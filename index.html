@@ -351,7 +351,124 @@
     <!-- Раздел: Схема Звезда-Зигзаг -->
     <div id="y-z" class="tab-panel">
         <h2>Аналитический вывод: Несимметричные КЗ за трансформатором Y/Z-0</h2>
-        <p style="color: #64748b; font-style: italic;">[ Раздел для вывода формул схемы Звезда-Зигзаг ]</p>
+        <section class="transformer-yz-section" style="margin-top: 50px; font-family: sans-serif;">
+    <h2>Схема соединения обмоток Y/Z-11 (Звезда-Зигзаг с заземленной нейтралью)</h2>
+    <p>Каждая полуобмотка низшего напряжения (НН) индуктивно связана с обмоткой высшего напряжения (ВН) другой фазы. Из-за встречно-последовательного включения полуобмоток коэффициент трансформации по отношению к одной секции зигзага составляет \(k_{т.об.Y/Z} = \frac{U_ф}{U_ф / \sqrt{3}} = \sqrt{3}\).</p>
+
+    <!-- Зарезервированное место под SVG-схему -->
+    <div class="svg-placeholder" style="border: 2px dashed #1976d2; background-color: #f0f7ff; padding: 30px; text-align: center; margin: 20px 0; border-radius: 8px;">
+        <p style="color: #1976d2; font-weight: bold; margin: 0 0 10px 0; font-size: 1.1em;">🗺️ МЕСТО ДЛЯ СХЕМЫ И ЭПЮРЫ ТОКОВ Y/Z-11</p>
+        <p style="color: #555; margin: 0; font-size: 0.95em;">Замените этот блок тегом <code>&lt;img src="Images/T_Y_Z11.svg" alt="Трансформатор Y/Z-11 и эпюра токов" style="max-width: 100%; height: auto;"&gt;</code></p>
+    </div>
+
+    <!-- Подраздел: 2-х фазное КЗ -->
+    <div class="k3-2phase" style="margin-top: 30px;">
+        <h3>1. Двухфазное КЗ за трансформатором Y/Z-11</h3>
+        <p>Модуль тока двухфазного короткого замыкания на вторичной стороне при равенстве сопротивлений прямой и обратной последовательностей (\(Z_1 = Z_2\)) равен:</p>
+        <p style="text-align: center;">
+            \[I_{КЗ2}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\]
+        </p>
+        <p>Токи в поврежденных фазах на стороне НН равны по модулю и противоположны по фазе:</p>
+        <p style="text-align: center;">
+            \[\dot{I}_A = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}, \quad \dot{I}_B = 0, \quad \dot{I}_C = -\dot{I}_A\]
+        </p>
+
+        <p>Составляющие фазных токов в обмотках ВН (с учетом коэффициентов трансформации \(k_{тт}\) и \(k_{т.об.Y/Z}\)):</p>
+        <p style="text-align: center;">
+            \[\dot{I}_{AI1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{AII1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+            \[\dot{I}_{BI1} = 0, \quad \dot{I}_{BII1} = 0\]
+            \[\dot{I}_{CI1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{CII1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+        </p>
+
+        <p>Суммарные линейные токи на стороне ВН определяются наложением составляющих от полуобмоток:</p>
+        <p style="text-align: center;">
+            \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} + \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
+        </p>
+        <p>Выразив их через трехфазный ток КЗ \(I_{КЗ2}^{(3)}\), получаем распределение токов на ВН по фазам:</p>
+        <p style="text-align: center;">
+            \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}} \\ \dot{I}_{C1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}} \end{cases} \quad \text{или через ток } I_{КЗ2}^{(2)}: \quad \begin{cases} \dot{I}_{A1} = \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2.Y/Z}^{(2)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \\ \dot{I}_{C1} = -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \end{cases}\]
+        </p>
+    </div>
+
+    <!-- Подраздел: Однофазное КЗ -->
+    <div class="k3-1phase" style="margin-top: 40px;">
+        <h3>2. Однофазное КЗ за трансформатором Y/Z-11</h3>
+        <p>При однофазном КЗ на стороне зигзага (при условии \(Z_1 = Z_2 = Z_0\)) модуль тока КЗ равен:</p>
+        <p style="text-align: center;">
+            \[I_{КЗ2.Y/Z}^{(1)} = \frac{\sqrt{3} U_{л.2}}{3 k_{тт} \sqrt{r_1^2 + x_1^2}} = \frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1} = I_{КЗ2.Y/Z}^{(3)}\]
+        </p>
+
+        <p>Составляющие фазных токов в высоковольтных обмотках от действия полуобмоток зигзага:</p>
+        <p style="text-align: center;">
+            \[\dot{I}_{AI1} = \frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{AII1} = -\frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+            \[\dot{I}_{BI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{BII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+            \[\dot{I}_{CI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{CII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+        </p>
+
+        <p>Итоговые линейные токи первичной стороны (ВН) определяются геометрическим сложением токов полуобмоток:</p>
+        <p style="text-align: center;">
+            \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} + \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
+        </p>
+        <p>После подстановки и математических преобразований получаем результирующие линейные токи со стороны ВН:</p>
+        <p style="text-align: center;">
+            \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} = 0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} = -0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{C1} = 0 \end{cases}\]
+        </p>
+    </div>
+
+    <!-- Сводная таблица распределения токов для Y/Z-11 -->
+    <div class="table-section-yz" style="margin-top: 40px;">
+        <h3>Сводная таблица распределения токов при КЗ (схема Y/Z-11)</h3>
+        <div style="overflow-x: auto;">
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th>Вид повреждения</th>
+                        <th>Сторона ВН / НН</th>
+                        <th>Фаза A</th>
+                        <th>Фаза B</th>
+                        <th>Фаза C</th>
+                        <th>Ток в нейтрали / Особенности</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Двухфазное КЗ -->
+                    <tr>
+                        <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ (между A и C)</td>
+                        <td>Вторичная сторона (НН)</td>
+                        <td style="color: #d32f2f; font-weight: bold;">\(\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)</td>
+                        <td>\(0\)</td>
+                        <td style="color: #d32f2f; font-weight: bold;">\(-\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)</td>
+                        <td>\(I_N = 0\)</td>
+                    </tr>
+                    <tr style="border-bottom: 2px solid #ccc;">
+                        <td>Первичная сторона (ВН)</td>
+                        <td style="color: #1976d2; font-weight: bold;">\(\frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                        <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)</td>
+                        <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)</td>
+                        <td>На стороне ВН токи текут во всех трех фазах в пропорции \(1 : -0.5 : -0.5\)</td>
+                    </tr>
+                    
+                    <!-- Однофазное КЗ -->
+                    <tr>
+                        <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ (фаза A)</td>
+                        <td>Вторичная сторона (НН)</td>
+                        <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Z}^{(1)}\)</td>
+                        <td>\(0\)</td>
+                        <td>\(0\)</td>
+                        <td>\(I_N = I_{КЗ2.Y/Z}^{(1)}\)</td>
+                    </tr>
+                    <tr>
+                        <td>Первичная сторона (ВН)</td>
+                        <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
+                        <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
+                        <td>\(0\)</td>
+                        <td>Токи нулевой последовательности взаимно компенсируются в обмотках НН и не трансформируются в сеть ВН. В фазе C ток равен 0.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
     </div>
 </div>
 
