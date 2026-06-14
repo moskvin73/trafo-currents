@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Трансформация токов несимметричных КЗ через силовые трансформаторы</title>
-    
+
     <!-- Настройка и подключение MathJax через CDN для работы на GitHub Pages -->
     <script>
         window.MathJax = {
@@ -22,619 +23,913 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Georgia, serif; font-size: 16px; line-height: 1.7; margin: 0; padding: 20px; background-color: #f4f6f9; color: #222; }
-        .wrapper { max-width: 900px; margin: 30px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        h1 { text-align: center; color: #0f2d59; font-size: 26px; border-bottom: 3px solid #0f2d59; padding-bottom: 15px; margin-bottom: 35px; }
-        h2 { color: #1b4332; font-size: 20px; margin-top: 35px; border-bottom: 1px dashed #a3b19b; padding-bottom: 8px; }
-        
-        .navigation-tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; }
-        .tab-trigger { padding: 12px 24px; font-size: 14px; font-weight: 600; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; border-radius: 6px; transition: all 0.2s ease; color: #475569; }
-        .tab-trigger.active { background: #0f2d59; color: white; border-color: #0f2d59; box-shadow: 0 2px 4px rgba(15,45,89,0.2); }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; animation: fadeIn 0.4s ease; }
-        
-        .derivation-step { margin-bottom: 30px; text-align: justify; }
-        .step-heading { font-weight: bold; color: #1e293b; margin-bottom: 8px; font-size: 17px; display: flex; align-items: center; gap: 8px; }
-        .step-heading::before { content: "•"; color: #3b82f6; font-size: 24px; line-height: 0; }
-        
-        .flex-container { display: flex; gap: 30px; align-items: center; margin: 20px 0; flex-wrap: wrap; }
-        .text-side { flex: 1; min-width: 300px; }
-        .graphic-side { flex: 1; min-width: 300px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px dashed #cbd5e1; text-align: center; }
+        body {
+            font-family: 'Segoe UI', Georgia, serif;
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f6f9;
+            color: #222;
+        }
 
-        .table-container { width: 100%; overflow-x: auto; margin: 30px 0; border: 1px solid #cbd5e1; border-radius: 6px; }
-        table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 0; }
-        th, td { border: 1px solid #cbd5e1; padding: 12px 14px; text-align: center; }
-        th { background-color: #f1f5f9; font-weight: bold; color: #1e293b; }
-        .max-load-row { background-color: #fffbeb; font-weight: bold; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .wrapper {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0f2d59;
+            font-size: 26px;
+            border-bottom: 3px solid #0f2d59;
+            padding-bottom: 15px;
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            color: #1b4332;
+            font-size: 20px;
+            margin-top: 35px;
+            border-bottom: 1px dashed #a3b19b;
+            padding-bottom: 8px;
+        }
+
+        .navigation-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tab-trigger {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            color: #475569;
+        }
+
+        .tab-trigger.active {
+            background: #0f2d59;
+            color: white;
+            border-color: #0f2d59;
+            box-shadow: 0 2px 4px rgba(15, 45, 89, 0.2);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .derivation-step {
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        .step-heading {
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-heading::before {
+            content: "•";
+            color: #3b82f6;
+            font-size: 24px;
+            line-height: 0;
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .text-side {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .graphic-side {
+            flex: 1;
+            min-width: 300px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 12px 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .max-load-row {
+            background-color: #fffbeb;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
 
         @media (max-width: 768px) {
-            body { padding: 10px; font-size: 15px; }
-            .wrapper { padding: 20px 15px; margin: 10px auto; }
-            h1 { font-size: 20px; margin-bottom: 20px; }
-            h2 { font-size: 17px; margin-top: 25px; }
-            .navigation-tabs { gap: 5px; padding-bottom: 8px; }
-            .tab-trigger { flex: 1 1 calc(50% - 5px); padding: 10px 10px; font-size: 13px; text-align: center; }
-            .flex-container { flex-direction: column; gap: 15px; }
-            .text-side, .graphic-side { width: 100%; min-width: 100%; box-sizing: border-box; }
-            .step-heading { font-size: 15px; }
+            body {
+                padding: 10px;
+                font-size: 15px;
+            }
+
+            .wrapper {
+                padding: 20px 15px;
+                margin: 10px auto;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                font-size: 17px;
+                margin-top: 25px;
+            }
+
+            .navigation-tabs {
+                gap: 5px;
+                padding-bottom: 8px;
+            }
+
+            .tab-trigger {
+                flex: 1 1 calc(50% - 5px);
+                padding: 10px 10px;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .flex-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .text-side,
+            .graphic-side {
+                width: 100%;
+                min-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .step-heading {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
+
 <body class="tex2jax_process">
 
-<div class="wrapper">
-    <h1>Трансформация токов несимметричных КЗ через силовые трансформаторы</h1>
-    
-    <div class="navigation-tabs">
-        <button class="tab-trigger active" onclick="changeTab('delta-y')">Схема соединений Δ/Y-0</button>
-        <button class="tab-trigger" onclick="changeTab('y-y')">Схема соединений Y/Y-0</button>
-        <button class="tab-trigger" onclick="changeTab('y-z')">Схема соединений Y/Z-0</button>
-    </div>
+    <div class="wrapper">
+        <h1>Трансформация токов несимметричных КЗ через силовые трансформаторы</h1>
 
-    <!-- Раздел: Схема Треугольник-Звезда -->
-    <div id="delta-y" class="tab-panel active">
-        <h2>Несимметричные КЗ за трансформатором Δ/Y-0</h2>
-        <p>Аналитический вывод: Двухфазное КЗ (B-C) за трансформатором Δ/Y-0</p>
-        
-        <div class="flex-container">
-            <div class="text-side">
-                <div class="derivation-step">
-                    <div class="step-heading">1. Исходные уравнения несимметричного режима</div>
-                    При возникновении двухфазного замыкания между фазами $B$ и $C$ на выводах вторичной обмотки (НН), согласно первому и второму законам Кирхгофа, фиксируются следующие граничные условия для токов:
-                    $$\dot{I}_{A2} = 0; \quad \dot{I}_{B2} = -\dot{I}_{C2}$$
-                    При этом модуль тока КЗ выражается через ток базисного трехфазного повреждения как:
-                    $$I_{КЗ2}^{(2)} = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}$$
+        <div class="navigation-tabs">
+            <button class="tab-trigger active" onclick="changeTab('delta-y')">Схема соединений Δ/Y-0</button>
+            <button class="tab-trigger" onclick="changeTab('y-y')">Схема соединений Y/Y-0</button>
+            <button class="tab-trigger" onclick="changeTab('y-z')">Схема соединений Y/Z-0</button>
+        </div>
+
+        <!-- Раздел: Схема Треугольник-Звезда -->
+        <div id="delta-y" class="tab-panel active">
+            <h2>Несимметричные КЗ за трансформатором Δ/Y-0</h2>
+            <p>Аналитический вывод: Двухфазное КЗ (B-C) за трансформатором Δ/Y-0</p>
+
+            <div class="flex-container">
+                <div class="text-side">
+                    <div class="derivation-step">
+                        <div class="step-heading">1. Исходные уравнения несимметричного режима</div>
+                        При возникновении двухфазного замыкания между фазами $B$ и $C$ на выводах вторичной обмотки
+                        (НН), согласно первому и второму законам Кирхгофа, фиксируются следующие граничные условия для
+                        токов:
+                        $$\dot{I}_{A2} = 0; \quad \dot{I}_{B2} = -\dot{I}_{C2}$$
+                        При этом модуль тока КЗ выражается через ток базисного трехфазного повреждения как:
+                        $$I_{КЗ2}^{(2)} = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}$$
+                    </div>
+                </div>
+                <div class="graphic-side">
+                    <img src="Images/T_Д_Y2КЗ.svg" alt="Трансформатор Δ/Y-0 и эпюра токов"
+                        style="max-width: 100%; height: auto;">
                 </div>
             </div>
-            <div class="graphic-side">
-                <img src="Images/T_Д_Y2КЗ.svg" alt="Трансформатор Δ/Y-0 и эпюра токов" style="max-width: 100%; height: auto;">
+
+            <div class="derivation-step">
+                <div class="step-heading">2. Закон трансформации токов в фазные обмотки ВН</div>
+                Поскольку первичная обмотка соединена в треугольник, фазные токи внутри него ($\dot{I}_{AB1},
+                \dot{I}_{BC1}, \dot{I}_{CA1}$) пропорциональны токам в соответствующих фазах вторичной звезды с учетом
+                коэффициента трансформации $k_{тт}$:
+                $$\dot{I}_{AB1} = \frac{\dot{I}_{A2}}{\sqrt{3} \cdot k_{тт}} = \frac{I_{КЗ2}^{(3)}}{2 \cdot k_{тт}}$$
+                $$\dot{I}_{BC1} = 0; \quad \dot{I}_{CA1} = -\frac{I_{КЗ2}^{(3)}}{2 \cdot k_{тт}}$$
             </div>
-        </div>
 
-        <div class="derivation-step">
-            <div class="step-heading">2. Закон трансформации токов в фазные обмотки ВН</div>
-            Поскольку первичная обмотка соединена в треугольник, фазные токи внутри него ($\dot{I}_{AB1}, \dot{I}_{BC1}, \dot{I}_{CA1}$) пропорциональны токам в соответствующих фазах вторичной звезды с учетом коэффициента трансформации $k_{тт}$:
-            $$\dot{I}_{AB1} = \frac{\dot{I}_{A2}}{\sqrt{3} \cdot k_{тт}} = \frac{I_{КЗ2}^{(3)}}{2 \cdot k_{тт}}$$
-            $$\dot{I}_{BC1} = 0; \quad \dot{I}_{CA1} = -\frac{I_{КЗ2}^{(3)}}{2 \cdot k_{тт}}$$
-        </div>
-
-        <div class="derivation-step">
-            <div class="step-heading">3. Расчет линейных токов первичной сети</div>
-            Линейные токи, поступающие из сети высокого напряжения в трансформатор, определяются разностью соответствующих фазных токов в вершинах треугольника:
-            $$
-            \begin{cases} 
-            \dot{I}_{A1} = \dot{I}_{AB1} - \dot{I}_{CA1} = \frac{I_{КЗ2}^{(3)}}{2 k_{тт}} - \left(-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}\right) = \frac{I_{КЗ2}^{(3)}}{k_{тт}} \\
-            \dot{I}_{B1} = \dot{I}_{BC1} - \dot{I}_{AB1} = 0 - \frac{I_{КЗ2}^{(3)}}{2 k_{тт}} = -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}} \\
-            \dot{I}_{C1} = \dot{I}_{CA1} - \dot{I}_{BC1} = -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}} - 0 = -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}
-            \end{cases}
-            $$
-        </div>
-
-        <div class="derivation-step">
-            <div class="step-heading">4. Результирующие коэффициенты формы</div>
-            Связывая токи первичной стороны с фактическим током двухфазного КЗ на вторичной стороне ($I_{КЗ2}^{(2)}$), получаем окончательные модульные зависимости:
-            $$I_{A1} = \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 1.155 \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
-            $$I_{B1} = I_{C1} = \frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 0.577 \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
-        </div>
-        
-        <h3>Сводная инженерная таблица распределения коэффициентов</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Фаза сети ВН</th>
-                        <th>Выражение через $I_{КЗ}^{(3)}$</th>
-                        <th>Выражение через $I_{КЗ}^{(2)}$</th>
-                        <th>Коэффициент распределения</th>
-                        <th>Характеристика фазы в аварийном режиме</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="max-load-row">
-                        <td><b>Фаза А</b></td>
-                        <td>$\frac{I_{КЗ2}^{(3)}}{k_{тт}}$</td>
-                        <td>$\frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
-                        <td><b>1.155</b></td>
-                        <td>Особая фаза. Ток в 2 раза выше, чем в неповрежденных фазах.</td>
-                    </tr>
-                    <tr>
-                        <td><b>Фаза В</b></td>
-                        <td>$-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}$</td>
-                        <td>$-\frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
-                        <td><b>0.577</b></td>
-                        <td>Ток равен половине тока фазы А, вектор развернут на 180°.</td>
-                    </tr>
-                    <tr>
-                        <td><b>Фаза С</b></td>
-                        <td>$-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}$</td>
-                        <td>$-\frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
-                        <td><b>0.577</b></td>
-                        <td>Ток равен половине тока фазы А, вектор развернут на 180°.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <section class="short-circuit-section">
-            <h2>Несимметричные КЗ за трансформатором Δ/Y-0</h2>
-            <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
-    
-            <p style="text-align: center;">
-                \[I_{КЗ2 \ \Delta/(Y-0)}^{(1)}=\frac{\sqrt{3} U_{л.2}}{3k_{тт} \sqrt{r_1^2+x_1^2 }}=\frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1 }=I_{КЗ.2 \ \Delta/(Y-0)}^{(3)}\]
-            </p>
-
-            <p>Коэффициент трансформации \(k_{т.\Delta/Y}=\frac{U_л}{U_ф} =\sqrt{3}\), фазные токи в высоковольтных обмотках:</p>
-    
-        <p style="text-align: center;">
-            \[\dot{I}_{AB1}=\frac{2}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-            \[\dot{I}_{BC1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-            \[\dot{I}_{CA1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-        </p>
-
-        <p>Выразим линейные токи через фазные для схемы соединения обмоток в треугольник:</p>
-    
-        <p style="text-align: center;">
-            \[\begin{cases}\dot{I}_{A1} = \dot{I}_{AB1}-\dot{I}_{CA1} \\ \dot{I}_{B1} = \dot{I}_{BC1}-\dot{I}_{AB1} \\ \dot{I}_{C1} = \dot{I}_{CA1}-\dot{I}_{BC1} \end{cases}\]
-        </p>
-
-        <p>Подставив значения, получаем итоговые линейные токи:</p>
-    
-        <p style="text-align: center;">
-            \[\begin{cases}\dot{I}_{A1}= \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{B1}=-\frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=-0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{C1}=0 \end{cases}\]
-        </p>
-    </section>
-
-       <section class="table-section" style="margin-top: 30px;">
-        <h3>Сводная таблица распределения токов при однофазном КЗ (схема Δ/Y-0)</h3>
-        <div style="overflow-x: auto;">
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th>Сторона трансформатора</th>
-                    <th>Тип тока</th>
-                    <th>Фаза A</th>
-                    <th>Фаза B</th>
-                    <th>Фаза C</th>
-                    <th>Ток в нейтрали / Нулевая последовательность</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Сторона НН -->
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Низшее напряжение (НН, звезда \(Y_n\))</td>
-                    <td>Линейные / Фазные токи</td>
-                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ}^{(1)}\)</td>
-                    <td>\(0\)</td>
-                    <td>\(0\)</td>
-                    <td rowspan="2" style="vertical-align: middle;">\(I_N = 3I_0 = I_{КЗ}^{(1)}\)</td>
-                </tr>
-                <tr style="background-color: #fdfdfd;">
-                    <td>Относительные модули</td>
-                    <td style="color: #d32f2f; font-weight: bold;">\(1\)</td>
-                    <td>\(0\)</td>
-                    <td>\(0\)</td>
-                </tr>
-                <!-- Сторона ВН -->
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Высшее напряжение (ВН, треугольник \(\Delta\))</td>
-                    <td>Фазные токи (в обмотках)</td>
-                    <td>\(\frac{2}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
-                    <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
-                    <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
-                    <td rowspan="2" style="vertical-align: middle;">\(I_0\) замыкается внутри \(\Delta\)<br>(во внешнюю сеть не выходит)</td>
-                </tr>
-                <tr style="background-color: #fdfdfd;">
-                    <td>Линейные токи (в линию)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
-                    <td>\(0\)</td>
-                </tr>
-            </tbody>
-            </table>
+            <div class="derivation-step">
+                <div class="step-heading">3. Расчет линейных токов первичной сети</div>
+                Линейные токи, поступающие из сети высокого напряжения в трансформатор, определяются разностью
+                соответствующих фазных токов в вершинах треугольника:
+                $$
+                \begin{cases}
+                \dot{I}_{A1} = \dot{I}_{AB1} - \dot{I}_{CA1} = \frac{I_{КЗ2}^{(3)}}{2 k_{тт}} -
+                \left(-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}\right) = \frac{I_{КЗ2}^{(3)}}{k_{тт}} \\
+                \dot{I}_{B1} = \dot{I}_{BC1} - \dot{I}_{AB1} = 0 - \frac{I_{КЗ2}^{(3)}}{2 k_{тт}} =
+                -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}} \\
+                \dot{I}_{C1} = \dot{I}_{CA1} - \dot{I}_{BC1} = -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}} - 0 =
+                -\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}
+                \end{cases}
+                $$
             </div>
-        </section>     
-    </div>
 
-    <!-- Раздел: Схема Звезда-Звезда -->
-    <div id="y-y" class="tab-panel">
-<section class="transformer-yy-section" style="margin-top: 50px;">
-    <h2>Несимметричные КЗ за трансформатором Y/Y-0</h2>
-    <p>Ниже приведены математические выводы распределения токов для двухфазного и однофазного коротких замыканий (КЗ) за трансформатором со схемой соединения Y/Y-0.</p>
+            <div class="derivation-step">
+                <div class="step-heading">4. Результирующие коэффициенты формы</div>
+                Связывая токи первичной стороны с фактическим током двухфазного КЗ на вторичной стороне
+                ($I_{КЗ2}^{(2)}$), получаем окончательные модульные зависимости:
+                $$I_{A1} = \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 1.155 \cdot
+                \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
+                $$I_{B1} = I_{C1} = \frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 0.577 \cdot
+                \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
+            </div>
 
-    <!-- Подраздел: 2-х фазное КЗ -->
-    <div class="k3-2phase" style="margin-top: 30px;">
-        <h3>1. Двухфазное КЗ за трансформатором Y/Y-0</h3>
-        <p>Модуль тока двухфазного КЗ в общем виде определяется выражением:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ}^{(2)} = |\dot{I}_A| = |\dot{I}_C| = \frac{\sqrt{3} U_ф}{\sqrt{(r_1+r_2)^2 + (x_1+x_2)^2}} = \frac{U_л}{\sqrt{(r_1+r_2)^2 + (x_1+x_2)^2}}\]
-        </p>
+            <h3>Сводная инженерная таблица распределения коэффициентов</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Фаза сети ВН</th>
+                            <th>Выражение через $I_{КЗ}^{(3)}$</th>
+                            <th>Выражение через $I_{КЗ}^{(2)}$</th>
+                            <th>Коэффициент распределения</th>
+                            <th>Характеристика фазы в аварийном режиме</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="max-load-row">
+                            <td><b>Фаза А</b></td>
+                            <td>$\frac{I_{КЗ2}^{(3)}}{k_{тт}}$</td>
+                            <td>$\frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
+                            <td><b>1.155</b></td>
+                            <td>Особая фаза. Ток в 2 раза выше, чем в неповрежденных фазах.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Фаза В</b></td>
+                            <td>$-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}$</td>
+                            <td>$-\frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
+                            <td><b>0.577</b></td>
+                            <td>Ток равен половине тока фазы А, вектор развернут на 180°.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Фаза С</b></td>
+                            <td>$-\frac{I_{КЗ2}^{(3)}}{2 k_{тт}}$</td>
+                            <td>$-\frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$</td>
+                            <td><b>0.577</b></td>
+                            <td>Ток равен половине тока фазы А, вектор развернут на 180°.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <p>При условии равенства полных сопротивлений прямой и обратной последовательностей (\(Z_1 = Z_2\)):</p>
-        <p style="text-align: center;">
-            \[I_{КЗ}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ}^{(3)}\]
-        </p>
+            <section class="short-circuit-section">
+                <h2>Несимметричные КЗ за трансформатором Δ/Y-0</h2>
+                <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
 
-        <p>Токи на стороне ВН при двухфазном КЗ за трансформатором со схемой соединения Y/Y-0 распределяются следующим образом:</p>
-        <p style="text-align: center;">
-            \[\begin{cases} \dot{I}_{A1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = 0 \\ \dot{I}_{C1} = -\dot{I}_{A1} \end{cases}\]
-        </p>
-    </div>
+                <p style="text-align: center;">
+                    \[I_{КЗ2 \ \Delta/(Y-0)}^{(1)}=\frac{\sqrt{3} U_{л.2}}{3k_{тт} \sqrt{r_1^2+x_1^2
+                    }}=\frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1 }=I_{КЗ.2 \ \Delta/(Y-0)}^{(3)}\]
+                </p>
 
-    <!-- Подраздел: Однофазное КЗ -->
-    <div class="k3-1phase" style="margin-top: 40px;">
-        <h3>2. Однофазное КЗ за трансформатором Y/Y-0</h3>
-        <p>Модуль тока однофазного КЗ определяется через симметричные составляющие:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ}^{(1)} = |\dot{I}_A| = \frac{3 U_{ф2}}{\sqrt{(r_1+r_2+r_0)^2 + (x_1+x_2+x_0)^2}} = \frac{\sqrt{3} U_{л.2}}{\sqrt{(r_1+r_2+r_0)^2 + (x_1+x_2+x_0)^2}}\]
-        </p>
+                <p>Коэффициент трансформации \(k_{т.\Delta/Y}=\frac{U_л}{U_ф} =\sqrt{3}\), фазные токи в высоковольтных
+                    обмотках:</p>
 
-        <p>При условии, что \(Z_1 = Z_2\), ток КЗ на вторичной стороне равен:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ2}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_1+r_0)^2 + (2x_1+x_0)^2}}\]
-        </p>
+                <p style="text-align: center;">
+                    \[\dot{I}_{AB1}=\frac{2}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+                    \[\dot{I}_{BC1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+                    \[\dot{I}_{CA1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+                </p>
 
-        <p>Непосредственно для КЗ за трансформатором Y/Y-0 с учетом его параметров:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ2.Y/Y-0}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_{1.т}+r_{0.т})^2 + (2x_{1.т}+x_{0.т})^2}} = \frac{\sqrt{3} U_{л2}}{Z_{т.Y/Y-0(1)}}\]
-        </p>
+                <p>Выразим линейные токи через фазные для схемы соединения обмоток в треугольник:</p>
 
-        <p>Трансформация токов на сторону высшего напряжения (ВН) с учетом коэффициента трансформации \(k_{тт}\):</p>
-        <ul>
-            <li>
-                <strong>Ток в фазе «А» на стороне ВН:</strong>
-                \[\dot{I}_{A.1} = \frac{\dot{I}_1 + \dot{I}_2}{k_{тт}} = \frac{2\dot{E}_{ф.2}}{k_{тт} (Z_1 + Z_2 + Z_0)} = \frac{2}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
-            </li>
-            <li style="margin-top: 15px;">
-                <strong>Токи в фазах «B» и «С» на стороне ВН (где \(a = e^{j120^\circ}\) — оператор фазы):</strong>
-                \[\dot{I}_{B.1} = \frac{a^2 \dot{I}_1 + a \dot{I}_2}{k_{тт}} = \frac{-\dot{E}_{ф.2}}{k_{тт} (Z_1 + Z_2 + Z_0)} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
-                \[\dot{I}_{C.1} = \frac{a \dot{I}_1 + a^2 \dot{I}_2}{k_{тт}} = \frac{-\dot{E}_{ф.2}}{k_{тт} (Z_1 + Z_2 + Z_0)} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
-            </li>
-        </ul>
-    </div>
-</section>
-        <!-- Сводная таблица для схемы Y/Y-0 -->
-<section class="table-section-yy" style="margin-top: 40px; margin-bottom: 20px;">
-    <h3>Сводная таблица распределения токов при КЗ (схема Y/Y-0)</h3>
-    <div style="overflow-x: auto;">
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th>Вид повреждения</th>
-                    <th>Сторона ВН / НН</th>
-                    <th>Фаза A</th>
-                    <th>Фаза B</th>
-                    <th>Фаза C</th>
-                    <th>Ток в нейтрали / Особенности</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Двухфазное КЗ -->
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ (между B и C)</td>
-                    <td>Вторичная сторона (НН)</td>
-                    <td>\(0\)</td>
-                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2}^{(2)}\)</td>
-                    <td style="color: #d32f2f; font-weight: bold;">\(-I_{КЗ2}^{(2)}\)</td>
-                    <td>\(I_N = 0\)<br>(нейтраль не задействована)</td>
-                </tr>
-                <tr style="border-bottom: 2px solid #ccc;">
-                    <td>Первичная сторона (ВН)</td>
-                    <td>\(0\)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
-                    <td>Токи на ВН полностью повторяют распределение сторон НН</td>
-                </tr>
-                
-                <!-- Однофазное КЗ -->
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ (фаза A)</td>
-                    <td>Вторичная сторона (НН)</td>
-                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Y-0}^{(1)}\)</td>
-                    <td>\(0\)</td>
-                    <td>\(0\)</td>
-                    <td>\(I_N = I_{КЗ2.Y/Y-0}^{(1)}\)<br>(полный ток КЗ в нейтрали)</td>
-                </tr>
-                <tr>
-                    <td>Первичная сторона (ВН)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(\frac{2}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
-                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
-                    <td style="color: #1976d2; font-weight: bold;">-\(\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
-                    <td>Ток нулевой последовательности трансформируется в питающую сеть ВН</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-    </div>
+                <p style="text-align: center;">
+                    \[\begin{cases}\dot{I}_{A1} = \dot{I}_{AB1}-\dot{I}_{CA1} \\ \dot{I}_{B1} =
+                    \dot{I}_{BC1}-\dot{I}_{AB1} \\ \dot{I}_{C1} = \dot{I}_{CA1}-\dot{I}_{BC1} \end{cases}\]
+                </p>
 
-    <!-- Раздел: Схема Звезда-Зигзаг -->
-    <div id="y-z" class="tab-panel">
-        <h2>Несимметричные КЗ за трансформатором Y/Z-0</h2>
-        <section class="transformer-yz-section" style="margin-top: 50px; font-family: sans-serif;">
-    <h2>Схема соединения обмоток Y/Z-11 (Звезда-Зигзаг с заземленной нейтралью)</h2>
-    <p>Каждая полуобмотка низшего напряжения (НН) индуктивно связана с обмоткой высшего напряжения (ВН) другой фазы. Из-за встречно-последовательного включения полуобмоток коэффициент трансформации по отношению к одной секции зигзага составляет \(k_{т.об.Y/Z} = \frac{U_ф}{U_ф / \sqrt{3}} = \sqrt{3}\).</p>
+                <p>Подставив значения, получаем итоговые линейные токи:</p>
 
-    <!-- Зарезервированное место под SVG-схему -->
-    <div class="svg-placeholder" style="border: 2px dashed #1976d2; background-color: #f0f7ff; padding: 30px; text-align: center; margin: 20px 0; border-radius: 8px;">
-        <p style="color: #1976d2; font-weight: bold; margin: 0 0 10px 0; font-size: 1.1em;">🗺️ МЕСТО ДЛЯ СХЕМЫ И ЭПЮРЫ ТОКОВ Y/Z-11</p>
-        <p style="color: #555; margin: 0; font-size: 0.95em;">Замените этот блок тегом <code>&lt;img src="Images/T_Y_Z11.svg" alt="Трансформатор Y/Z-11 и эпюра токов" style="max-width: 100%; height: auto;"&gt;</code></p>
-    </div>
+                <p style="text-align: center;">
+                    \[\begin{cases}\dot{I}_{A1}= \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=0.577 \cdot
+                    \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{B1}=-\frac{I_{КЗ2 \
+                    \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=-0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\
+                    \dot{I}_{C1}=0 \end{cases}\]
+                </p>
+            </section>
 
-    <!-- Подраздел: 2-х фазное КЗ -->
-    <div class="k3-2phase" style="margin-top: 30px;">
-        <h3>1. Двухфазное КЗ за трансформатором Y/Z-11</h3>
-        <p>Модуль тока двухфазного короткого замыкания на вторичной стороне при равенстве сопротивлений прямой и обратной последовательностей (\(Z_1 = Z_2\)) равен:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ2}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\]
-        </p>
-        <p>Токи в поврежденных фазах на стороне НН равны по модулю и противоположны по фазе:</p>
-        <p style="text-align: center;">
-            \[\dot{I}_A = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}, \quad \dot{I}_B = 0, \quad \dot{I}_C = -\dot{I}_A\]
-        </p>
-
-        <p>Составляющие фазных токов в обмотках ВН (с учетом коэффициентов трансформации \(k_{тт}\) и \(k_{т.об.Y/Z}\)):</p>
-        <p style="text-align: center;">
-            \[\dot{I}_{AI1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{AII1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
-            \[\dot{I}_{BI1} = 0, \quad \dot{I}_{BII1} = 0\]
-            \[\dot{I}_{CI1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{CII1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
-        </p>
-
-        <p>Суммарные линейные токи на стороне ВН определяются наложением составляющих от полуобмоток:</p>
-        <p style="text-align: center;">
-            \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} + \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
-        </p>
-        <p>Выразив их через трехфазный ток КЗ \(I_{КЗ2}^{(3)}\), получаем распределение токов на ВН по фазам:</p>
-        <p style="text-align: center;">
-            \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}} \\ \dot{I}_{C1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}} \end{cases} \quad \text{или через ток } I_{КЗ2}^{(2)}: \quad \begin{cases} \dot{I}_{A1} = \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2.Y/Z}^{(2)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \\ \dot{I}_{C1} = -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \end{cases}\]
-        </p>
-    </div>
-
-    <!-- Подраздел: Однофазное КЗ -->
-    <div class="k3-1phase" style="margin-top: 40px;">
-        <h3>2. Однофазное КЗ за трансформатором Y/Z-11</h3>
-        <p>При однофазном КЗ на стороне зигзага (при условии \(Z_1 = Z_2 = Z_0\)) модуль тока КЗ равен:</p>
-        <p style="text-align: center;">
-            \[I_{КЗ2.Y/Z}^{(1)} = \frac{\sqrt{3} U_{л.2}}{3 k_{тт} \sqrt{r_1^2 + x_1^2}} = \frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1} = I_{КЗ2.Y/Z}^{(3)}\]
-        </p>
-
-        <p>Составляющие фазных токов в высоковольтных обмотках от действия полуобмоток зигзага:</p>
-        <p style="text-align: center;">
-            \[\dot{I}_{AI1} = \frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{AII1} = -\frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
-            \[\dot{I}_{BI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{BII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
-            \[\dot{I}_{CI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad \dot{I}_{CII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
-        </p>
-
-        <p>Итоговые линейные токи первичной стороны (ВН) определяются геометрическим сложением токов полуобмоток:</p>
-        <p style="text-align: center;">
-            \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} + \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
-        </p>
-        <p>После подстановки и математических преобразований получаем результирующие линейные токи со стороны ВН:</p>
-        <p style="text-align: center;">
-            \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} = 0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} = -0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{C1} = 0 \end{cases}\]
-        </p>
-    </div>
-
-    <!-- Сводная таблица распределения токов для Y/Z-11 -->
-    <div class="table-section-yz" style="margin-top: 40px;">
-        <h3>Сводная таблица распределения токов при КЗ (схема Y/Z-11)</h3>
-        <div style="overflow-x: auto;">
-            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th>Вид повреждения</th>
-                        <th>Сторона ВН / НН</th>
-                        <th>Фаза A</th>
-                        <th>Фаза B</th>
-                        <th>Фаза C</th>
-                        <th>Ток в нейтрали / Особенности</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Двухфазное КЗ -->
-                    <tr>
-                        <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ (между A и C)</td>
-                        <td>Вторичная сторона (НН)</td>
-                        <td style="color: #d32f2f; font-weight: bold;">\(\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)</td>
-                        <td>\(0\)</td>
-                        <td style="color: #d32f2f; font-weight: bold;">\(-\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)</td>
-                        <td>\(I_N = 0\)</td>
-                    </tr>
-                    <tr style="border-bottom: 2px solid #ccc;">
-                        <td>Первичная сторона (ВН)</td>
-                        <td style="color: #1976d2; font-weight: bold;">\(\frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
-                        <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)</td>
-                        <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)</td>
-                        <td>На стороне ВН токи текут во всех трех фазах в пропорции \(1 : -0.5 : -0.5\)</td>
-                    </tr>
-                    
-                    <!-- Однофазное КЗ -->
-                    <tr>
-                        <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ (фаза A)</td>
-                        <td>Вторичная сторона (НН)</td>
-                        <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Z}^{(1)}\)</td>
-                        <td>\(0\)</td>
-                        <td>\(0\)</td>
-                        <td>\(I_N = I_{КЗ2.Y/Z}^{(1)}\)</td>
-                    </tr>
-                    <tr>
-                        <td>Первичная сторона (ВН)</td>
-                        <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
-                        <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
-                        <td>\(0\)</td>
-                        <td>Токи нулевой последовательности взаимно компенсируются в обмотках НН и не трансформируются в сеть ВН. В фазе C ток равен 0.</td>
-                    </tr>
-                </tbody>
-            </table>
+            <section class="table-section" style="margin-top: 30px;">
+                <h3>Сводная таблица распределения токов при однофазном КЗ (схема Δ/Y-0)</h3>
+                <div style="overflow-x: auto;">
+                    <table border="1" cellpadding="10" cellspacing="0"
+                        style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th>Сторона трансформатора</th>
+                                <th>Тип тока</th>
+                                <th>Фаза A</th>
+                                <th>Фаза B</th>
+                                <th>Фаза C</th>
+                                <th>Ток в нейтрали / Нулевая последовательность</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Сторона НН -->
+                            <tr>
+                                <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Низшее напряжение
+                                    (НН, звезда \(Y_n\))</td>
+                                <td>Линейные / Фазные токи</td>
+                                <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ}^{(1)}\)</td>
+                                <td>\(0\)</td>
+                                <td>\(0\)</td>
+                                <td rowspan="2" style="vertical-align: middle;">\(I_N = 3I_0 = I_{КЗ}^{(1)}\)</td>
+                            </tr>
+                            <tr style="background-color: #fdfdfd;">
+                                <td>Относительные модули</td>
+                                <td style="color: #d32f2f; font-weight: bold;">\(1\)</td>
+                                <td>\(0\)</td>
+                                <td>\(0\)</td>
+                            </tr>
+                            <!-- Сторона ВН -->
+                            <tr>
+                                <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Высшее напряжение
+                                    (ВН, треугольник \(\Delta\))</td>
+                                <td>Фазные токи (в обмотках)</td>
+                                <td>\(\frac{2}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                                <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                                <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                                <td rowspan="2" style="vertical-align: middle;">\(I_0\) замыкается внутри
+                                    \(\Delta\)<br>(во внешнюю сеть не выходит)</td>
+                            </tr>
+                            <tr style="background-color: #fdfdfd;">
+                                <td>Линейные токи (в линию)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot
+                                    \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot
+                                    \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
+                                <td>\(0\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
-    </div>
-</section>
-    </div>
 
-    <section id="calculator" class="interactive-calc-section" style="margin-top: 40px; font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fbfbfb;">
-    <h2 style="color: #1976d2; margin-top: 0;">⚡ Интерактивный расчёт параметров и токов КЗ за трансформатором</h2>
-    
-    <div class="calc-controls" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <div style="flex: 2; min-width: 250px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите трансформатор серии ТМГ:</label>
-            <select id="transformer-select" onchange="updateCalculation()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
-                <option value="">Загрузка базы данных...</option>
-            </select>
+        <!-- Раздел: Схема Звезда-Звезда -->
+        <div id="y-y" class="tab-panel">
+            <section class="transformer-yy-section" style="margin-top: 50px;">
+                <h2>Несимметричные КЗ за трансформатором Y/Y-0</h2>
+                <p>Ниже приведены математические выводы распределения токов для двухфазного и однофазного коротких
+                    замыканий (КЗ) за трансформатором со схемой соединения Y/Y-0.</p>
+
+                <!-- Подраздел: 2-х фазное КЗ -->
+                <div class="k3-2phase" style="margin-top: 30px;">
+                    <h3>1. Двухфазное КЗ за трансформатором Y/Y-0</h3>
+                    <p>Модуль тока двухфазного КЗ в общем виде определяется выражением:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ}^{(2)} = |\dot{I}_A| = |\dot{I}_C| = \frac{\sqrt{3} U_ф}{\sqrt{(r_1+r_2)^2 +
+                        (x_1+x_2)^2}} = \frac{U_л}{\sqrt{(r_1+r_2)^2 + (x_1+x_2)^2}}\]
+                    </p>
+
+                    <p>При условии равенства полных сопротивлений прямой и обратной последовательностей (\(Z_1 = Z_2\)):
+                    </p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ}^{(3)}\]
+                    </p>
+
+                    <p>Токи на стороне ВН при двухфазном КЗ за трансформатором со схемой соединения Y/Y-0 распределяются
+                        следующим образом:</p>
+                    <p style="text-align: center;">
+                        \[\begin{cases} \dot{I}_{A1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}} \\
+                        \dot{I}_{B1} = 0 \\ \dot{I}_{C1} = -\dot{I}_{A1} \end{cases}\]
+                    </p>
+                </div>
+
+                <!-- Подраздел: Однофазное КЗ -->
+                <div class="k3-1phase" style="margin-top: 40px;">
+                    <h3>2. Однофазное КЗ за трансформатором Y/Y-0</h3>
+                    <p>Модуль тока однофазного КЗ определяется через симметричные составляющие:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ}^{(1)} = |\dot{I}_A| = \frac{3 U_{ф2}}{\sqrt{(r_1+r_2+r_0)^2 + (x_1+x_2+x_0)^2}} =
+                        \frac{\sqrt{3} U_{л.2}}{\sqrt{(r_1+r_2+r_0)^2 + (x_1+x_2+x_0)^2}}\]
+                    </p>
+
+                    <p>При условии, что \(Z_1 = Z_2\), ток КЗ на вторичной стороне равен:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ2}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_1+r_0)^2 + (2x_1+x_0)^2}}\]
+                    </p>
+
+                    <p>Непосредственно для КЗ за трансформатором Y/Y-0 с учетом его параметров:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ2.Y/Y-0}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_{1.т}+r_{0.т})^2 +
+                        (2x_{1.т}+x_{0.т})^2}} = \frac{\sqrt{3} U_{л2}}{Z_{т.Y/Y-0(1)}}\]
+                    </p>
+
+                    <p>Трансформация токов на сторону высшего напряжения (ВН) с учетом коэффициента трансформации
+                        \(k_{тт}\):</p>
+                    <ul>
+                        <li>
+                            <strong>Ток в фазе «А» на стороне ВН:</strong>
+                            \[\dot{I}_{A.1} = \frac{\dot{I}_1 + \dot{I}_2}{k_{тт}} = \frac{2\dot{E}_{ф.2}}{k_{тт} (Z_1 +
+                            Z_2 + Z_0)} = \frac{2}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
+                        </li>
+                        <li style="margin-top: 15px;">
+                            <strong>Токи в фазах «B» и «С» на стороне ВН (где \(a = e^{j120^\circ}\) — оператор
+                                фазы):</strong>
+                            \[\dot{I}_{B.1} = \frac{a^2 \dot{I}_1 + a \dot{I}_2}{k_{тт}} = \frac{-\dot{E}_{ф.2}}{k_{тт}
+                            (Z_1 + Z_2 + Z_0)} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
+                            \[\dot{I}_{C.1} = \frac{a \dot{I}_1 + a^2 \dot{I}_2}{k_{тт}} = \frac{-\dot{E}_{ф.2}}{k_{тт}
+                            (Z_1 + Z_2 + Z_0)} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\]
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <!-- Сводная таблица для схемы Y/Y-0 -->
+            <section class="table-section-yy" style="margin-top: 40px; margin-bottom: 20px;">
+                <h3>Сводная таблица распределения токов при КЗ (схема Y/Y-0)</h3>
+                <div style="overflow-x: auto;">
+                    <table border="1" cellpadding="10" cellspacing="0"
+                        style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th>Вид повреждения</th>
+                                <th>Сторона ВН / НН</th>
+                                <th>Фаза A</th>
+                                <th>Фаза B</th>
+                                <th>Фаза C</th>
+                                <th>Ток в нейтрали / Особенности</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Двухфазное КЗ -->
+                            <tr>
+                                <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ
+                                    (между B и C)</td>
+                                <td>Вторичная сторона (НН)</td>
+                                <td>\(0\)</td>
+                                <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2}^{(2)}\)</td>
+                                <td style="color: #d32f2f; font-weight: bold;">\(-I_{КЗ2}^{(2)}\)</td>
+                                <td>\(I_N = 0\)<br>(нейтраль не задействована)</td>
+                            </tr>
+                            <tr style="border-bottom: 2px solid #ccc;">
+                                <td>Первичная сторона (ВН)</td>
+                                <td>\(0\)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(\frac{\sqrt{3}}{2} \cdot
+                                    \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(-\frac{\sqrt{3}}{2} \cdot
+                                    \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                                <td>Токи на ВН полностью повторяют распределение сторон НН</td>
+                            </tr>
+
+                            <!-- Однофазное КЗ -->
+                            <tr>
+                                <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ
+                                    (фаза A)</td>
+                                <td>Вторичная сторона (НН)</td>
+                                <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Y-0}^{(1)}\)</td>
+                                <td>\(0\)</td>
+                                <td>\(0\)</td>
+                                <td>\(I_N = I_{КЗ2.Y/Y-0}^{(1)}\)<br>(полный ток КЗ в нейтрали)</td>
+                            </tr>
+                            <tr>
+                                <td>Первичная сторона (ВН)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(\frac{2}{3} \cdot
+                                    \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                                <td style="color: #1976d2; font-weight: bold;">\(-\frac{1}{3} \cdot
+                                    \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                                <td style="color: #1976d2; font-weight: bold;">-\(\frac{1}{3} \cdot
+                                    \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                                <td>Ток нулевой последовательности трансформируется в питающую сеть ВН</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
-        <!-- Активное сопротивление системы -->
-        <div style="flex: 1; min-width: 140px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН}$ (Ом):</label>
-            <input type="number" id="input-R-sys-vn" value="0" step="0.001" min="0" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+
+        <!-- Раздел: Схема Звезда-Зигзаг -->
+        <div id="y-z" class="tab-panel">
+            <h2>Несимметричные КЗ за трансформатором Y/Z-0</h2>
+            <section class="transformer-yz-section" style="margin-top: 50px; font-family: sans-serif;">
+                <h2>Схема соединения обмоток Y/Z-11 (Звезда-Зигзаг с заземленной нейтралью)</h2>
+                <p>Каждая полуобмотка низшего напряжения (НН) индуктивно связана с обмоткой высшего напряжения (ВН)
+                    другой фазы. Из-за встречно-последовательного включения полуобмоток коэффициент трансформации по
+                    отношению к одной секции зигзага составляет \(k_{т.об.Y/Z} = \frac{U_ф}{U_ф / \sqrt{3}} =
+                    \sqrt{3}\).</p>
+
+                <!-- Зарезервированное место под SVG-схему -->
+                <div class="svg-placeholder"
+                    style="border: 2px dashed #1976d2; background-color: #f0f7ff; padding: 30px; text-align: center; margin: 20px 0; border-radius: 8px;">
+                    <p style="color: #1976d2; font-weight: bold; margin: 0 0 10px 0; font-size: 1.1em;">🗺️ МЕСТО ДЛЯ
+                        СХЕМЫ И ЭПЮРЫ ТОКОВ Y/Z-11</p>
+                    <p style="color: #555; margin: 0; font-size: 0.95em;">Замените этот блок тегом
+                        <code>&lt;img src="Images/T_Y_Z11.svg" alt="Трансформатор Y/Z-11 и эпюра токов" style="max-width: 100%; height: auto;"&gt;</code>
+                    </p>
+                </div>
+
+                <!-- Подраздел: 2-х фазное КЗ -->
+                <div class="k3-2phase" style="margin-top: 30px;">
+                    <h3>1. Двухфазное КЗ за трансформатором Y/Z-11</h3>
+                    <p>Модуль тока двухфазного короткого замыкания на вторичной стороне при равенстве сопротивлений
+                        прямой и обратной последовательностей (\(Z_1 = Z_2\)) равен:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ2}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\]
+                    </p>
+                    <p>Токи в поврежденных фазах на стороне НН равны по модулю и противоположны по фазе:</p>
+                    <p style="text-align: center;">
+                        \[\dot{I}_A = \frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}, \quad \dot{I}_B = 0, \quad \dot{I}_C =
+                        -\dot{I}_A\]
+                    </p>
+
+                    <p>Составляющие фазных токов в обмотках ВН (с учетом коэффициентов трансформации \(k_{тт}\) и
+                        \(k_{т.об.Y/Z}\)):</p>
+                    <p style="text-align: center;">
+                        \[\dot{I}_{AI1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}},
+                        \quad \dot{I}_{AII1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot
+                        k_{тт}}\]
+                        \[\dot{I}_{BI1} = 0, \quad \dot{I}_{BII1} = 0\]
+                        \[\dot{I}_{CI1} = -\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}},
+                        \quad \dot{I}_{CII1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot
+                        k_{тт}}\]
+                    </p>
+
+                    <p>Суммарные линейные токи на стороне ВН определяются наложением составляющих от полуобмоток:</p>
+                    <p style="text-align: center;">
+                        \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} +
+                        \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
+                    </p>
+                    <p>Выразив их через трехфазный ток КЗ \(I_{КЗ2}^{(3)}\), получаем распределение токов на ВН по
+                        фазам:</p>
+                    <p style="text-align: center;">
+                        \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} =
+                        -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}} \\ \dot{I}_{C1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{2k_{тт}}
+                        \end{cases} \quad \text{или через ток } I_{КЗ2}^{(2)}: \quad \begin{cases} \dot{I}_{A1} =
+                        \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2.Y/Z}^{(2)}}{k_{тт}} \\ \dot{I}_{B1} =
+                        -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \\ \dot{I}_{C1} =
+                        -\frac{I_{КЗ2.Y/Z}^{(2)}}{\sqrt{3}k_{тт}} \end{cases}\]
+                    </p>
+                </div>
+
+                <!-- Подраздел: Однофазное КЗ -->
+                <div class="k3-1phase" style="margin-top: 40px;">
+                    <h3>2. Однофазное КЗ за трансформатором Y/Z-11</h3>
+                    <p>При однофазном КЗ на стороне зигзага (при условии \(Z_1 = Z_2 = Z_0\)) модуль тока КЗ равен:</p>
+                    <p style="text-align: center;">
+                        \[I_{КЗ2.Y/Z}^{(1)} = \frac{\sqrt{3} U_{л.2}}{3 k_{тт} \sqrt{r_1^2 + x_1^2}} =
+                        \frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1} = I_{КЗ2.Y/Z}^{(3)}\]
+                    </p>
+
+                    <p>Составляющие фазных токов в высоковольтных обмотках от действия полуобмоток зигзага:</p>
+                    <p style="text-align: center;">
+                        \[\dot{I}_{AI1} = \frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad
+                        \dot{I}_{AII1} = -\frac{2}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+                        \[\dot{I}_{BI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad
+                        \dot{I}_{BII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+                        \[\dot{I}_{CI1} = -\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}, \quad
+                        \dot{I}_{CII1} = \frac{1}{3} \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{т.об.Y/Z} \cdot k_{тт}}\]
+                    </p>
+
+                    <p>Итоговые линейные токи первичной стороны (ВН) определяются геометрическим сложением токов
+                        полуобмоток:</p>
+                    <p style="text-align: center;">
+                        \[\begin{cases} \dot{I}_{A1} = \dot{I}_{AI1} + \dot{I}_{CII1} \\ \dot{I}_{B1} = \dot{I}_{BI1} +
+                        \dot{I}_{AII1} \\ \dot{I}_{C1} = \dot{I}_{CI1} + \dot{I}_{BII1} \end{cases}\]
+                    </p>
+                    <p>После подстановки и математических преобразований получаем результирующие линейные токи со
+                        стороны ВН:</p>
+                    <p style="text-align: center;">
+                        \[\begin{cases} \dot{I}_{A1} = \frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} = 0.577 \cdot
+                        \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{B1} = -\frac{I_{КЗ2.Y/Z}^{(3)}}{\sqrt{3} k_{тт}} =
+                        -0.577 \cdot \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}} \\ \dot{I}_{C1} = 0 \end{cases}\]
+                    </p>
+                </div>
+
+                <!-- Сводная таблица распределения токов для Y/Z-11 -->
+                <div class="table-section-yz" style="margin-top: 40px;">
+                    <h3>Сводная таблица распределения токов при КЗ (схема Y/Z-11)</h3>
+                    <div style="overflow-x: auto;">
+                        <table border="1" cellpadding="10" cellspacing="0"
+                            style="width: 100%; border-collapse: collapse; text-align: center;">
+                            <thead>
+                                <tr style="background-color: #f2f2f2;">
+                                    <th>Вид повреждения</th>
+                                    <th>Сторона ВН / НН</th>
+                                    <th>Фаза A</th>
+                                    <th>Фаза B</th>
+                                    <th>Фаза C</th>
+                                    <th>Ток в нейтрали / Особенности</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Двухфазное КЗ -->
+                                <tr>
+                                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ
+                                        (между A и C)</td>
+                                    <td>Вторичная сторона (НН)</td>
+                                    <td style="color: #d32f2f; font-weight: bold;">\(\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)
+                                    </td>
+                                    <td>\(0\)</td>
+                                    <td style="color: #d32f2f; font-weight: bold;">\(-\frac{\sqrt{3}}{2} I_{КЗ2}^{(3)}\)
+                                    </td>
+                                    <td>\(I_N = 0\)</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #ccc;">
+                                    <td>Первичная сторона (ВН)</td>
+                                    <td style="color: #1976d2; font-weight: bold;">\(\frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)
+                                    </td>
+                                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{I_{КЗ2}^{(3)}}{2k_{тт}}\)
+                                    </td>
+                                    <td>На стороне ВН токи текут во всех трех фазах в пропорции \(1 : -0.5 : -0.5\)</td>
+                                </tr>
+
+                                <!-- Однофазное КЗ -->
+                                <tr>
+                                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ
+                                        (фаза A)</td>
+                                    <td>Вторичная сторона (НН)</td>
+                                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Z}^{(1)}\)</td>
+                                    <td>\(0\)</td>
+                                    <td>\(0\)</td>
+                                    <td>\(I_N = I_{КЗ2.Y/Z}^{(1)}\)</td>
+                                </tr>
+                                <tr>
+                                    <td>Первичная сторона (ВН)</td>
+                                    <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot
+                                        \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
+                                    <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot
+                                        \frac{I_{КЗ2.Y/Z}^{(3)}}{k_{тт}}\)</td>
+                                    <td>\(0\)</td>
+                                    <td>Токи нулевой последовательности взаимно компенсируются в обмотках НН и не
+                                        трансформируются в сеть ВН. В фазе C ток равен 0.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </div>
-        <!-- Индуктивное сопротивление системы -->
-        <div style="flex: 1; min-width: 140px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН}$ (Ом):</label>
-            <input type="number" id="input-X-sys-vn" value="0" step="0.001" min="0" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
-        </div>
-        <!-- Коэффициент приведения -->
-        <div style="flex: 1; min-width: 140px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Коэфф. напряжения:</label>
-            <input type="number" id="input-k-voltage" value="1.05" step="0.01" min="0.5" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
-        </div>
+
+        <section id="calculator" class="interactive-calc-section"
+            style="margin-top: 40px; font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fbfbfb;">
+            <h2 style="color: #1976d2; margin-top: 0;">⚡ Интерактивный расчёт параметров и токов КЗ за трансформатором
+            </h2>
+
+            <div class="calc-controls"
+                style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="flex: 2; min-width: 250px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите
+                        трансформатор серии ТМГ:</label>
+                    <select id="transformer-select" onchange="updateCalculation()"
+                        style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                        <option value="">Загрузка базы данных...</option>
+                    </select>
+                </div>
+                <!-- Активное сопротивление системы -->
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН}$
+                        (Ом):</label>
+                    <input type="number" id="input-R-sys-vn" value="0" step="0.001" min="0"
+                        oninput="updateCalculation()"
+                        style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+                </div>
+                <!-- Индуктивное сопротивление системы -->
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН}$
+                        (Ом):</label>
+                    <input type="number" id="input-X-sys-vn" value="0" step="0.001" min="0"
+                        oninput="updateCalculation()"
+                        style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+                </div>
+                <!-- Коэффициент приведения -->
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Коэфф.
+                        напряжения:</label>
+                    <input type="number" id="input-k-voltage" value="1.05" step="0.01" min="0.5"
+                        oninput="updateCalculation()"
+                        style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <!-- Таблица результатов (Остается точно такой же, как раньше) -->
+            <div style="overflow-x: auto;">
+                <table border="1" cellpadding="10" cellspacing="0"
+                    style="width: 100%; border-collapse: collapse; background: #fff; font-size: 14px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2; font-weight: bold; text-align: center;">
+                            <th style="width: 40%;">Наименование параметра</th>
+                            <th style="width: 20%;">Обозначение</th>
+                            <th style="width: 20%;">Приведено к ВН</th>
+                            <th style="width: 20%;">Приведено к НН</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- БЛОК 1: ПАСПОРТНЫЕ ДАННЫЕ -->
+                        <tr style="background-color: #e8f5e9; font-weight: bold;">
+                            <td colspan="4">1. Паспортные, каталожные данные и параметры режима</td>
+                        </tr>
+                        <tr>
+                            <td>Производитель силового трансформатора</td>
+                            <td>—</td>
+                            <td colspan="2" id="out-manufacturer"
+                                style="font-weight: bold; text-align: center; color: #1b5e20;">-</td>
+                        </tr>
+                        <tr>
+                            <td>Номинальная мощность / Схема соединения</td>
+                            <td>$S_{ном}$ / Группа</td>
+                            <td colspan="2" style="text-align: center; font-weight: bold;"><span id="out-S">-</span> кВА
+                                / <span id="out-schema" style="color:#0d47a1;">-</span></td>
+                        </tr>
+                        <tr>
+                            <td>Номинальные линейные напряжения</td>
+                            <td>$U_{ном}$</td>
+                            <td style="font-weight: bold;"><span id="out-Uvn-pass">-</span> кВ</td>
+                            <td style="font-weight: bold;"><span id="out-Unn-pass">-</span> кВ</td>
+                        </tr>
+                        <tr>
+                            <td>Коэффициент трансформации сети</td>
+                            <td>$k_{т} = U_{ВН} / U_{НН}$</td>
+                            <td colspan="2" id="out-kt" style="text-align: center; font-weight: bold; color: #555;">-
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Потери: Холостого хода (ХХ) / Короткого замыкания (КЗ)</td>
+                            <td>$\Delta P_{хх}$ / $\Delta P_{кз}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Pxx"
+                                    style="font-weight: bold;">-</span> кВт / <span id="out-Pkz"
+                                    style="font-weight: bold;">-</span> кВт</td>
+                        </tr>
+                        <tr>
+                            <td>Напряжение КЗ $u_к\%$ / Ток ХХ $i_{хх}\%$</td>
+                            <td>$u_к\%$ / $i_{хх}\%$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-uk"
+                                    style="font-weight: bold;">-</span> % / <span id="out-ixx"
+                                    style="font-weight: bold;">-</span> %</td>
+                        </tr>
+                        <tr>
+                            <td>Номинальные токи обмоток</td>
+                            <td>$I_{ном}$</td>
+                            <td><span id="out-I-vn" style="font-weight: bold;">-</span> А</td>
+                            <td><span id="out-I-nn" style="font-weight: bold;">-</span> А</td>
+                        </tr>
+
+                        <!-- БЛОК 2: СОПРОТИВЛЕНИЯ ВНЕШНЕЙ СИСТЕМЫ -->
+                        <tr style="background-color: #fff8e1; font-weight: bold;">
+                            <td colspan="4">2. Сопротивление энергосистемы (введённое)</td>
+                        </tr>
+                        <tr>
+                            <td>Активное сопротивление энергосистемы</td>
+                            <td>$R_{сист}$</td>
+                            <td><span id="out-Rsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td><span id="out-Rsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                        </tr>
+                        <tr>
+                            <td>Индуктивное сопротивление энергосистемы</td>
+                            <td>$X_{сист}$</td>
+                            <td><span id="out-Xsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td><span id="out-Xsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                        </tr>
+                        <!-- БЛОК 3: СОПРОТИВЛЕНИЯ ТРАНСФОРМАТОРА (ПРЯМАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ) -->
+                        <tr style="background-color: #fafafa; font-weight: bold;">
+                            <td colspan="4">3. Сопротивления прямой последовательности трансформатора</td>
+                        </tr>
+                        <tr>
+                            <td>Активное сопротивление трансформатора</td>
+                            <td>$R_{1т}$</td>
+                            <td><span id="out-R1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
+                            <td><span id="out-R1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
+                        </tr>
+                        <tr>
+                            <td>Индуктивное сопротивление трансформатора</td>
+                            <td>$X_{1т}$</td>
+                            <td><span id="out-X1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
+                            <td><span id="out-X1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
+                        </tr>
+                        <tr>
+                            <td>Полное эквивалентное сопротивление цепи (Система + Тр)</td>
+                            <td>$Z_{1.экв}$</td>
+                            <td><span id="out-Z1экв-vn" style="font-weight: bold; color: #1b5e20;">-</span> Ом</td>
+                            <td><span id="out-Z1экв-nn" style="font-weight: bold; color: #1b5e20;">-</span> мОм</td>
+                        </tr>
+
+                        <!-- БЛОК 4: НУЛЕВАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ ТРАНСФОРМАТОРА -->
+                        <tr style="background-color: #fafafa; font-weight: bold;">
+                            <td colspan="4">4. Сопротивления нулевой последовательности трансформатора</td>
+                        </tr>
+                        <tr>
+                            <td>Активное сопротивление нулевой посл.</td>
+                            <td>$R_{0т}$</td>
+                            <td><span id="out-R0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
+                            <td><span id="out-R0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
+                        </tr>
+                        <tr>
+                            <td>Индуктивное сопротивление нулевой посл.</td>
+                            <td>$X_{0т}$</td>
+                            <td><span id="out-X0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
+                            <td><span id="out-X0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
+                        </tr>
+
+                        <!-- БЛОК 5: ТОКИ КЗ И ИХ ПРИВЕДЕНИЕ -->
+                        <tr style="background-color: #e3f2fd; font-weight: bold;">
+                            <td colspan="4">5. Расчётные токи короткого замыкания (с учётом сопротивления системы)</td>
+                        </tr>
+                        <tr style="font-weight: bold;">
+                            <td>Вид короткого замыкания</td>
+                            <td>Формула (для стороны НН)</td>
+                            <td>Ток, приведенный к ВН</td>
+                            <td>Ток на выводах НН (0.4 кВ)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Трёхфазное КЗ</strong></td>
+                            <td>$I_{КЗ}^{(3)} = \frac{U_{НН}}{\sqrt{3} \cdot Z_{1.экв.нн}}$</td>
+                            <td><span id="out-Ik3-3-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                            <td><span id="out-Ik3-3-nn"
+                                    style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Двухфазное КЗ</strong></td>
+                            <td>$I_{КЗ}^{(2)} = \frac{\sqrt{3}}{2} \cdot I_{КЗ}^{(3)}$</td>
+                            <td><span id="out-Ik3-2-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                            <td><span id="out-Ik3-2-nn"
+                                    style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Однофазное КЗ на землю</strong></td>
+                            <td>$I_{КЗ}^{(1)} = \frac{3 \cdot U_{ф.НН}}{\sqrt{(2R_{1т} + R_{0т})^2 + (2X_{1.экв} +
+                                X_{0т})^2}}$</td>
+                            <td><span id="out-Ik3-1-vn" style="font-weight: bold; color: #1976d2;">-</span> А</td>
+                            <td><span id="out-Ik3-1-nn"
+                                    style="font-weight: bold; color: #1976d2; font-size: 1.2em;">-</span> А</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
-    <!-- Таблица результатов (Остается точно такой же, как раньше) -->
-    <div style="overflow-x: auto;">
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; background: #fff; font-size: 14px;">
-          <thead>
-                <tr style="background-color: #f2f2f2; font-weight: bold; text-align: center;">
-                    <th style="width: 40%;">Наименование параметра</th>
-                    <th style="width: 20%;">Обозначение</th>
-                    <th style="width: 20%;">Приведено к ВН</th>
-                    <th style="width: 20%;">Приведено к НН</th>
-                </tr>
-            </thead>
-            <tbody>
-            <!-- БЛОК 1: ПАСПОРТНЫЕ ДАННЫЕ -->
-                <tr style="background-color: #e8f5e9; font-weight: bold;"><td colspan="4">1. Паспортные, каталожные данные и параметры режима</td></tr>
-                <tr>
-                    <td>Производитель силового трансформатора</td>
-                    <td>—</td>
-                    <td colspan="2" id="out-manufacturer" style="font-weight: bold; text-align: center; color: #1b5e20;">-</td>
-                </tr>
-                <tr>
-                    <td>Номинальная мощность / Схема соединения</td>
-                    <td>$S_{ном}$ / Группа</td>
-                    <td colspan="2" style="text-align: center; font-weight: bold;"><span id="out-S">-</span> кВА / <span id="out-schema" style="color:#0d47a1;">-</span></td>
-                </tr>
-                <tr>
-                    <td>Номинальные линейные напряжения</td>
-                    <td>$U_{ном}$</td>
-                    <td style="font-weight: bold;"><span id="out-Uvn-pass">-</span> кВ</td>
-                    <td style="font-weight: bold;"><span id="out-Unn-pass">-</span> кВ</td>
-                </tr>
-                <tr>
-                    <td>Коэффициент трансформации сети</td>
-                    <td>$k_{т} = U_{ВН} / U_{НН}$</td>
-                    <td colspan="2" id="out-kt" style="text-align: center; font-weight: bold; color: #555;">-</td>
-                </tr>
-                <tr>
-                    <td>Потери: Холостого хода (ХХ) / Короткого замыкания (КЗ)</td>
-                    <td>$\Delta P_{хх}$ / $\Delta P_{кз}$</td>
-                    <td colspan="2" style="text-align: center;"><span id="out-Pxx" style="font-weight: bold;">-</span> кВт / <span id="out-Pkz" style="font-weight: bold;">-</span> кВт</td>
-                </tr>
-                <tr>
-                    <td>Напряжение КЗ $u_к\%$ / Ток ХХ $i_{хх}\%$</td>
-                    <td>$u_к\%$ / $i_{хх}\%$</td>
-                    <td colspan="2" style="text-align: center;"><span id="out-uk" style="font-weight: bold;">-</span> % / <span id="out-ixx" style="font-weight: bold;">-</span> %</td>
-                </tr>
-                <tr>
-                    <td>Номинальные токи обмоток</td>
-                    <td>$I_{ном}$</td>
-                    <td><span id="out-I-vn" style="font-weight: bold;">-</span> А</td>
-                    <td><span id="out-I-nn" style="font-weight: bold;">-</span> А</td>
-                </tr>
-                
-               <!-- БЛОК 2: СОПРОТИВЛЕНИЯ ВНЕШНЕЙ СИСТЕМЫ -->
-                <tr style="background-color: #fff8e1; font-weight: bold;"><td colspan="4">2. Сопротивление энергосистемы (введённое)</td></tr>
-                <tr>
-                    <td>Активное сопротивление энергосистемы</td>
-                    <td>$R_{сист}$</td>
-                    <td><span id="out-Rsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
-                    <td><span id="out-Rsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
-                </tr>
-                <tr>
-                    <td>Индуктивное сопротивление энергосистемы</td>
-                    <td>$X_{сист}$</td>
-                    <td><span id="out-Xsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
-                    <td><span id="out-Xsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
-                </tr>
-             <!-- БЛОК 3: СОПРОТИВЛЕНИЯ ТРАНСФОРМАТОРА (ПРЯМАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ) -->
-                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="4">3. Сопротивления прямой последовательности трансформатора</td></tr>
-                <tr>
-                    <td>Активное сопротивление трансформатора</td>
-                    <td>$R_{1т}$</td>
-                    <td><span id="out-R1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
-                    <td><span id="out-R1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
-                </tr>
-                <tr>
-                    <td>Индуктивное сопротивление трансформатора</td>
-                    <td>$X_{1т}$</td>
-                    <td><span id="out-X1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
-                    <td><span id="out-X1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
-                </tr>
-                <tr>
-                    <td>Полное эквивалентное сопротивление цепи (Система + Тр)</td>
-                    <td>$Z_{1.экв}$</td>
-                    <td><span id="out-Z1экв-vn" style="font-weight: bold; color: #1b5e20;">-</span> Ом</td>
-                    <td><span id="out-Z1экв-nn" style="font-weight: bold; color: #1b5e20;">-</span> мОм</td>
-                </tr>
-
-                <!-- БЛОК 4: НУЛЕВАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ ТРАНСФОРМАТОРА -->
-                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="4">4. Сопротивления нулевой последовательности трансформатора</td></tr>
-                <tr>
-                    <td>Активное сопротивление нулевой посл.</td>
-                    <td>$R_{0т}$</td>
-                    <td><span id="out-R0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
-                    <td><span id="out-R0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
-                </tr>
-                <tr>
-                    <td>Индуктивное сопротивление нулевой посл.</td>
-                    <td>$X_{0т}$</td>
-                    <td><span id="out-X0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
-                    <td><span id="out-X0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
-                </tr>
-
-                <!-- БЛОК 5: ТОКИ КЗ И ИХ ПРИВЕДЕНИЕ -->
-                <tr style="background-color: #e3f2fd; font-weight: bold;"><td colspan="4">5. Расчётные токи короткого замыкания (с учётом сопротивления системы)</td></tr>
-                <tr style="font-weight: bold;">
-                    <td>Вид короткого замыкания</td>
-                    <td>Формула (для стороны НН)</td>
-                    <td>Ток, приведенный к ВН</td>
-                    <td>Ток на выводах НН (0.4 кВ)</td>
-                </tr>
-                <tr>
-                    <td><strong>Трёхфазное КЗ</strong></td>
-                    <td>$I_{КЗ}^{(3)} = \frac{U_{НН}}{\sqrt{3} \cdot Z_{1.экв.нн}}$</td>
-                    <td><span id="out-Ik3-3-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
-                    <td><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
-                </tr>
-                <tr>
-                    <td><strong>Двухфазное КЗ</strong></td>
-                    <td>$I_{КЗ}^{(2)} = \frac{\sqrt{3}}{2} \cdot I_{КЗ}^{(3)}$</td>
-                    <td><span id="out-Ik3-2-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
-                    <td><span id="out-Ik3-2-nn" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
-                </tr>
-                <tr>
-                    <td><strong>Однофазное КЗ на землю</strong></td>
-                    <td>$I_{КЗ}^{(1)} = \frac{3 \cdot U_{ф.НН}}{\sqrt{(2R_{1т} + R_{0т})^2 + (2X_{1.экв} + X_{0т})^2}}$</td>
-                    <td><span id="out-Ik3-1-vn" style="font-weight: bold; color: #1976d2;">-</span> А</td>
-                    <td><span id="out-Ik3-1-nn" style="font-weight: bold; color: #1976d2; font-size: 1.2em;">-</span> А</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-</div>
-
-<!-- Кнопка быстрого перехода к калькулятору -->
-<button id="calc-shortcut-btn" onclick="document.getElementById('calculator').scrollIntoView({behavior: 'smooth'})" title="Перейти к калькулятору КЗ" style="
+    <!-- Кнопка быстрого перехода к калькулятору -->
+    <button id="calc-shortcut-btn" onclick="document.getElementById('calculator').scrollIntoView({behavior: 'smooth'})"
+        title="Перейти к калькулятору КЗ" style="
     position: fixed;
     bottom: 25px;
     right: 25px;
@@ -655,194 +950,195 @@
     opacity: 0;
     visibility: hidden;
 ">
-    <span>⚡ Калькулятор КЗ</span>
-</button>   
-    
-<script>
-// Логика плавного появления кнопки при скролле
-window.addEventListener('scroll', function() {
-    const btn = document.getElementById('calc-shortcut-btn');
-    if (window.scrollY > 300) {
-        btn.style.opacity = '1';
-        btn.style.visibility = 'visible';
-    } else {
-        btn.style.opacity = '0';
-        btn.style.visibility = 'hidden';
-    }
-});
-    
-function changeTab(panelId) {
-    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-    document.querySelectorAll('.tab-trigger').forEach(btn => btn.classList.remove('active'));
-    
-    document.getElementById(panelId).classList.add('active');
-    event.currentTarget.classList.add('active');
-    
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise();
-    }
-}
+        <span>⚡ Калькулятор КЗ</span>
+    </button>
 
-// Глобальный массив для хранения загруженной базы данных
-let globalTransformersData = [];
-
-// Функция для асинхронной загрузки базы из файла
-async function loadTransformersDatabase() {
-    try {
-        // Укажите относительный путь к файлу JSON на вашем GitHub
-        const response = await fetch('data/transformers.json');
-        if (!response.ok) throw new Error('Ошибка загрузки файла базы данных');
-        
-        globalTransformersData = await response.json();
-        
-        // Очищаем и заполняем элемент <select>
-        const selectElement = document.getElementById('transformer-select');
-        selectElement.innerHTML = ''; 
-        
-        globalTransformersData.forEach(tx => {
-            const option = document.createElement('option');
-            option.value = tx.id;
-            option.textContent = `${tx.brand}-${tx.S} кВА (${tx.Uvn}/${tx.Unn} кВ) [${tx.schema}] ${tx.manufacturer}`;
-            selectElement.appendChild(option);
+    <script>
+        // Логика плавного появления кнопки при скролле
+        window.addEventListener('scroll', function () {
+            const btn = document.getElementById('calc-shortcut-btn');
+            if (window.scrollY > 300) {
+                btn.style.opacity = '1';
+                btn.style.visibility = 'visible';
+            } else {
+                btn.style.opacity = '0';
+                btn.style.visibility = 'hidden';
+            }
         });
 
-        // Ставим по умолчанию, например, ТМГ-250 (id: "250_10_YY")
-        selectElement.value = "250_10_YY";
-        updateCalculation(); // Запуск первого расчета
+        function changeTab(panelId) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-trigger').forEach(btn => btn.classList.remove('active'));
 
-    } catch (error) {
-        console.error(error);
-        document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации БД</option>';
-    }
-}
+            document.getElementById(panelId).classList.add('active');
+            event.currentTarget.classList.add('active');
 
-// Аналитическая функция расчета (работает с данными из оперативной памяти)
-function updateCalculation() {
-    const selectElement = document.getElementById("transformer-select");
-    const rSysInput = document.getElementById("input-R-sys-vn");
-    const xSysInput = document.getElementById("input-X-sys-vn");
-    const kVoltInput = document.getElementById("input-k-voltage");
-    
-    if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
-    
-    const selectedId = selectElement.value;
-    const tx = globalTransformersData.find(item => item.id === selectedId);
-    if (!tx) return;
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise();
+            }
+        }
 
-    // Считываем сопротивления системы на ВН (Ом)
-    const R_sys_vn = parseFloat(rSysInput.value) || 0;
-    const X_sys_vn = parseFloat(xSysInput.value) || 0;
-    const k_voltage = parseFloat(kVoltInput.value) || 1.0;
+        // Глобальный массив для хранения загруженной базы данных
+        let globalTransformersData = [];
 
-    const setTxt = (id, val) => { 
-        const el = document.getElementById(id); 
-        if(el) el.innerText = val; 
-    };
+        // Функция для асинхронной загрузки базы из файла
+        async function loadTransformersDatabase() {
+            try {
+                // Укажите относительный путь к файлу JSON на вашем GitHub
+                const response = await fetch('data/transformers.json');
+                if (!response.ok) throw new Error('Ошибка загрузки файла базы данных');
 
-    // Базовые параметры
-    const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
-    const ktSq = Math.pow(kt, 2); // k_т^2
+                globalTransformersData = await response.json();
 
-    // 1. Паспортные данные
-    setTxt("out-manufacturer", tx.manufacturer || "МЭТЗ имени В.И. Козлова");
-    setTxt("out-S", tx.S);
-    setTxt("out-Uvn-pass", tx.Uvn);
-    setTxt("out-Unn-pass", tx.Unn);
-    setTxt("out-kt", kt.toFixed(1));
-    setTxt("out-schema", tx.schema);
-    
-    const activePxx = tx.DPхх !== undefined ? tx.DPхх : (tx.Pxx || 0);
-    const activePkz = tx.DPкз !== undefined ? tx.DPкз : (tx.Pkz || 0);
-    const activeIxx = tx.Iхх !== undefined ? tx.Iхх : (tx.ixx !== undefined ? tx.ixx : 0);
-    
-    setTxt("out-Pxx", activePxx);
-    setTxt("out-Pkz", activePkz);
-    setTxt("out-uk", tx.uk);
-    setTxt("out-ixx", activeIxx);
+                // Очищаем и заполняем элемент <select>
+                const selectElement = document.getElementById('transformer-select');
+                selectElement.innerHTML = '';
 
-    // 2. Номинальные токи обмоток
-    const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
-    const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
-    setTxt("out-I-vn", I_vn.toFixed(2));
-    setTxt("out-I-nn", I_nn.toFixed(1));
+                globalTransformersData.forEach(tx => {
+                    const option = document.createElement('option');
+                    option.value = tx.id;
+                    option.textContent = `${tx.brand}-${tx.S} кВА (${tx.Uvn}/${tx.Unn} кВ) [${tx.schema}] ${tx.manufacturer}`;
+                    selectElement.appendChild(option);
+                });
 
-    // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
-    const R_sys_nn = R_sys_vn / ktSq; 
-    const X_sys_nn = X_sys_vn / ktSq; 
-    
-    setTxt("out-Rsys-vn", R_sys_vn.toFixed(4));
-    setTxt("out-Rsys-nn", (R_sys_nn * 1000).toFixed(4));
-    setTxt("out-Xsys-vn", X_sys_vn.toFixed(4));
-    setTxt("out-Xsys-nn", (X_sys_nn * 1000).toFixed(4));
+                // Ставим по умолчанию, например, ТМГ-250 (id: "250_10_YY")
+                selectElement.value = "250_10_YY";
+                updateCalculation(); // Запуск первого расчета
 
-    // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
-    const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
-    const R1_nn = (activePkz * 1000) / (3 * Math.pow(I_nn, 2));
-    const X1_nn = Math.sqrt(Math.pow(Z1_nn, 2) - Math.pow(R1_nn, 2));
+            } catch (error) {
+                console.error(error);
+                document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации БД</option>';
+            }
+        }
 
-    // Приведение сопротивлений трансформатора на сторону ВН (Ом)
-    const R1_vn = R1_nn * ktSq;
-    const X1_vn = X1_nn * ktSq;
+        // Аналитическая функция расчета (работает с данными из оперативной памяти)
+        function updateCalculation() {
+            const selectElement = document.getElementById("transformer-select");
+            const rSysInput = document.getElementById("input-R-sys-vn");
+            const xSysInput = document.getElementById("input-X-sys-vn");
+            const kVoltInput = document.getElementById("input-k-voltage");
 
-    setTxt("out-R1-nn", (R1_nn * 1000).toFixed(3));
-    setTxt("out-X1-nn", (X1_nn * 1000).toFixed(3));
-    setTxt("out-R1-vn", R1_vn.toFixed(3));
-    setTxt("out-X1-vn", X1_vn.toFixed(3));
+            if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
 
-    // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
-    const R1_ekv_nn = R1_nn + R_sys_nn; 
-    const X1_ekv_nn = X1_nn + X_sys_nn;
-    const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
+            const selectedId = selectElement.value;
+            const tx = globalTransformersData.find(item => item.id === selectedId);
+            if (!tx) return;
 
-    const Z1_ekv_vn = Z1_ekv_nn * ktSq;
-    setTxt("out-Z1экв-nn", (Z1_ekv_nn * 1000).toFixed(3));
-    setTxt("out-Z1экв-vn", Z1_ekv_vn.toFixed(3));
+            // Считываем сопротивления системы на ВН (Ом)
+            const R_sys_vn = parseFloat(rSysInput.value) || 0;
+            const X_sys_vn = parseFloat(xSysInput.value) || 0;
+            const k_voltage = parseFloat(kVoltInput.value) || 1.0;
 
-    // 5. Логика для нулевой последовательности Z0 трансформатора
-    let R0_nn, X0_nn;
-    if (tx.r0_tab === "Z1" || tx.x0_tab === "Z1") {
-        R0_nn = R1_nn;
-        X0_nn = X1_nn;
-    } else {
-        R0_nn = tx.r0_tab !== null ? tx.r0_tab : R1_nn;
-        X0_nn = tx.x0_tab !== null ? tx.x0_tab : X1_nn;
-    }
-    
-    const R0_vn = R0_nn * ktSq;
-    const X0_vn = X0_nn * ktSq;
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
 
-    setTxt("out-R0-nn", (R0_nn * 1000).toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
-    setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
-    setTxt("out-R0-vn", R0_vn.toFixed(3));
-    setTxt("out-X0-vn", X0_vn.toFixed(3));
+            // Базовые параметры
+            const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
+            const ktSq = Math.pow(kt, 2); // k_т^2
 
-    // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
-    const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
-    const I_kz2_nn = (Math.sqrt(3) / 2) * I_kz3_nn;
-    
-    // Однофазное КЗ: Внимание! В расчете прямой последовательности участвуют ЭКВИВАЛЕНТНЫЕ сопротивления (Тр + Система)
-    // Формула знаменателя: Z(1) = sqrt((2*R1.экв + R0.тр)^2 + (2*X1.экв + X0.тр)^2)
-    const Z_loop_1ph_nn = Math.sqrt(Math.pow((2 * R1_ekv_nn + R0_nn), 2) + Math.pow((2 * X1_ekv_nn + X0_nn), 2));
-    const I_kz1_nn = ((3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph_nn) * k_voltage;
+            // 1. Паспортные данные
+            setTxt("out-manufacturer", tx.manufacturer || "МЭТЗ имени В.И. Козлова");
+            setTxt("out-S", tx.S);
+            setTxt("out-Uvn-pass", tx.Uvn);
+            setTxt("out-Unn-pass", tx.Unn);
+            setTxt("out-kt", kt.toFixed(1));
+            setTxt("out-schema", tx.schema);
 
-    // Приведение токов КЗ на сторону ВН (делением на линейный коэффициент трансформации kt)
-    const I_kz3_vn = I_kz3_nn / kt;
-    const I_kz2_vn = I_kz2_nn / kt;
-    const I_kz1_vn = I_kz1_nn / kt;
+            const activePxx = tx.DPхх !== undefined ? tx.DPхх : (tx.Pxx || 0);
+            const activePkz = tx.DPкз !== undefined ? tx.DPкз : (tx.Pkz || 0);
+            const activeIxx = tx.Iхх !== undefined ? tx.Iхх : (tx.ixx !== undefined ? tx.ixx : 0);
 
-    // Вывод токов в таблицу
-    setTxt("out-Ik3-3-nn", Math.round(I_kz3_nn).toLocaleString());
-    setTxt("out-Ik3-2-nn", Math.round(I_kz2_nn).toLocaleString());
-    setTxt("out-Ik3-1-nn", Math.round(I_kz1_nn).toLocaleString());
+            setTxt("out-Pxx", activePxx);
+            setTxt("out-Pkz", activePkz);
+            setTxt("out-uk", tx.uk);
+            setTxt("out-ixx", activeIxx);
 
-    setTxt("out-Ik3-3-vn", I_kz3_vn.toFixed(2));
-    setTxt("out-Ik3-2-vn", I_kz2_vn.toFixed(2));
-    setTxt("out-Ik3-1-vn", I_kz1_vn.toFixed(2));
-}
-// Запускаем чтение файла при старте страницы
-window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
-    
-</script>
+            // 2. Номинальные токи обмоток
+            const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
+            const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
+            setTxt("out-I-vn", I_vn.toFixed(2));
+            setTxt("out-I-nn", I_nn.toFixed(1));
+
+            // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
+            const R_sys_nn = R_sys_vn / ktSq;
+            const X_sys_nn = X_sys_vn / ktSq;
+
+            setTxt("out-Rsys-vn", R_sys_vn.toFixed(4));
+            setTxt("out-Rsys-nn", (R_sys_nn * 1000).toFixed(4));
+            setTxt("out-Xsys-vn", X_sys_vn.toFixed(4));
+            setTxt("out-Xsys-nn", (X_sys_nn * 1000).toFixed(4));
+
+            // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
+            const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
+            const R1_nn = (activePkz * 1000) / (3 * Math.pow(I_nn, 2));
+            const X1_nn = Math.sqrt(Math.pow(Z1_nn, 2) - Math.pow(R1_nn, 2));
+
+            // Приведение сопротивлений трансформатора на сторону ВН (Ом)
+            const R1_vn = R1_nn * ktSq;
+            const X1_vn = X1_nn * ktSq;
+
+            setTxt("out-R1-nn", (R1_nn * 1000).toFixed(3));
+            setTxt("out-X1-nn", (X1_nn * 1000).toFixed(3));
+            setTxt("out-R1-vn", R1_vn.toFixed(3));
+            setTxt("out-X1-vn", X1_vn.toFixed(3));
+
+            // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
+            const R1_ekv_nn = R1_nn + R_sys_nn;
+            const X1_ekv_nn = X1_nn + X_sys_nn;
+            const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
+
+            const Z1_ekv_vn = Z1_ekv_nn * ktSq;
+            setTxt("out-Z1экв-nn", (Z1_ekv_nn * 1000).toFixed(3));
+            setTxt("out-Z1экв-vn", Z1_ekv_vn.toFixed(3));
+
+            // 5. Логика для нулевой последовательности Z0 трансформатора
+            let R0_nn, X0_nn;
+            if (tx.r0_tab === "Z1" || tx.x0_tab === "Z1") {
+                R0_nn = R1_nn;
+                X0_nn = X1_nn;
+            } else {
+                R0_nn = tx.r0_tab !== null ? tx.r0_tab : R1_nn;
+                X0_nn = tx.x0_tab !== null ? tx.x0_tab : X1_nn;
+            }
+
+            const R0_vn = R0_nn * ktSq;
+            const X0_vn = X0_nn * ktSq;
+
+            setTxt("out-R0-nn", (R0_nn * 1000).toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
+            setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
+            setTxt("out-R0-vn", R0_vn.toFixed(3));
+            setTxt("out-X0-vn", X0_vn.toFixed(3));
+
+            // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
+            const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
+            const I_kz2_nn = (Math.sqrt(3) / 2) * I_kz3_nn;
+
+            // Однофазное КЗ: Внимание! В расчете прямой последовательности участвуют ЭКВИВАЛЕНТНЫЕ сопротивления (Тр + Система)
+            // Формула знаменателя: Z(1) = sqrt((2*R1.экв + R0.тр)^2 + (2*X1.экв + X0.тр)^2)
+            const Z_loop_1ph_nn = Math.sqrt(Math.pow((2 * R1_ekv_nn + R0_nn), 2) + Math.pow((2 * X1_ekv_nn + X0_nn), 2));
+            const I_kz1_nn = ((3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph_nn) * k_voltage;
+
+            // Приведение токов КЗ на сторону ВН (делением на линейный коэффициент трансформации kt)
+            const I_kz3_vn = I_kz3_nn / kt;
+            const I_kz2_vn = I_kz2_nn / kt;
+            const I_kz1_vn = I_kz1_nn / kt;
+
+            // Вывод токов в таблицу
+            setTxt("out-Ik3-3-nn", Math.round(I_kz3_nn).toLocaleString());
+            setTxt("out-Ik3-2-nn", Math.round(I_kz2_nn).toLocaleString());
+            setTxt("out-Ik3-1-nn", Math.round(I_kz1_nn).toLocaleString());
+
+            setTxt("out-Ik3-3-vn", I_kz3_vn.toFixed(2));
+            setTxt("out-Ik3-2-vn", I_kz2_vn.toFixed(2));
+            setTxt("out-Ik3-1-vn", I_kz1_vn.toFixed(2));
+        }
+        // Запускаем чтение файла при старте страницы
+        window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
+
+    </script>
 
 </body>
+
 </html>
