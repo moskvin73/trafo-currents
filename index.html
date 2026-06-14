@@ -117,35 +117,6 @@
             $$I_{A1} = \frac{2}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 1.155 \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
             $$I_{B1} = I_{C1} = \frac{1}{\sqrt{3}} \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}} \approx 0.577 \cdot \frac{I_{КЗ2}^{(2)}}{k_{тт}}$$
         </div>
-
-<section class="short-circuit-section">
-    <h2>Однофазное КЗ за трансформатором со схемой соединения Δ/Y-0</h2>
-    <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
-    
-    <p style="text-align: center;">
-        \[I_{КЗ2 \ \Delta/(Y-0)}^{(1)}=\frac{\sqrt{3} U_{л.2}}{3k_{тт} \sqrt{r_1^2+x_1^2 }}=\frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1 }=I_{КЗ.2 \ \Delta/(Y-0)}^{(3)}\]
-    </p>
-
-    <p>Коэффициент трансформации \(k_{т.\Delta/Y}=\frac{U_л}{U_ф} =\sqrt{3}\), фазные токи в высоковольтных обмотках:</p>
-    
-    <p style="text-align: center;">
-        \[\dot{I}_{AB1}=\frac{2}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-        \[\dot{I}_{BC1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-        \[\dot{I}_{CA1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
-    </p>
-
-    <p>Выразим линейные токи через фазные для схемы соединения обмоток в треугольник:</p>
-    
-    <p style="text-align: center;">
-        \[\begin{cases}\dot{I}_{A1} = \dot{I}_{AB1}-\dot{I}_{CA1} \\ \dot{I}_{B1} = \dot{I}_{BC1}-\dot{I}_{AB1} \\ \dot{I}_{C1} = \dot{I}_{CA1}-\dot{I}_{BC1} \end{cases}\]
-    </p>
-
-    <p>Подставив значения, получаем итоговые линейные токи:</p>
-    
-    <p style="text-align: center;">
-        \[\begin{cases}\dot{I}_{A1}= \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{B1}=-\frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=-0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{C1}=0 \end{cases}\]
-    </p>
-</section> 
         
         <h3>Сводная инженерная таблица распределения коэффициентов</h3>
         <div class="table-container">
@@ -184,6 +155,35 @@
                 </tbody>
             </table>
         </div>
+
+        <section class="short-circuit-section">
+            <h2>Однофазное КЗ за трансформатором со схемой соединения Δ/Y-0</h2>
+            <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
+    
+            <p style="text-align: center;">
+                \[I_{КЗ2 \ \Delta/(Y-0)}^{(1)}=\frac{\sqrt{3} U_{л.2}}{3k_{тт} \sqrt{r_1^2+x_1^2 }}=\frac{U_{л.2}}{\sqrt{3} k_{тт} Z_1 }=I_{КЗ.2 \ \Delta/(Y-0)}^{(3)}\]
+            </p>
+
+            <p>Коэффициент трансформации \(k_{т.\Delta/Y}=\frac{U_л}{U_ф} =\sqrt{3}\), фазные токи в высоковольтных обмотках:</p>
+    
+        <p style="text-align: center;">
+            \[\dot{I}_{AB1}=\frac{2}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+            \[\dot{I}_{BC1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+            \[\dot{I}_{CA1}=-\frac{1}{3} \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт} k_{т.\Delta/Y}}\]
+        </p>
+
+        <p>Выразим линейные токи через фазные для схемы соединения обмоток в треугольник:</p>
+    
+        <p style="text-align: center;">
+            \[\begin{cases}\dot{I}_{A1} = \dot{I}_{AB1}-\dot{I}_{CA1} \\ \dot{I}_{B1} = \dot{I}_{BC1}-\dot{I}_{AB1} \\ \dot{I}_{C1} = \dot{I}_{CA1}-\dot{I}_{BC1} \end{cases}\]
+        </p>
+
+        <p>Подставив значения, получаем итоговые линейные токи:</p>
+    
+        <p style="text-align: center;">
+            \[\begin{cases}\dot{I}_{A1}= \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{B1}=-\frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=-0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{C1}=0 \end{cases}\]
+        </p>
+    </section>
     </div>
 
     <!-- Раздел: Схема Звезда-Звезда -->
