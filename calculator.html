@@ -24,34 +24,82 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> 
 
     <style>
-        /* ФИКСИРОВАННАЯ ВЕРХНЯЯ ПАНЕЛЬ С СЫЛКОЙ ВОЗВРАТА */
-    .fixed-top-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        background-color: #f4f6f9; /* В цвет фона страницы */
-        padding: 15px 40px;
-        border-bottom: 1px solid #cbd5e1;
-        box-sizing: border-box;
-        height: 65px; /* Жестко задаем высоту шапки */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        /* Блокируем скролл всего экрана, чтобы убрать любые дергания */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        /* Жесткий каркас приложения */
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Неподвижная верхняя шапка */
+        .app-header {
+            height: 70px;
+            min-height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        /* Рабочая зона калькулятора */
+        .app-main {
+            display: flex;
+            gap: 25px;
+            flex: 1;
+            height: calc(100vh - 70px);
+            padding: 20px 0;
+            box-sizing: border-box;
+            align-items: flex-start;
+        }
+
+        /* ЛЕВАЯ КОЛОНКА: Скроллится ТОЛЬКО она */
+        .scrollable-inputs {
+            flex: 1.3;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 10px;
+            box-sizing: border-box;
+        }
+
+        /* ПРАВАЯ КОЛОНКА: Стоит намертво, так как в родительском контейнере нет скролла */
+        .fixed-results {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 20px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
-<body  style="background-color: #f4f6f9; padding: 20px; font-family: sans-serif;">
+<body">
+    <div class="app-layout">
+        
     <!-- Ссылка для возврата на аналитическую главную страницу -->
-    <div class="sticky-top-bar">
+    <header class="app-header">
          <div style="margin-bottom: 20px;">
              <a href="index.html" style="color: #1976d2; text-decoration: none; font-weight: bold; font-size: 16px;">← Назад к аналитическому описанию</a>
          </div>
          <h2 style="color: #1976d2; margin-top: 0;">⚡ Интерактивный расчёт параметров и токов КЗ за трансформатором
             </h2>
-     </div>
+     </header>
 
+     <main class="app-main">
+        <div class="scrollable-inputs">
         <section id="calculator" class="interactive-calc-section"
             style="margin-top: 40px; font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fbfbfb;">
             
@@ -245,7 +293,9 @@
                 </table>
             </div>
         </section>
-     
+        </div>
+        </main>
+    </div>
      <script>
         // Глобальный массив для хранения загруженной базы данных
         let globalTransformersData = [];
