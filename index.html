@@ -474,12 +474,28 @@
     <section id="calculator" class="interactive-calc-section" style="margin-top: 40px; font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fbfbfb;">
     <h2 style="color: #1976d2; margin-top: 0;">⚡ Интерактивный расчёт параметров и токов КЗ за трансформатором</h2>
     
-    <div class="calc-controls" style="margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите трансформатор серии ТМГ:</label>
-        <!-- Список заполнится автоматически из JSON через JS -->
-        <select id="transformer-select" onchange="updateCalculation()" style="width: 100%; max-width: 500px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
-            <option value="">Загрузка базы данных...</option>
-        </select>
+    <div class="calc-controls" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="flex: 2; min-width: 250px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите трансформатор серии ТМГ:</label>
+            <select id="transformer-select" onchange="updateCalculation()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                <option value="">Загрузка базы данных...</option>
+            </select>
+        </div>
+        <!-- Активное сопротивление системы -->
+        <div style="flex: 1; min-width: 140px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН}$ (Ом):</label>
+            <input type="number" id="input-R-sys-vn" value="0" step="0.001" min="0" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+        </div>
+        <!-- Индуктивное сопротивление системы -->
+        <div style="flex: 1; min-width: 140px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН}$ (Ом):</label>
+            <input type="number" id="input-X-sys-vn" value="0" step="0.001" min="0" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+        </div>
+        <!-- Коэффициент приведения -->
+        <div style="flex: 1; min-width: 140px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Коэфф. напряжения:</label>
+            <input type="number" id="input-k-voltage" value="1.05" step="0.01" min="0.5" oninput="updateCalculation()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+        </div>
     </div>
 
     <!-- Таблица результатов (Остается точно такой же, как раньше) -->
@@ -493,59 +509,121 @@
                 </tr>
             </thead>
             <tbody>
-                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="3">1. Токи в номинальном режиме</td></tr>
+            <!-- БЛОК 1: ПАСПОРТНЫЕ ДАННЫЕ -->
+                <tr style="background-color: #e8f5e9; font-weight: bold;"><td colspan="4">1. Паспортные, каталожные данные и параметры режима</td></tr>
                 <tr>
-                    <td>Номинальный ток стороны ВН</td>
-                    <td>\(I_{н.ВН} = \frac{S}{\sqrt{3} \cdot U_{ВН}}\)</td>
-                    <td><span id="out-I-vn" style="font-weight: bold;">-</span> А</td>
+                    <td>Производитель силового трансформатора</td>
+                    <td>—</td>
+                    <td colspan="2" id="out-manufacturer" style="font-weight: bold; text-align: center; color: #1b5e20;">-</td>
                 </tr>
                 <tr>
-                    <td>Номинальный ток стороны НН</td>
-                    <td>\(I_{н.НН} = \frac{S}{\sqrt{3} \cdot U_{НН}}\)</td>
+                    <td>Номинальная мощность / Схема соединения</td>
+                    <td>$S_{ном}$ / Группа</td>
+                    <td colspan="2" style="text-align: center; font-weight: bold;"><span id="out-S">-</span> кВА / <span id="out-schema" style="color:#0d47a1;">-</span></td>
+                </tr>
+                <tr>
+                    <td>Номинальные линейные напряжения</td>
+                    <td>$U_{ном}$</td>
+                    <td style="font-weight: bold;"><span id="out-Uvn-pass">-</span> кВ</td>
+                    <td style="font-weight: bold;"><span id="out-Unn-pass">-</span> кВ</td>
+                </tr>
+                <tr>
+                    <td>Коэффициент трансформации сети</td>
+                    <td>$k_{т} = U_{ВН} / U_{НН}$</td>
+                    <td colspan="2" id="out-kt" style="text-align: center; font-weight: bold; color: #555;">-</td>
+                </tr>
+                <tr>
+                    <td>Потери: Холостого хода (ХХ) / Короткого замыкания (КЗ)</td>
+                    <td>$\Delta P_{хх}$ / $\Delta P_{кз}$</td>
+                    <td colspan="2" style="text-align: center;"><span id="out-Pxx" style="font-weight: bold;">-</span> кВт / <span id="out-Pkz" style="font-weight: bold;">-</span> кВт</td>
+                </tr>
+                <tr>
+                    <td>Напряжение КЗ $u_к\%$ / Ток ХХ $i_{хх}\%$</td>
+                    <td>$u_к\%$ / $i_{хх}\%$</td>
+                    <td colspan="2" style="text-align: center;"><span id="out-uk" style="font-weight: bold;">-</span> % / <span id="out-ixx" style="font-weight: bold;">-</span> %</td>
+                </tr>
+                <tr>
+                    <td>Номинальные токи обмоток</td>
+                    <td>$I_{ном}$</td>
+                    <td><span id="out-I-vn" style="font-weight: bold;">-</span> А</td>
                     <td><span id="out-I-nn" style="font-weight: bold;">-</span> А</td>
                 </tr>
-                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="3">2. Сопротивления прямой последовательности (аналитические)</td></tr>
+                
+               <!-- БЛОК 2: СОПРОТИВЛЕНИЯ ВНЕШНЕЙ СИСТЕМЫ -->
+                <tr style="background-color: #fff8e1; font-weight: bold;"><td colspan="4">2. Сопротивление энергосистемы (введённое)</td></tr>
                 <tr>
-                    <td>Активное сопротивление прямой посл.</td>
-                    <td>\(R_{1нн} = \frac{\Delta P_{кз} \cdot 1000}{3 \cdot I_{н.НН}^2}\)</td>
-                    <td><span id="out-R1" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
+                    <td>Активное сопротивление энергосистемы</td>
+                    <td>$R_{сист}$</td>
+                    <td><span id="out-Rsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                    <td><span id="out-Rsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                 </tr>
                 <tr>
-                    <td>Полное сопротивление прямой посл.</td>
-                    <td>\(Z_{1нн} = \frac{u_к\%}{100} \cdot \frac{U_{НН}^2 \cdot 1000}{S}\)</td>
-                    <td><span id="out-Z1" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
+                    <td>Индуктивное сопротивление энергосистемы</td>
+                    <td>$X_{сист}$</td>
+                    <td><span id="out-Xsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                    <td><span id="out-Xsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                </tr>
+             <!-- БЛОК 3: СОПРОТИВЛЕНИЯ ТРАНСФОРМАТОРА (ПРЯМАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ) -->
+                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="4">3. Сопротивления прямой последовательности трансформатора</td></tr>
+                <tr>
+                    <td>Активное сопротивление трансформатора</td>
+                    <td>$R_{1т}$</td>
+                    <td><span id="out-R1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
+                    <td><span id="out-R1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
                 </tr>
                 <tr>
-                    <td>Реактивное сопротивление прямой посл.</td>
-                    <td>\(X_{1нн} = \sqrt{Z_{1нн}^2 - R_{1нн}^2}\)</td>
-                    <td><span id="out-X1" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
+                    <td>Индуктивное сопротивление трансформатора</td>
+                    <td>$X_{1т}$</td>
+                    <td><span id="out-X1-vn" style="font-weight: bold; color: #2e7d32;">-</span> Ом</td>
+                    <td><span id="out-X1-nn" style="font-weight: bold; color: #2e7d32;">-</span> мОм</td>
                 </tr>
-                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="3">3. Сопротивления нулевой последовательности</td></tr>
+                <tr>
+                    <td>Полное эквивалентное сопротивление цепи (Система + Тр)</td>
+                    <td>$Z_{1.экв}$</td>
+                    <td><span id="out-Z1экв-vn" style="font-weight: bold; color: #1b5e20;">-</span> Ом</td>
+                    <td><span id="out-Z1экв-nn" style="font-weight: bold; color: #1b5e20;">-</span> мОм</td>
+                </tr>
+
+                <!-- БЛОК 4: НУЛЕВАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ ТРАНСФОРМАТОРА -->
+                <tr style="background-color: #fafafa; font-weight: bold;"><td colspan="4">4. Сопротивления нулевой последовательности трансформатора</td></tr>
                 <tr>
                     <td>Активное сопротивление нулевой посл.</td>
-                    <td>\(R_{0т}\) (табличное / \(R_{1т}\) для \(\Delta/\text{Y}\))</td>
-                    <td><span id="out-R0" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
+                    <td>$R_{0т}$</td>
+                    <td><span id="out-R0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
+                    <td><span id="out-R0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
                 </tr>
                 <tr>
-                    <td>Реактивное сопротивление нулевой посл.</td>
-                    <td>\(X_{0т}\) (табличное / \(X_{1т}\) для \(\Delta/\text{Y}\))</td>
-                    <td><span id="out-X0" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
+                    <td>Индуктивное сопротивление нулевой посл.</td>
+                    <td>$X_{0т}$</td>
+                    <td><span id="out-X0-vn" style="font-weight: bold; color: #e65100;">-</span> Ом</td>
+                    <td><span id="out-X0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
                 </tr>
-                <tr style="background-color: #e3f2fd; font-weight: bold;"><td colspan="3">4. Результирующие токи КЗ на выводах 0.4 кВ</td></tr>
-                <tr>
-                    <td><strong>Ток трёхфазного КЗ</strong></td>
-                    <td>\(I_{КЗ}^{(3)} = \frac{U_{НН}}{\sqrt{3} \cdot Z_{1нн}}\)</td>
-                    <td><span id="out-Ik3-3" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
+
+                <!-- БЛОК 5: ТОКИ КЗ И ИХ ПРИВЕДЕНИЕ -->
+                <tr style="background-color: #e3f2fd; font-weight: bold;"><td colspan="4">5. Расчётные токи короткого замыкания (с учётом сопротивления системы)</td></tr>
+                <tr style="font-weight: bold;">
+                    <td>Вид короткого замыкания</td>
+                    <td>Формула (для стороны НН)</td>
+                    <td>Ток, приведенный к ВН</td>
+                    <td>Ток на выводах НН (0.4 кВ)</td>
                 </tr>
                 <tr>
-                    <td><strong>Ток двухфазного КЗ</strong></td>
-                    <td>\(I_{КЗ}^{(2)} = \frac{\sqrt{3}}{2} \cdot I_{КЗ}^{(3)}\)</td>
-                    <td><span id="out-Ik3-2" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
+                    <td><strong>Трёхфазное КЗ</strong></td>
+                    <td>$I_{КЗ}^{(3)} = \frac{U_{НН}}{\sqrt{3} \cdot Z_{1.экв.нн}}$</td>
+                    <td><span id="out-Ik3-3-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                    <td><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
                 </tr>
                 <tr>
-                    <td><strong>Ток однофазного КЗ на землю</strong></td>
-                    <td>\(I_{КЗ}^{(1)} = \frac{3 \cdot (U_{НН}/\sqrt{3})}{\sqrt{(2R_{1} + R_{0})^2 + (2X_{1} + X_{0})^2}}\)</td>
-                    <td><span id="out-Ik3-1" style="font-weight: bold; color: #1976d2; font-size: 1.2em;">-</span> А</td>
+                    <td><strong>Двухфазное КЗ</strong></td>
+                    <td>$I_{КЗ}^{(2)} = \frac{\sqrt{3}}{2} \cdot I_{КЗ}^{(3)}$</td>
+                    <td><span id="out-Ik3-2-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                    <td><span id="out-Ik3-2-nn" style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
+                </tr>
+                <tr>
+                    <td><strong>Однофазное КЗ на землю</strong></td>
+                    <td>$I_{КЗ}^{(1)} = \frac{3 \cdot U_{ф.НН}}{\sqrt{(2R_{1т} + R_{0т})^2 + (2X_{1.экв} + X_{0т})^2}}$</td>
+                    <td><span id="out-Ik3-1-vn" style="font-weight: bold; color: #1976d2;">-</span> А</td>
+                    <td><span id="out-Ik3-1-nn" style="font-weight: bold; color: #1976d2; font-size: 1.2em;">-</span> А</td>
                 </tr>
             </tbody>
         </table>
@@ -638,53 +716,127 @@ async function loadTransformersDatabase() {
 
 // Аналитическая функция расчета (работает с данными из оперативной памяти)
 function updateCalculation() {
-    const selectedId = document.getElementById("transformer-select").value;
+    const selectElement = document.getElementById("transformer-select");
+    const rSysInput = document.getElementById("input-R-sys-vn");
+    const xSysInput = document.getElementById("input-X-sys-vn");
+    const kVoltInput = document.getElementById("input-k-voltage");
+    
+    if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
+    
+    const selectedId = selectElement.value;
     const tx = globalTransformersData.find(item => item.id === selectedId);
-
     if (!tx) return;
 
-    // 1. Токи в номинальном режиме
+    // Считываем сопротивления системы на ВН (Ом)
+    const R_sys_vn = parseFloat(rSysInput.value) || 0;
+    const X_sys_vn = parseFloat(xSysInput.value) || 0;
+    const k_voltage = parseFloat(kVoltInput.value) || 1.0;
+
+    const setTxt = (id, val) => { 
+        const el = document.getElementById(id); 
+        if(el) el.innerText = val; 
+    };
+
+    // Базовые параметры
+    const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
+    const ktSq = Math.pow(kt, 2); // k_т^2
+
+    // 1. Паспортные данные
+    setTxt("out-manufacturer", tx.manufacturer || "МЭТЗ имени В.И. Козлова");
+    setTxt("out-S", tx.S);
+    setTxt("out-Uvn-pass", tx.Uvn);
+    setTxt("out-Unn-pass", tx.Unn);
+    setTxt("out-kt", kt.toFixed(1));
+    setTxt("out-schema", tx.schema);
+    
+    const activePxx = tx.DPхх !== undefined ? tx.DPхх : (tx.Pxx || 0);
+    const activePkz = tx.DPкз !== undefined ? tx.DPкз : (tx.Pkz || 0);
+    const activeIxx = tx.Iхх !== undefined ? tx.Iхх : (tx.ixx !== undefined ? tx.ixx : 0);
+    
+    setTxt("out-Pxx", activePxx);
+    setTxt("out-Pkz", activePkz);
+    setTxt("out-uk", tx.uk);
+    setTxt("out-ixx", activeIxx);
+
+    // 2. Номинальные токи обмоток
     const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
     const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
+    setTxt("out-I-vn", I_vn.toFixed(2));
+    setTxt("out-I-nn", I_nn.toFixed(1));
 
-    // 2. Аналитический расчет сопротивлений прямой последовательности Z1 (в Ом)
-    const Z1 = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
-    const R1 = (tx.Pkz * 1000) / (3 * Math.pow(I_nn, 2));
-    const X1 = Math.sqrt(Math.pow(Z1, 2) - Math.pow(R1, 2));
+    // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
+    const R_sys_nn = R_sys_vn / ktSq; 
+    const X_sys_nn = X_sys_vn / ktSq; 
+    
+    setTxt("out-Rsys-vn", R_sys_vn.toFixed(4));
+    setTxt("out-Rsys-nn", (R_sys_nn * 1000).toFixed(4));
+    setTxt("out-Xsys-vn", X_sys_vn.toFixed(4));
+    setTxt("out-Xsys-nn", (X_sys_nn * 1000).toFixed(4));
 
-    // 3. Логика для нулевой последовательности Z0
-    let R0, X0;
+    // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
+    const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
+    const R1_nn = (activePkz * 1000) / (3 * Math.pow(I_nn, 2));
+    const X1_nn = Math.sqrt(Math.pow(Z1_nn, 2) - Math.pow(R1_nn, 2));
+
+    // Приведение сопротивлений трансформатора на сторону ВН (Ом)
+    const R1_vn = R1_nn * ktSq;
+    const X1_vn = X1_nn * ktSq;
+
+    setTxt("out-R1-nn", (R1_nn * 1000).toFixed(3));
+    setTxt("out-X1-nn", (X1_nn * 1000).toFixed(3));
+    setTxt("out-R1-vn", R1_vn.toFixed(3));
+    setTxt("out-X1-vn", X1_vn.toFixed(3));
+
+    // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
+    const R1_ekv_nn = R1_nn + R_sys_nn; 
+    const X1_ekv_nn = X1_nn + X_sys_nn;
+    const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
+
+    const Z1_ekv_vn = Z1_ekv_nn * ktSq;
+    setTxt("out-Z1экв-nn", (Z1_ekv_nn * 1000).toFixed(3));
+    setTxt("out-Z1экв-vn", Z1_ekv_vn.toFixed(3));
+
+    // 5. Логика для нулевой последовательности Z0 трансформатора
+    let R0_nn, X0_nn;
     if (tx.r0_tab === "Z1" || tx.x0_tab === "Z1") {
-        R0 = R1;
-        X0 = X1;
+        R0_nn = R1_nn;
+        X0_nn = X1_nn;
     } else {
-        R0 = tx.r0_tab !== null ? tx.r0_tab : R1;
-        X0 = tx.x0_tab !== null ? tx.x0_tab : X1;
+        R0_nn = tx.r0_tab !== null ? tx.r0_tab : R1_nn;
+        X0_nn = tx.x0_tab !== null ? tx.x0_tab : X1_nn;
     }
+    
+    const R0_vn = R0_nn * ktSq;
+    const X0_vn = X0_nn * ktSq;
 
-    // 4. Расчет токов КЗ на шинах 0.4 кВ
-    const I_kz3 = (tx.Unn * 1000) / (Math.sqrt(3) * Z1);
-    const I_kz2 = (Math.sqrt(3) / 2) * I_kz3;
-    
-    const Z_loop_1ph = Math.sqrt(Math.pow((2 * R1 + R0), 2) + Math.pow((2 * X1 + X0), 2));
-    const I_kz1 = (3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph;
+    setTxt("out-R0-nn", (R0_nn * 1000).toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
+    setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
+    setTxt("out-R0-vn", R0_vn.toFixed(3));
+    setTxt("out-X0-vn", X0_vn.toFixed(3));
 
-    // 5. Вывод результатов в таблицу (перевод в мОм)
-    document.getElementById("out-I-vn").innerText = I_vn.toFixed(2);
-    document.getElementById("out-I-nn").innerText = I_nn.toFixed(1);
+    // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
+    const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
+    const I_kz2_nn = (Math.sqrt(3) / 2) * I_kz3_nn;
     
-    document.getElementById("out-R1").innerText = (R1 * 1000).toFixed(3);
-    document.getElementById("out-Z1").innerText = (Z1 * 1000).toFixed(3);
-    document.getElementById("out-X1").innerText = (X1 * 1000).toFixed(3);
-    
-    document.getElementById("out-R0").innerText = tx.r0_tab === "Z1" ? (R0 * 1000).toFixed(3) + " (=R1)" : (R0 * 1000).toFixed(3);
-    document.getElementById("out-X0").innerText = tx.x0_tab === "Z1" ? (X0 * 1000).toFixed(3) + " (=X1)" : (X0 * 1000).toFixed(3);
-    
-    document.getElementById("out-Ik3-3").innerText = Math.round(I_kz3).toLocaleString();
-    document.getElementById("out-Ik3-2").innerText = Math.round(I_kz2).toLocaleString();
-    document.getElementById("out-Ik3-1").innerText = Math.round(I_kz1).toLocaleString();
+    // Однофазное КЗ: Внимание! В расчете прямой последовательности участвуют ЭКВИВАЛЕНТНЫЕ сопротивления (Тр + Система)
+    // Формула знаменателя: Z(1) = sqrt((2*R1.экв + R0.тр)^2 + (2*X1.экв + X0.тр)^2)
+    const Z_loop_1ph_nn = Math.sqrt(Math.pow((2 * R1_ekv_nn + R0_nn), 2) + Math.pow((2 * X1_ekv_nn + X0_nn), 2));
+    const I_kz1_nn = ((3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph_nn) * k_voltage;
+
+    // Приведение токов КЗ на сторону ВН (делением на линейный коэффициент трансформации kt)
+    const I_kz3_vn = I_kz3_nn / kt;
+    const I_kz2_vn = I_kz2_nn / kt;
+    const I_kz1_vn = I_kz1_nn / kt;
+
+    // Вывод токов в таблицу
+    setTxt("out-Ik3-3-nn", Math.round(I_kz3_nn).toLocaleString());
+    setTxt("out-Ik3-2-nn", Math.round(I_kz2_nn).toLocaleString());
+    setTxt("out-Ik3-1-nn", Math.round(I_kz1_nn).toLocaleString());
+
+    setTxt("out-Ik3-3-vn", I_kz3_vn.toFixed(2));
+    setTxt("out-Ik3-2-vn", I_kz2_vn.toFixed(2));
+    setTxt("out-Ik3-1-vn", I_kz1_vn.toFixed(2));
 }
-
 // Запускаем чтение файла при старте страницы
 window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
     
