@@ -294,6 +294,59 @@
         </ul>
     </div>
 </section>
+        <!-- Сводная таблица для схемы Y/Y-0 -->
+<section class="table-section-yy" style="margin-top: 40px; margin-bottom: 20px;">
+    <h3>Сводная таблица распределения токов при КЗ (схема Y/Y-0)</h3>
+    <div style="overflow-x: auto;">
+        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Вид повреждения</th>
+                    <th>Сторона ВН / НН</th>
+                    <th>Фаза A</th>
+                    <th>Фаза B</th>
+                    <th>Фаза C</th>
+                    <th>Ток в нейтрали / Особенности</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Двухфазное КЗ -->
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Двухфазное КЗ (между B и C)</td>
+                    <td>Вторичная сторона (НН)</td>
+                    <td>\(0\)</td>
+                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2}^{(2)}\)</td>
+                    <td style="color: #d32f2f; font-weight: bold;">\(-I_{КЗ2}^{(2)}\)</td>
+                    <td>\(I_N = 0\)<br>(нейтраль не задействована)</td>
+                </tr>
+                <tr style="border-bottom: 2px solid #ccc;">
+                    <td>Первичная сторона (ВН)</td>
+                    <td>\(0\)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}}\)</td>
+                    <td>Токи на ВН полностью повторяют распределение сторон НН</td>
+                </tr>
+                
+                <!-- Однофазное КЗ -->
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Однофазное КЗ (фаза A)</td>
+                    <td>Вторичная сторона (НН)</td>
+                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ2.Y/Y-0}^{(1)}\)</td>
+                    <td>\(0\)</td>
+                    <td>\(0\)</td>
+                    <td>\(I_N = I_{КЗ2.Y/Y-0}^{(1)}\)<br>(полный ток КЗ в нейтрали)</td>
+                </tr>
+                <tr>
+                    <td>Первичная сторона (ВН)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(\frac{2}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(-\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                    <td style="color: #1976d2; font-weight: bold;">-\(\frac{1}{3} \cdot \frac{I_{КЗ2.Y/Y-0}^{(1)}}{k_{тт}}\)</td>
+                    <td>Ток нулевой последовательности трансформируется в питающую сеть ВН</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
     </div>
 
     <!-- Раздел: Схема Звезда-Зигзаг -->
