@@ -152,29 +152,32 @@ th {
 /* Стили для фиксированной/плавающей кнопки быстрого перехода к калькулятору */
 .floating-calc-btn {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 25px; /* Согласовали с вашими 25px */
+    right: 25px;  /* Согласовали с вашими 25px */
     background-color: #1976d2;
     color: white;
-    padding: 14px 24px;
+    padding: 14px 22px;
     border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     text-decoration: none;
     font-weight: bold;
     font-size: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    z-index: 1000;
+    gap: 8px;
+    z-index: 9999;
     transition: all 0.3s ease;
+    
+    /* Начальное состояние для контроля из JS-скрипта скролла */
+    opacity: 0;
+    visibility: hidden;
 }
 
 .floating-calc-btn:hover {
     background-color: #1565c0;
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.6);
+    box-shadow: 0 6px 15px rgba(25, 118, 210, 0.5);
 }
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
