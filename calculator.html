@@ -223,6 +223,168 @@
                     </tbody>
                 </table>
             </div>
-        </section>     
+        </section>
+     
+     <script>
+        // Глобальный массив для хранения загруженной базы данных
+        let globalTransformersData = [];
+
+        // Функция для асинхронной загрузки базы из файла
+        async function loadTransformersDatabase() {
+            try {
+                // Укажите относительный путь к файлу JSON на вашем GitHub
+                const response = await fetch('data/transformers.json');
+                if (!response.ok) throw new Error('Ошибка загрузки файла базы данных');
+
+                globalTransformersData = await response.json();
+
+                // Очищаем и заполняем элемент <select>
+                const selectElement = document.getElementById('transformer-select');
+                selectElement.innerHTML = '';
+
+                globalTransformersData.forEach(tx => {
+                    const option = document.createElement('option');
+                    option.value = tx.id;
+                    option.textContent = `${tx.brand}-${tx.S} кВА (${tx.Uvn}/${tx.Unn} кВ) [${tx.schema}] ${tx.manufacturer}`;
+                    selectElement.appendChild(option);
+                });
+
+                // Ставим по умолчанию, например, ТМГ-250 (id: "250_10_YY")
+                selectElement.value = "250_10_YY";
+                updateCalculation(); // Запуск первого расчета
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации БД</option>';
+            }
+        }
+
+        // Аналитическая функция расчета (работает с данными из оперативной памяти)
+        function updateCalculation() {
+            const selectElement = document.getElementById("transformer-select");
+            const rSysInput = document.getElementById("input-R-sys-vn");
+            const xSysInput = document.getElementById("input-X-sys-vn");
+            const kVoltInput = document.getElementById("input-k-voltage");
+
+            if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
+
+            const selectedId = selectElement.value;
+            const tx = globalTransformersData.find(item => item.id === selectedId);
+            if (!tx) return;
+
+            // Считываем сопротивления системы на ВН (Ом)
+            const R_sys_vn = parseFloat(rSysInput.value) || 0;
+            const X_sys_vn = parseFloat(xSysInput.value) || 0;
+            const k_voltage = parseFloat(kVoltInput.value) || 1.0;
+
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            // Базовые параметры
+            const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
+            const ktSq = Math.pow(kt, 2); // k_т^2
+
+            // 1. Паспортные данные
+            setTxt("out-manufacturer", tx.manufacturer || "МЭТЗ имени В.И. Козлова");
+            setTxt("out-S", tx.S);
+            setTxt("out-Uvn-pass", tx.Uvn);
+            setTxt("out-Unn-pass", tx.Unn);
+            setTxt("out-kt", kt.toFixed(1));
+            setTxt("out-schema", tx.schema);
+
+            const activePxx = tx.DPхх !== undefined ? tx.DPхх : (tx.Pxx || 0);
+            const activePkz = tx.DPкз !== undefined ? tx.DPкз : (tx.Pkz || 0);
+            const activeIxx = tx.Iхх !== undefined ? tx.Iхх : (tx.ixx !== undefined ? tx.ixx : 0);
+
+            setTxt("out-Pxx", activePxx);
+            setTxt("out-Pkz", activePkz);
+            setTxt("out-uk", tx.uk);
+            setTxt("out-ixx", activeIxx);
+
+            // 2. Номинальные токи обмоток
+            const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
+            const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
+            setTxt("out-I-vn", I_vn.toFixed(2));
+            setTxt("out-I-nn", I_nn.toFixed(1));
+
+            // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
+            const R_sys_nn = R_sys_vn / ktSq;
+            const X_sys_nn = X_sys_vn / ktSq;
+
+            setTxt("out-Rsys-vn", R_sys_vn.toFixed(4));
+            setTxt("out-Rsys-nn", (R_sys_nn * 1000).toFixed(4));
+            setTxt("out-Xsys-vn", X_sys_vn.toFixed(4));
+            setTxt("out-Xsys-nn", (X_sys_nn * 1000).toFixed(4));
+
+            // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
+            const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
+            const R1_nn = (activePkz * 1000) / (3 * Math.pow(I_nn, 2));
+            const X1_nn = Math.sqrt(Math.pow(Z1_nn, 2) - Math.pow(R1_nn, 2));
+
+            // Приведение сопротивлений трансформатора на сторону ВН (Ом)
+            const R1_vn = R1_nn * ktSq;
+            const X1_vn = X1_nn * ktSq;
+
+            setTxt("out-R1-nn", (R1_nn * 1000).toFixed(3));
+            setTxt("out-X1-nn", (X1_nn * 1000).toFixed(3));
+            setTxt("out-R1-vn", R1_vn.toFixed(3));
+            setTxt("out-X1-vn", X1_vn.toFixed(3));
+
+            // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
+            const R1_ekv_nn = R1_nn + R_sys_nn;
+            const X1_ekv_nn = X1_nn + X_sys_nn;
+            const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
+
+            const Z1_ekv_vn = Z1_ekv_nn * ktSq;
+            setTxt("out-Z1экв-nn", (Z1_ekv_nn * 1000).toFixed(3));
+            setTxt("out-Z1экв-vn", Z1_ekv_vn.toFixed(3));
+
+            // 5. Логика для нулевой последовательности Z0 трансформатора
+            let R0_nn, X0_nn;
+            if (tx.r0_tab === "Z1" || tx.x0_tab === "Z1") {
+                R0_nn = R1_nn;
+                X0_nn = X1_nn;
+            } else {
+                R0_nn = tx.r0_tab !== null ? tx.r0_tab : R1_nn;
+                X0_nn = tx.x0_tab !== null ? tx.x0_tab : X1_nn;
+            }
+
+            const R0_vn = R0_nn * ktSq;
+            const X0_vn = X0_nn * ktSq;
+
+            setTxt("out-R0-nn", (R0_nn * 1000).toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
+            setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
+            setTxt("out-R0-vn", R0_vn.toFixed(3));
+            setTxt("out-X0-vn", X0_vn.toFixed(3));
+
+            // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
+            const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
+            const I_kz2_nn = (Math.sqrt(3) / 2) * I_kz3_nn;
+
+            // Однофазное КЗ: Внимание! В расчете прямой последовательности участвуют ЭКВИВАЛЕНТНЫЕ сопротивления (Тр + Система)
+            // Формула знаменателя: Z(1) = sqrt((2*R1.экв + R0.тр)^2 + (2*X1.экв + X0.тр)^2)
+            const Z_loop_1ph_nn = Math.sqrt(Math.pow((2 * R1_ekv_nn + R0_nn), 2) + Math.pow((2 * X1_ekv_nn + X0_nn), 2));
+            const I_kz1_nn = ((3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph_nn) * k_voltage;
+
+            // Приведение токов КЗ на сторону ВН (делением на линейный коэффициент трансформации kt)
+            const I_kz3_vn = I_kz3_nn / kt;
+            const I_kz2_vn = I_kz2_nn / kt;
+            const I_kz1_vn = I_kz1_nn / kt;
+
+            // Вывод токов в таблицу
+            setTxt("out-Ik3-3-nn", Math.round(I_kz3_nn).toLocaleString());
+            setTxt("out-Ik3-2-nn", Math.round(I_kz2_nn).toLocaleString());
+            setTxt("out-Ik3-1-nn", Math.round(I_kz1_nn).toLocaleString());
+
+            setTxt("out-Ik3-3-vn", I_kz3_vn.toFixed(2));
+            setTxt("out-Ik3-2-vn", I_kz2_vn.toFixed(2));
+            setTxt("out-Ik3-1-vn", I_kz1_vn.toFixed(2));
+        }
+        // Запускаем чтение файла при старте страницы
+        window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
+          
+     </script>
 </body>
 </html>
