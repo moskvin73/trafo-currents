@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-     <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Интерактивный расчёт параметров и токов КЗ</title>
     <!-- Подключаем CSS калькулятора и MathJax для красивых формул в лейблах -->
@@ -21,13 +21,29 @@
             }
         };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>     
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> 
+
+    <style>
+        /* ФИКСИРОВАННАЯ ВЕРХНЯЯ ПАНЕЛЬ С СЫЛКОЙ ВОЗВРАТА */
+        .sticky-top-bar {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #f4f6f9; /* В цвет фона страницы, чтобы контент под ней размывался/прятался */
+            padding: 15px 0 10px 0;
+            border-bottom: 1px solid #cbd5e1;
+            margin-bottom: 25px;
+        }
+     </style>
 </head>
 <body  style="background-color: #f4f6f9; padding: 20px; font-family: sans-serif;">
     <!-- Ссылка для возврата на аналитическую главную страницу -->
-    <div style="margin-bottom: 20px;">
-        <a href="index.html" style="color: #1976d2; text-decoration: none; font-weight: bold; font-size: 16px;">← Назад к аналитическому описанию</a>
-    </div>
+    <div class="sticky-top-bar">
+         <div style="margin-bottom: 20px;">
+             <a href="index.html" style="color: #1976d2; text-decoration: none; font-weight: bold; font-size: 16px;">← Назад к аналитическому описанию</a>
+         </div>
+     </div>
 
         <section id="calculator" class="interactive-calc-section"
             style="margin-top: 40px; font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fbfbfb;">
