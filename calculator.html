@@ -25,18 +25,20 @@
 
     <style>
         /* ФИКСИРОВАННАЯ ВЕРХНЯЯ ПАНЕЛЬ С СЫЛКОЙ ВОЗВРАТА */
-    .sticky-top-bar {
-        position: -webkit-sticky;
-        position: sticky;
+    .fixed-top-bar {
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        background-color: #f4f6f9; /* Точно совпадает с фоном body */
-        padding: 15px 20px 15px 20px; /* Сделали одинаковые отступы */
-        margin: 0 -20px 25px -20px; /* Расширяем шапку на всю ширину экрана с учетом padding у body */
+        background-color: #f4f6f9; /* В цвет фона страницы */
+        padding: 15px 40px;
         border-bottom: 1px solid #cbd5e1;
         box-sizing: border-box;
+        height: 65px; /* Жестко задаем высоту шапки */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     </style>
 </head>
