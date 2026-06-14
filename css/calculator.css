@@ -1,1 +1,57 @@
+/* Базовые параметры для страницы калькулятора */
+body {
+    font-family: 'Segoe UI', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f6f9;
+    color: #222;
+}
 
+/* Оформление ссылки возврата на аналитическую страницу */
+.back-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: #0d47a1;
+    text-decoration: underline;
+}
+
+/* Медиа-запрос для адаптации панели элементов управления */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    /* Сбрасываем flex-строку в колонку для мобильных экранов */
+    .calc-controls {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    /* Элементы внутри панели управления занимают всю ширину */
+    .calc-controls > div {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+    
+    /* Новый подблок кабеля также выстраивается вертикально */
+    #cable-control-block {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    #cable-control-block > div {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+}
