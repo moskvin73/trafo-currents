@@ -6,7 +6,22 @@
     <title>Интерактивный расчёт параметров и токов КЗ</title>
     <!-- Подключаем CSS калькулятора и MathJax для красивых формул в лейблах -->
     <link rel="stylesheet" href="./css/calculator.css">
-    <script src="https://jsdelivr.net" async></script>
+
+    <!-- Настройка и подключение MathJax через CDN для работы на GitHub Pages -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>     
 </head>
 <body  style="background-color: #f4f6f9; padding: 20px; font-family: sans-serif;">
     <!-- Ссылка для возврата на аналитическую главную страницу -->
