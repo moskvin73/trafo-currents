@@ -610,7 +610,7 @@ let globalTransformersData = [];
 async function loadTransformersDatabase() {
     try {
         // Укажите относительный путь к файлу JSON на вашем GitHub
-        const response = await fetch('./data/transformers.json');
+        const response = await fetch('data/transformers.json');
         if (!response.ok) throw new Error('Ошибка загрузки файла базы данных');
         
         globalTransformersData = await response.json();
