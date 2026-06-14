@@ -184,6 +184,56 @@
             \[\begin{cases}\dot{I}_{A1}= \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{B1}=-\frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{\sqrt{3} k_{тт}}=-0.577 \cdot \frac{I_{КЗ2 \ \Delta/(Y-0)}^{(3)}}{k_{тт}} \\ \dot{I}_{C1}=0 \end{cases}\]
         </p>
     </section>
+
+       <section class="table-section" style="margin-top: 30px;">
+        <h3>Сводная таблица распределения токов при однофазном КЗ (схема Δ/Y-0)</h3>
+        <div style="overflow-x: auto;">
+        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Сторона трансформатора</th>
+                    <th>Тип тока</th>
+                    <th>Фаза A</th>
+                    <th>Фаза B</th>
+                    <th>Фаза C</th>
+                    <th>Ток в нейтрали / Нулевая последовательность</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Сторона НН -->
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Низшее напряжение (НН, звезда \(Y_n\))</td>
+                    <td>Линейные / Фазные токи</td>
+                    <td style="color: #d32f2f; font-weight: bold;">\(I_{КЗ}^{(1)}\)</td>
+                    <td>\(0\)</td>
+                    <td>\(0\)</td>
+                    <td rowspan="2" style="vertical-align: middle;">\(I_N = 3I_0 = I_{КЗ}^{(1)}\)</td>
+                </tr>
+                <tr style="background-color: #fdfdfd;">
+                    <td>Относительные модули</td>
+                    <td style="color: #d32f2f; font-weight: bold;">\(1\)</td>
+                    <td>\(0\)</td>
+                    <td>\(0\)</td>
+                </tr>
+                <!-- Сторона ВН -->
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; background-color: #fafafa;">Высшее напряжение (ВН, треугольник \(\Delta\))</td>
+                    <td>Фазные токи (в обмотках)</td>
+                    <td>\(\frac{2}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                    <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                    <td>\(-\frac{1}{3} \cdot \frac{I_{КЗ}^{(3)}}{k_{тт} \sqrt{3}}\)</td>
+                    <td rowspan="2" style="vertical-align: middle;">\(I_0\) замыкается внутри \(\Delta\)<br>(во внешнюю сеть не выходит)</td>
+                </tr>
+                <tr style="background-color: #fdfdfd;">
+                    <td>Линейные токи (в линию)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(0.577 \cdot \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
+                    <td style="color: #1976d2; font-weight: bold;">\(-0.577 \cdot \frac{I_{КЗ}^{(3)}}{k_{тт}}\)</td>
+                    <td>\(0\)</td>
+                </tr>
+            </tbody>
+            </table>
+            </div>
+        </section>     
     </div>
 
     <!-- Раздел: Схема Звезда-Звезда -->
