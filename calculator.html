@@ -595,8 +595,20 @@
             setTxt("out-Ik3-3-nn-min-vn", I_kz3_nn_min_vn.toFixed(3));
             // Максимальный ток двухфазного КЗ на выводах НН трансформатора
             const I_kz2_nn_max = sqrt_3 * I_kz3_nn_max / 2;
+            setTxt("out-Ik3-2-nn-max", I_kz2_nn_max.toFixed(3));
             // Коэффициент привидения максимального тока двухфазного КЗ к ВН
-
+            let k_2_nn_vn_max, k_2_nn_vn_min;
+            if (tx.schema_type == 0) {
+                k_2_nn_vn_max = k_2_nn_vn_min = 1
+            }
+            else {
+                k_2_nn_vn_max = 2 / sqrt_3;
+                k_2_nn_vn_min = 1 / sqrt_3;
+            }
+            // Коэффициент привидения максимального тока двухфазного КЗ к ВН
+            setTxt("out-k-2-nn_vn-max", k_2_nn_vn_max.toFixed(3));
+            // Коэффициент привидения минимального тока двухфазного КЗ к ВН
+            setTxt("out-k-2-nn_vn-min", k_2_nn_vn_min.toFixed(3));
         }
         // Запускаем чтение файла при старте страницы
         window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
