@@ -452,8 +452,8 @@
             setTxt("out-X1-vn", X1_vn.toFixed(3));
 
             // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
-            const R1_ekv_nn = R1_nn + R_sys_nn;
-            const X1_ekv_nn = X1_nn + X_sys_nn;
+            const R1_ekv_nn = R1_nn + R_sys_nn_min;
+            const X1_ekv_nn = X1_nn + X_sys_nn_min;
             const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
 
             const Z1_ekv_vn = Z1_ekv_nn * ktSq;
