@@ -107,25 +107,41 @@
                 style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="flex: 2; min-width: 250px;">
                     <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите
-                        трансформатор серии ТМГ:</label>
+                        трансформатор:</label>
                     <select id="transformer-select" onchange="updateCalculation()"
                         style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
                         <option value="">Загрузка базы данных...</option>
                     </select>
                 </div>
-                <!-- Активное сопротивление системы -->
+                <!-- Активное сопротивление системы в миниальном режиме-->
                 <div style="flex: 1; min-width: 140px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН}$
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН.min}$
                         (Ом):</label>
-                    <input type="number" id="input-R-sys-vn" value="0" step="0.001" min="0"
+                    <input type="number" id="input-R-sys-vn-min" value="0" step="0.001" min="0"
                         oninput="updateCalculation()"
                         style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
                 </div>
-                <!-- Индуктивное сопротивление системы -->
+                <!-- Активное сопротивление системы в максимальном режиме-->
                 <div style="flex: 1; min-width: 140px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН}$
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$R_{сист.ВН.max}$
                         (Ом):</label>
-                    <input type="number" id="input-X-sys-vn" value="0" step="0.001" min="0"
+                    <input type="number" id="input-R-sys-vn-max" value="0" step="0.001" min="0"
+                        oninput="updateCalculation()"
+                        style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+                </div>
+                <!-- Индуктивное сопротивление системы в миниальном режиме -->
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН.min}$
+                        (Ом):</label>
+                    <input type="number" id="input-X-sys-vn-min" value="0" step="0.001" min="0"
+                        oninput="updateCalculation()"
+                        style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
+                </div>
+                <!-- Индуктивное сопротивление системы в максимальном режиме -->
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">$X_{сист.ВН.max}$
+                        (Ом):</label>
+                    <input type="number" id="input-X-sys-vn-max" value="0" step="0.001" min="0"
                         oninput="updateCalculation()"
                         style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box;">
                 </div>
