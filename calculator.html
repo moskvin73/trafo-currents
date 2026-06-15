@@ -271,8 +271,8 @@
                         <tr>
                             <td>Полное эквивалентное сопротивление цепи (Система + Тр)</td>
                             <td style="text-align: center;">$z_{\text {1.т}}=\frac{u_{\text {кз%}}}{100} \cdot \frac{U_{\text {ном}}^2}{S_{\text {ном}}} \cdot 10^3$</td>
-                            <td style="text-align: center;"><span id="out-Z1экв-vn" style="font-weight: bold; color: #1b5e20;">-</span> Ом</td>
-                            <td style="text-align: center;"><span id="out-Z1экв-nn" style="font-weight: bold; color: #1b5e20;">-</span> мОм</td>
+                            <td style="text-align: center;"><span id="out-Z1-vn" style="font-weight: bold; color: #1b5e20;">-</span> Ом</td>
+                            <td style="text-align: center;"><span id="out-Z1-nn" style="font-weight: bold; color: #1b5e20;">-</span> мОм</td>
                         </tr>
 
                         <!-- БЛОК 4: НУЛЕВАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ ТРАНСФОРМАТОРА -->
@@ -496,9 +496,10 @@
             // Базовые параметры
             const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
             const ktSq = Math.pow(kt, 2); // k_т^2
+            const sqrt_3 = Math.sqrt(3);
 
             // 1. Паспортные данные
-            setTxt("out-manufacturer", tx.manufacturer || "МЭТЗ имени В.И. Козлова");
+            setTxt("out-manufacturer", tx.manufacturer || "Неизвестный");
             setTxt("out-S", tx.S);
             setTxt("out-Uvn-pass", tx.Uvn);
             setTxt("out-Unn-pass", tx.Unn);
@@ -515,8 +516,8 @@
             setTxt("out-ixx", activeIxx);
 
             // 2. Номинальные токи обмоток
-            const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
-            const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
+            const I_vn = tx.S / (sqrt_3 * tx.Uvn);
+            const I_nn = tx.S / (sqrt_3 * tx.Unn);
             const I_btn = (8 * I_vn) / Math.sqrt(2);
             setTxt("out-I-vn", I_vn.toFixed(2));
             setTxt("out-I-nn", I_nn.toFixed(1));
@@ -539,18 +540,21 @@
             setTxt("out-Xsys-nn-max", (X_sys_nn_max * 1000).toFixed(4));
 
             // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
-            const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
-            const R1_nn = (activePkz * 1000) / (3 * Math.pow(I_nn, 2));
+            const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1e6) / tx.S;
+            const R1_nn = activePkz * Math.pow(tx.Unn / tx.S, 2) * 1e6;
             const X1_nn = Math.sqrt(Math.pow(Z1_nn, 2) - Math.pow(R1_nn, 2));
 
             // Приведение сопротивлений трансформатора на сторону ВН (Ом)
-            const R1_vn = R1_nn * ktSq;
-            const X1_vn = X1_nn * ktSq;
+            const Z1_vn = (tx.uk / 100) * (Math.pow(tx.Uvn, 2) * 1e3) / tx.S;
+            const R1_vn = activePkz * Math.pow(tx.Uvn / tx.S, 2) * 1e3;
+            const X1_vn = Math.sqrt(Math.pow(Z1_vn, 2) - Math.pow(R1_vn, 2));
 
-            setTxt("out-R1-nn", (R1_nn * 1000).toFixed(3));
-            setTxt("out-X1-nn", (X1_nn * 1000).toFixed(3));
+            setTxt("out-R1-nn", R1_nn.toFixed(3));
+            setTxt("out-X1-nn", X1_nn.toFixed(3));
             setTxt("out-R1-vn", R1_vn.toFixed(3));
             setTxt("out-X1-vn", X1_vn.toFixed(3));
+            setTxt("out-Z1-nn", Z1_nn.toFixed(3));
+            setTxt("out-Z1-vn", Z1_vn.toFixed(3));
 
             // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
             const R1_ekv_nn = R1_nn + R_sys_nn_min;
@@ -558,8 +562,6 @@
             const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
 
             const Z1_ekv_vn = Z1_ekv_nn * ktSq;
-            setTxt("out-Z1экв-nn", (Z1_ekv_nn * 1000).toFixed(3));
-            setTxt("out-Z1экв-vn", Z1_ekv_vn.toFixed(3));
 
             // 5. Логика для нулевой последовательности Z0 трансформатора
             let R0_nn, X0_nn;
@@ -578,6 +580,15 @@
             setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
             setTxt("out-R0-vn", R0_vn.toFixed(3));
             setTxt("out-X0-vn", X0_vn.toFixed(3));
+            
+            const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2));
+            const I_kz3_vn_min = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_min, 2) + Math.pow(X_sys_vn_min, 2));
+            setTxt("out-Ik3-3-vn-max", I_kz3_vn_max.toFixed(3));
+            setTxt("out-Ik3-3-vn-min", I_kz3_vn_min.toFixed(3));
+            const I_kz2_vn_max = sqrt_3 * I_kz3_vn_max / 2;
+            const I_kz2_vn_min = sqrt_3 * I_kz3_vn_min / 2; out-Ik3-2-vn-max
+            setTxt("out-Ik3-2-vn-max", I_kz2_vn_max.toFixed(3));
+            setTxt("out-Ik3-2-vn-min", I_kz2_vn_min.toFixed(3));
 
             // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
             const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
