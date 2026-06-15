@@ -219,8 +219,7 @@
                         <tr>
                             <td>Бросок тока намагничивания</td>
                             <td style="text-align: center;">$I_{БТН}=\frac{8}{\sqrt{2}} \cdot I_{ном.ВН}$</td>
-                            <td colspan="2" style="text-align: center;"><span id="i-btn"
-                                    style="font-weight: bold;">-</span></td>
+                            <td colspan="2" style="text-align: center;"><span id="I-btn" style="font-weight: bold;">-</span></td>
                         </tr>
 
 
@@ -402,8 +401,10 @@
             // 2. Номинальные токи обмоток
             const I_vn = tx.S / (Math.sqrt(3) * tx.Uvn);
             const I_nn = tx.S / (Math.sqrt(3) * tx.Unn);
+            const I_btn = (8 * I_vn) / Math.sqrt(2);
             setTxt("out-I-vn", I_vn.toFixed(2));
             setTxt("out-I-nn", I_nn.toFixed(1));
+            setTxt("I-btn", I_btn.toFixed(1));
 
             // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
             const R_sys_nn = R_sys_vn / ktSq;
