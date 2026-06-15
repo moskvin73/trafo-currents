@@ -522,20 +522,20 @@
             setTxt("I-btn", I_btn.toFixed(1));
 
             // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
-            const R_sys_nn_min = R_sys_vn_min / ktSq;
-            const R_sys_nn_max = R_sys_vn_max / ktSq;
-            const X_sys_nn_min = X_sys_vn_min / ktSq;
-            const X_sys_nn_max = X_sys_vn_max / ktSq;
+            const R_sys_nn_min = R_sys_vn_min / ktSq * 1e3;
+            const R_sys_nn_max = R_sys_vn_max / ktSq * 1e3;
+            const X_sys_nn_min = X_sys_vn_min / ktSq * 1e3;
+            const X_sys_nn_max = X_sys_vn_max / ktSq * 1e3;
 
             setTxt("out-Rsys-vn-min", R_sys_vn_min.toFixed(4));
-            setTxt("out-Rsys-nn-min", (R_sys_nn_min * 1000).toFixed(4));
+            setTxt("out-Rsys-nn-min", R_sys_nn_min.toFixed(4));
             setTxt("out-Xsys-vn-min", X_sys_vn_min.toFixed(4));
-            setTxt("out-Xsys-nn-min", (X_sys_nn_min * 1000).toFixed(4));
+            setTxt("out-Xsys-nn-min", X_sys_nn_min.toFixed(4));
 
             setTxt("out-Rsys-vn-max", R_sys_vn_max.toFixed(4));
-            setTxt("out-Rsys-nn-max", (R_sys_nn_max * 1000).toFixed(4));
+            setTxt("out-Rsys-nn-max", R_sys_nn_max.toFixed(4));
             setTxt("out-Xsys-vn-max", X_sys_vn_max.toFixed(4));
-            setTxt("out-Xsys-nn-max", (X_sys_nn_max * 1000).toFixed(4));
+            setTxt("out-Xsys-nn-max", X_sys_nn_max.toFixed(4));
 
             // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
             const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1e6) / tx.S;
