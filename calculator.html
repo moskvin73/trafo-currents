@@ -574,8 +574,8 @@
             setTxt("out-R0-nn", R0_nn.toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
             setTxt("out-X0-nn", X0_nn.toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
             
-            const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2));
-            const I_kz3_vn_min = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_min, 2) + Math.pow(X_sys_vn_min, 2));
+            const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * (Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2)));
+            const I_kz3_vn_min = tx.Uvn * k_voltage / Math.sqrt(3 * (Math.pow(R_sys_vn_min, 2) + Math.pow(X_sys_vn_min, 2)));
             setTxt("out-Ik3-3-vn-max", I_kz3_vn_max.toFixed(3));
             setTxt("out-Ik3-3-vn-min", I_kz3_vn_min.toFixed(3));
             const I_kz2_vn_max = sqrt_3 * I_kz3_vn_max / 2;
