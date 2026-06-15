@@ -609,6 +609,25 @@
             setTxt("out-k-2-nn_vn-max", k_2_nn_vn_max.toFixed(3));
             // Коэффициент привидения минимального тока двухфазного КЗ к ВН
             setTxt("out-k-2-nn_vn-min", k_2_nn_vn_min.toFixed(3));
+            // Максимальный больший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_2_nn_max_b_vn = k_voltage * I_kz2_nn_max * k_2_nn_vn_max / kt;
+            setTxt("out-Ik3-2-nn-max-b-vn", Ik3_2_nn_max_b_vn.toFixed(3));
+            // Максимальный меньший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_2_nn_max_m_vn = k_voltage * I_kz2_nn_max * k_2_nn_vn_min / kt;
+            setTxt("out-Ik3-2-nn-max-m-vn", Ik3_2_nn_max_m_vn.toFixed(3));
+            // Минимальный ток двухфазного КЗ на выводах НН трансформатора
+            const I_kz2_nn_min = sqrt_3 * I_kz3_nn_min / 2;
+            setTxt("out-Ik3-2-nn-min", I_kz2_nn_min.toFixed(3));
+            // Минимальный больший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_2_nn_min_b_vn = k_voltage * I_kz2_nn_min * k_2_nn_vn_max / kt;
+            setTxt("out-Ik3-2-nn-min-b-vn", Ik3_2_nn_min_b_vn.toFixed(3));
+            // Минимальный меньший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_2_nn_min_m_vn = k_voltage * I_kz2_nn_min * k_2_nn_vn_min / kt;
+            setTxt("out-Ik3-2-nn-min-m-vn", Ik3_2_nn_min_m_vn.toFixed(3));
+            // Максимальный ток однофазного КЗ на выводах НН трансформатора
+            const Ik3_1_nn_max = sqrt_3 * tx.Unn * 1e3 / Math.sqrt(Math.pow(2 * (R_sys_nn_max + R1_nn) + R0_nn, 2) + Math.pow(2 * (X_sys_nn_max + X1_nn) + X0_nn, 2));
+            setTxt("out-Ik3-1-nn-max", Ik3_1_nn_max.toFixed(3));
+
         }
         // Запускаем чтение файла при старте страницы
         window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
