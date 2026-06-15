@@ -374,7 +374,7 @@
             const xSysInputMax = document.getElementById("input-X-sys-vn-max");
             const kVoltInput = document.getElementById("input-k-voltage");
 
-            if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
+            if (!selectElement || !rSysInputMin || !xSysInputMin  || !rSysInputMax || !xSysInputMax || !kVoltInput) return;
 
             const selectedId = selectElement.value;
             const tx = globalTransformersData.find(item => item.id === selectedId);
