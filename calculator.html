@@ -327,7 +327,7 @@
                         </tr>                        
                         <tr>
                             <td><strong>Максимальный ток трёхфазного КЗ на выводах НН трансформатора</strong></td>
-                            <td style="text-align: center;">$I_{\text{max.НН}}^{(3)} = \frac{U_{\text{ном.НН}}}{\sqrt{3((r_{\text{сист.max.НН}}+r_{\text {1т.НН}})^2 + (x_{\text{сист.max.НН}}+r_{\text {1т.НН}})^2)}}$</td>
+                            <td style="text-align: center;">$I_{\text{max.НН}}^{(3)} = \frac{U_{\text{ном.НН}} \cdot 10^{2}}{\sqrt{3((r_{\text{сист.max.НН}}+r_{\text {1т.НН}})^2 + (x_{\text{сист.max.НН}}+r_{\text {1т.НН}})^2)}}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
                         </tr>
                         <tr>
@@ -337,12 +337,37 @@
                         </tr>
                         <tr>
                             <td><strong>Минимальный ток трёхфазного КЗ на выводах НН трансформатора</strong></td>
-                            <td style="text-align: center;">$I_{\text{min.НН}}^{(3)} = \frac{U_{\text{ном.НН}}}{\sqrt{3((r_{\text{сист.min.НН}}+r_{\text {1т.НН}})^2 + (x_{\text{сист.min.НН}}+r_{\text {1т.НН}})^2)}}$</td>
+                            <td style="text-align: center;">$I_{\text{min.НН}}^{(3)} = \frac{U_{\text{ном.НН}} \cdot 10^{2}}{\sqrt{3((r_{\text{сист.min.НН}}+r_{\text {1т.НН}})^2 + (x_{\text{сист.min.НН}}+r_{\text {1т.НН}})^2)}}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
                         </tr>
                         <tr>
                             <td><strong>Минимальный ток трёхфазного КЗ на выводах НН трансформатора, приведённый к ВН</strong></td>
-                            <td style="text-align: center;">$I_{\text{max.НН}}^{(3)\prime} = \frac{k_{\text{сис}} I_{\text{min.НН}}^{(3)}}{k_{\text {тт}}}$</td>
+                            <td style="text-align: center;">$I_{\text{min.НН}}^{(3)\prime} = \frac{k_{\text{сис}} I_{\text{min.НН}}^{(3)}}{k_{\text {тт}}}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Максимальный ток двухфазного КЗ на выводах НН трансформатора</strong></td>
+                            <td style="text-align: center;">$I_{\text{max.НН}}^{(2)} = \frac{\sqrt{3}}{2}I_{\text{max.НН}}^{(3)}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Коэффициент привидения максимального тока двухфазного КЗ к ВН</strong></td>
+                            <td style="text-align: center;">$k_{\text{прив.max}}^{(2)}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Коэффициент привидения минимального тока двухфазного КЗ к ВН</strong></td>
+                            <td style="text-align: center;">$k_{\text{прив.min}}^{(2)}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Максимальный больший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН</strong></td>
+                            <td style="text-align: center;">$I_{\text{max.б.НН}}^{(2)\prime}=\frac{k_{\text{сис}} I_{\text{max.НН}}^{(2)}}{k_{\text {тт}}}k_{\text{прив.max}}^{(2)}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Максимальный меньший ток двухфазного КЗ на выводах НН трансформатора, приведённый к ВН</strong></td>
+                            <td style="text-align: center;">$I_{\text{max.м.НН}}^{(2)\prime}=\frac{k_{\text{сис}} I_{\text{max.НН}}^{(2)}}{k_{\text {тт}}}k_{\text{прив.min}}^{(2)}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
                         </tr>
 
