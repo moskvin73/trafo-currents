@@ -625,7 +625,7 @@
             const Ik3_2_nn_min_m_vn = k_voltage * I_kz2_nn_min * k_2_nn_vn_min / kt;
             setTxt("out-Ik3-2-nn-min-m-vn", Ik3_2_nn_min_m_vn.toFixed(3));
             // Максимальный ток однофазного КЗ на выводах НН трансформатора
-            const Ik3_1_nn_max = sqrt_3 * tx.Unn * 1e3 / Math.sqrt(Math.pow(2 * (R_sys_nn_max + R1_nn) + R0_nn, 2) + Math.pow(2 * (X_sys_nn_max + X0_nn) + X0_nn, 2));
+            const Ik3_1_nn_max = sqrt_3 * tx.Unn * 1e3 / Math.sqrt(Math.pow(2 * (R_sys_nn_max + R1_nn) + R0_nn, 2) + Math.pow(2 * (X_sys_nn_max + X1_nn) + X0_nn, 2));
             setTxt("out-Ik3-1-nn-max", Ik3_1_nn_max.toFixed(3));
 
         }
