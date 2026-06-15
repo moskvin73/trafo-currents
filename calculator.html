@@ -567,17 +567,12 @@
                 R0_nn = R1_nn;
                 X0_nn = X1_nn;
             } else {
-                R0_nn = tx.r0_tab !== null ? tx.r0_tab : R1_nn;
-                X0_nn = tx.x0_tab !== null ? tx.x0_tab : X1_nn;
+                R0_nn = tx.r0_tab !== null ? tx.r0_tab * 1e3 : R1_nn;
+                X0_nn = tx.x0_tab !== null ? tx.x0_tab * 1e3 : X1_nn;
             }
 
-            const R0_vn = R0_nn * ktSq;
-            const X0_vn = X0_nn * ktSq;
-
-            setTxt("out-R0-nn", (R0_nn * 1000).toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
-            setTxt("out-X0-nn", (X0_nn * 1000).toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
-            setTxt("out-R0-vn", R0_vn.toFixed(3));
-            setTxt("out-X0-vn", X0_vn.toFixed(3));
+            setTxt("out-R0-nn", R0_nn.toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
+            setTxt("out-X0-nn", X0_nn.toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
             
             const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2));
             const I_kz3_vn_min = tx.Uvn * k_voltage / Math.sqrt(3 * Math.pow(R_sys_vn_min, 2) + Math.pow(X_sys_vn_min, 2));
