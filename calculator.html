@@ -307,7 +307,7 @@
                                                     style="font-weight: bold; color: #d32f2f;">-</span> кА</td>
                         </tr>
                         <tr>
-                            <td><strong>Минимальный ток трёхфазного КЗ на выводах ВН трансформатора/strong></td>
+                            <td><strong>Минимальный ток трёхфазного КЗ на выводах ВН трансформатора</strong></td>
                             <td style="text-align: center;">$I_{\text{min.ВН}}^{(3)} = \frac{k_{\text{сис}} U_{\text{ном.ВН}}}{\sqrt{3(r_{\text{сист.min.ВН}}^2 + x_{\text{сист.min.ВН}}^2)}}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-vn-min" style="font-weight: bold; color: #d32f2f;">-</span> кА</td>
                         </tr>
@@ -567,24 +567,35 @@
             setTxt("out-R0-nn", R0_nn.toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
             setTxt("out-X0-nn", X0_nn.toFixed(3) + (tx.x0_tab === "Z1" ? " (=X1)" : ""));
             
+            // Максимальный ток трёхфазного КЗ на выводах ВН трансформатора
             const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * (Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2)));
+            // Минимальный ток трёхфазного КЗ на выводах ВН трансформатора
             const I_kz3_vn_min = tx.Uvn * k_voltage / Math.sqrt(3 * (Math.pow(R_sys_vn_min, 2) + Math.pow(X_sys_vn_min, 2)));
             setTxt("out-Ik3-3-vn-max", I_kz3_vn_max.toFixed(3));
             setTxt("out-Ik3-3-vn-min", I_kz3_vn_min.toFixed(3));
+            // Максимальный ток двухфазного КЗ на выводах ВН трансформатора
             const I_kz2_vn_max = sqrt_3 * I_kz3_vn_max / 2;
+            // Минимальный ток двухфазного КЗ на выводах ВН трансформатора
             const I_kz2_vn_min = sqrt_3 * I_kz3_vn_min / 2;
             setTxt("out-Ik3-2-vn-max", I_kz2_vn_max.toFixed(3));
             setTxt("out-Ik3-2-vn-min", I_kz2_vn_min.toFixed(3));
 
+            // Максимальный ток трёхфазного КЗ на выводах НН трансформатора
             const I_kz3_nn_max = tx.Unn * 1e3 / Math.sqrt(3 *(Math.pow(R_sys_nn_max + R1_nn, 2) + Math.pow(X_sys_nn_max + X1_nn, 2)));
             setTxt("out-Ik3-3-nn-max", I_kz3_nn_max.toFixed(3));
+            // Максимальный ток трёхфазного КЗ на выводах НН трансформатора, приведённый к ВН
             const I_kz3_nn_max_vn = k_voltage * I_kz3_nn_max / kt;
             setTxt("out-Ik3-3-nn-max-vn", I_kz3_nn_max_vn.toFixed(3));
 
+            // Минимальный ток трёхфазного КЗ на выводах НН трансформатора
             const I_kz3_nn_min = tx.Unn * 1e3 / Math.sqrt(3 *(Math.pow(R_sys_nn_min + R1_nn, 2) + Math.pow(X_sys_nn_min + X1_nn, 2)));
             setTxt("out-Ik3-3-nn-min", I_kz3_nn_min.toFixed(3));
+            // Минимальный ток трёхфазного КЗ на выводах НН трансформатора, приведённый к ВН
             const I_kz3_nn_min_vn = k_voltage * I_kz3_nn_min / kt;
             setTxt("out-Ik3-3-nn-min-vn", I_kz3_nn_min_vn.toFixed(3));
+            // Максимальный ток двухфазного КЗ на выводах НН трансформатора
+            const I_kz2_nn_max = sqrt_3 * I_kz3_nn_max / 2;
+            // Коэффициент привидения максимального тока двухфазного КЗ к ВН
 
         }
         // Запускаем чтение файла при старте страницы
