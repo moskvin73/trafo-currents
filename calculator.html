@@ -586,32 +586,10 @@
             setTxt("out-Ik3-3-vn-max", I_kz3_vn_max.toFixed(3));
             setTxt("out-Ik3-3-vn-min", I_kz3_vn_min.toFixed(3));
             const I_kz2_vn_max = sqrt_3 * I_kz3_vn_max / 2;
-            const I_kz2_vn_min = sqrt_3 * I_kz3_vn_min / 2; out-Ik3-2-vn-max
+            const I_kz2_vn_min = sqrt_3 * I_kz3_vn_min / 2;
             setTxt("out-Ik3-2-vn-max", I_kz2_vn_max.toFixed(3));
             setTxt("out-Ik3-2-vn-min", I_kz2_vn_min.toFixed(3));
 
-            // 6. Расчет токов короткого замыкания на шинах НН (0.4 кВ) с учетом полного импедаса системы
-            const I_kz3_nn = ((tx.Unn * 1000) / (Math.sqrt(3) * Z1_ekv_nn)) * k_voltage;
-            const I_kz2_nn = (Math.sqrt(3) / 2) * I_kz3_nn;
-
-            // Однофазное КЗ: Внимание! В расчете прямой последовательности участвуют ЭКВИВАЛЕНТНЫЕ сопротивления (Тр + Система)
-            // Формула знаменателя: Z(1) = sqrt((2*R1.экв + R0.тр)^2 + (2*X1.экв + X0.тр)^2)
-            const Z_loop_1ph_nn = Math.sqrt(Math.pow((2 * R1_ekv_nn + R0_nn), 2) + Math.pow((2 * X1_ekv_nn + X0_nn), 2));
-            const I_kz1_nn = ((3 * (tx.Unn * 1000 / Math.sqrt(3))) / Z_loop_1ph_nn) * k_voltage;
-
-            // Приведение токов КЗ на сторону ВН (делением на линейный коэффициент трансформации kt)
-            const I_kz3_vn = I_kz3_nn / kt;
-            const I_kz2_vn = I_kz2_nn / kt;
-            const I_kz1_vn = I_kz1_nn / kt;
-
-            // Вывод токов в таблицу
-            setTxt("out-Ik3-3-nn", Math.round(I_kz3_nn).toLocaleString());
-            setTxt("out-Ik3-2-nn", Math.round(I_kz2_nn).toLocaleString());
-            setTxt("out-Ik3-1-nn", Math.round(I_kz1_nn).toLocaleString());
-
-            setTxt("out-Ik3-3-vn", I_kz3_vn.toFixed(2));
-            setTxt("out-Ik3-2-vn", I_kz2_vn.toFixed(2));
-            setTxt("out-Ik3-1-vn", I_kz1_vn.toFixed(2));
         }
         // Запускаем чтение файла при старте страницы
         window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
