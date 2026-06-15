@@ -228,17 +228,30 @@
                             <td colspan="4">2. Сопротивление энергосистемы (введённое)</td>
                         </tr>
                         <tr>
-                            <td>Активное сопротивление энергосистемы</td>
+                            <td>Активное сопротивление энергосистемы в миниальном режиме</td>
                             <td style="text-align: center;">$R_{сист}$</td>
-                            <td style="text-align: center;"><span id="out-Rsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
-                            <td style="text-align: center;"><span id="out-Rsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                            <td style="text-align: center;"><span id="out-Rsys-vn-min" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td style="text-align: center;"><span id="out-Rsys-nn-min" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
                         <tr>
-                            <td>Индуктивное сопротивление энергосистемы</td>
-                            <td style="text-align: center;">$X_{сист}$</td>
-                            <td style="text-align: center;"><span id="out-Xsys-vn" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
-                            <td style="text-align: center;"><span id="out-Xsys-nn" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                            <td>Активное сопротивление энергосистемы в максимальном режиме</td>
+                            <td style="text-align: center;">$R_{сист}$</td>
+                            <td style="text-align: center;"><span id="out-Rsys-vn-max" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td style="text-align: center;"><span id="out-Rsys-nn-max" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
+                        <tr>
+                            <td>Индуктивное сопротивление энергосистемы в миниальном режиме</td>
+                            <td style="text-align: center;">$X_{сист}$</td>
+                            <td style="text-align: center;"><span id="out-Xsys-vn-min" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td style="text-align: center;"><span id="out-Xsys-nn-min" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                        </tr>
+                        <tr>
+                            <td>Индуктивное сопротивление энергосистемы в максимальном режиме</td>
+                            <td style="text-align: center;">$X_{сист}$</td>
+                            <td style="text-align: center;"><span id="out-Xsys-vn-max" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
+                            <td style="text-align: center;"><span id="out-Xsys-nn-max" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
+                        </tr>
+
                         <!-- БЛОК 3: СОПРОТИВЛЕНИЯ ТРАНСФОРМАТОРА (ПРЯМАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ) -->
                         <tr style="background-color: #fafafa; font-weight: bold;">
                             <td colspan="4">3. Сопротивления прямой последовательности трансформатора</td>
@@ -355,8 +368,8 @@
         // Аналитическая функция расчета (работает с данными из оперативной памяти)
         function updateCalculation() {
             const selectElement = document.getElementById("transformer-select");
-            const rSysInput = document.getElementById("input-R-sys-vn-min");
-            const xSysInput = document.getElementById("input-X-sys-vn-min");
+            const rSysInputMin = document.getElementById("input-R-sys-vn-min");
+            const xSysInputMin = document.getElementById("input-X-sys-vn-min");
             const rSysInputMax = document.getElementById("input-R-sys-vn-max");
             const xSysInputMax = document.getElementById("input-X-sys-vn-max");
             const kVoltInput = document.getElementById("input-k-voltage");
@@ -368,8 +381,10 @@
             if (!tx) return;
 
             // Считываем сопротивления системы на ВН (Ом)
-            const R_sys_vn = parseFloat(rSysInput.value) || 0;
-            const X_sys_vn = parseFloat(xSysInput.value) || 0;
+            const R_sys_vn_min = parseFloat(rSysInputMin.value) || 0;
+            const X_sys_vn_min = parseFloat(xSysInputMin.value) || 0;
+            const R_sys_vn_max = parseFloat(rSysInputMax.value) || 0;
+            const X_sys_vn_max = parseFloat(xSysInputMax.value) || 0;
             const k_voltage = parseFloat(kVoltInput.value) || 1.0;
 
             const setTxt = (id, val) => {
@@ -407,13 +422,20 @@
             setTxt("I-btn", I_btn.toFixed(1));
 
             // 3. Расчет и вывод сопротивления системы (пересчет ВН -> НН делением на ktSq)
-            const R_sys_nn = R_sys_vn / ktSq;
-            const X_sys_nn = X_sys_vn / ktSq;
+            const R_sys_nn_min = R_sys_vn_min / ktSq;
+            const R_sys_nn_max = R_sys_vn_max / ktSq;
+            const X_sys_nn_min = X_sys_vn_min / ktSq;
+            const X_sys_nn_max = X_sys_vn_max / ktSq;
 
-            setTxt("out-Rsys-vn", R_sys_vn.toFixed(4));
-            setTxt("out-Rsys-nn", (R_sys_nn * 1000).toFixed(4));
-            setTxt("out-Xsys-vn", X_sys_vn.toFixed(4));
-            setTxt("out-Xsys-nn", (X_sys_nn * 1000).toFixed(4));
+            setTxt("out-Rsys-vn-min", R_sys_vn_min.toFixed(4));
+            setTxt("out-Rsys-nn-min", (R_sys_nn_min * 1000).toFixed(4));
+            setTxt("out-Xsys-vn-min", X_sys_vn_min.toFixed(4));
+            setTxt("out-Xsys-nn-min", (X_sys_nn_min * 1000).toFixed(4));
+
+            setTxt("out-Rsys-vn-max", R_sys_vn_max.toFixed(4));
+            setTxt("out-Rsys-nn-max", (R_sys_nn_max * 1000).toFixed(4));
+            setTxt("out-Xsys-vn-max", X_sys_vn_max.toFixed(4));
+            setTxt("out-Xsys-nn-max", (X_sys_nn_max * 1000).toFixed(4));
 
             // 4. Аналитический расчет сопротивлений трансформатора (на стороне НН, в Ом)
             const Z1_nn = (tx.uk / 100) * (Math.pow(tx.Unn, 2) * 1000) / tx.S;
