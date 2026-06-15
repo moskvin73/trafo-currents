@@ -204,7 +204,7 @@
                                     style="font-weight: bold;">-</span> кВт</td>
                         </tr>
                         <tr>
-                            <td>Напряжение КЗ $u_к\%$ / Ток ХХ $i_{\text {хх}}\%$</td>
+                            <td>Напряжение короткого замыкания / Ток холостого хода</td>
                             <td style="text-align: center;">$u_{\text {кз%}}$ / $i_{\text {хх%}}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-uk"
                                     style="font-weight: bold;">-</span> % / <span id="out-ixx"
@@ -229,25 +229,25 @@
                         </tr>
                         <tr>
                             <td>Активное сопротивление энергосистемы в миниальном режиме</td>
-                            <td style="text-align: center;">$R_{\text {сист.min}}$</td>
+                            <td style="text-align: center;">$r_{\text {сист.min}}$</td>
                             <td style="text-align: center;"><span id="out-Rsys-vn-min" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
                             <td style="text-align: center;"><span id="out-Rsys-nn-min" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
                         <tr>
                             <td>Активное сопротивление энергосистемы в максимальном режиме</td>
-                            <td style="text-align: center;">$R_{\text {сист.max}}$</td>
+                            <td style="text-align: center;">$r_{\text {сист.max}}$</td>
                             <td style="text-align: center;"><span id="out-Rsys-vn-max" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
                             <td style="text-align: center;"><span id="out-Rsys-nn-max" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
                         <tr>
                             <td>Индуктивное сопротивление энергосистемы в миниальном режиме</td>
-                            <td style="text-align: center;">$X_{\text {сист.min}}$</td>
+                            <td style="text-align: center;">$x_{\text {сист.min}}$</td>
                             <td style="text-align: center;"><span id="out-Xsys-vn-min" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
                             <td style="text-align: center;"><span id="out-Xsys-nn-min" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
                         <tr>
                             <td>Индуктивное сопротивление энергосистемы в максимальном режиме</td>
-                            <td style="text-align: center;">$X_{\text {сист.max}}$</td>
+                            <td style="text-align: center;">$x_{\text {сист.max}}$</td>
                             <td style="text-align: center;"><span id="out-Xsys-vn-max" style="font-weight: bold; color: #b76e00;">-</span> Ом</td>
                             <td style="text-align: center;"><span id="out-Xsys-nn-max" style="font-weight: bold; color: #b76e00;">-</span> мОм</td>
                         </tr>
@@ -303,12 +303,29 @@
                             <td>Ток на выводах НН (0.4 кВ)</td>
                         </tr>
                         <tr>
-                            <td><strong>Трёхфазное КЗ</strong></td>
-                            <td style="text-align: center;">$I_{\text {КЗ}}^{(3)} = \frac{U_{\text {НН}}}{\sqrt{3} \cdot Z_{\text {1.экв.нн}}}$</td>
-                            <td style="text-align: center;"><span id="out-Ik3-3-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                            <td><strong>Максимальный ток трёхфазного КЗ на выводах ВН трансформатора</strong></td>
+                            <td style="text-align: center;">$I_{\text {КЗ}}^{(3)} = \frac{U_{\text {ном.ВН}}}{\sqrt{3 \left( r_{\text {сист.max}}^2+x_{\text {сист.max}}^2 \right)}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-vn-max" 
+                                                    style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Минимальный ток трёхфазного КЗ на выводах ВН трансформатора/strong></td>
+                            <td style="text-align: center;">$I_{\text {КЗ.max.ВН}}^{(3)} = \frac{1,05 \cdot U_{\text {ВН}}}{\sqrt{}}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-vn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
                             <td style="text-align: center;"><span id="out-Ik3-3-nn"
                                     style="font-weight: bold; color: #d32f2f; font-size: 1.1em;">-</span> А</td>
                         </tr>
+                        <tr>
+                            <td><strong>Максимальный ток трёхфазного КЗ на выводах НН трансформатора/strong></td>
+                            <td style="text-align: center;">$I_{\text {КЗ}}^{(3)} = \frac{U_{\text {НН}}}{\sqrt{3} \cdot Z_{\text {1.экв.нн}}}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Максимальный ток трёхфазного КЗ на выводах НН трансформатора/strong></td>
+                            <td style="text-align: center;">$I_{\text {КЗ}}^{(3)} = \frac{U_{\text {НН}}}{\sqrt{3} \cdot Z_{\text {1.экв.нн}}}$</td>
+                            <td colspan="2" style="text-align: center;"><span id="out-Ik3-3-nn" style="font-weight: bold; color: #d32f2f;">-</span> А</td>
+                        </tr>
+
                         <tr>
                             <td><strong>Двухфазное КЗ</strong></td>
                             <td style="text-align: center;">$I_{\text {КЗ}}^{(2)} = \frac{\sqrt{3}}{2} \cdot I_{\text {КЗ}}^{(3)}$</td>
