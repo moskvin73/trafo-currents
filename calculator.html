@@ -554,13 +554,6 @@
             setTxt("out-Z1-nn", Z1_nn.toFixed(3));
             setTxt("out-Z1-vn", Z1_vn.toFixed(3));
 
-            // Эквивалентные сопротивления цепи прямой последовательности (Система + Трансформатор)
-            const R1_ekv_nn = R1_nn + R_sys_nn_min;
-            const X1_ekv_nn = X1_nn + X_sys_nn_min;
-            const Z1_ekv_nn = Math.sqrt(Math.pow(R1_ekv_nn, 2) + Math.pow(X1_ekv_nn, 2));
-
-            const Z1_ekv_vn = Z1_ekv_nn * ktSq;
-
             // 5. Логика для нулевой последовательности Z0 трансформатора
             let R0_nn, X0_nn;
             if (tx.r0_tab === "Z1" || tx.x0_tab === "Z1") {
@@ -582,6 +575,16 @@
             const I_kz2_vn_min = sqrt_3 * I_kz3_vn_min / 2;
             setTxt("out-Ik3-2-vn-max", I_kz2_vn_max.toFixed(3));
             setTxt("out-Ik3-2-vn-min", I_kz2_vn_min.toFixed(3));
+
+            const I_kz3_nn_max = tx.Unn * 1e3 / Math.sqrt(3 *(Math.pow(R_sys_nn_max + R1_nn, 2) + Math.pow(X_sys_nn_max + X1_nn, 2)));
+            setTxt("out-Ik3-3-nn-max", I_kz3_nn_max.toFixed(3));
+            const I_kz3_nn_max_vn = k_voltage * I_kz3_nn_max / kt;
+            setTxt("out-Ik3-3-nn-max-vn", I_kz3_nn_max_vn.toFixed(3));
+
+            const I_kz3_nn_min = tx.Unn * 1e3 / Math.sqrt(3 *(Math.pow(R_sys_nn_min + R1_nn, 2) + Math.pow(X_sys_nn_min + X1_nn, 2)));
+            setTxt("out-Ik3-3-nn-min", I_kz3_nn_min.toFixed(3));
+            const I_kz3_nn_min_vn = k_voltage * I_kz3_nn_min / kt;
+            setTxt("out-Ik3-3-nn-min-vn", I_kz3_nn_min_vn.toFixed(3));
 
         }
         // Запускаем чтение файла при старте страницы
