@@ -349,8 +349,10 @@
         // Аналитическая функция расчета (работает с данными из оперативной памяти)
         function updateCalculation() {
             const selectElement = document.getElementById("transformer-select");
-            const rSysInput = document.getElementById("input-R-sys-vn");
-            const xSysInput = document.getElementById("input-X-sys-vn");
+            const rSysInput = document.getElementById("input-R-sys-vn-min");
+            const xSysInput = document.getElementById("input-X-sys-vn-min");
+            const rSysInputMax = document.getElementById("input-R-sys-vn-max");
+            const xSysInputMax = document.getElementById("input-X-sys-vn-max");
             const kVoltInput = document.getElementById("input-k-voltage");
 
             if (!selectElement || !rSysInput || !xSysInput || !kVoltInput) return;
