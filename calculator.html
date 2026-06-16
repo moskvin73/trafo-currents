@@ -627,11 +627,32 @@
             // Максимальный ток однофазного КЗ на выводах НН трансформатора
             const Ik3_1_nn_max = sqrt_3 * tx.Unn * 1e3 / Math.sqrt(Math.pow(2 * (R_sys_nn_max + R1_nn) + R0_nn, 2) + Math.pow(2 * (X_sys_nn_max + X1_nn) + X0_nn, 2));
             setTxt("out-Ik3-1-nn-max", Ik3_1_nn_max.toFixed(3));
-
+            // 
         }
         // Запускаем чтение файла при старте страницы
         window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
           
+function updateFormula(elementId, newMathText) {
+    // Проверяем, загрузился ли MathJax на странице
+    if (typeof MathJax === 'undefined' || !MathJax.typesetPromise) {
+        console.warn('MathJax еще не загружен. Пробуем снова через 100мс...');
+        setTimeout(() => updateFormula(elementId, newMathText), 100);
+        return;
+    }
+
+    const container = document.getElementById(elementId);
+    if (!container) return;
+
+    // 1. Очищаем старый кэш MathJax для этого элемента
+    MathJax.typesetClear([container]);
+
+    // 2. Вставляем новый текст (в вашем случае с символами $)
+    container.innerText = newMathText;
+
+    // 3. Запускаем рендеринг новой формулы
+    MathJax.typesetPromise([container])
+        .catch((err) => console.error('Ошибка MathJax:', err));
+}        
      </script>
 </body>
 </html>
