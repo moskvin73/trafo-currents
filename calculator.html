@@ -471,47 +471,6 @@
             const X_sys_vn_max = parseFloat(xSysInputMax.value) || 0;
             const k_voltage = parseFloat(kVoltInput.value) || 1.0;
 
-            const setTxt = (id, val) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                //if (el) el.innerText = val;
- 
-                let finalValue = '';
-                let isMath = false; // Флаг: нужно ли подключать MathJax для этого значения
-
-                // 1. Проверка на NaN
-                if (Number.isNaN(val) || val === 'NaN') {
-                    finalValue = 'NaN';
-                } 
-                // 2. Проверка на положительную бесконечность
-                else if (val === Infinity || val === '+Infinity' || val === 'Infinity') {
-                    finalValue = '$\\infty$'; // Команда TeX для бесконечности
-                    isMath = true;
-                } 
-                // 3. Проверка на отрицательную бесконечность
-                else if (val === -Infinity || val === '-Infinity') {
-                    finalValue = '$-\\infty$'; // Команда TeX для минус бесконечности
-                    isMath = true;
-                } 
-                // 4. Обычные числа и строки (замена точки на запятую)
-                else if (typeof val === 'number') {
-                    finalValue = val.toString().replace('.', ',');
-                } else if (typeof val === 'string') {
-                    finalValue = val.replace('.', ',');
-                } else {
-                    finalValue = val ?? '';
-                }
-
-                // Записываем результат в элемент
-                el.innerText = finalValue;
-
-                // Если это бесконечность, принудительно вызываем MathJax для этого элемента
-                if (isMath && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetClear([el]);
-                    MathJax.typesetPromise([el]).catch((err) => console.error('MathJax error:', err));
-                }
-            };
-
             // Базовые параметры
             const kt = tx.Uvn / tx.Unn; // Коэффициент трансформации
             const ktSq = Math.pow(kt, 2); // k_т^2

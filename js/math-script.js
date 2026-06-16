@@ -25,7 +25,50 @@ function updateFormula(elementId, newMathText) {
     MathJax.typesetPromise([container]).catch((err) => console.error(err));
 }
 
-// 3. ДИНАМИЧЕСКАЯ ЗАГРУЗКА MATHJAX
+// 3. Инженерная функция вывода чисел и красивых бесконечностей
+const setTxt = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    //if (el) el.innerText = val;
+
+    let finalValue = '';
+    let isMath = false; // Флаг: нужно ли подключать MathJax для этого значения
+
+    // 1. Проверка на NaN
+    if (Number.isNaN(val) || val === 'NaN') {
+        finalValue = 'NaN';
+    } 
+    // 2. Проверка на положительную бесконечность
+    else if (val === Infinity || val === '+Infinity' || val === 'Infinity') {
+        finalValue = '$\\infty$'; // Команда TeX для бесконечности
+        isMath = true;
+    } 
+    // 3. Проверка на отрицательную бесконечность
+    else if (val === -Infinity || val === '-Infinity') {
+        finalValue = '$-\\infty$'; // Команда TeX для минус бесконечности
+        isMath = true;
+    } 
+    // 4. Обычные числа и строки (замена точки на запятую)
+    else if (typeof val === 'number') {
+        finalValue = val.toString().replace('.', ',');
+    } else if (typeof val === 'string') {
+        finalValue = val.replace('.', ',');
+    } else {
+        finalValue = val ?? '';
+    }
+
+    // Записываем результат в элемент
+    el.innerText = finalValue;
+
+    // Если это бесконечность, принудительно вызываем MathJax для этого элемента
+    if (isMath && typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+        MathJax.typesetClear([el]);
+        MathJax.typesetPromise([el]).catch((err) => console.error('MathJax error:', err));
+    }
+};
+
+
+// 3. 4. Автоматическая загрузка MathJax с CDN
 // Этот код сам создаст и вставит тег скрипта в документ
 (function() {
     const script = document.createElement('script');
