@@ -52,7 +52,13 @@ const setTxt = (id, val) => {
     else if (typeof val === 'number') {
         finalValue = val.toString().replace('.', ',');
     } else if (typeof val === 'string') {
+        // Заменяем точки на запятые только в числах (например, 5.5 -> 5,5)
         finalValue = val.replace('.', ',');
+        // ПРОВЕРКА: Ищем хотя бы одну пару знаков $ (например, $...$)
+        // Регулярное выражение проверяет наличие текста, обернутого в доллары
+        if (/\$.*?\$/.test(finalValue)) {
+            isMath = true;
+        }        
     } else {
         finalValue = val ?? '';
     }
