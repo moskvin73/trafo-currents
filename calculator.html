@@ -626,6 +626,21 @@
             setTxt("out-k-1-nn_vn-max", k_1_nn_vn_max.toFixed(3));
             // Коэффициент привидения минимального тока однофазного КЗ к ВН
             setTxt("out-k-1-nn_vn-min", k_1_nn_vn_min.toFixed(3));
+            // Максимальный больший ток однофазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_1_nn_max_b_vn = Ik3_1_nn_max * k_1_nn_vn_max / kt;
+            etTxt("out-Ik3-1-nn-max-b-vn", Ik3_1_nn_max_b_vn.toFixed(3));
+            // Максимальный ментший ток однофазного КЗ на выводах НН трансформатора, приведённый к ВН
+            const Ik3_1_nn_max_m_vn = Ik3_1_nn_max * k_1_nn_vn_min / kt;
+            setTxt("out-Ik3-1-nn-max-m-vn", Ik3_1_nn_max_m_vn.toFixed(3));
+            // Минимальный ток однофазного КЗ на выводах НН трансформатора
+            const Ik3_1_nn_min = sqrt_3 * tx.Unn * 1e3 / Math.sqrt(Math.pow(2 * (R_sys_nn_min + R1_nn) + R0_nn, 2) + Math.pow(2 * (X_sys_nn_min + X1_nn) + X0_nn, 2));
+            setTxt("out-Ik3-1-nn-min", Ik3_1_nn_min.toFixed(3));
+             // Минимальный больший ток однофазного КЗ на выводах НН трансформатора, приведённый к ВН
+             const Ik3_1_nn_min_b_vn = Ik3_1_nn_min * k_1_nn_vn_max / kt;
+             setTxt("out-Ik3-1-nn-min-b-vn", Ik3_1_nn_min_b_vn.toFixed(3));
+             // Минимальный меньший ток однофазного КЗ на выводах НН трансформатора, приведённый к ВН
+             const Ik3_1_nn_min_m_vn = Ik3_1_nn_min * k_1_nn_vn_min / kt;
+             setTxt("out-Ik3-1-nn-min-m-vn", Ik3_1_nn_min_m_vn.toFixed(3));
         }
         // Запускаем чтение файла при старте страницы
         window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
