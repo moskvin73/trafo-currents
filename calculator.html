@@ -284,11 +284,6 @@
                             <td style="text-align: center;">$r_{\text {0т}}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-R0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
                         </tr>
-                        <tr>
-                            <td>Индуктивное сопротивление нулевой посл.</td>
-                            <td style="text-align: center;">$x_{\text {0т}}$</td>
-                            <td colspan="2" style="text-align: center;"><span id="out-X0-nn" style="font-weight: bold; color: #e65100;">-</span> мОм</td>
-                        </tr>
 
                         <!-- БЛОК 5: ТОКИ КЗ И ИХ ПРИВЕДЕНИЕ -->
                         <tr style="background-color: #e3f2fd; font-weight: bold;">
@@ -559,8 +554,13 @@
                 R0_nn = R1_nn;
                 X0_nn = X1_nn;
             } else {
+<<<<<<< HEAD
+                R0_nn = tx.r0_tab !== null ? tx.r0_tab * 1000 : R1_nn;
+                X0_nn = tx.x0_tab !== null ? tx.x0_tab * 1000 : X1_nn;
+=======
                 R0_nn = tx.r0_tab !== null ? tx.r0_tab * 1e3 : R1_nn;
                 X0_nn = tx.x0_tab !== null ? tx.x0_tab * 1e3 : X1_nn;
+>>>>>>> a0c564920b09d840df44a1de29933ac8977999b7
             }
 
             setTxt("out-R0-nn", R0_nn.toFixed(3) + (tx.r0_tab === "Z1" ? " (=R1)" : ""));
