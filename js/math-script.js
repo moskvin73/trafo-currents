@@ -75,49 +75,37 @@ const setTxt = (id, val) => {
 
 // Автоматический перехват копирования для Microsoft Word
 document.addEventListener('copy', function(e) {
-    // 1. Проверяем, загружен ли MathJax
-    if (typeof MathJax === 'undefined' || !MathJax.startup || !MathJax.startup.toMML) {
-        return; 
-    }
-
-    // 2. Получаем выделение пользователя
+     // 1. Получаем выделение пользователя
     const selection = window.getSelection();
     if (selection.rangeCount === 0) return;
 
-    // Создаем временный контейнер
+    // 2. Создаем временный контейнер и копируем туда выделенный фрагмент
     const container = document.createElement('div');
     for (let i = 0; i < selection.rangeCount; i++) {
-        // ИСПРАВЛЕНО: используем cloneContents(), чтобы скопировать содержимое диапазона
-        const rangeFragment = selection.getRangeAt(i).cloneContents();
-        container.appendChild(rangeFragment);
+        container.appendChild(selection.getRangeAt(i).cloneContents());
     }
 
-    // 3. Ищем все отрендеренные формулы MathJax внутри выделенного фрагмента
+    // 3. Находим все контейнеры MathJax внутри скопированного фрагмента
     const mathContainers = container.querySelectorAll('mjx-container');
     
     if (mathContainers.length > 0) {
         mathContainers.forEach(mjx => {
-            if (mjx.mjxRoot) {
-                // Конвертируем внутреннее дерево MathJax в строку MathML
-                const mathmlString = MathJax.startup.toMML(mjx.mjxRoot);
-                
-                // Создаем временный элемент, чтобы получить чистый DOM MathML
-                const dummy = document.createElement('div');
-                dummy.innerHTML = mathmlString;
-                const mathmlElement = dummy.firstElementChild;
-
-                // Заменяем сложную SVG-верстку браузера на чистый MathML-тег
-                mjx.parentNode.replaceChild(mathmlElement, mjx);
+            // Ищем скрытый тег <math>, который MathJax всегда генерирует для доступности
+            const nativeMathTag = mjx.querySelector('mjx-assistive-mml math');
+            
+            if (nativeMathTag) {
+                // Извлекаем его и заменяем им весь огромный блок <mjx-container>
+                mjx.parentNode.replaceChild(nativeMathTag, mjx);
             }
         });
 
-        // 4. Перезаписываем данные в буфер обмена
+        // 4. Записываем очищенный HTML с нативными формулами Word в буфер обмена
         e.clipboardData.setData('text/html', container.innerHTML);
         e.clipboardData.setData('text/plain', selection.toString());
 
-        // Отменяем стандартное системное копирование
+        // Отменяем стандартное копирование браузера, так как мы подменили данные
         e.preventDefault();
-        console.log(`Успешно обработано формул для Word: ${mathContainers.length}`);
+        console.log(`Успешно перенесено формул в формат Word: ${mathContainers.length}`);
     }
 });
 
