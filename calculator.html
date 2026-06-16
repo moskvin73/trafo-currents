@@ -296,9 +296,8 @@
                         </tr>
                         <tr style="text-align: center; font-weight: bold;">
                             <td>Вид короткого замыкания</td>
-                            <td>Формула (для стороны НН)</td>
-                            <td>Ток, приведенный к ВН</td>
-                            <td>Ток на выводах НН (0.4 кВ)</td>
+                            <td>Формула</td>
+                            <td colspan="2">Ток</td>
                         </tr>
                         <tr>
                             <td><strong>Максимальный ток трёхфазного КЗ на выводах ВН трансформатора</strong></td>
@@ -350,12 +349,12 @@
                         </tr>
                         <tr>
                             <td><strong>Коэффициент привидения максимального тока двухфазного КЗ к ВН</strong></td>
-                            <td style="text-align: center;">$k_{\text{прив.max}}^{(2)}$</td>
+                            <td id="F_k-2-nn_vn-max" style="text-align: center;">$k_{\text{прив.max}}^{(2)}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-k-2-nn_vn-max" style="font-weight: bold; color: #d32f2f;">-</span></td>
                         </tr>
                         <tr>
                             <td><strong>Коэффициент привидения минимального тока двухфазного КЗ к ВН</strong></td>
-                            <td style="text-align: center;">$k_{\text{прив.min}}^{(2)}$</td>
+                            <td id="F_k-2-nn_vn-min" style="text-align: center;">$k_{\text{прив.min}}^{(2)}$</td>
                             <td colspan="2" style="text-align: center;"><span id="out-k-2-nn_vn-min" style="font-weight: bold; color: #d32f2f;">-</span></td>
                         </tr>
                         <tr>
@@ -599,11 +598,17 @@
             // Коэффициент привидения максимального тока двухфазного КЗ к ВН
             let k_2_nn_vn_max, k_2_nn_vn_min;
             if (tx.schema_type == 0) {
+                // Y/Yн
                 k_2_nn_vn_max = k_2_nn_vn_min = 1
+                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.max}}^{(2)}=1$');
+                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.min}}^{(2)}=1$');
             }
             else {
+                // D/Yн, Y/Zн
                 k_2_nn_vn_max = 2 / sqrt_3;
+                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.max}}^{(2)}=\\frac{2}{\\sqrt{3}}$');
                 k_2_nn_vn_min = 1 / sqrt_3;
+                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.min}}^{(2)}=\\frac{1}{\\sqrt{3}}$');
             }
             // Коэффициент привидения максимального тока двухфазного КЗ к ВН
             setTxt("out-k-2-nn_vn-max", k_2_nn_vn_max.toFixed(3));
