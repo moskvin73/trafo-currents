@@ -547,7 +547,7 @@
             }
 
             setTxt("out-R0-nn", R0_nn.toFixed(3) + (tx.r0_tab === "Z1" ? " $(=r_{\\text {1т}})$" : ""));
-            setTxt("out-X0-nn", X0_nn.toFixed(3) + (tx.x0_tab === "Z1" ? " $(=X_{\\text {1т}})$" : ""));
+            setTxt("out-X0-nn", X0_nn.toFixed(3) + (tx.x0_tab === "Z1" ? " $(=x_{\\text {1т}})$" : ""));
             
             // Максимальный ток трёхфазного КЗ на выводах ВН трансформатора
             const I_kz3_vn_max = tx.Uvn * k_voltage / Math.sqrt(3 * (Math.pow(R_sys_vn_max, 2) + Math.pow(X_sys_vn_max, 2)));
