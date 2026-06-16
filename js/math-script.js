@@ -77,31 +77,31 @@ const setTxt = (id, val) => {
 document.addEventListener('copy', function(e) {
     // 1. Проверяем, загружен ли MathJax
     if (typeof MathJax === 'undefined' || !MathJax.startup || !MathJax.startup.toMML) {
-        return; // Если MathJax не готов, копируем как обычно
+        return; 
     }
 
-    // 2. Получаем то, что пользователь выделил на странице
+    // 2. Получаем выделение пользователя
     const selection = window.getSelection();
     if (selection.rangeCount === 0) return;
 
-    // Создаем временный контейнер, чтобы вытащить HTML выделенного фрагмента
+    // Создаем временный контейнер
     const container = document.createElement('div');
     for (let i = 0; i < selection.rangeCount; i++) {
-        container.appendChild(selection.getRangeAt(i).cloneNode(true));
+        // ИСПРАВЛЕНО: используем cloneContents(), чтобы скопировать содержимое диапазона
+        const rangeFragment = selection.getRangeAt(i).cloneContents();
+        container.appendChild(rangeFragment);
     }
 
     // 3. Ищем все отрендеренные формулы MathJax внутри выделенного фрагмента
-    // MathJax v3 помечает свои контейнеры тегом <mjx-container>
     const mathContainers = container.querySelectorAll('mjx-container');
     
     if (mathContainers.length > 0) {
-        // Проходимся по каждой формуле и меняем её визуальный код на скрытый MathML
         mathContainers.forEach(mjx => {
             if (mjx.mjxRoot) {
                 // Конвертируем внутреннее дерево MathJax в строку MathML
                 const mathmlString = MathJax.startup.toMML(mjx.mjxRoot);
                 
-                // Создаем временный элемент, чтобы вставить чистый MathML
+                // Создаем временный элемент, чтобы получить чистый DOM MathML
                 const dummy = document.createElement('div');
                 dummy.innerHTML = mathmlString;
                 const mathmlElement = dummy.firstElementChild;
@@ -112,12 +112,10 @@ document.addEventListener('copy', function(e) {
         });
 
         // 4. Перезаписываем данные в буфер обмена
-        // Передаем измененный HTML, где вместо картинок теперь лежат формулы MathML
         e.clipboardData.setData('text/html', container.innerHTML);
-        // Также сохраняем обычный текстовый вариант для блокнотов
         e.clipboardData.setData('text/plain', selection.toString());
 
-        // Отменяем стандартное системное копирование, так как мы подменили буфер своими силами
+        // Отменяем стандартное системное копирование
         e.preventDefault();
         console.log(`Успешно обработано формул для Word: ${mathContainers.length}`);
     }
