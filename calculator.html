@@ -601,14 +601,14 @@
                 // Y/Yн
                 k_2_nn_vn_max = k_2_nn_vn_min = 1
                 updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.max}}^{(2)}=1$');
-                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.min}}^{(2)}=1$');
+                updateFormula('F_k-2-nn_vn-min', '$k_{\\text{прив.min}}^{(2)}=1$');
             }
             else {
                 // D/Yн, Y/Zн
                 k_2_nn_vn_max = 2 / sqrt_3;
                 updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.max}}^{(2)}=\\frac{2}{\\sqrt{3}}$');
                 k_2_nn_vn_min = 1 / sqrt_3;
-                updateFormula('F_k-2-nn_vn-max', '$k_{\\text{прив.min}}^{(2)}=\\frac{1}{\\sqrt{3}}$');
+                updateFormula('F_k-2-nn_vn-min', '$k_{\\text{прив.min}}^{(2)}=\\frac{1}{\\sqrt{3}}$');
             }
             // Коэффициент привидения максимального тока двухфазного КЗ к ВН
             setTxt("out-k-2-nn_vn-max", k_2_nn_vn_max.toFixed(3));
