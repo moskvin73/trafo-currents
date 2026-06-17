@@ -577,96 +577,100 @@
             }
         }
 
-    function drawDiagram(phase) {
-        // Подсветка кнопок
-        ['A', 'B', 'C'].forEach(p => {
-            const btn = document.getElementById(`btn-phase-${p}`);
-            if (btn) {
-                btn.style.background = p === phase ? '#2e7d32' : '#e0e0e0';
-                btn.style.color = p === phase ? 'white' : 'black';
-            }
-        });
-
-        const group = document.getElementById('vectors-group');
-        if (!group) return;
-        group.innerHTML = ''; 
-
-        const cx = 200, cy = 200, length = 120;
-        let angles = { A: null, B: null, C: null };
-        
-        // Матрица углов с базовым электротехническим сдвигом на +90 градусов
-        if (phase === 'A') {
-            angles = { A: 90, B: -90, C: null }; 
-        } else if (phase === 'B') {
-            angles = { A: null, B: 210, C: 30 }; 
-        } else if (phase === 'C') {
-            angles = { A: -30, B: null, C: 150 }; 
+function drawDiagram(phase) {
+    // Подсветка кнопок
+    ['A', 'B', 'C'].forEach(p => {
+        const btn = document.getElementById(`btn-phase-${p}`);
+        if (btn) {
+            btn.style.background = p === phase ? '#2e7d32' : '#e0e0e0';
+            btn.style.color = p === phase ? 'white' : 'black';
         }
+    });
 
-        function createVector(angle, color, label) {
-            if (angle === null || angle === undefined) return;
-            
-            const rad = (angle * Math.PI) / 180;
-            const x2 = cx + length * Math.cos(rad);
-            const y2 = cy - length * Math.sin(rad); 
-            
-            const svgNS = "http://www.w3.org/2000/svg";
+    const group = document.getElementById('vectors-group');
+    if (!group) return;
+    group.innerHTML = ''; 
 
-            // Создаем линию
-            const line = document.createElementNS(svgNS, 'line');
-            line.setAttribute('x1', cx.toString());
-            line.setAttribute('y1', cy.toString());
-            line.setAttribute('x2', x2.toString());
-            line.setAttribute('y2', y2.toString());
-            line.setAttribute('stroke', color);
-            line.setAttribute('stroke-width', '3');
-            
-            const markerColor = color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue';
-            line.setAttribute('marker-end', 'url(#arrow-' + markerColor + ')');
-            group.appendChild(line);
-
-            // Геометрический расчет безопасного положения текста MathJax
-            const padding = 25; 
-            let textX = cx + (length + padding) * Math.cos(rad);
-            let textY = cy - (length + padding) * Math.sin(rad);
-
-            // Тонкие сдвиги контейнера MathJax для защиты от наложения на стрелки
-            if (Math.abs(Math.cos(rad)) < 0.1) {
-                // Если вектор строго вертикальный (вверх или вниз)
-                textX -= 15; 
-                if (Math.sin(rad) < 0) textY += 10; // Дополнительный отступ вниз
-            } else {
-                // Если вектор под углом
-                if (Math.cos(rad) < 0) textX -= 45; // Сдвиг влево для левой полусферы
-                if (Math.cos(rad) > 0) textX += 5;  // Сдвиг вправо для правой полусферы
-                if (Math.sin(rad) < 0) textY += 10; // Сдвиг вниз
-            }
-
-            // Вставка MathJax через foreignObject
-            const foreignObj = document.createElementNS(svgNS, 'foreignObject');
-            foreignObj.setAttribute('x', textX.toString());
-            foreignObj.setAttribute('y', (textY - 15).toString());
-            foreignObj.setAttribute('width', '60');
-            foreignObj.setAttribute('height', '30');
-
-            const mathDiv = document.createElement('div');
-            mathDiv.style.color = '#333';
-            mathDiv.style.fontSize = '14px';
-            mathDiv.style.fontFamily = 'sans-serif';
-            mathDiv.innerHTML = label; 
-            
-            foreignObj.appendChild(mathDiv);
-            group.appendChild(foreignObj);
-
-            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([mathDiv]).catch((err) => console.error(err));
-            }
-        }
-
-        createVector(angles.A, '#d32f2f', '$\\dot{I}_{A1}$');
-        createVector(angles.B, '#388e3c', '$\\dot{I}_{B1}$');
-        createVector(angles.C, '#1976d2', '$\\dot{I}_{C1}$');
+    const cx = 200, cy = 200, length = 120;
+    let angles = { A: null, B: null, C: null };
+    
+    // СТРОГАЯ ЭЛЕКТРОТЕХНИЧЕСКАЯ МАТРИЦА УГЛОВ С УЧЕТОМ ЗНАКОВ МАТРИЦЫ КЗ
+    if (phase === 'A') {
+        // Фаза A вверх (90°), Фаза B вниз (-90°)
+        angles = { A: 90, B: -90, C: null }; 
+    } else if (phase === 'B') {
+        // Фаза B по направлению фазы B (240°), Фаза C наоборот (60°)
+        angles = { A: null, B: 240, C: 60 }; 
+    } else if (phase === 'C') {
+        // Фаза C по направлению фазы C (120°), Фаза A наоборот (-60°)
+        angles = { A: -60, B: null, C: 120 }; 
     }
+
+    function createVector(angle, color, label) {
+        if (angle === null || angle === undefined) return;
+        
+        const rad = (angle * Math.PI) / 180;
+        const x2 = cx + length * Math.cos(rad);
+        const y2 = cy - length * Math.sin(rad); 
+        
+        const svgNS = "http://www.w3.org/2000/svg";
+
+        // Создаем линию вектора
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', cx.toString());
+        line.setAttribute('y1', cy.toString());
+        line.setAttribute('x2', x2.toString());
+        line.setAttribute('y2', y2.toString());
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '3');
+        
+        const markerColor = color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue';
+        line.setAttribute('marker-end', 'url(#arrow-' + markerColor + ')');
+        group.appendChild(line);
+
+        // Расчет положения текста MathJax
+        const padding = 25; 
+        let textX = cx + (length + padding) * Math.cos(rad);
+        let textY = cy - (length + padding) * Math.sin(rad);
+
+        // Коррекция смещения текста MathJax, чтобы он не налетал на стрелки
+        if (Math.abs(Math.cos(rad)) < 0.1) {
+            // Строго вертикальные векторы (КЗ фазы А)
+            textX -= 15; 
+            if (Math.sin(rad) < 0) textY += 12; 
+        } else {
+            // Векторы под углами (КЗ фаз B и C)
+            if (Math.cos(rad) < 0) textX -= 45; 
+            if (Math.cos(rad) > 0) textX += 5;  
+            if (Math.sin(rad) < 0) textY += 12; 
+        }
+
+        // Вставка MathJax через foreignObject
+        const foreignObj = document.createElementNS(svgNS, 'foreignObject');
+        foreignObj.setAttribute('x', textX.toString());
+        foreignObj.setAttribute('y', (textY - 15).toString());
+        foreignObj.setAttribute('width', '60');
+        foreignObj.setAttribute('height', '30');
+
+        const mathDiv = document.createElement('div');
+        mathDiv.style.color = '#333';
+        mathDiv.style.fontSize = '14px';
+        mathDiv.style.fontFamily = 'sans-serif';
+        mathDiv.innerHTML = label; 
+        
+        foreignObj.appendChild(mathDiv);
+        group.appendChild(foreignObj);
+
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([mathDiv]).catch((err) => console.error(err));
+        }
+    }
+
+    createVector(angles.A, '#d32f2f', '$\\dot{I}_{A1}$');
+    createVector(angles.B, '#388e3c', '$\\dot{I}_{B1}$');
+    createVector(angles.C, '#1976d2', '$\\dot{I}_{C1}$');
+}
+
 
     // Стартовый запуск (КЗ фазы А)
     setTimeout(() => drawDiagram('A'), 200);
