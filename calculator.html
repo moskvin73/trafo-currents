@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="./css/calculator.css">
 
     <script src="./js/math-script.js"></script>
+    <!-- Подключаем внешний парсер -->
+    <script src=".js/csv-parser.js"></script>    
 
     <style>
         /* Блокируем скролл всего экрана, чтобы убрать любые дергания */
@@ -425,15 +427,16 @@
         // Функция для асинхронной загрузки базы из файла
         async function loadTransformersDatabase() {
             try {
-                // Укажите относительный путь к файлу JSON на вашем GitHub
-                const response = await fetch('data/transformers.json');
-                if (!response.ok) throw new Error('Ошибка загрузки файла базы данных');
+                const response = await fetch(GOOGLE_CSV_URL);
+                if (!response.ok) throw new Error('Ошибка загрузки файла базы данных с Google Cloud');
 
-                globalTransformersData = await response.json();
+                const csvText = await response.text();
+                
+                // Вызываем функцию, которая теперь лежит в отдельном файле js/csv-parser.js
+                globalTransformersData = csvToJSON(csvText);
 
-                // Очищаем и заполняем элемент <select>
                 const selectElement = document.getElementById('transformer-select');
-                selectElement.innerHTML = '';
+                selectElement.innerHTML = ''; 
 
                 globalTransformersData.forEach(tx => {
                     const option = document.createElement('option');
@@ -442,13 +445,15 @@
                     selectElement.appendChild(option);
                 });
 
-                // Ставим по умолчанию, например, ТМГ-250 (id: "250_10_YY")
                 selectElement.value = "250_10_YY";
-                updateCalculation(); // Запуск первого расчета
+                
+                if (typeof updateCalculation === 'function') {
+                    updateCalculation(); 
+                }
 
             } catch (error) {
                 console.error(error);
-                document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации БД</option>';
+                document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации облачной БД</option>';
             }
         }
 
