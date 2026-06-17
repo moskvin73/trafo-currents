@@ -568,6 +568,22 @@
         <span>⚡ Калькулятор КЗ</span>
     </a>
     
+     <div style="max-width: 700px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin-top:0; color: #0056b3;">Тестирование канала связи с Google Sheets</h3>
+        <p style="font-size: 14px; color: #555;">При нажатии на кнопку скрипт запросит данные в формате CSV по вашей ссылке публикации.</p>
+        
+        <button onclick="debugFetchGoogleSheet()" style="padding: 10px 20px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            Запустить отладку чтения
+        </button>
+
+        <h4 style="margin-top: 20px; margin-bottom: 5px;">Статус запроса:</h4>
+        <div id="debug-status" style="font-weight: bold; color: #777;">Ожидание запуска...</div>
+
+        <h4 style="margin-top: 20px; margin-bottom: 5px;">Сырые полученные данные (CSV):</h4>
+        <!-- Сюда выведутся текстовые строки прямо из вашей таблицы -->
+        <textarea id="debug-output" style="width: 100%; height: 300px; font-family: monospace; font-size: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: #fafafa;" readonly></textarea>
+    </div>
+   
     <script>
         
         // Логика плавного появления кнопки при скролле
@@ -598,6 +614,48 @@
                 drawDiagram('A', 'currents-diagram', currentsConfig);       
         });
 
+     // Ваша живая ссылка на публикацию таблицы в формате CSV
+    const DEBUG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcgm8RLOxeABuvsGpZ6J4IdvQ3I8Bck44RRX9HQQb9VniF2Ck_ao2cwrrvk2vCujG4AWj7WLo41UGZ/pub?output=csv";
+
+    function debugFetchGoogleSheet() {
+        const statusDiv = document.getElementById('debug-status');
+        const outputTextArea = document.getElementById('debug-output');
+
+        statusDiv.innerText = "Выполняется fetch запрос...";
+        statusDiv.style.color = "#ff9800";
+        outputTextArea.value = "";
+
+        console.log("=== СТАРТ ОТЛАДКИ ===");
+        console.log("Запрос по адресу:", DEBUG_URL);
+
+        fetch(DEBUG_URL)
+            .then(response => {
+                console.log("Ответ от сервера получен. Код статуса:", response.status);
+                if (!response.ok) {
+                    throw new Error("Сетевая ошибка! Код ответа сервера: " + response.status);
+                }
+                return response.text(); // Читаем как чистый текст
+            })
+            .then(text => {
+                statusDiv.innerText = "Успешно! Данные получены.";
+                statusDiv.style.color = "#2e7d32";
+
+                // Выводим сырой CSV текст на экран
+                outputTextArea.value = text;
+
+                // Дополнительно выводим в консоль первые 200 символов для проверки
+                console.log("Первые строки ответа:");
+                console.log(text.substring(0, 200) + "\n...");
+                console.log("=== КОНЕЦ ОТЛАДКИ ===");
+            })
+            .catch(error => {
+                statusDiv.innerText = "Ошибка чтения!";
+                statusDiv.style.color = "#d32f2f";
+                outputTextArea.value = "Критическая ошибка:\n" + error.message;
+                console.error("Ошибка в процессе fetch:", error);
+            });
+    }
+       
     </script>
 
 </body>
