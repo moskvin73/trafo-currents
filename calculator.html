@@ -93,6 +93,19 @@
             
             <div class="calc-controls"
                 style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+               
+<div style="margin-bottom: 15px; font-family: sans-serif;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">
+        Выберите напряжение сети ВН (\(U_{вн}\)):
+    </label>
+    <select id="voltage-filter" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <option value="all">Все напряжения (без фильтра)</option>
+        <option value="6">6 кВ</option>
+        <option value="10">10 кВ</option>
+        <option value="35">35 кВ</option>
+    </select>
+</div>                
+
                 <div style="flex: 2; min-width: 250px;">
                     <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Выберите
                         трансформатор:</label>
@@ -431,21 +444,22 @@
                 if (!response.ok) throw new Error('Ошибка загрузки файла базы данных с Google Cloud');
 
                 const csvText = await response.text();
-                
-                // Вызываем функцию, которая теперь лежит в отдельном файле js/csv-parser.js
-                globalTransformersData = csvToJSON(csvText);
+                globalTransformersData = csvToJSON(csvText); // Вызов из вашего внешнего файла csv-parser.js
 
+                // Привязываем событие изменения фильтра напряжения
+                const voltageFilter = document.getElementById('voltage-filter');
+                voltageFilter.addEventListener('change', populateTransformerSelect);
+
+                // Первичное заполнение списка трансформаторов (по умолчанию выведутся "Все")
+                populateTransformerSelect();
+
+                // Ставим дефолтное значение для первого расчета, если оно есть в списке
                 const selectElement = document.getElementById('transformer-select');
-                selectElement.innerHTML = ''; 
-
-                globalTransformersData.forEach(tx => {
-                    const option = document.createElement('option');
-                    option.value = tx.id;
-                    option.textContent = `${tx.brand}-${tx.S} кВА (${tx.Uvn}/${tx.Unn} кВ) [${tx.schema}] ${tx.manufacturer}`;
-                    selectElement.appendChild(option);
-                });
-
-                selectElement.value = "250_10_YY";
+                if (selectElement.querySelector('option[value="250_10_YY"]')) {
+                    voltageFilter.value = "10"; // Сразу переключаем верхний фильтр на 10 кВ для красоты
+                    populateTransformerSelect(); // Перерисовываем список под 10 кВ
+                    selectElement.value = "250_10_YY";
+                }
                 
                 if (typeof updateCalculation === 'function') {
                     updateCalculation(); 
@@ -456,6 +470,42 @@
                 document.getElementById('transformer-select').innerHTML = '<option>Ошибка инициализации облачной БД</option>';
             }
         }
+
+        // Новая функция: динамически фильтрует и заполняет список трансформаторов
+        function populateTransformerSelect() {
+            const voltageFilterValue = document.getElementById('voltage-filter').value;
+            const selectElement = document.getElementById('transformer-select');
+            
+            // Очищаем текущие опции списка трансформаторов
+            selectElement.innerHTML = ''; 
+
+            // Фильтруем массив: если выбрано конкретное число, оставляем только tx.Uvn === числу
+            const filteredData = globalTransformersData.filter(tx => {
+                if (voltageFilterValue === 'all') return true; // Пропускаем все
+                return tx.Uvn === Number(voltageFilterValue);  // Сравниваем числа
+            });
+
+            // Если под выбранное напряжение ничего не нашлось в вашей Google Таблице
+            if (filteredData.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = "-- Нет трансформаторов для данного напряжения --";
+                selectElement.appendChild(option);
+                return;
+            }
+
+            // Заполняем селектор отфильтрованными данными
+            filteredData.forEach(tx => {
+                const option = document.createElement('option');
+                option.value = tx.id;
+                option.textContent = `${tx.brand}-${tx.S} кВА (${tx.Uvn}/${tx.Unn} кВ) [${tx.schema}] ${tx.manufacturer}`;
+                selectElement.appendChild(option);
+            });
+
+            // Принудительно вызываем ваш расчет КЗ для первой доступной в новом списке модели
+            if (typeof updateCalculation === 'function') {
+                updateCalculation();
+            }
+        }        
 
         // Аналитическая функция расчета (работает с данными из оперативной памяти)
         function updateCalculation() {
