@@ -25,8 +25,8 @@
 
         <!-- Раздел: Схема Треугольник-Звезда -->
         <div id="delta-y" class="tab-panel active">
-            <h2>Несимметричные КЗ за трансформатором Δ/Y-0</h2>
-            <p>Аналитический вывод: Двухфазное КЗ (B-C) за трансформатором Δ/Y-0</p>
+            <h2>Несимметричные КЗ за трансформатором Δ/Yн-11</h2>
+            <h3>1. Двухфазное КЗ за трансформатором Δ/Yн-11</h3>
 
             <div class="flex-container">
                 <div class="text-side">
@@ -120,47 +120,47 @@
             </div>
 
             <section class="short-circuit-section">
-                <h2>Несимметричное однофазное КЗ за трансформатором Δ/Y-0</h2>
+                <h3>2. Однофазное КЗ за трансформатором Δ/Yн-11</h3>
 
- <div class="vector-diagram-container" style="text-align: center; margin: 20px auto; max-width: 600px; font-family: sans-serif;">
-    <h3>Интерактивная векторная диаграмма токов ВН</h3>
-    <div style="margin-bottom: 15px;">
-        <label style="margin-right: 10px; font-weight: bold;">Выберите фазу КЗ на стороне НН:</label>
-        <button onclick="drawDiagram('A')" id="btn-phase-A" style="padding: 6px 12px; font-weight: bold; background: #2e7d32; color: white; border: none; cursor: pointer; border-radius: 4px;">Фаза A</button>
-        <button onclick="drawDiagram('B')" id="btn-phase-B" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px; margin: 0 5px;">Фаза B</button>
-        <button onclick="drawDiagram('C')" id="btn-phase-C" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px;">Фаза C</button>
-    </div>
-    
-    <!-- SVG Поле -->
-    <svg id="vector-svg" width="400" height="400" style="background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
-        <!-- Определения стрелок -->
-        <defs>
-            <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#d32f2f"/>
-            </marker>
-            <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#388e3c"/>
-            </marker>
-            <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1976d2"/>
-            </marker>
-        </defs>
-        
-        <!-- Контрастная координатная сетка (+1 вверх, +j вправо) -->
-        <line x1="40" y1="200" x2="360" y2="200" stroke="#757575" stroke-width="1.5" stroke-dasharray="4"/>
-        <line x1="200" y1="40" x2="200" y2="360" stroke="#757575" stroke-width="1.5" stroke-dasharray="4"/>
-        <circle cx="200" cy="200" r="120" stroke="#bdbdbd" fill="none" stroke-width="1" stroke-dasharray="2"/>
-        
-        <!-- Обозначения комплексных осей -->
-        <text x="210" y="55" fill="#757575" font-weight="bold" font-size="14px">+1</text>
-        <text x="345" y="190" fill="#757575" font-weight="bold" font-size="14px">+j</text>
-        
-        <!-- Динамический контейнер векторов -->
-        <g id="vectors-group"></g>
-    </svg>
-</div>               
+                <div class="vector-diagram-container" style="text-align: center; margin: 20px auto; max-width: 600px; font-family: sans-serif;">
+                    <h3>Интерактивная векторная диаграмма токов ВН</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="margin-right: 10px; font-weight: bold;">Выберите фазу КЗ на стороне НН:</label>
+                        <button onclick="drawDiagram('A')" id="btn-phase-A" style="padding: 6px 12px; font-weight: bold; background: #2e7d32; color: white; border: none; cursor: pointer; border-radius: 4px;">Фаза A</button>
+                        <button onclick="drawDiagram('B')" id="btn-phase-B" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px; margin: 0 5px;">Фаза B</button>
+                        <button onclick="drawDiagram('C')" id="btn-phase-C" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px;">Фаза C</button>
+                    </div>
+                    
+                    <!-- SVG Поле -->
+                    <svg id="vector-svg" width="400" height="400" style="background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
+                        <!-- Определения стрелок -->
+                        <defs>
+                            <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#d32f2f"/>
+                            </marker>
+                            <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#388e3c"/>
+                            </marker>
+                            <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1976d2"/>
+                            </marker>
+                        </defs>
+                        
+                        <!-- Контрастная координатная сетка (+1 вверх, +j вправо) -->
+                        <line x1="40" y1="200" x2="360" y2="200" stroke="#757575" stroke-width="1.5" stroke-dasharray="4"/>
+                        <line x1="200" y1="40" x2="200" y2="360" stroke="#757575" stroke-width="1.5" stroke-dasharray="4"/>
+                        <circle cx="200" cy="200" r="120" stroke="#bdbdbd" fill="none" stroke-width="1" stroke-dasharray="2"/>
+                        
+                        <!-- Обозначения комплексных осей -->
+                        <text x="210" y="55" fill="#757575" font-weight="bold" font-size="14px">+1</text>
+                        <text x="345" y="190" fill="#757575" font-weight="bold" font-size="14px">+j</text>
+                        
+                        <!-- Динамический контейнер векторов -->
+                        <g id="vectors-group"></g>
+                    </svg>
+                </div>               
 
-                <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
+                <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Yн-11, при условии \(Z_1=Z_2=Z_0\):</p>
 
                 <p style="text-align: center;">
                     \[I_{КЗ2 \ \Delta/(Y-0)}^{(1)}=\frac{\sqrt{3} U_{л.2}}{3k_{тт} \sqrt{r_1^2+x_1^2
@@ -202,7 +202,7 @@
                         </p>
                     </div>
                 </details>                
-                
+
                 <p>Выразим линейные токи через фазные для схемы соединения обмоток в треугольник:</p>
 
                 <p style="text-align: center;">
@@ -221,7 +221,7 @@
             </section>
 
             <section class="table-section" style="margin-top: 30px;">
-                <h3>Сводная таблица распределения токов при однофазном КЗ (схема Δ/Y-0)</h3>
+                <h3>Сводная таблица распределения токов при однофазном КЗ (схема Δ/Yн-11)</h3>
                 <div style="overflow-x: auto;">
                     <table border="1" cellpadding="10" cellspacing="0"
                         style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
@@ -280,13 +280,13 @@
         <!-- Раздел: Схема Звезда-Звезда -->
         <div id="y-y" class="tab-panel">
             <section class="transformer-yy-section" style="margin-top: 50px;">
-                <h2>Несимметричные КЗ за трансформатором Y/Y-0</h2>
+                <h2>Несимметричные КЗ за трансформатором Y/Yн-0</h2>
                 <p>Ниже приведены математические выводы распределения токов для двухфазного и однофазного коротких
-                    замыканий (КЗ) за трансформатором со схемой соединения Y/Y-0.</p>
+                    замыканий (КЗ) за трансформатором со схемой соединения Y/Yн-0.</p>
 
                 <!-- Подраздел: 2-х фазное КЗ -->
                 <div class="k3-2phase" style="margin-top: 30px;">
-                    <h3>1. Двухфазное КЗ за трансформатором Y/Y-0</h3>
+                    <h3>1. Двухфазное КЗ за трансформатором Y/Yн-0</h3>
                     <p>Модуль тока двухфазного КЗ в общем виде определяется выражением:</p>
                     <p style="text-align: center;">
                         \[I_{КЗ}^{(2)} = |\dot{I}_A| = |\dot{I}_C| = \frac{\sqrt{3} U_ф}{\sqrt{(r_1+r_2)^2 +
@@ -309,7 +309,7 @@
 
                 <!-- Подраздел: Однофазное КЗ -->
                 <div class="k3-1phase" style="margin-top: 40px;">
-                    <h3>2. Однофазное КЗ за трансформатором Y/Y-0</h3>
+                    <h3>2. Однофазное КЗ за трансформатором Y/Yн-0</h3>
                     <p>Модуль тока однофазного КЗ определяется через симметричные составляющие:</p>
                     <p style="text-align: center;">
                         \[I_{КЗ}^{(1)} = |\dot{I}_A| = \frac{3 U_{ф2}}{\sqrt{(r_1+r_2+r_0)^2 + (x_1+x_2+x_0)^2}} =
@@ -346,7 +346,7 @@
                     </ul>
                 </div>
             </section>
-            <!-- Сводная таблица для схемы Y/Y-0 -->
+            <!-- Сводная таблица для схемы Y/Yн-0 -->
             <section class="table-section-yy" style="margin-top: 40px; margin-bottom: 20px;">
                 <h3>Сводная таблица распределения токов при КЗ (схема Y/Y-0)</h3>
                 <div style="overflow-x: auto;">
