@@ -444,13 +444,25 @@
                 if (!response.ok) throw new Error('Ошибка загрузки файла базы данных с Google Cloud');
 
                 const csvText = await response.text();
-                globalTransformersData = csvToJSON(csvText); // Вызов из вашего внешнего файла csv-parser.js
+                
+                // 1. Получаем сырые данные из парсера
+                const rawData = csvToJSON(csvText); 
+
+                // 2. СОРТИРОВКА ДАННЫХ (по напряжению ВН, затем по мощности S)
+                globalTransformersData = rawData.sort((a, b) => {
+                    // Сначала сравниваем напряжение ВН (Uvn)
+                    if (a.Uvn !== b.Uvn) {
+                        return a.Uvn - b.Uvn; // Сначала меньшее напряжение (например, 6 кВ перед 10 кВ)
+                    }
+                    // Если напряжения равны, сортируем по мощности (S)
+                    return a.S - b.S; // Сначала меньшая мощность (например, 16 кВА перед 25 кВА)
+                });
 
                 // Привязываем событие изменения фильтра напряжения
                 const voltageFilter = document.getElementById('voltage-filter');
                 voltageFilter.addEventListener('change', populateTransformerSelect);
 
-                // Первичное заполнение списка трансформаторов (по умолчанию выведутся "Все")
+                // Первичное заполнение списка трансформаторов
                 populateTransformerSelect();
 
                 // Ставим дефолтное значение для первого расчета, если оно есть в списке
