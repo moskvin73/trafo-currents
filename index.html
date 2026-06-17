@@ -573,7 +573,7 @@
         }
 
  function drawDiagram(phase) {
-    // 1. Подсветка активной кнопки
+    // 1. Подсветка кнопок
     ['A', 'B', 'C'].forEach(p => {
         const btn = document.getElementById(`btn-phase-${p}`);
         if (btn) {
@@ -584,88 +584,84 @@
 
     const group = document.getElementById('vectors-group');
     if (!group) return;
-    group.innerHTML = ''; // Очищаем старые векторы
+    group.innerHTML = ''; // Очистка старых векторов
 
-    const cx = 200, cy = 200; // Центр координат
-    const length = 120;       // Базовая длина вектора (100%)
-
-    // Матрица углов для линейных токов ВН в зависимости от поврежденной фазы на НН
-    let angles = { A: 0, B: 0, C: 0 };
+    const cx = 200, cy = 200, length = 120;
+    let angles = { A: null, B: null, C: null };
     
+    // Матрица углов для линейных токов ВН
     if (phase === 'A') {
-        angles = { A: 0, B: 180, C: null }; // Фаза C равна 0
+        angles = { A: 0, B: 180, C: null }; 
     } else if (phase === 'B') {
-        angles = { A: null, B: 120, C: -60 }; // Фаза A равна 0
+        angles = { A: null, B: 120, C: -60 }; 
     } else if (phase === 'C') {
-        angles = { A: -120, B: null, C: 60 }; // Фаза B равна 0
+        angles = { A: -120, B: null, C: 60 }; 
     }
 
-    // Функция отрисовки одной стрелки векторов
-function createVector(angle, color, label) {
-    if (angle === null || angle === undefined) return;
-    
-    const rad = (angle * Math.PI) / 180;
-    const x2 = cx + length * Math.cos(rad);
-    const y2 = cy - length * Math.sin(rad); 
-    
-    const svgNS = "http://www.w3.org/2000/svg";
+    // Внутренняя функция отрисовки одной стрелки
+    function createVector(angle, color, label) {
+        // ИСПРАВЛЕНО: Вместо глобального return просто выходим из этой подфункции,
+        // не ломая работу основного скрипта отрисовки других фаз
+        if (angle === null || angle === undefined) return; 
+        
+        const rad = (angle * Math.PI) / 180;
+        const x2 = cx + length * Math.cos(rad);
+        const y2 = cy - length * Math.sin(rad); 
+        
+        const svgNS = "http://www.w3.org/2000/svg";
 
-    // 1. Отрисовка линии вектора
-    const line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', cx.toString());
-    line.setAttribute('y1', cy.toString());
-    line.setAttribute('x2', x2.toString());
-    line.setAttribute('y2', y2.toString());
-    line.setAttribute('stroke', color);
-    line.setAttribute('stroke-width', '3');
-    
-    const markerColor = color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue';
-    line.setAttribute('marker-end', 'url(#arrow-' + markerColor + ')');
-    group.appendChild(line);
+        // Создаем линию
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', cx.toString());
+        line.setAttribute('y1', cy.toString());
+        line.setAttribute('x2', x2.toString());
+        line.setAttribute('y2', y2.toString());
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '3');
+        
+        const markerColor = color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue';
+        line.setAttribute('marker-end', 'url(#arrow-' + markerColor + ')');
+        group.appendChild(line);
 
-    // 2. ДИНАМИЧЕСКИЙ СДВИГ НАДПИСИ (чтобы не налазить на стрелку)
-    // Отодвигаем текст чуть дальше от острия стрелки (на 25 пикселей вперед)
-    const padding = 25; 
-    let textX = cx + (length + padding) * Math.cos(rad);
-    let textY = cy - (length + padding) * Math.sin(rad);
+        // Расчет отступов для текста
+        const padding = 25; 
+        let textX = cx + (length + padding) * Math.cos(rad);
+        let textY = cy - (length + padding) * Math.sin(rad);
 
-    // Дополнительное смещение по осям в зависимости от четверти круга
-    // Если вектор смотрит влево (например, I_B1 при КЗ фазы А, угол 180°), 
-    // сдвигаем контейнер еще левее, чтобы текст не наползал на линию
-    if (Math.cos(rad) < -0.1) textX -= 40; // Сдвиг влево для развернутых векторов
-    if (Math.sin(rad) < -0.1) textY += 10; // Сдвиг вниз
+        // Умный сдвиг текста, чтобы он не налезал на наконечник стрелки
+        if (Math.cos(rad) < -0.1) textX -= 45; // Для векторов, смотрящих влево
+        if (Math.cos(rad) > 0.1) textX += 5;   // Для векторов, смотрящих вправо
+        if (Math.sin(rad) < -0.1) textY += 15;  // Для векторов, смотрящих вниз
 
-    // 3. ВСТАВКА MATHJAX ЧЕРЕЗ FOREIGNOBJECT
-    // Создаем контейнер, внутри которого браузер разрешает рендерить стандартный HTML/MathJax
-    const foreignObj = document.createElementNS(svgNS, 'foreignObject');
-    foreignObj.setAttribute('x', textX.toString());
-    foreignObj.setAttribute('y', (textY - 15).toString()); // Выравниваем по центру высоты
-    foreignObj.setAttribute('width', '60');
-    foreignObj.setAttribute('height', '30');
+        // Вставка MathJax через foreignObject
+        const foreignObj = document.createElementNS(svgNS, 'foreignObject');
+        foreignObj.setAttribute('x', textX.toString());
+        foreignObj.setAttribute('y', (textY - 15).toString());
+        foreignObj.setAttribute('width', '60');
+        foreignObj.setAttribute('height', '30');
 
-    // Создаем внутренний HTML-блок для формулы
-    const mathDiv = document.createElement('div');
-    mathDiv.style.color = '#333';
-    mathDiv.style.fontSize = '14px';
-    mathDiv.style.fontFamily = 'sans-serif';
-    
-    // Передаем строку в формате TeX (например, $\dot{I}_{A1}$)
-    mathDiv.innerHTML = label; 
-    
-    // Собираем элементы вместе
-    foreignObj.appendChild(mathDiv);
-    group.appendChild(foreignObj);
+        const mathDiv = document.createElement('div');
+        mathDiv.style.color = '#333';
+        mathDiv.style.fontSize = '14px';
+        mathDiv.style.fontFamily = 'sans-serif';
+        mathDiv.innerHTML = label; 
+        
+        foreignObj.appendChild(mathDiv);
+        group.appendChild(foreignObj);
 
-    // 4. Просим MathJax принудительно отрендерить формулу внутри SVG
-    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-        MathJax.typesetPromise([mathDiv]).catch((err) => console.error(err));
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([mathDiv]).catch((err) => console.error(err));
+        }
     }
+
+    // Запуск отрисовки векторов (теперь они вызываются независимо!)
+    createVector(angles.A, '#d32f2f', '$\\dot{I}_{A1}$');
+    createVector(angles.B, '#388e3c', '$\\dot{I}_{B1}$');
+    createVector(angles.C, '#1976d2', '$\\dot{I}_{C1}$');
 }
 
-// Инициализация диаграммы при загрузке страницы (по умолчанию КЗ фазы А)
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => drawDiagram('A'), 500);
-});
+// Стартовый запуск при открытии страницы
+setTimeout(() => drawDiagram('A'), 200);
 
     </script>
 
