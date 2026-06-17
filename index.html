@@ -578,7 +578,7 @@
         }
 
 function drawDiagram(phase) {
-    // Подсветка кнопок
+    // Подсветка кнопок фаз КЗ
     ['A', 'B', 'C'].forEach(p => {
         const btn = document.getElementById(`btn-phase-${p}`);
         if (btn) {
@@ -589,31 +589,37 @@ function drawDiagram(phase) {
 
     const group = document.getElementById('vectors-group');
     if (!group) return;
-    group.innerHTML = ''; 
+    group.innerHTML = ''; // Очистка поля
 
-    const cx = 200, cy = 200, length = 120;
-    let angles = { A: null, B: null, C: null };
+    const cx = 200, cy = 200;
     
-    // СТРОГАЯ ЭЛЕКТРОТЕХНИЧЕСКАЯ МАТРИЦА УГЛОВ С УЧЕТОМ ЗНАКОВ МАТРИЦЫ КЗ
+    // Матрицы углов для ВН (длина 130) и НН (длина 90) с учетом 11-й группы соединения (+30 градусов)
+    let anglesVN = { A: null, B: null, C: null };
+    let anglesNN = { A: null, B: null, C: null };
+    
     if (phase === 'A') {
-        // Фаза A вверх (90°), Фаза B вниз (-90°)
-        angles = { A: 90, B: -90, C: null }; 
+        anglesNN = { A: 90, B: null, C: null };
+        anglesVN = { A: 120, B: -60, C: null }; 
     } else if (phase === 'B') {
-        // Фаза B по направлению фазы B (240°), Фаза C наоборот (60°)
-        angles = { A: null, B: -30, C: 150 }; 
+        anglesNN = { A: null, B: -30, C: null };
+        anglesVN = { A: null, B: 0, C: 180 }; 
     } else if (phase === 'C') {
-        // Фаза C по направлению фазы C (120°), Фаза A наоборот (-60°)
-        angles = { A: 30, B: null, C: 210 }; 
+        anglesNN = { A: null, B: null, C: 210 };
+        anglesVN = { A: 60, B: null, C: 240 }; 
     }
 
-    function createVector(angle, color, label) {
+    // Универсальная функция отрисовки векторов ВН и НН
+    function createVector(angle, color, label, isLV = false) {
         if (angle === null || angle === undefined) return;
+        
+        // Векторы НН (isLV) делаем чуть короче, чтобы они визуально разделялись
+        const length = isLV ? 90 : 130;
         
         const rad = (angle * Math.PI) / 180;
         const x2 = cx + length * Math.cos(rad);
         const y2 = cy - length * Math.sin(rad); 
         
-        const svgNS = "http://www.w3.org/2000/svg";
+        const svgNS = "http://w3.org";
 
         // Создаем линию вектора
         const line = document.createElementNS(svgNS, 'line');
@@ -622,24 +628,27 @@ function drawDiagram(phase) {
         line.setAttribute('x2', x2.toString());
         line.setAttribute('y2', y2.toString());
         line.setAttribute('stroke', color);
-        line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-width', isLV ? '2.5' : '3.5');
+        
+        // Если это сторона НН — делаем вектор ПУНКТИРНЫМ
+        if (isLV) {
+            line.setAttribute('stroke-dasharray', '5,4');
+        }
         
         const markerColor = color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue';
         line.setAttribute('marker-end', 'url(#arrow-' + markerColor + ')');
         group.appendChild(line);
 
-        // Расчет положения текста MathJax
-        const padding = 25; 
+        // Расчет безопасного положения текста MathJax
+        const padding = isLV ? 15 : 25; 
         let textX = cx + (length + padding) * Math.cos(rad);
         let textY = cy - (length + padding) * Math.sin(rad);
 
-        // Коррекция смещения текста MathJax, чтобы он не налетал на стрелки
+        // Коррекция наложения шрифтов MathJax на стрелки векторов
         if (Math.abs(Math.cos(rad)) < 0.1) {
-            // Строго вертикальные векторы (КЗ фазы А)
             textX -= 15; 
             if (Math.sin(rad) < 0) textY += 12; 
         } else {
-            // Векторы под углами (КЗ фаз B и C)
             if (Math.cos(rad) < 0) textX -= 45; 
             if (Math.cos(rad) > 0) textX += 5;  
             if (Math.sin(rad) < 0) textY += 12; 
@@ -654,7 +663,7 @@ function drawDiagram(phase) {
 
         const mathDiv = document.createElement('div');
         mathDiv.style.color = '#333';
-        mathDiv.style.fontSize = '14px';
+        mathDiv.style.fontSize = '13px';
         mathDiv.style.fontFamily = 'sans-serif';
         mathDiv.innerHTML = label; 
         
@@ -666,12 +675,16 @@ function drawDiagram(phase) {
         }
     }
 
-    createVector(angles.A, '#d32f2f', '$\\dot{I}_{A1}$');
-    createVector(angles.B, '#388e3c', '$\\dot{I}_{B1}$');
-    createVector(angles.C, '#1976d2', '$\\dot{I}_{C1}$');
+    // 1. ОТРИСОВКА ВЕКТОРОВ НН (Пунктирные, укороченные, индекс 2)
+    createVector(anglesNN.A, '#d32f2f', '$\\dot{I}_{A2}$', true);
+    createVector(anglesNN.B, '#388e3c', '$\\dot{I}_{B2}$', true);
+    createVector(anglesNN.C, '#1976d2', '$\\dot{I}_{C2}$', true);
+
+    // 2. ОТРИСОВКА ВЕКТОРОВ ВН (Сплошные, длинные, индекс 1, со сдвигом +30 градусов)
+    createVector(anglesVN.A, '#d32f2f', '$\\dot{I}_{A1}$', false);
+    createVector(anglesVN.B, '#388e3c', '$\\dot{I}_{B1}$', false);
+    createVector(anglesVN.C, '#1976d2', '$\\dot{I}_{C1}$', false);
 }
-
-
     // Стартовый запуск (КЗ фазы А)
     setTimeout(() => drawDiagram('A'), 200);
 
