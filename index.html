@@ -18,9 +18,9 @@
         <h1>Трансформация токов несимметричных КЗ через силовые трансформаторы</h1>
 
         <div class="navigation-tabs">
-            <button class="tab-trigger active" onclick="changeTab('delta-y')">Схема соединений Δ/Y-0</button>
-            <button class="tab-trigger" onclick="changeTab('y-y')">Схема соединений Y/Y-0</button>
-            <button class="tab-trigger" onclick="changeTab('y-z')">Схема соединений Y/Z-0</button>
+            <button class="tab-trigger active" onclick="changeTab('delta-y')">Схема соединений Δ/Yн-11</button>
+            <button class="tab-trigger" onclick="changeTab('y-y')">Схема соединений Y/Yн-0</button>
+            <button class="tab-trigger" onclick="changeTab('y-z')">Схема соединений Y/Zн-11</button>
         </div>
 
         <!-- Раздел: Схема Треугольник-Звезда -->
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="graphic-side">
-                    <img src="Images/T_Д_Y2КЗ.svg" alt="Трансформатор Δ/Y-0 и эпюра токов"
+                    <img src="Images/T_Д_Y2КЗ.svg" alt="Трансформатор Δ/Yн-11 и эпюра токов"
                         style="max-width: 100%; height: auto;">
                 </div>
             </div>
@@ -299,7 +299,7 @@
                         \[I_{КЗ}^{(2)} = \frac{U_л}{2\sqrt{r_1^2 + x_1^2}} = \frac{\sqrt{3}}{2} I_{КЗ}^{(3)}\]
                     </p>
 
-                    <p>Токи на стороне ВН при двухфазном КЗ за трансформатором со схемой соединения Y/Y-0 распределяются
+                    <p>Токи на стороне ВН при двухфазном КЗ за трансформатором со схемой соединения Y/Yн-0 распределяются
                         следующим образом:</p>
                     <p style="text-align: center;">
                         \[\begin{cases} \dot{I}_{A1} = \frac{\sqrt{3}}{2} \cdot \frac{I_{КЗ2}^{(3)}}{k_{тт}} \\
@@ -321,7 +321,7 @@
                         \[I_{КЗ2}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_1+r_0)^2 + (2x_1+x_0)^2}}\]
                     </p>
 
-                    <p>Непосредственно для КЗ за трансформатором Y/Y-0 с учетом его параметров:</p>
+                    <p>Непосредственно для КЗ за трансформатором Y/Yн-0 с учетом его параметров:</p>
                     <p style="text-align: center;">
                         \[I_{КЗ2.Y/Y-0}^{(1)} = \frac{\sqrt{3} U_{л2}}{\sqrt{(2r_{1.т}+r_{0.т})^2 +
                         (2x_{1.т}+x_{0.т})^2}} = \frac{\sqrt{3} U_{л2}}{Z_{т.Y/Y-0(1)}}\]
@@ -348,7 +348,7 @@
             </section>
             <!-- Сводная таблица для схемы Y/Yн-0 -->
             <section class="table-section-yy" style="margin-top: 40px; margin-bottom: 20px;">
-                <h3>Сводная таблица распределения токов при КЗ (схема Y/Y-0)</h3>
+                <h3>Сводная таблица распределения токов при КЗ (схема Y/Yн-0)</h3>
                 <div style="overflow-x: auto;">
                     <table border="1" cellpadding="10" cellspacing="0"
                         style="width: 100%; border-collapse: collapse; text-align: center; font-family: sans-serif;">
@@ -411,9 +411,9 @@
 
         <!-- Раздел: Схема Звезда-Зигзаг -->
         <div id="y-z" class="tab-panel">
-            <h2>Несимметричные КЗ за трансформатором Y/Z-0</h2>
+            <h2>Несимметричные КЗ за трансформатором Y/Zн-11</h2>
             <section class="transformer-yz-section" style="margin-top: 50px; font-family: sans-serif;">
-                <h2>Схема соединения обмоток Y/Z-11 (Звезда-Зигзаг с заземленной нейтралью)</h2>
+                <h2>Схема соединения обмоток Y/Zн-11 (Звезда-Зигзаг с заземленной нейтралью)</h2>
                 <p>Каждая полуобмотка низшего напряжения (НН) индуктивно связана с обмоткой высшего напряжения (ВН)
                     другой фазы. Из-за встречно-последовательного включения полуобмоток коэффициент трансформации по
                     отношению к одной секции зигзага составляет \(k_{т.об.Y/Z} = \frac{U_ф}{U_ф / \sqrt{3}} =
@@ -425,13 +425,13 @@
                     <p style="color: #1976d2; font-weight: bold; margin: 0 0 10px 0; font-size: 1.1em;">🗺️ МЕСТО ДЛЯ
                         СХЕМЫ И ЭПЮРЫ ТОКОВ Y/Z-11</p>
                     <p style="color: #555; margin: 0; font-size: 0.95em;">Замените этот блок тегом
-                        <code>&lt;img src="Images/T_Y_Z11.svg" alt="Трансформатор Y/Z-11 и эпюра токов" style="max-width: 100%; height: auto;"&gt;</code>
+                        <code>&lt;img src="Images/T_Y_Z11.svg" alt="Трансформатор Y/Zн-11 и эпюра токов" style="max-width: 100%; height: auto;"&gt;</code>
                     </p>
                 </div>
 
                 <!-- Подраздел: 2-х фазное КЗ -->
                 <div class="k3-2phase" style="margin-top: 30px;">
-                    <h3>1. Двухфазное КЗ за трансформатором Y/Z-11</h3>
+                    <h3>1. Двухфазное КЗ за трансформатором Y/Zн-11</h3>
                     <p>Модуль тока двухфазного короткого замыкания на вторичной стороне при равенстве сопротивлений
                         прямой и обратной последовательностей (\(Z_1 = Z_2\)) равен:</p>
                     <p style="text-align: center;">
@@ -474,7 +474,7 @@
 
                 <!-- Подраздел: Однофазное КЗ -->
                 <div class="k3-1phase" style="margin-top: 40px;">
-                    <h3>2. Однофазное КЗ за трансформатором Y/Z-11</h3>
+                    <h3>2. Однофазное КЗ за трансформатором Y/Zн-11</h3>
                     <p>При однофазном КЗ на стороне зигзага (при условии \(Z_1 = Z_2 = Z_0\)) модуль тока КЗ равен:</p>
                     <p style="text-align: center;">
                         \[I_{КЗ2.Y/Z}^{(1)} = \frac{\sqrt{3} U_{л.2}}{3 k_{тт} \sqrt{r_1^2 + x_1^2}} =
@@ -506,7 +506,7 @@
                     </p>
                 </div>
 
-                <!-- Сводная таблица распределения токов для Y/Z-11 -->
+                <!-- Сводная таблица распределения токов для Y/Zн-11 -->
                 <div class="table-section-yz" style="margin-top: 40px;">
                     <h3>Сводная таблица распределения токов при КЗ (схема Y/Z-11)</h3>
                     <div style="overflow-x: auto;">
