@@ -600,10 +600,10 @@ function drawDiagram(phase) {
         angles = { A: 90, B: -90, C: null }; 
     } else if (phase === 'B') {
         // Фаза B по направлению фазы B (240°), Фаза C наоборот (60°)
-        angles = { A: null, B: 240, C: 60 }; 
+        angles = { A: null, B: -30, C: 150 }; 
     } else if (phase === 'C') {
         // Фаза C по направлению фазы C (120°), Фаза A наоборот (-60°)
-        angles = { A: -60, B: null, C: 120 }; 
+        angles = { A: 30, B: null, C: 210 }; 
     }
 
     function createVector(angle, color, label) {
