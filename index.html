@@ -622,11 +622,13 @@
 
         // Создаем текст надписи
         const text = document.createElementNS('http://w3.org', 'text');
-        text.setAttribute('x', cx + (length + 20) * Math.cos(rad) - 10);
-        text.setAttribute('y', cy - (length + 20) * Math.sin(rad) + 5);
+        text.setAttribute('x', (cx + (length + 20) * Math.cos(rad) - 10).toString());
+        text.setAttribute('y', (cy - (length + 20) * Math.sin(rad) + 5).toString());
         text.setAttribute('fill', '#333');
-        text.style.fontWeight = 'bold';
-        text.style.fontSize = '14px';
+        
+        // ИСПРАВЛЕНО: задаем стили через setAttribute, а не через .style
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('font-size', '14px');        
         text.textContent = label;
         group.appendChild(text);
     }
@@ -641,7 +643,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => drawDiagram('A'), 500);
 });
-       
+
     </script>
 
 </body>
