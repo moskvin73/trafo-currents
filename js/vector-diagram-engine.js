@@ -24,7 +24,7 @@ function drawDiagram(phaseKey, containerId, config) {
     mountPoint.innerHTML = ''; 
 
     const cfg = config.settings;
-    const svgNS = "http://w3.org";
+    const svgNS = "http://www.w3.org/2000/svg";
 
     // 3. Создание SVG
     const svg = document.createElementNS(svgNS, 'svg');
