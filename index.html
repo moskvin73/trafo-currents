@@ -121,6 +121,40 @@
 
             <section class="short-circuit-section">
                 <h2>Несимметричное однофазное КЗ за трансформатором Δ/Y-0</h2>
+
+ <div class="vector-diagram-container" style="text-align: center; margin: 20px auto; max-width: 600px; font-family: sans-serif;">
+    <h3>Интерактивная векторная диаграмма токов ВН</h3>
+    <div style="margin-bottom: 15px;">
+        <label style="margin-right: 10px; font-weight: bold;">Выберите фазу КЗ на стороне НН:</label>
+        <button onclick="drawDiagram('A')" id="btn-phase-A" style="padding: 6px 12px; font-weight: bold; background: #2e7d32; color: white; border: none; cursor: pointer; border-radius: 4px;">Фаза A</button>
+        <button onclick="drawDiagram('B')" id="btn-phase-B" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px; margin: 0 5px;">Фаза B</button>
+        <button onclick="drawDiagram('C')" id="btn-phase-C" style="padding: 6px 12px; background: #e0e0e0; color: black; border: none; cursor: pointer; border-radius: 4px;">Фаза C</button>
+    </div>
+    
+    <!-- SVG Поле для отрисовки векторов -->
+    <svg id="vector-svg" width="400" height="400" style="background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
+        <!-- Стрелки для векторов (Defs) -->
+        <defs>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#d32f2f"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#388e3c"/>
+            </marker>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1976d2"/>
+            </marker>
+        </defs>
+        <!-- Координатная сетка (оси) -->
+        <line x1="50" y1="200" x2="350" y2="200" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="200" y1="50" x2="200" y2="350" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+        <circle cx="200" cy="200" r="100" stroke="#f0f0f0" fill="none" stroke-width="1"/>
+        
+        <!-- Группа для динамических векторов -->
+        <g id="vectors-group"></g>
+    </svg>
+</div>               
+
                 <p>При однофазном КЗ за трансформатором со схемой соединения Δ/Y-0, при условии \(Z_1=Z_2=Z_0\):</p>
 
                 <p style="text-align: center;">
@@ -538,6 +572,76 @@
             }
         }
 
+ function drawDiagram(phase) {
+    // 1. Подсветка активной кнопки
+    ['A', 'B', 'C'].forEach(p => {
+        const btn = document.getElementById(`btn-phase-${p}`);
+        if (btn) {
+            btn.style.background = p === phase ? '#2e7d32' : '#e0e0e0';
+            btn.style.color = p === phase ? 'white' : 'black';
+        }
+    });
+
+    const group = document.getElementById('vectors-group');
+    if (!group) return;
+    group.innerHTML = ''; // Очищаем старые векторы
+
+    const cx = 200, cy = 200; // Центр координат
+    const length = 120;       // Базовая длина вектора (100%)
+
+    // Матрица углов для линейных токов ВН в зависимости от поврежденной фазы на НН
+    let angles = { A: 0, B: 0, C: 0 };
+    
+    if (phase === 'A') {
+        angles = { A: 0, B: 180, C: null }; // Фаза C равна 0
+    } else if (phase === 'B') {
+        angles = { A: null, B: 120, C: -60 }; // Фаза A равна 0
+    } else if (phase === 'C') {
+        angles = { A: -120, B: null, C: 60 }; // Фаза B равна 0
+    }
+
+    // Функция отрисовки одной стрелки векторов
+    function createVector(angle, color, label) {
+        if (angle === null) return;
+        
+        // Переводим радианы в координаты SVG (учитывая, что Y в SVG идет вниз)
+        const rad = (angle * Math.PI) / 180;
+        const x2 = cx + length * Math.cos(rad);
+        const y2 = cy - length * Math.sin(rad); // Минус, чтобы развернуть ось Y вверх
+
+        // Создаем линию
+        const line = document.createElementNS('http://w3.org', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '3');
+        line.setAttribute('marker-end', `url(#arrow-${color === '#d32f2f' ? 'red' : color === '#388e3c' ? 'green' : 'blue'})`);
+        group.appendChild(line);
+
+        // Создаем текст надписи
+        const text = document.createElementNS('http://w3.org', 'text');
+        text.setAttribute('x', cx + (length + 20) * Math.cos(rad) - 10);
+        text.setAttribute('y', cy - (length + 20) * Math.sin(rad) + 5);
+        text.setAttribute('fill', '#333');
+        text.style.fontWeight = 'bold';
+        text.style.fontSize = '14px';
+        text.textContent = label;
+        group.appendChild(text);
+    }
+
+    // Отрисовываем векторы линейных токов ВН
+    createVector(angles.A, '#d32f2f', 'I_A1');
+    createVector(angles.B, '#388e3c', 'I_B1');
+    createVector(angles.C, '#1976d2', 'I_C1');
+}
+
+// Инициализация диаграммы при загрузке страницы (по умолчанию КЗ фазы А)
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => drawDiagram('A'), 500);
+});
+       
     </script>
 
 </body>
