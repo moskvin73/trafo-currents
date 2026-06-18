@@ -787,7 +787,88 @@
             setTxt("out-Ik3-1-nn-min-m-vn", Ik3_1_nn_min_m_vn.toFixed(3));
         }
         // Запускаем чтение файла при старте страницы
-        window.addEventListener('DOMContentLoaded', loadTransformersDatabase);
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            // Запускаем чтение файла при старте страницы
+            loadTransformersDatabase();
+            const fabContainer = document.getElementById("fabContainer");
+            const fabMainBtn = document.getElementById("fabMainBtn");
+            const fabAuthBtn = document.getElementById("fabAuthBtn");
+            const fabAddBtn = document.getElementById("fabAddBtn");
+
+            // Глобальные переменные сессии инженера
+            let currentUserLogin = null;
+            let isUserAuthorized = false;
+            const SECRET_PASSWORD = "Transform2026"; // Наш единый пароль для коллег
+
+            // 1. Логика открытия/закрытия меню по клику на шестеренку
+            fabMainBtn.addEventListener("click", () => {
+                fabContainer.classList.toggle("open");
+                // Меняем иконку с шестеренки на крестик
+                if (fabContainer.classList.contains("open")) {
+                    fabMainBtn.textContent = "❌";
+                } else {
+                    fabMainBtn.textContent = "⚙️";
+                }
+            });
+
+            // 2. Логика авторизации через последовательные Prompt
+            fabAuthBtn.addEventListener("click", () => {
+                if (isUserAuthorized) {
+                    alert(`Вы уже вошли как: ${currentUserLogin}`);
+                    return;
+                }
+
+                const login = prompt("Введите ваш рабочий логин (Фамилия / Email):");
+                if (!login || login.trim() === "") {
+                    alert("Вход отменен: логин не может быть пустым.");
+                    return;
+                }
+
+                const password = prompt("Введите общий пароль доступа для сотрудников:");
+                if (password === SECRET_PASSWORD) {
+                    currentUserLogin = login.trim();
+                    isUserAuthorized = true;
+                    fabAuthBtn.style.backgroundColor = "#4CAF50"; // Подсвечиваем кнопку зеленым в знак успеха
+                    fabAuthBtn.textContent = "✅";
+                    alert(`Успешный вход! Инженер: ${currentUserLogin}. Теперь расчет будет сохранен автоматически при выходе.`);
+                    fabContainer.classList.remove("open");
+                    fabMainBtn.textContent = "⚙️";
+                } else {
+                    alert("❌ Неверный пароль доступа! Доступ к облачным функциям ограничен.");
+                }
+            });
+
+            // 3. Логика для кнопки добавления трансформатора (пока заглушка под ваше будущее окно)
+            fabAddBtn.addEventListener("click", () => {
+                alert("Здесь будет открываться ваше модальное окно добавления нового трансформатора.");
+                fabContainer.classList.remove("open");
+                fabMainBtn.textContent = "⚙️";
+            });
+
+            // 4. АВТОСОХРАНЕНИЕ ПРИ ЗАКРЫТИИ СТРАНИЦЫ
+            window.addEventListener("beforeunload", (event) => {
+                // Запускаем сохранение ТОЛЬКО если пользователь авторизовался
+                if (isUserAuthorized && currentUserLogin) {
+                    
+                    // Собираем текущие данные с фильтров и полей ввода страницы
+                    const payload = {
+                        action: "save_session",
+                        user_login: currentUserLogin,
+                        voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
+                        // Предполагаем, что сопротивления системы хранятся в переменных или элементах
+                        system_r: document.getElementById("system-r-input") ? document.getElementById("system-r-input").value : 0,
+                        system_x: document.getElementById("system-x-input") ? document.getElementById("system-x-input").value : 0,
+                        transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null
+                    };
+
+                    // Используем sendBeacon — это специальный сверхнадежный метод браузера 
+                    // для отправки данных в момент закрытия вкладки (обычный fetch может прерваться)
+                    const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                    navigator.sendBeacon(GOOGLE_WEB_APP_URL, blob);
+                }
+            });
+        });
                  
      </script>
 </body>
