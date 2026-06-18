@@ -447,14 +447,26 @@
         <!-- Главная кнопка-триггер (Шестеренка) -->
         <button class="fab-main" id="fabMainBtn" title="Настройки сессии и базы">⚙️</button>
         
-        <!-- Дочерние всплывающие кнопки -->
+        <!-- Дочерние всплывающие элементы -->
         <div class="fab-subs">
-            <!-- Кнопка 1: Вход -->
-            <button class="fab-btn" id="fabAuthBtn" data-tooltip="Вход для коллег">👤</button>
-            <!-- Кнопка 2: Добавить трансформатор -->
+            <!-- Блок индикации логина и формы ввода (всплывает над кнопками) -->
+            <div id="fabAuthForm" style="display: none; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 180px; flex-direction: column; gap: 6px;">
+                <div id="user-status-text" style="font-size: 11px; font-weight: bold; color: #f44336; text-align: center; margin-bottom: 4px;">❌ Вход не выполнен</div>
+                <input type="text" id="fab-login-input" placeholder="Логин (Фамилия)" style="width: 100%; padding: 4px; font-size: 12px; box-sizing: border-box;">
+                <input type="password" id="fab-password-input" placeholder="Пароль" style="width: 100%; padding: 4px; font-size: 12px; box-sizing: border-box;">
+                <button type="button" id="fabSubmitAuthBtn" style="width: 100%; padding: 4px; background: #2196F3; color: white; border: none; cursor: pointer; border-radius: 3px; font-size: 12px; font-weight: bold;">Войти</button>
+            </div>
+
+            <!-- Кнопка 1: Открыть форму входа / Показать статус -->
+            <button class="fab-btn" id="fabAuthBtn" data-tooltip="Личный кабинет инженера">👤</button>
+            
+            <!-- Кнопка 2: Принудительное сохранение текущей сессии (скрыта до авторизации) -->
+            <button class="fab-btn" id="fabSaveBtn" data-tooltip="Сохранить сессию вручную" style="display: none; background-color: #FFF3E0; color: #E65100;">💾</button>
+            
+            <!-- Кнопка 3: Добавить трансформатор -->
             <button class="fab-btn" id="fabAddBtn" data-tooltip="Добавить трансформатор">➕</button>
         </div>
-    </div>    
+    </div>
 
      <script>
         // Прямая ссылка на вашу опубликованную Google Таблицу в формате CSV
@@ -787,49 +799,65 @@
             setTxt("out-Ik3-1-nn-min-m-vn", Ik3_1_nn_min_m_vn.toFixed(3));
         }
         
-       document.addEventListener("DOMContentLoaded", () => {
-            // Запускаем чтение файла при старте страницы
-            loadTransformersDatabase();
-            const fabContainer = document.getElementById("fabContainer");
-            const fabMainBtn = document.getElementById("fabMainBtn");
-            const fabAuthBtn = document.getElementById("fabAuthBtn");
-            const fabAddBtn = document.getElementById("fabAddBtn");
+document.addEventListener("DOMContentLoaded", () => {
+    // Запускаем чтение файла базы трансформаторов при старте страницы
+    loadTransformersDatabase();
+    
+    const fabContainer = document.getElementById("fabContainer");
+    const fabMainBtn = document.getElementById("fabMainBtn");
+    const fabAuthBtn = document.getElementById("fabAuthBtn");
+    const fabAddBtn = document.getElementById("fabAddBtn");
+    
+    // Новые элементы управления сессией
+    const fabAuthForm = document.getElementById("fabAuthForm");
+    const fabLoginInput = document.getElementById("fab-login-input");
+    const fabPasswordInput = document.getElementById("fab-password-input");
+    const fabSubmitAuthBtn = document.getElementById("fabSubmitAuthBtn");
+    const userStatusText = document.getElementById("user-status-text");
+    const fabSaveBtn = document.getElementById("fabSaveBtn");
 
-            // Глобальные переменные сессии инженера
-            let currentUserLogin = null;
-            let isUserAuthorized = false;
-            let currentUserPassword = null;
+    // Глобальные переменные состояния сессии
+    let currentUserLogin = null;
+    let currentUserPassword = null;
+    let isUserAuthorized = false;
 
+    // 1. Логика открытия/закрытия FAB-меню по клику на шестеренку
+    fabMainBtn.addEventListener("click", () => {
+        fabContainer.classList.toggle("open");
+        if (fabContainer.classList.contains("open")) {
+            fabMainBtn.textContent = "❌";
+        } else {
+            fabMainBtn.textContent = "⚙️";
+            fabAuthForm.style.display = "none"; // Прячем форму ввода при общем закрытии меню
+        }
+    });
 
-            // 1. Логика открытия/закрытия меню по клику на шестеренку
-            fabMainBtn.addEventListener("click", () => {
-                fabContainer.classList.toggle("open");
-                // Меняем иконку с шестеренки на крестик
-                if (fabContainer.classList.contains("open")) {
-                    fabMainBtn.textContent = "❌";
-                } else {
-                    fabMainBtn.textContent = "⚙️";
-                }
-            });
+    // 2. Показ/скрытие мини-формы авторизации по клику на силуэт 👤
+    fabAuthBtn.addEventListener("click", () => {
+        if (fabAuthForm.style.display === "none" || fabAuthForm.style.display === "") {
+            fabAuthForm.style.display = "flex";
+        } else {
+            fabAuthForm.style.display = "none";
+        }
+    });
 
-    // 2. Мгновенная авторизация на сервере и загрузка сохраненного сеанса
-    fabAuthBtn.addEventListener("click", async () => {
-        if (isUserAuthorized) {
-            alert(`Вы уже вошли как: ${currentUserLogin}`);
+    // 3. Мгновенная авторизация по кнопке "Войти" из формы
+    fabSubmitAuthBtn.addEventListener("click", async () => {
+        const login = fabLoginInput.value.trim();
+        const password = fabPasswordInput.value;
+
+        if (!login) {
+            alert("Пожалуйста, введите ваш рабочий логин.");
             return;
         }
-
-        const login = prompt("Введите ваш рабочий логин (Фамилия / Email):");
-        if (!login || login.trim() === "") {
-            alert("Вход отменен: логин не может быть пустым.");
-            return;
-        }
-
-        const password = prompt("Введите общий пароль доступа для сотрудников:");
         if (!password) {
-            alert("Вход отменен: пароль не может быть пустым.");
+            alert("Пожалуйста, введите пароль.");
             return;
         }
+
+        // Включаем индикатор ожидания сети на кнопке формы
+        fabSubmitAuthBtn.textContent = "⏳ Ожидание...";
+        fabSubmitAuthBtn.disabled = true;
 
         try {
             const response = await fetch(GOOGLE_WEB_APP_URL, {
@@ -837,90 +865,157 @@
                 redirect: "follow",
                 body: JSON.stringify({
                     action: "login_session",
-                    user_login: login.trim(),
+                    user_login: login,
                     password: password
                 })
             });
 
             if (!response.ok) throw new Error("Сервер Google не отвечает");
-
             const result = await response.json();
 
             if (result.status === "error") {
                 alert(`❌ ${result.message}`);
+                fabSubmitAuthBtn.textContent = "Войти";
+                fabSubmitAuthBtn.disabled = false;
                 return;
             }
 
             if (result.status === "success") {
-                currentUserLogin = login.trim();
+                // Фиксируем успешный статус в памяти страницы
+                currentUserLogin = login;
                 currentUserPassword = password;
                 isUserAuthorized = true;
 
-                fabAuthBtn.style.backgroundColor = "#4CAF50"; 
-                fabAuthBtn.textContent = "✅";
+                // Перестраиваем индикаторы статуса в меню
+                userStatusText.textContent = `💻 Инженер: ${currentUserLogin}`;
+                userStatusText.style.color = "#4CAF50"; // Меняем цвет текста на зеленый
                 
-                fabContainer.classList.remove("open");
-                fabMainBtn.textContent = "⚙️";
+                // Прячем поля ввода, оставляя только текст приветствия
+                fabLoginInput.style.display = "none";
+                fabPasswordInput.style.display = "none";
+                fabSubmitAuthBtn.style.display = "none";
 
-                // АВТОМАТИЧЕСКИ ВОССТАНАВЛИВАЕМ ДАННЫЕ НА ЭКРАНЕ ЧЕРЕЗ ВАШИ ID
+                // Подсвечиваем саму кнопку 👤 зеленым цветом успеха
+                fabAuthBtn.style.backgroundColor = "#4CAF50";
+                fabAuthBtn.textContent = "HN"; // Инициалы High Voltage / Новая сессия
+
+                // СРАЗУ ПОКАЗЫВАЕМ КНОПКУ ПРИНУДИТЕЛЬНОГО СОХРАНЕНИЯ 💾
+                fabSaveBtn.style.display = "flex";
+
+                // Если у пользователя ЕСТЬ старая сессия — восстанавливаем её параметры на экран
                 if (!result.is_new && result.data) {
                     const saved = result.data;
-                     
+                    
                     if (document.getElementById("voltage-filter")) document.getElementById("voltage-filter").value = saved.voltage_filter;
                     if (document.getElementById("input-R-sys-vn-min")) document.getElementById("input-R-sys-vn-min").value = saved.system_r_min;
                     if (document.getElementById("input-X-sys-vn-min")) document.getElementById("input-X-sys-vn-min").value = saved.system_x_min;
                     if (document.getElementById("input-R-sys-vn-max")) document.getElementById("input-R-sys-vn-max").value = saved.system_r_max;
                     if (document.getElementById("input-X-sys-vn-max")) document.getElementById("input-X-sys-vn-max").value = saved.system_x_max;
                     
-                    // Перезапускаем каскадные фильтры (выбор схемы)
                     if (typeof updateSchemaFilter === 'function') updateSchemaFilter();
-                    
-                    // Выставляем сохраненный трансформатор
                     if (document.getElementById("transformer-select")) document.getElementById("transformer-select").value = saved.transformer_id;
-                    
-                    // Пересчитываем токи КЗ
                     if (typeof updateCalculation === 'function') updateCalculation();
 
                     alert(`С возвращением, ${currentUserLogin}! Ваши прошлые параметры расчета успешно восстановлены из Google Таблицы.`);
                 } else {
-                    alert(`Успешный первый вход! Создан ваш новый пустой профиль расчетов в Google Таблице.`);
+                    // Если это новый профиль — сразу делаем первичную отправку текущих цифр с экрана
+                    await executeCloudUpdate();
+                    alert(`Успешный первый вход! Создан ваш рабочий профиль, текущие параметры синхронизированы.`);
                 }
+                
+                // Закрываем шторку формы через пару секунд для красоты
+                setTimeout(() => { fabAuthForm.style.display = "none"; }, 1500);
             }
 
         } catch (error) {
             alert(`❌ Ошибка подключения: ${error.message}`);
             console.error(error);
+            fabSubmitAuthBtn.textContent = "Войти";
+            fabSubmitAuthBtn.disabled = false;
         }
     });
 
-        // 4. НАДЕЖНОЕ АВТОСОХРАНЕНИЕ СЕССИИ С ВАШИМИ REAL ID СТРАНИЦЫ (Модернизированный вариант)
-        window.addEventListener("beforeunload", (event) => {
-            if (isUserAuthorized && currentUserLogin && currentUserPassword) {
-                
-                const payload = {
-                    action: "update_session",
-                    user_login: currentUserLogin,
-                    password: currentUserPassword,
-                    voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
-                    system_r_min: document.getElementById("input-R-sys-vn-min") ? document.getElementById("input-R-sys-vn-min").value : 0,
-                    system_x_min: document.getElementById("input-X-sys-vn-min") ? document.getElementById("input-X-sys-vn-min").value : 0,
-                    system_r_max: document.getElementById("input-R-sys-vn-max") ? document.getElementById("input-R-sys-vn-max").value : 0,
-                    system_x_max: document.getElementById("input-X-sys-vn-max") ? document.getElementById("input-X-sys-vn-max").value : 0,
-                    transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null
-                };
+    // 4. ВЫДЕЛЕННАЯ ФУНКЦИЯ КЛИЕНТСКОГО ОБНОВЛЕНИЯ ДАННЫХ В ОБЛАКЕ
+    async function executeCloudUpdate() {
+        if (!isUserAuthorized || !currentUserLogin || !currentUserPassword) return false;
 
-                // Используем fetch с флагом keepalive вместо sendBeacon.
-                // Это гарантирует прохождение через редиректы Google, даже когда вкладка закрывается!
+        const payload = {
+            action: "update_session",
+            user_login: currentUserLogin,
+            password: currentUserPassword,
+            voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
+            system_r_min: document.getElementById("input-R-sys-vn-min") ? document.getElementById("input-R-sys-vn-min").value : 0,
+            system_x_min: document.getElementById("input-X-sys-vn-min") ? document.getElementById("input-X-sys-vn-min").value : 0,
+            system_r_max: document.getElementById("input-R-sys-vn-max") ? document.getElementById("input-R-sys-vn-max").value : 0,
+            system_x_max: document.getElementById("input-X-sys-vn-max") ? document.getElementById("input-X-sys-vn-max").value : 0,
+            transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null
+        };
+
+        try {
+            const response = await fetch(GOOGLE_WEB_APP_URL, {
+                method: "POST",
+                redirect: "follow",
+                body: JSON.stringify(payload)
+            });
+            const res = await response.json();
+            return res.status === "success";
+        } catch (e) {
+            console.error("Ошибка синхронизации сессии:", e);
+            return false;
+        }
+    }
+
+    // 5. Обработчик для Кнопки ручного сохранения 💾
+    fabSaveBtn.addEventListener("click", async () => {
+        fabSaveBtn.textContent = "⏳";
+        fabSaveBtn.disabled = true;
+
+        const isSuccess = await executeCloudUpdate();
+
+        if (isSuccess) {
+            fabSaveBtn.style.backgroundColor = "#4CAF50"; // На секунду красим в зеленый
+            fabSaveBtn.textContent = "✅";
+            setTimeout(() => {
+                fabSaveBtn.style.backgroundColor = "#FFF3E0";
+                fabSaveBtn.textContent = "💾";
+                fabSaveBtn.disabled = false;
+            }, 1500);
+        } else {
+            alert("❌ Не удалось принудительно сохранить расчет в облако.");
+            fabSaveBtn.textContent = "💾";
+            fabSaveBtn.disabled = false;
+        }
+    });
+
+    // 6. Логика для кнопки добавления трансформатора (заглушка)
+    fabAddBtn.addEventListener("click", () => {
+        alert("Здесь будет открываться ваше модальное окно добавления нового трансформатора.");
+        fabContainer.classList.remove("open");
+        fabMainBtn.textContent = "⚙️";
+    });
+
+    // 7. НАДЕЖНОЕ АВТОСОХРАНЕНИЕ ПРИ ВЫХОДЕ (ДУБЛИРУЮЩИЙ КОНТРОЛЬ)
+    window.addEventListener("beforeunload", (event) => {
+        if (isUserAuthorized && currentUserLogin && currentUserPassword) {
+            const payload = {
+                action: "update_session",
+                user_login: currentUserLogin,
+                password: currentUserPassword,
+                voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
+                system_r_min: document.getElementById("input-R-sys-vn-min") ? document.getElementById("input-R-sys-vn-min").value : 0,
+                system_x_min: document.getElementById("input-X-sys-vn-min") ? document.getElementById("input-X-sys-vn-min").value : 0,
+                system_r_max: document.getElementById("input-R-sys-vn-max") ? document.getElementById("input-R-sys-vn-max").value : 0,
+                system_x_max: document.getElementById("input-X-sys-vn-max") ? document.getElementById("input-X-sys-vn-max").value : 0,
+                transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null};
                 fetch(GOOGLE_WEB_APP_URL, {
                     method: "POST",
                     mode: "cors",
-                    redirect: "follow", // Принудительно следуем за редиректами Google
-                    keepalive: true,    // Приказываем браузеру дописать запрос в фоне после закрытия страницы
-                    body: JSON.stringify(payload)
-                }).catch(err => console.error("Ошибка автосохранения при выходе:", err));
-            }
-        });
-    });
-     </script>
+                    redirect: "follow",
+                    keepalive: true,
+                    body: JSON.stringify(payload)})
+            ;}});
+        });                
+
+    </script>
 </body>
 </html>
