@@ -1,1 +1,101 @@
+/* Контейнер для всей группы кнопок в углу */
+.fab-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 12px;
+}
 
+/* Главная управляющая круглая кнопка (Шестеренка) */
+.fab-main {
+    width: 56px;
+    height: 56px;
+    background-color: #2196F3;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, background-color 0.2s;
+}
+
+.fab-main:hover {
+    background-color: #0b7dda;
+}
+
+/* Поворот шестеренки при открытии меню */
+.fab-container.open .fab-main {
+    transform: rotate(90deg);
+    background-color: #f44336; /* Меняется на красный крестик/цвет при открытии */
+}
+
+/* Скрытый по умолчанию блок с дочерними кнопками */
+.fab-subs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+/* Показываем дочерние кнопки, когда контейнер открыт */
+.fab-container.open .fab-subs {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Стили для маленьких всплывающих кнопок-действий */
+.fab-btn {
+    width: 45px;
+    height: 45px;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.fab-btn:hover {
+    background-color: #eee;
+    transform: scale(1.05);
+}
+
+/* Всплывающие текстовые подсказки слева от кнопок */
+.fab-btn::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 55px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.fab-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
