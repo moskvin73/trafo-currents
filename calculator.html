@@ -96,7 +96,7 @@
                
                 <div style="margin-bottom: 15px; font-family: sans-serif;">
                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">
-                        Выберите напряжение сети ВН (\(U_{вн}\)):
+                        Выберите напряжение сети ВН (\(U_{\text{вн}}\)):
                     </label>
                     <select id="voltage-filter" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
                         <option value="all">Все напряжения (без фильтра)</option>
@@ -442,7 +442,7 @@
     </div>
      <script>
         // Прямая ссылка на вашу опубликованную Google Таблицу в формате CSV
-        const GOOGLE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcgm8RLOxeABuvsGpZ6J4IdvQ3I8Bck44RRX9HQQb9VniF2Ck_ao2cwrrvk2vCujG4AWj7WLo41UGZ/pub?output=csv";
+        const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxj0TnplvS0xdQnXJnFn4c88ooE3FlhZSkuyeUHjvsjnsvlyfszZ1wti05O2ro9txkMVA/exec";
 
         // Глобальный массив для хранения загруженной базы данных
         let globalTransformersData = [];
@@ -450,11 +450,16 @@
         // Функция для асинхронной загрузки базы из файла
         async function loadTransformersDatabase() {
             try {
-                const response = await fetch(GOOGLE_CSV_URL);
+                // Обязательно добавляем redirect: "follow" для правильной обработки ответа Google
+                const response = await fetch(GOOGLE_WEB_APP_URL, {
+                    method: "GET",
+                    redirect: "follow"
+                });
+                
                 if (!response.ok) throw new Error('Ошибка загрузки файла базы данных с Google Cloud');
 
-                const csvText = await response.text();
-                const rawData = csvToJSON(csvText); // Вызов из файла csv-parser.js
+                // Получаем данные сразу как готовый массив объектов JSON (минуя текстовый csv-парсер)
+                const rawData = await response.json();
 
                 // Двухуровневая сортировка: сначала по Uvn, затем по мощности S
                 globalTransformersData = rawData.sort((a, b) => {
