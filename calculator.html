@@ -6,6 +6,7 @@
     <title>Интерактивный расчёт параметров и токов КЗ</title>
     <!-- Подключаем CSS калькулятора и MathJax для красивых формул в лейблах -->
     <link rel="stylesheet" href="./css/calculator.css">
+    <link rel="stylesheet" href="./css/floating-menu.css">
 
     <script src="./js/math-script.js"></script>
     <!-- Подключаем внешний парсер -->
@@ -440,6 +441,21 @@
         </div>
         </main>
     </div>
+
+    <!-- Конструктор плавающего FAB-меню -->
+    <div class="fab-container" id="fabContainer">
+        <!-- Главная кнопка-триггер (Шестеренка) -->
+        <button class="fab-main" id="fabMainBtn" title="Настройки сессии и базы">⚙️</button>
+        
+        <!-- Дочерние всплывающие кнопки -->
+        <div class="fab-subs">
+            <!-- Кнопка 1: Вход -->
+            <button class="fab-btn" id="fabAuthBtn" data-tooltip="Вход для коллег">👤</button>
+            <!-- Кнопка 2: Добавить трансформатор -->
+            <button class="fab-btn" id="fabAddBtn" data-tooltip="Добавить трансформатор">➕</button>
+        </div>
+    </div>    
+
      <script>
         // Прямая ссылка на вашу опубликованную Google Таблицу в формате CSV
         const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxj0TnplvS0xdQnXJnFn4c88ooE3FlhZSkuyeUHjvsjnsvlyfszZ1wti05O2ro9txkMVA/exec";
