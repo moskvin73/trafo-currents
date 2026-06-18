@@ -912,7 +912,9 @@
             const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
             navigator.sendBeacon(GOOGLE_WEB_APP_URL, blob);
         }
-    });                 
+        });
+           
+    });
      </script>
 </body>
 </html>
