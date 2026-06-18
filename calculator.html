@@ -893,26 +893,33 @@
         }
     });
 
-    // 4. НАДЕЖНОЕ АВТОСОХРАНЕНИЕ СЕССИИ С ВАШИМИ REAL ID СТРАНИЦЫ
-    window.addEventListener("beforeunload", (event) => {
-        if (isUserAuthorized && currentUserLogin && currentUserPassword) {
-            
-            const payload = {
-                action: "update_session",
-                user_login: currentUserLogin,
-                password: currentUserPassword,
-                voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
-                system_r_min: document.getElementById("input-R-sys-vn-min") ? document.getElementById("input-R-sys-vn-min").value : 0,
-                system_x_min: document.getElementById("input-X-sys-vn-min") ? document.getElementById("input-X-sys-vn-min").value : 0,
-                system_r_max: document.getElementById("input-R-sys-vn-max") ? document.getElementById("input-R-sys-vn-max").value : 0,
-                system_x_max: document.getElementById("input-X-sys-vn-max") ? document.getElementById("input-X-sys-vn-max").value : 0,
-                transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null
-            };
+        // 4. НАДЕЖНОЕ АВТОСОХРАНЕНИЕ СЕССИИ С ВАШИМИ REAL ID СТРАНИЦЫ (Модернизированный вариант)
+        window.addEventListener("beforeunload", (event) => {
+            if (isUserAuthorized && currentUserLogin && currentUserPassword) {
+                
+                const payload = {
+                    action: "update_session",
+                    user_login: currentUserLogin,
+                    password: currentUserPassword,
+                    voltage_filter: document.getElementById("voltage-filter") ? document.getElementById("voltage-filter").value : null,
+                    system_r_min: document.getElementById("input-R-sys-vn-min") ? document.getElementById("input-R-sys-vn-min").value : 0,
+                    system_x_min: document.getElementById("input-X-sys-vn-min") ? document.getElementById("input-X-sys-vn-min").value : 0,
+                    system_r_max: document.getElementById("input-R-sys-vn-max") ? document.getElementById("input-R-sys-vn-max").value : 0,
+                    system_x_max: document.getElementById("input-X-sys-vn-max") ? document.getElementById("input-X-sys-vn-max").value : 0,
+                    transformer_id: document.getElementById("transformer-select") ? document.getElementById("transformer-select").value : null
+                };
 
-            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-            navigator.sendBeacon(GOOGLE_WEB_APP_URL, blob);
-        }
-        });           
+                // Используем fetch с флагом keepalive вместо sendBeacon.
+                // Это гарантирует прохождение через редиректы Google, даже когда вкладка закрывается!
+                fetch(GOOGLE_WEB_APP_URL, {
+                    method: "POST",
+                    mode: "cors",
+                    redirect: "follow", // Принудительно следуем за редиректами Google
+                    keepalive: true,    // Приказываем браузеру дописать запрос в фоне после закрытия страницы
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error("Ошибка автосохранения при выходе:", err));
+            }
+        });
     });
      </script>
 </body>
