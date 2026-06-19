@@ -479,7 +479,7 @@
         async function loadTransformersDatabase() {
             try {
                 // Обязательно добавляем redirect: "follow" для правильной обработки ответа Google
-                const response = await fetch(GOOGLE_WEB_APP_URL, {
+                const response = await fetch(AppConfig.GOOGLE_WEB_APP_URL, {
                     method: "GET",
                     redirect: "follow"
                 });
