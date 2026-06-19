@@ -87,15 +87,25 @@
 
         // Загрузка данных (имитация получения чистых реляционных строк)
         function loadConductorsData() {
-            setTimeout(() => {
-                // Сервер присылает нам сырые данные с ID и кодами
-                currentConductors = [
-                    { id: 101, conductor_type: 0, cross_section: 70.00, class: 1, resistance: 0.4430 },
-                    { id: 102, conductor_type: 0, cross_section: 95.00, class: 1, resistance: 0.3200 },
-                    { id: 103, conductor_type: 1, cross_section: 120.00, class: 2, resistance: 0.1530 }
-                ];
-                renderTable();
-            }, 400);
+            const tableBody = document.getElementById('directoryTableBody');
+            
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка связи со справочником");
+                return response.json();
+            })
+            .then(res => {
+                if (res.success) {
+                    currentConductors = res.data;
+                    renderTable();
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="6" style="color:#dc2626;">Ошибка базы: ${res.error}</td></tr>`;
+                }
+            })
+            .catch(error => {
+                console.error("Catalog Loading Error:", error);
+                tableBody.innerHTML = `<tr><td colspan="6" style="color:#dc2626;">Не удалось загрузить данные ГОСТ. Проверьте сеть.</td></tr>`;
+            });
         }
 
         // Отрисовка таблицы в зависимости от роли
@@ -188,24 +198,64 @@
                 return alert("Ошибка: Проверьте правильность заполнения всех числовых полей!");
             }
 
-            // Формируем чистый JSON, переводя текстовый выбор обратно в сущности БД
-            const payload = {
-                action: "save_gost_conductor",
-                id: String(id).startsWith('new_') ? null : id, // Если строка новая, ID отправляем как null
-                conductor_type: parseInt(type),
-                cross_section: section,
-                class: cls,
-                resistance: res
-            };
+            // Если ID временный (начинается на new_), шлем на сервер null для создания записи
+            const isNew = String(id).startsWith('new_');
 
-            alert(`Администратор сохраняет строку.\nСерверу отправляется JSON:\n${JSON.stringify(payload, null, 2)}`);
-            // Тут будет боевой fetch к doPost(e)
+            fetch(AppConfig.GOOGLE_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "save_gost_conductor",
+                    id: isNew ? null : Number(id),
+                    conductor_type: parseInt(type),
+                    cross_section: section,
+                    class: cls,
+                    resistance: res
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadConductorsData(); // Полностью перегружаем актуальные данные с сервера
+                } else {
+                    alert("Ошибка сохранения: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Save Error:", error);
+                alert("Сетевая ошибка при попытке сохранить изменения.");
+            });
         }
 
         function deleteRow(id) {
-            if (confirm(`Вы уверены, что хотите удалить эту жилу из справочника ГОСТ?`)) {
-                alert(`Отправка команды удаления для ID: ${id}`);
-            }
+            if (!confirm(`Вы уверены, что хотите безвозвратно удалить эту жилу из справочника ГОСТ?`)) return;
+
+            fetch(AppConfig.GOOGLE_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "delete_gost_conductor",
+                    id: Number(id)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadConductorsData(); // Обновляем таблицу на экране
+                } else {
+                    alert("Ошибка удаления: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Delete Error:", error);
+                alert("Сетевая ошибка при попытке удаления.");
+            });
         }
     </script>
 </body>
