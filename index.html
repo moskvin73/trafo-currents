@@ -88,19 +88,20 @@
             <button class="fab-btn" id="netStatusBtn" data-tooltip="📡 Сеть: Готов к работе">📡</button>
             
             <!-- Блок полей авторизации (показывается только ГОСТЮ) -->
-            <div id="authFormFields" class="fab-btn" data-tooltip="Авторизация" style="width:auto; height:auto; border-radius:8px; padding:12px; background:rgba(0,0,0,0.85); border:none; display:block;">
+            <form id="authFormFields" class="fab-btn" onsubmit="event.preventDefault();" data-tooltip="Авторизация" style="width:auto; height:auto; border-radius:8px; padding:12px; background:rgba(0,0,0,0.85); border:none; display:block;">
                 <div class="fab-auth-form">
                     <label>Логин (Фамилия):</label>
-                    <input type="text" id="loginInput" placeholder="Иванов">
+                    <input type="text" id="loginInput" autocomplete="username" placeholder="Иванов">
+                    
                     <label>Пароль:</label>
-                    <input type="password" id="passInput" placeholder="******">
+                    <input type="password" id="passInput" autocomplete="current-password" placeholder="******">
+                    
                     <div style="display: flex; gap: 6px;">
-                        <button class="btn" style="flex:1; padding:5px; font-size:11px;" onclick="handleLogin()">Войти</button>
-                        <button class="btn btn-ghost" style="flex:1; padding:5px; font-size:11px; background:#475569; color:#fff; border:none;" onclick="handleRegister()">Рег.</button>
+                        <button type="button" class="btn" style="flex:1; padding:5px; font-size:11px;" onclick="handleLogin()">Войти</button>
+                        <button type="button" class="btn btn-ghost" style="flex:1; padding:5px; font-size:11px; background:#475569; color:#fff; border:none;" onclick="handleRegister()">Рег.</button>
                     </div>
                 </div>
-            </div>
-
+            </form>
             <!-- Блок профиля (показывается только ИНЖЕНЕРУ) -->
             <button class="fab-btn" id="saveProjectBtn" data-tooltip="💾 Сохранить в облако" onclick="triggerManualSave()" style="display:none;">💾</button>
             <button class="fab-btn" id="logoutBtn" data-tooltip="🚪 Выйти из системы" onclick="handleLogout()" style="display:none;">🚪</button>
@@ -175,7 +176,7 @@
             updateNetStatus("📡 Гость активен");
         }
 
-        const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxD9-MsmFAbFLsVqmf70GPmg64lyMKAiDFQB1622WE6ufNl1WCNwSWEEHYMWu9izaqvrg/exec";
+        const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxVUiYtT1ZLPUeWiVYUbOhdpjplGs2Cy9-EZQ1dJ_Oe-EtLcolOQ-UApVOWNGVmVUeLPA/exec";
 
         function handleLogin() {
             const login = document.getElementById('loginInput').value.trim();
