@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГОСТ 22483 — Справочник жил</title>
+    <link rel="stylesheet" href="./css/main-page.css">
+    <script src="./js/config.js"></script>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Инженерный комплекс ТКЗ</h1>
+            <p>Справочник параметров токопроводящих жил (ГОСТ 22483)</p>
+        </div>
+        <div>
+            <a href="index.html" class="btn btn-ghost" style="padding: 8px 16px;">⬅️ На главную</a>
+        </div>
+    </header>
+
+    <div class="panel" style="max-width: 1100px; margin: 20px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <h2 style="margin: 0; border: none; padding: 0;">📋 Реестр параметров материала и сечений</h2>
+            <!-- Кнопка админа, скрыта по умолчанию -->
+            <button id="adminAddBtn" class="btn" style="display: none;" onclick="openAddModal()">+ Добавить жилу по ГОСТ</button>
+        </div>
+
+        <table class="project-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Материал (0-Al, 1-Cu)</th>
+                    <th>Сечение, мм²</th>
+                    <th>Класс гибкости</th>
+                    <th>$R_{20}$, Ом/км</th>
+                    <th id="thAdminAction" style="display: none;">Действие</th>
+                </tr>
+            </thead>
+            <tbody id="directoryTableBody">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">Загрузка данных из облака Google...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const userRole = localStorage.getItem('user_role') || 'guest';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            configureAccessRights();
+            loadConductorsData();
+        });
+
+        // Настройка прав доступа (Админ / Читатель)
+        function configureAccessRights() {
+            if (userRole === 'admin') {
+                document.getElementById('adminAddBtn').style.display = 'inline-flex';
+                document.getElementById('thAdminAction').style.display = 'table-cell';
+            }
+        }
+
+        // Загрузка данных через GET-запрос (подключаем к Apps Script)
+        function loadConductorsData() {
+            // В будущем: fetch(AppConfig.GOOGLE_WEB_APP_URL + "?action=get_conductors")
+            // Имитация загрузки точных данных вашей структуры:
+            setTimeout(() => {
+                const mockData = [
+                    { id: 1, conductor_type: 0, cross_section: 70.00, class: 1, resistance: 0.4430 },
+                    { id: 2, conductor_type: 0, cross_section: 95.00, class: 1, resistance: 0.3200 },
+                    { id: 3, conductor_type: 1, cross_section: 120.00, class: 2, resistance: 0.1530 }
+                ];
+
+                const tableBody = document.getElementById('directoryTableBody');
+                tableBody.innerHTML = "";
+
+                mockData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    
+                    let actionTd = "";
+                    if (userRole === 'admin') {
+                        actionTd = `<td><button class="btn btn-ghost" style="padding: 4px 8px; color: #dc2626; border-color: #fca5a5;" onclick="deleteRow(${row.id})">🗑️</button></td>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>${row.id}</td>
+                        <td><strong>${row.conductor_type === 1 ? '🔴 Медь (1)' : '⚪ Алюминий (0)'}</strong></td>
+                        <td>${row.cross_section.toFixed(2)}</td>
+                        <td>Класс ${row.class}</td>
+                        <td style="font-family: monospace;">${row.resistance.toFixed(4)}</td>
+                        ${actionTd}
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }, 500);
+        }
+
+        function openAddModal() {
+            const mat = prompt("Введите тип проводника (0 - Алюминий, 1 - Медь):", "0");
+            const sect = prompt("Введите сечение жилы (мм²):", "95");
+            const cls = prompt("Введите класс гибкости (1-6):", "1");
+            const res = prompt("Введите сопротивление R20 (Ом/км):", "0.32");
+
+            if(!mat || !sect || !cls || !res) return alert("Операция отменена. Все поля обязательны.");
+
+            // Отправка через POST с действием action: "add_conductor"
+            alert(`Данные отправлены администратором в doPost(e):\nМатериал: ${mat}, Сечение: ${sect}, Класс: ${cls}, R20: ${res}`);
+        }
+
+        function deleteRow(id) {
+            if (confirm(`Удалить строку ГОСТ с ID ${id}?`)) {
+                // Отправка через POST с действием action: "delete_conductor"
+                alert(`Запрос на каскадное удаление ID ${id} передан серверу.`);
+            }
+        }
+    </script>
+</body>
+</html
