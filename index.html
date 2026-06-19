@@ -179,79 +179,86 @@
         const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxVUiYtT1ZLPUeWiVYUbOhdpjplGs2Cy9-EZQ1dJ_Oe-EtLcolOQ-UApVOWNGVmVUeLPA/exec";
 
         function handleLogin() {
-            const login = document.getElementById('loginInput').value.trim();
-            const pass = document.getElementById('passInput').value.trim();
-            if(!login || !pass) return alert('Заполните поля!');
+    const login = document.getElementById('loginInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+    if(!login || !pass) return alert('Заполните поля!');
 
-            updateNetStatus("📡 Авторизация...");
-            
-            // Синхронный fetch с флагами обхода редиректов Google
-            fetch(GOOGLE_WEB_APP_URL, {
-                method: "POST",
-                mode: "cors",
-                redirect: "follow",
-                keepalive: true,
-                headers: { "Content-Type": "text/plain;charset=utf-8" }, // Предотвращает preflight OPTIONS запрос
-                body: JSON.stringify({
-                    action: "login",
-                    login: login,
-                    password: pass
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem('user_login', data.login);
-                    localStorage.setItem('user_role', data.role);
-                    checkCurrentAuth();
-                    updateNetStatus("📡 Доступ разрешен");
-                    toggleFabMenu(); // Закрываем меню после успешного входа
-                } else {
-                    alert("Ошибка входа: " + data.error);
-                    updateNetStatus("❌ Ошибка авторизации");
-                }
-            })
-            .catch(error => {
-                console.error("Auth Error:", error);
-                updateNetStatus("❌ Ошибка сети");
-            });
+    updateNetStatus("📡 Авторизация...");
+    
+    // Очищенный POST-запрос без флага keepalive
+    fetch(GOOGLE_WEB_APP_URL, {
+        method: "POST",
+        mode: "cors",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "login",
+            login: login,
+            password: pass
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Сетевая ошибка сервера");
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            localStorage.setItem('user_login', data.login);
+            localStorage.setItem('user_role', data.role);
+            checkCurrentAuth();
+            updateNetStatus("📡 Доступ разрешен");
+            toggleFabMenu(); 
+        } else {
+            alert("Ошибка входа: " + data.error);
+            updateNetStatus("❌ Ошибка авторизации");
         }
+    })
+    .catch(error => {
+        console.error("Auth Error:", error);
+        updateNetStatus("❌ Ошибка сети");
+        alert("Не удалось связаться с сервером Google. Проверьте публикацию Web App.");
+    });
+}
 
         function handleRegister() {
-            const login = document.getElementById('loginInput').value.trim();
-            const pass = document.getElementById('passInput').value.trim();
-            if(!login || !pass) return alert('Введите логин и пароль для регистрации!');
-        
-            if(!confirm(`Зарегистрировать нового инженера с логином "${login}"?`)) return;
-        
-            updateNetStatus("📡 Регистрация...");
-            
-            fetch(GOOGLE_WEB_APP_URL, {
-                method: "POST",
-                mode: "cors",
-                redirect: "follow",
-                keepalive: true,
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    action: "register",
-                    login: login,
-                    password: pass
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.info);
-                    updateNetStatus("📡 Регистрация завершена");
-                } else {
-                    alert("Ошибка регистрации: " + data.error);
-                    updateNetStatus("❌ Ошибка регистрации");
-                }
-            })
-            .catch(error => {
-                console.error("Register Error:", error);
-                updateNetStatus("❌ Ошибка сети");
-            });
+    const login = document.getElementById('loginInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+    if(!login || !pass) return alert('Введите логин и пароль для регистрации!');
+
+    if(!confirm(`Зарегистрировать нового инженера с логином "${login}"?`)) return;
+
+    updateNetStatus("📡 Регистрация...");
+    
+    // Очищенный POST-запрос без флага keepalive
+    fetch(GOOGLE_WEB_APP_URL, {
+        method: "POST",
+        mode: "cors",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "register",
+            login: login,
+            password: pass
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Сетевая ошибка сервера");
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert(data.info);
+            updateNetStatus("📡 Регистрация завершена");
+        } else {
+            alert("Ошибка регистрации: " + data.error);
+            updateNetStatus("❌ Ошибка регистрации");
+        }
+    })
+    .catch(error => {
+        console.error("Register Error:", error);
+        updateNetStatus("❌ Ошибка сети");
+        alert("Не удалось связаться с сервером Google. Проверьте публикацию Web App.");
+    });
         }
 
         function handleLogout() {
