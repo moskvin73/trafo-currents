@@ -8,9 +8,32 @@
     <link rel="stylesheet" href="./css/main-page.css">
 
     <script src="./js/config.js"></script>
-    
-    <!-- Подключение MathJax для рендеринга формул -->
-    <script src="./js/math-script.js"></script>    
+
+     <!-- Подключение MathJax для рендеринга формул -->
+    <script src="./js/math-script.js"></script>
+       
+    <style>
+        /* Стили для полей ввода внутри таблицы, чтобы они выглядели аккуратно */
+        .table-input {
+            width: 90%;
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .table-select {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .sub-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
@@ -25,21 +48,21 @@
     </header>
 
     <div class="panel" style="max-width: 1100px; margin: 20px auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-            <h2 style="margin: 0; border: none; padding: 0;">📋 Реестр параметров материала и сечений</h2>
-            <!-- Кнопка админа, скрыта по умолчанию -->
-            <button id="adminAddBtn" class="btn" style="display: none;" onclick="openAddModal()">+ Добавить жилу по ГОСТ</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; border: none; padding: 0;">📋 Реестр сечений и материалов жилы</h2>
+            <!-- Админ видит кнопку добавления строки прямо в таблицу -->
+            <button id="adminAddRowBtn" class="btn" style="display: none;" onclick="addNewRowToTable()">+ Добавить новую строку</button>
         </div>
 
         <table class="project-table" style="width: 100%;">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Материал (0-Al, 1-Cu)</th>
+                    <th style="width: 60px;">№</th> <!-- Вместо ID пишем просто порядковый номер -->
+                    <th>Материал жилы</th>
                     <th>Сечение, мм²</th>
                     <th>Класс гибкости</th>
-                    <th>$R_{20}$, Ом/км</th>
-                    <th id="thAdminAction" style="display: none;">Действие</th>
+                    <th>Сопротивление $R_{20}$, Ом/км</th>
+                    <th id="thAdminAction" style="display: none; width: 120px;">Действие</th>
                 </tr>
             </thead>
             <tbody id="directoryTableBody">
@@ -52,73 +75,138 @@
 
     <script>
         const userRole = localStorage.getItem('user_role') || 'guest';
+        let currentConductors = []; // Храним загруженные данные в памяти
 
         document.addEventListener("DOMContentLoaded", () => {
-            configureAccessRights();
+            if (userRole === 'admin') {
+                document.getElementById('adminAddRowBtn').style.display = 'inline-flex';
+                document.getElementById('thAdminAction').style.display = 'table-cell';
+            }
             loadConductorsData();
         });
 
-        // Настройка прав доступа (Админ / Читатель)
-        function configureAccessRights() {
-            if (userRole === 'admin') {
-                document.getElementById('adminAddBtn').style.display = 'inline-flex';
-                document.getElementById('thAdminAction').style.display = 'table-cell';
-            }
+        // Загрузка данных (имитация получения чистых реляционных строк)
+        function loadConductorsData() {
+            setTimeout(() => {
+                // Сервер присылает нам сырые данные с ID и кодами
+                currentConductors = [
+                    { id: 101, conductor_type: 0, cross_section: 70.00, class: 1, resistance: 0.4430 },
+                    { id: 102, conductor_type: 0, cross_section: 95.00, class: 1, resistance: 0.3200 },
+                    { id: 103, conductor_type: 1, cross_section: 120.00, class: 2, resistance: 0.1530 }
+                ];
+                renderTable();
+            }, 400);
         }
 
-        // Загрузка данных через GET-запрос (подключаем к Apps Script)
-        function loadConductorsData() {
-            // В будущем: fetch(AppConfig.GOOGLE_WEB_APP_URL + "?action=get_conductors")
-            // Имитация загрузки точных данных вашей структуры:
-            setTimeout(() => {
-                const mockData = [
-                    { id: 1, conductor_type: 0, cross_section: 70.00, class: 1, resistance: 0.4430 },
-                    { id: 2, conductor_type: 0, cross_section: 95.00, class: 1, resistance: 0.3200 },
-                    { id: 3, conductor_type: 1, cross_section: 120.00, class: 2, resistance: 0.1530 }
-                ];
+        // Отрисовка таблицы в зависимости от роли
+        function renderTable() {
+            const tableBody = document.getElementById('directoryTableBody');
+            tableBody.innerHTML = "";
 
-                const tableBody = document.getElementById('directoryTableBody');
-                tableBody.innerHTML = "";
+            currentConductors.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-id', row.id); // Прячем системный ID в атрибут строки
 
-                mockData.forEach(row => {
-                    const tr = document.createElement('tr');
-                    
-                    let actionTd = "";
-                    if (userRole === 'admin') {
-                        actionTd = `<td><button class="btn btn-ghost" style="padding: 4px 8px; color: #dc2626; border-color: #fca5a5;" onclick="deleteRow(${row.id})">🗑️</button></td>`;
-                    }
+                if (userRole === 'admin') {
+                    // ИНТЕРФЕЙС АДМИНИСТРАТОРА: Поля ввода и выпадающие списки
+                    tr.innerHTML = `
+                        <td>
+                            ${index + 1}
+                            <span class="sub-text">id: ${row.id}</span>
+                        </td>
+                        <td>
+                            <select class="table-select" id="type_${row.id}">
+                                <option value="0" ${row.conductor_type === 0 ? 'selected' : ''}>Медь (голая)</option>
+                                <option value="1" ${row.conductor_type === 1 ? 'selected' : ''}>Медь (с покрытием)</option>
+                                <option value="2" ${row.conductor_type === 2 ? 'selected' : ''}>Алюминий</option>
+                            </select>
+                        </td>
+                        <td><input type="number" step="0.01" class="table-input" id="section_${row.id}" value="${row.cross_section.toFixed(2)}"></td>
+                        <td><input type="number" class="table-input" id="class_${row.id}" value="${row.class}"></td>
+                        <td><input type="text" class="table-input" style="font-family:monospace;" id="res_${row.id}" value="${row.resistance.toFixed(4)}"></td>
+                        <td>
+                            <button class="btn btn-ghost" style="padding: 4px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="saveRowChange(${row.id})" title="Сохранить">💾</button>
+                            <button class="btn btn-ghost" style="padding: 4px 8px; color: #dc2626; border-color: #fca5a5;" onclick="deleteRow(${row.id})" title="Удалить">🗑️</button>
+                        </td>
+                    `;
+                } else {
+                    // ИНТЕРФЕЙС ИНЖЕНЕРА / ГОСТЯ: Чистый текст (Read Only)
+
+                    let materialText = "";
+                    if (row.conductor_type === 0) materialText = "🔴 Медь (голая)";
+                    else if (row.conductor_type === 1) materialText = "🟤 Медь (с покрытием)";
+                    else if (row.conductor_type === 2) materialText = "⚪ Алюминий";
+                    else materialText = "❓ Неизвестно";                    
 
                     tr.innerHTML = `
-                        <td>${row.id}</td>
-                        <td><strong>${row.conductor_type === 1 ? '🔴 Медь (1)' : '⚪ Алюминий (0)'}</strong></td>
-                        <td>${row.cross_section.toFixed(2)}</td>
+                        <td>${index + 1}</td>
+                        <td><strong>${materialText}</strong></td>
+                        <td>${row.cross_section.toFixed(2)} мм²</td>
                         <td>Класс ${row.class}</td>
                         <td style="font-family: monospace;">${row.resistance.toFixed(4)}</td>
-                        ${actionTd}
                     `;
-                    tableBody.appendChild(tr);
-                });
-            }, 500);
+                }
+                tableBody.appendChild(tr);
+            });
         }
 
-        function openAddModal() {
-            const mat = prompt("Введите тип проводника (0 - Алюминий, 1 - Медь):", "0");
-            const sect = prompt("Введите сечение жилы (мм²):", "95");
-            const cls = prompt("Введите класс гибкости (1-6):", "1");
-            const res = prompt("Введите сопротивление R20 (Ом/км):", "0.32");
+        // Логика добавления новой пустой строки прямо в таблицу (для админа)
+        function addNewRowToTable() {
+            const tableBody = document.getElementById('directoryTableBody');
+            const tempId = "new_" + Date.now(); // Временный ID для новой строки
 
-            if(!mat || !sect || !cls || !res) return alert("Операция отменена. Все поля обязательны.");
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', tempId);
+            tr.innerHTML = `
+                <td>* <span class="sub-text">новый</span></td>
+                <td>
+                    <select class="table-select" id="type_${tempId}">
+                        <option value="0">Медь (голая)</option>
+                        <option value="1">Медь (с покрытием)</option>
+                        <option value="2">Алюминий</option>
+                    </select>
+                </td>
+                <td><input type="number" step="0.01" class="table-input" id="section_${tempId}" placeholder="0.00"></td>
+                <td><input type="number" class="table-input" id="class_${tempId}" value="1"></td>
+                <td><input type="text" class="table-input" style="font-family:monospace;" id="res_${tempId}" placeholder="0.0000"></td>
+                <td>
+                    <button class="btn btn-ghost" style="padding: 4px 8px; color: #16a34a; border-color: #bbf7d0;" onclick="saveRowChange('${tempId}')">💾</button>
+                    <button class="btn btn-ghost" style="padding: 4px 8px; color: #475569;" onclick="renderTable()">❌</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        }
 
-            // Отправка через POST с действием action: "add_conductor"
-            alert(`Данные отправлены администратором в doPost(e):\nМатериал: ${mat}, Сечение: ${sect}, Класс: ${cls}, R20: ${res}`);
+        // Сбор данных из строки и отправка в Apps Script через POST
+        function saveRowChange(id) {
+            const type = document.getElementById(`type_${id}`).value;
+            const section = parseFloat(document.getElementById(`section_${id}`).value);
+            const cls = parseInt(document.getElementById(`class_${id}`).value);
+            const res = parseFloat(document.getElementById(`res_${id}`).value);
+
+            if (isNaN(section) || isNaN(cls) || isNaN(res)) {
+                return alert("Ошибка: Проверьте правильность заполнения всех числовых полей!");
+            }
+
+            // Формируем чистый JSON, переводя текстовый выбор обратно в сущности БД
+            const payload = {
+                action: "save_gost_conductor",
+                id: String(id).startsWith('new_') ? null : id, // Если строка новая, ID отправляем как null
+                conductor_type: parseInt(type),
+                cross_section: section,
+                class: cls,
+                resistance: res
+            };
+
+            alert(`Администратор сохраняет строку.\nСерверу отправляется JSON:\n${JSON.stringify(payload, null, 2)}`);
+            // Тут будет боевой fetch к doPost(e)
         }
 
         function deleteRow(id) {
-            if (confirm(`Удалить строку ГОСТ с ID ${id}?`)) {
-                // Отправка через POST с действием action: "delete_conductor"
-                alert(`Запрос на каскадное удаление ID ${id} передан серверу.`);
+            if (confirm(`Вы уверены, что хотите удалить эту жилу из справочника ГОСТ?`)) {
+                alert(`Отправка команды удаления для ID: ${id}`);
             }
         }
     </script>
 </body>
-</html
+</html>
