@@ -1,1 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инженерный комплекс ТКЗ — Главная</title>
+    
+    <!-- Подключение внешних стилей -->
+    <link rel="stylesheet" href="./css/main-page.css">
+    <link rel="stylesheet" href="./css/floating-menu.css">
+    
+    <!-- Подключение MathJax для рендеринга формул -->
+    <script src="https://jsdelivr.net" async></script>
+</head>
+<body>
 
+    <!-- Шапка страницы -->
+    <header>
+        <div>
+            <h1>Инженерный калькулятор ТКЗ</h1>
+            <p>Проектирование и расчет параметров сети 6-10 кВ</p>
+        </div>
+        <div class="top-auth-badge" id="topStatus">
+            👤 Статус: Не авторизован
+        </div>
+    </header>
+
+    <!-- Основной блок -->
+    <div class="main-wrapper">
+        
+        <!-- Левая часть: Статья-анонс -->
+        <main class="panel">
+            <h2>📊 База знаний и методология</h2>
+            <h3 style="color: #1e293b; margin-top: 10px; font-size: 20px;">Трансформация токов несимметричных КЗ через силовые трансформаторы</h3>
+            <p style="text-align: justify;">При расчете токов короткого замыкания в распределительных сетях высокого и низкого напряжения критически важно учитывать влияние схем соединения обмоток трансформаторов. Трансформация токов при двухфазных и однофазных замыканиях имеет выраженную несимметрию.</p>
+            
+            <div class="formula-card">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">Расчет тока однофазного КЗ со схемой $Y/Y_n$:</p>
+                $$I^{(1)}_{КЗ} = \frac{3 \cdot U_{ф}}{2Z_{(1)} + Z_{(0)} + 3Z_{н}}$$
+            </div>
+            
+            <p style="text-align: justify; margin-bottom: 25px;">Математический аппарат учитывает полную трансформацию сопротивлений нулевой последовательности для различных групп соединений ($Y/\Delta-11$, $Y/Y_n-0$, $Y/Z_n-11$).</p>
+            <a href="article1.html" class="btn">Перейти к тексту статьи</a>
+        </main>
+
+        <!-- Правая часть: Управление расчетами -->
+        <aside class="panel" id="projectPanel">
+            <h2>📂 Рабочий кабинет</h2>
+            
+            <!-- Режим гостя -->
+            <div id="guestBlock">
+                <div class="guest-alert">
+                    <strong>Внимание:</strong> Вы работаете без авторизации. Расчеты сохраняются только в текущей сессии браузера.
+                </div>
+                <button class="btn" onclick="startGuestSession()" style="width: 100%;">Открыть временный калькулятор</button>
+            </div>
+
+            <!-- Режим инженера -->
+            <div id="engineerBlock" style="display: none;">
+                <button class="btn" style="width: 100%; margin-bottom: 15px;">+ Создать проект</button>
+                <table class="project-table">
+                    <thead>
+                        <tr>
+                            <th>Проект</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectTableBody">
+                        <tr>
+                            <td colspan="2" style="color: var(--text-muted); text-align: center; font-size: 14px;">Загрузка списка из Google Таблиц...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Реляционное FAB-меню управления в строгом соответствии с вашим CSS -->
+    <div class="fab-container" id="fabContainer">
+        
+        <!-- Главная управляющая круглая кнопка -->
+        <button class="fab-main" onclick="toggleFabMenu()">⚙️</button>
+        
+        <!-- Скрытый по умолчанию блок с дочерними кнопками-действиями -->
+        <div class="fab-subs">
+            
+            <!-- Информационный статус-индикатор (самый верхний) -->
+            <button class="fab-btn" id="netStatusBtn" data-tooltip="📡 Сеть: Готов к работе">📡</button>
+            
+            <!-- Блок полей авторизации (показывается только ГОСТЮ) -->
+            <div id="authFormFields" class="fab-btn" data-tooltip="Авторизация" style="width:auto; height:auto; border-radius:8px; padding:12px; background:rgba(0,0,0,0.85); border:none; display:block;">
+                <div class="fab-auth-form">
+                    <label>Логин (Фамилия):</label>
+                    <input type="text" id="loginInput" placeholder="Иванов">
+                    <label>Пароль:</label>
+                    <input type="password" id="passInput" placeholder="******">
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn" style="flex:1; padding:5px; font-size:11px;" onclick="handleLogin()">Войти</button>
+                        <button class="btn btn-ghost" style="flex:1; padding:5px; font-size:11px; background:#475569; color:#fff; border:none;" onclick="handleRegister()">Рег.</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок профиля (показывается только ИНЖЕНЕРУ) -->
+            <button class="fab-btn" id="saveProjectBtn" data-tooltip="💾 Сохранить в облако" onclick="triggerManualSave()" style="display:none;">💾</button>
+            <button class="fab-btn" id="logoutBtn" data-tooltip="🚪 Выйти из системы" onclick="handleLogout()" style="display:none;">🚪</button>
+            
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", () => {
+            checkCurrentAuth();
+        });
+
+        // Открытие/закрытие FAB контейнера добавлением класса .open (как в вашем CSS)
+        function toggleFabMenu() {
+            document.getElementById('fabContainer').classList.toggle('open');
+        }
+
+        function checkCurrentAuth() {
+            const currentLogin = localStorage.getItem('user_login');
+            const currentRole = localStorage.getItem('user_role');
+
+            const topStatus = document.getElementById('topStatus');
+            const guestBlock = document.getElementById('guestBlock');
+            const engineerBlock = document.getElementById('engineerBlock');
+            
+            const authFormFields = document.getElementById('authFormFields');
+            const saveProjectBtn = document.getElementById('saveProjectBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const netStatusBtn = document.getElementById('netStatusBtn');
+
+            if (currentLogin && currentLogin !== 'guest') {
+                // Залогинен как инженер
+                topStatus.innerText = `💻 Инженер: ${currentLogin}`;
+                netStatusBtn.setAttribute('data-tooltip', `💻 Инженер: ${currentLogin} (${currentRole})`);
+                
+                guestBlock.style.display = 'none';
+                engineerBlock.style.display = 'block';
+                
+                // Переключение кнопок внутри FAB
+                authFormFields.style.display = 'none';
+                saveProjectBtn.style.display = 'flex';
+                logoutBtn.style.display = 'flex';
+                
+                loadUserProjects(currentLogin);
+            } else if (currentLogin === 'guest') {
+                // Гостевой сеанс
+                topStatus.innerText = `👤 Режим: Гость`;
+                netStatusBtn.setAttribute('data-tooltip', "📡 Сеть: Гость (Без сохранения)");
+                guestBlock.style.display = 'block';
+                engineerBlock.style.display = 'none';
+                
+                authFormFields.style.display = 'block';
+                saveProjectBtn.style.display = 'none';
+                logoutBtn.style.display = 'none';
+            } else {
+                // Не авторизован вообще
+                topStatus.innerText = `👤 Статус: Не авторизован`;
+                netStatusBtn.setAttribute('data-tooltip', "📡 Сеть: Ожидание авторизации");
+                guestBlock.style.display = 'block';
+                engineerBlock.style.display = 'none';
+                
+                authFormFields.style.display = 'block';
+                saveProjectBtn.style.display = 'none';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        function startGuestSession() {
+            localStorage.setItem('user_login', 'guest');
+            localStorage.setItem('user_role', 'guest');
+            checkCurrentAuth();
+            updateNetStatus("📡 Гость активен");
+        }
+
+        function handleLogin() {
+            const login = document.getElementById('loginInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
+            if(!login || !pass) return alert('Заполните поля!');
+
+            updateNetStatus("📡 Авторизация...");
+            
+            // Имитация ответа от Apps Script
+            setTimeout(() => {
+                localStorage.setItem('user_login', login);
+                localStorage.setItem('user_role', 'engineer');
+                checkCurrentAuth();
+                updateNetStatus("📡 Доступ разрешен");
+            }, 600);
+        }
+
+        function handleRegister() {
+            alert('Запрос на регистрацию передан в doPost(e)');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('user_login');
+            localStorage.removeItem('user_role');
+            checkCurrentAuth();
+            updateNetStatus("📡 Сессия завершена");
+            location.reload();
+        }
+
+        function triggerManualSave() {
+            updateNetStatus("💾 Синхронизация...");
+            setTimeout(() => {
+                updateNetStatus("⚡ Сохранено успешно!");
+            }, 800);
+        }
+
+        function updateNetStatus(text) {
+            document.getElementById('netStatusBtn').setAttribute('data-tooltip', text);
+        }
+
+        // Восстановленная функция загрузки проектов инженера
+        function loadUserProjects(login) {
+            const tableBody = document.getElementById('projectTableBody');
+            // В будущем здесь будет fetch(url + "?action=get_projects&user=" + login)
+            setTimeout(() => {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td>ПС Правобережная 10кВ</td>
+                        <td><button class="btn btn-ghost" style="padding: 4px 8px; font-size: 12px;">Открыть</button></td>
+                    </tr>
+                `;
+            }, 400);
+        }
+    </script>
+</body>
+</html>
