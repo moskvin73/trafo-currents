@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Маркоразмеры кабелей</title>
+    <link rel="stylesheet" href="./css/main-page.css">
+    <script src="./js/config.js"></script>
+    <style>
+        .table-input { width: 95%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; text-align: center; box-sizing: border-box; }
+        .table-select { width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box; }
+        
+        .project-table th { position: sticky; top: 0; z-index: 10; background-color: #f1f5f9; box-shadow: inset 0 -2px 0 var(--border-color); }
+        .table-container-fixed { max-height: 70vh; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        .new-row-highlight { background-color: #f0fdf4 !important; }
+        
+        /* Стили для раскрывающихся деталей кабеля */
+        .details-row { background-color: #f8fafc; font-size: 14px; }
+        .details-container { padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: left; border: 1px dashed var(--border-color); border-radius: 6px; margin: 5px; }
+        .details-block h5 { margin: 0 0 5px 0; color: var(--primary-color); font-size: 13px; border-bottom: 1px dotted var(--border-color); padding-bottom: 2px; }
+        .details-block p { margin: 3px 0; font-size: 13px; }
+        .clickable-row { cursor: pointer; transition: background 0.1s; }
+        .clickable-row:hover { background-color: #f1f5f9; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Инженерный комплекс ТКЗ</h1>
+            <p>Паспорта маркоразмеров и электрические параметры кабелей КЛ</p>
+        </div>
+        <div>
+            <a href="index.html" class="btn btn-ghost" style="padding: 8px 16px;">⬅️ На главную</a>
+        </div>
+    </header>
+
+    <div class="panel" style="max-width: 1200px; margin: 20px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; border: none; padding: 0;">📦 Каталог силовых кабелей 6-10 кВ</h2>
+            <button id="adminAddCableBtn" class="btn" style="display: none;" onclick="addNewCableRow()">+ Добавить кабель</button>
+        </div>
+
+        <div class="table-container-fixed">
+            <table class="project-table" style="width: 100%; margin-top: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">№</th>
+                        <th>Марка кабеля</th>
+                        <th style="width: 180px;">Темп. группа / Напряжение</th>
+                        <th style="width: 220px;">Связанная жила по ГОСТ</th>
+                        <th style="width: 70px;">Кол-во жил</th>
+                        <th style="width: 80px;">Х (Ом/км)</th>
+                        <th style="width: 80px;">I возд.(А)</th>
+                        <th style="width: 80px;">I земл.(А)</th>
+                        <th style="width: 90px;">I кз 1с (кА)</th>
+                        <th id="thAdminAction" style="display: none; width: 100px;">Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="cableTableBody">
+                    <tr>
+                        <td colspan="10" style="text-align: center; color: var(--text-muted);">Синхронизация реляционных таблиц...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const userRole = localStorage.getItem('user_role') || 'guest';
+        let cablesCatalog = [];
+        let dbConductors = []; // Для списков админа
+        let dbGroups = [];     // Для списков админа
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (userRole === 'admin') {
+                document.getElementById('adminAddCableBtn').style.display = 'inline-flex';
+                document.getElementById('thAdminAction').style.display = 'table-cell';
+            }
+            // Сначала загружаем вспомогательные справочники, затем основной каталог
+            Promise.all([fetchConductors(), fetchGroups()])
+                .then(() => loadCablesCatalog());
+        });
+
+        function fetchConductors() {
+            return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
+                .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });
+        }
+
+        function fetchGroups() {
+            // Заглушка, пока не создали вкладку групп. Наполним базовыми данными для тестов:
+            dbGroups = [
+                { id: 1, standard_name: "ГОСТ 31996", voltage_kv: 10, insulation_type_ru: "СПЭ" },
+                { id: 2, standard_name: "ГОСТ 18410", voltage_kv: 6, insulation_type_ru: "БПИ" }
+            ];
+            return Promise.resolve();
+        }
+
+        function loadCablesCatalog() {
+            const tableBody = document.getElementById('cableTableBody');
+            // Вызываем агрегированную функцию, написанную ранее на сервере
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`)
+            .then(r => r.json())
+            .then(data => {
+                // Если сервер вернул массив
+                if (Array.isArray(data)) {
+                    cablesCatalog = data;
+                    renderCableTable();
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Ошибка сервера: ${data.error || 'Неверный формат данных'}</td></tr>`;
+                }
+            }).catch(err => {
+                tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Ошибка сети при чтении каталога.</td></tr>`;
+            });
+        }
+
+        function renderCableTable() {
+            const tableBody = document.getElementById('cableTableBody');
+            tableBody.innerHTML = "";
+
+            cablesCatalog.forEach((cable, index) => {
+                // Создаем основную строку
+                const tr = document.createElement('tr');
+                tr.className = userRole === 'admin' ? '' : 'clickable-row';
+                tr.setAttribute('data-id', cable.id);
+                
+                // Если обычный пользователь — клик по строке открывает/закрывает детали
+                if (userRole !== 'admin') {
+                    tr.onclick = () => toggleDetailsRow(cable.id, index, cable);
+                }
+
+                if (userRole === 'admin') {
+                    // Генерируем выпадающие списки для админа на основе загруженных справочников
+                    let groupOptions = dbGroups.map(g => `<option value="${g.id}" ${g.voltage_kv === cable.voltage_kv ? 'selected' : ''}>${g.standard_name} (${g.voltage_kv}кВ, ${g.insulation_type_ru})</option>`).join('');
+                    let condOptions = dbConductors.map(c => {
+                        let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
+                        return `<option value="${c.id}" ${c.cross_section === cable.cross_section && c.resistance === cable.r_20 ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
+                    }).join('');
+
+                    tr.innerHTML = `
+                        <td>${index + 1}<span class="sub-text">id:${cable.id}</span></td>
+                        <td><input type="text" class="table-input" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
+                        <td><select class="table-select" id="group_${cable.id}">${groupOptions}</select></td>
+                        <td><select class="table-select" id="cond_${cable.id}">${condOptions}</select></td>
+                        <td><input type="number" class="table-input" id="cores_${cable.id}" value="${cable.cores_count}"></td>
+                        <td><input type="number" step="0.0001" class="table-input" id="x_${cable.id}" value="${cable.x_line}"></td>
+                        <td><input type="number" class="table-input" id="air_${cable.id}" value="${cable.current_capacity_air || 0}"></td>
+                        <td><input type="number" class="table-input" id="ground_${cable.id}" value="${cable.current_capacity_ground || 0}"></td>
+                        <td><input type="number" step="0.01" class="table-input" id="sc_${cable.id}" value="${cable.short_circuit_current_1s || 0}"></td>
+                        <td>
+                            <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable(${cable.id})">💾</button>
+                            <button class="btn btn-ghost" style="padding:2px 6px; color:red; border-color:#fca5a5;" onclick="deleteCable(${cable.id})">🗑️</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                } else {
+                    // Строка инженера (Кратко и чисто)
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><strong>${cable.cable_type}</strong></td>
+                        <td>Сеть ${cable.voltage_kv} кВ</td>
+                        <td>${cable.cross_section} мм² (${cable.r_20 > 0.2 ? 'Алюминий' : 'Медь'})</td>
+                        <td>${cable.cores_count}</td>
+                        <td style="font-family:monospace;">${cable.x_line.toFixed(4)}</td>
+                        <td>${cable.current_capacity_air || '—'}</td>
+                        <td>${cable.current_capacity_ground || '—'}</td>
+                        <td>${cable.short_circuit_current_1s || '—'}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                }
+            });
+        }
+        // Логика разворачивания скрытых параметров (для Инженеров)
+        function toggleDetailsRow(cableId, index, data) {
+            const nextRow = document.getElementById(`details_${cableId}`);
+            if (nextRow) {
+                nextRow.remove();
+                return;
+            }
+            
+            // Закрываем другие открытые карточки, чтобы не захламлять экран
+            document.querySelectorAll('.details-row').forEach(el => el.remove());
+
+            const trDetails = document.createElement('tr');
+            trDetails.id = `details_${cableId}`;
+            trDetails.className = "details-row";
+            
+            // Вычисляем коэффициент изменения сопротивления на основе материала
+            // Для меди (r_20 < 0.2 Ом/км условно или проверяем по данным) задаем альфа = 0.00393, для алюминия = 0.00403
+            const alpha = data.cross_section > 0 && data.r_20 > 0.25 ? 0.00403 : 0.00393;
+            const rTemp = data.r_20 * (1 + alpha * (data.t_max_operating - 20));
+
+            trDetails.innerHTML = `
+                <td colspan="9">
+                    <div class="details-container">
+                        <div class="details-block">
+                            <h5>📐 Геометрия и Конструкция</h5>
+                            <p>• Наружный диаметр: <strong>${data.outer_diameter || '—'} мм</strong></p>
+                            <p>• Наличие брони: <strong>${data.outer_diameter > 38 ? 'Да (Бронированный)' : 'Нет'}</strong></p>
+                        </div>
+                        <div class="details-block">
+                            <h5>⚡ Электрическое сопротивление жил</h5>
+                            <p>• Активное при 20°C ($R_{20}$): <strong>${data.r_20.toFixed(4)} Ом/км</strong></p>
+                            <p>• Расчетное при макс. Т ($R_{раб}$): <strong>${rTemp.toFixed(4)} Ом/км</strong></p>
+                        </div>
+                        <div class="details-block">
+                            <h5>🔥 Температурные пределы (ГОСТ)</h5>
+                            <p>• Длительно допустимая: <strong style="color:green;">+${data.t_max_operating}°C</strong></p>
+                            <p>• Предельная при КЗ: <strong style="color:red;">+${data.t_max_short_circuit}°C</strong></p>
+                        </div>
+                    </div>
+                </td>
+            `;
+            
+            // Вставляем строку детализации строго под текущей строкой в tbody
+            document.getElementById('cableTableBody').children[index].after(trDetails);
+        }
+
+        // Добавление новой строки наверх таблицы (для Администратора)
+        function addNewCableRow() {
+            const tableBody = document.getElementById('cableTableBody');
+            if (document.getElementById('type_new_cable')) {
+                document.getElementById('type_new_cable').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const tempId = "new_cable";
+            const tr = document.createElement('tr');
+            tr.id = "inserted_new_cable_row";
+            tr.className = "new-row-highlight";
+
+            let groupOptions = dbGroups.map(g => `<option value="${g.id}">${g.standard_name} (${g.voltage_kv}кВ)</option>`).join('');
+            let condOptions = dbConductors.map(c => {
+                let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
+                return `<option value="${c.id}">${mat} | ${c.cross_section}мм²</option>`;
+            }).join('');
+
+            tr.innerHTML = `
+                <td>*</td>
+                <td><input type="text" class="table-input" id="type_${tempId}" placeholder="АПвПг" style="text-align:left; font-weight:600;"></td>
+                <td><select class="table-select" id="group_${tempId}">${groupOptions}</select></td>
+                <td><select class="table-select" id="cond_${tempId}">${condOptions}</select></td>
+                <td><input type="number" class="table-input" id="cores_${tempId}" value="3"></td>
+                <td><input type="number" step="0.0001" class="table-input" id="x_${tempId}" placeholder="0.1200"></td>
+                <td><input type="number" class="table-input" id="air_${tempId}" placeholder="0"></td>
+                <td><input type="number" class="table-input" id="ground_${tempId}" placeholder="0"></td>
+                <td><input type="number" step="0.01" class="table-input" id="sc_${tempId}" placeholder="0"></td>
+                <td>
+                    <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable('${tempId}')">💾</button>
+                    <button class="btn btn-ghost" style="padding:2px 6px; color:#475569;" onclick="renderCableTable()">❌</button>
+                </td>
+            `;
+            
+            tableBody.prepend(tr);
+            tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            setTimeout(() => {
+                const firstInput = document.getElementById(`type_${tempId}`);
+                if(firstInput) firstInput.focus();
+            }, 300);
+        }
+
+        // Отправка данных маркоразмера кабеля на сервер Google Apps Script
+        function saveCable(id) {
+            const typeInput = document.getElementById(`type_${id}`).value.trim();
+            const xInput = parseFloat(document.getElementById(`x_${id}`).value);
+            
+            if (!typeInput || isNaN(xInput)) {
+                return alert("Ошибка: Марка кабеля и индуктивное сопротивление Х обязательны для заполнения!");
+            }
+
+            const isNew = (id === 'new_cable');
+            const payload = {
+                action: "save_cable_specification",
+                server_auth_login: localStorage.getItem('user_login'),
+                id: isNew ? null : Number(id),
+                cable_type: typeInput,
+                group_id: parseInt(document.getElementById(`group_${id}`).value),
+                conductor_id: parseInt(document.getElementById(`cond_${id}`).value),
+                cores_count: parseInt(document.getElementById(`cores_${id}`).value),
+                // Параметры, предназначенные для дочерней таблицы cable_properties
+                inductive_resistance: xInput,
+                current_capacity_air: parseInt(document.getElementById(`air_${id}`).value) || 0,
+                current_capacity_ground: parseInt(document.getElementById(`ground_${id}`).value) || 0,
+                short_circuit_current_1s: parseFloat(document.getElementById(`sc_${id}`).value) || 0
+            };
+
+            fetch(AppConfig.GOOGLE_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка связи с сервером");
+                return response.json();
+            })
+            .then(res => {
+                if (res.success) {
+                    alert(res.message);
+                    loadCablesCatalog(); // Полностью обновляем данные на экране
+                } else {
+                    alert("Ошибка базы данных: " + res.error);
+                }
+            })
+            .catch(err => {
+                console.error("Save Cable Error:", err);
+                alert("Сетевой сбой при сохранении параметров кабеля.");
+            });
+        }
+
+        // Запрос на каскадное удаление кабеля
+        function deleteCable(id) {
+            if (!confirm(`Вы уверены, что хотите полностью удалить этот маркоразмер кабеля?\nЭто сотрет данные из таблиц спецификаций и свойств!`)) return;
+
+            fetch(AppConfig.GOOGLE_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "delete_cable_specification",
+                    server_auth_login: localStorage.getItem('user_login'),
+                    id: Number(id)
+                })
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    alert(res.message);
+                    loadCablesCatalog();
+                } else {
+                    alert("Ошибка удаления: " + res.error);
+                }
+            })
+            .catch(err => {
+                console.error("Delete Cable Error:", err);
+                alert("Сетевая ошибка при попытке удаления кабеля.");
+            });
+        }
+    </script>
+</body>
+</html>        
