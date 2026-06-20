@@ -26,6 +26,40 @@
         .details-block p { margin: 3px 0; font-size: 13px; }
         .clickable-row { cursor: pointer; transition: background 0.1s; }
         .clickable-row:hover { background-color: #f1f5f9; }
+
+        /* Навешиваем правила на строку, у которой есть наш атрибут */
+        tr[data-tooltip] {
+            cursor: pointer; /* Меняем курсор на палец, показывая, что строка кликабельна */
+        }
+
+        /* Создаем сам блок подсказки */
+        tr[data-tooltip]::after {
+            content: attr(data-tooltip); /* Берет текст из JS атрибута data-tooltip */
+            position: absolute;
+            bottom: 110%; /* Появляется строго НАД строкой */
+            left: 50%;
+            transform: translateX(-50%);
+            
+            /* Стили внешнего вида */
+            background-color: #2d3748; /* Темный современный фон */
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap; /* Чтобы текст не переносился */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            
+            /* Эффект плавного появления */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* Показываем подсказку при наведении */
+        tr[data-tooltip]:hover::after {
+            opacity: 1;
+        }        
     </style>
 </head>
 <body>
@@ -160,6 +194,8 @@
                     tableBody.appendChild(tr);
                 } else {
                     // Строка инженера (Кратко и чисто)
+                    tr.setAttribute('data-tooltip', 'Кликните для просмотра геометрии, сопротивления и ГОСТ');
+                    tr.style.position = 'relative'; // Важно для позиционирования подсказки
                     tr.innerHTML = `
                         <td>${index + 1}</td>
                         <td><strong>${cable.full_cable_name}</strong></td>
@@ -201,7 +237,7 @@
                         <div class="details-block">
                             <h5>⚡ Электрическое сопротивление жил</h5>
                             <p>• Активное при 20°C (\\(R_{20}\\)): <strong>${data.r_20.toFixed(4)} Ом/км</strong></p>
-                            <p>• Расчетное при макс. Т (\\(R_{раб}\\)): <strong>${data.r_max_temp.toFixed(4)} Ом/км</strong></p>
+                            <p>• Расчетное при макс. Т (\\(R_{\\text {раб}}\\)): <strong>${data.r_max_temp.toFixed(4)} Ом/км</strong></p>
                         </div>
                         <div class="details-block">
                             <h5>🔥 Температурные пределы (ГОСТ)</h5>
