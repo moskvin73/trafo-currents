@@ -154,7 +154,7 @@
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
                     cablesCatalog = data;
-                    if (userRole !== 'admin') renderAdminEditableView();
+                    if (userRole === 'admin') renderAdminEditableView();
                     else renderGuestView();
                 } else {
                     tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Ошибка сервера: ${data.error || 'Неверный формат данных'}</td></tr>`;
