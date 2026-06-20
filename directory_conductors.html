@@ -32,6 +32,27 @@
             font-size: 11px;
             color: var(--text-muted);
             display: block;
+        }       
+        /* ЭФФЕКТ СТИПКОГО (ФИКСИРОВАННОГО) ЗАГОЛОВКА */
+        .project-table th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f1f5f9; /* Цвет фона шапки, чтобы строки под ней не просвечивали */
+            box-shadow: inset 0 -2px 0 var(--border-color); /* Сохраняем нижнюю рамку */
+        }
+        
+        /* Дополнительно фиксируем контейнер, если у страницы есть padding */
+        .table-container-fixed {
+            max-height: 75vh; /* Таблица займет 75% высоты экрана и внутри появится скролл */
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        /* Выделение строки создания новой записи */
+        .new-row-highlight {
+            background-color: #f0fdf4 !important; /* Легкий зеленый оттенок */
         }
     </style>
 </head>
@@ -54,7 +75,8 @@
             <button id="adminAddRowBtn" class="btn" style="display: none;" onclick="addNewRowToTable()">+ Добавить новую строку</button>
         </div>
 
-        <table class="project-table" style="width: 100%;">
+        <div class="table-container-fixed">
+            <table class="project-table" style="width: 100%;">
             <thead>
                 <tr style="text-align: center;">
                     <th style="width: 60px;">№</th> <!-- Вместо ID пишем просто порядковый номер -->
@@ -70,7 +92,8 @@
                     <td colspan="6" style="text-align: center; color: var(--text-muted);">Загрузка данных из облака Google...</td>
                 </tr>
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -163,10 +186,16 @@
         // Логика добавления новой пустой строки прямо в таблицу (для админа)
         function addNewRowToTable() {
             const tableBody = document.getElementById('directoryTableBody');
-            const tempId = "new_" + Date.now(); // Временный ID для новой строки
+            
+            // Если администратор уже нажал кнопку и пустая строка ввода уже открыта сверху — не плодим дубликаты
+            if (document.getElementById('type_new_row')) return;
+
+            const tempId = "new_row"; 
 
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', tempId);
+            tr.className = "new-row-highlight"; // Подсвечиваем зеленым для наглядности
+            
             tr.innerHTML = `
                 <td>* <span class="sub-text">новый</span></td>
                 <td>
@@ -184,7 +213,9 @@
                     <button class="btn btn-ghost" style="padding: 4px 8px; color: #475569;" onclick="renderTable()">❌</button>
                 </td>
             `;
-            tableBody.appendChild(tr);
+            
+            // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Метод prepend вместо appendChild вставляет элемент в самое начало tbody
+            tableBody.prepend(tr);
         }
 
         // Сбор данных из строки и отправка в Apps Script через POST
