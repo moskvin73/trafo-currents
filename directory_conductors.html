@@ -13,6 +13,7 @@
     <script src="./js/math-script.js"></script>
        
     <style>
+
 /* ==========================================================================
    КОНТЕЙНЕР И СЕТКА ТАБЛИЦЫ
    ========================================================================== */
@@ -21,7 +22,15 @@
 .table-container-fixed {
     max-height: 75vh;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    
+    /* Отрисовываем только боковые и нижнюю рамку у контейнера */
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    
+    /* Верхнюю рамку контейнера убираем, её роль возьмет на себя тень липкого th */
+    border-top: none !important; 
+    
     border-radius: 6px;
     overscroll-behavior-y: none; /* Запрещает "резиновую" пружину и люфты вверху */
     background-color: #ffffff;   /* Чисто белый фон контейнера */
@@ -32,8 +41,9 @@
     width: 100%;
     margin: 0 !important;
     padding: 0 !important;
-    border-collapse: separate !important; /* Убирает микро-смещения рамок при скролле */
-    border-spacing: 0 !important;
+    
+    /* Возвращаем collapse — с убранной верхней рамкой контейнера он больше не прыгает */
+    border-collapse: collapse !important; 
     background-color: #ffffff;   /* Чисто белый фон таблицы */
 }
 
@@ -50,7 +60,12 @@
 /* Белый фон для всех обычных ячеек данных */
 .project-table td {
     background-color: #ffffff !important;
-    border-bottom: 1px solid var(--border-color); /* Аккуратная тонкая линия между строками */
+    border-bottom: 1px solid var(--border-color); /* Линия между строками */
+    border-right: 1px solid var(--border-color);  /* Линия между столбцами (если нужна сетка) */
+}
+
+.project-table td:last-child {
+    border-right: none; /* Убираем правую рамку у последней ячейки, чтобы не дублировать контейнер */
 }
 
 
@@ -59,24 +74,29 @@
    ========================================================================== */
 .project-table th {
     position: sticky;
-    top: -1px; /* Сдвиг на 1px вверх полностью перекрывает рамку контейнера, убирая зазор */
+    top: 0; /* Теперь жесткий ноль, так как верхняя рамка контейнера нам больше не мешает */
     z-index: 10;
     background-color: #f1f5f9 !important; /* Серый цвет только для заголовка */
-    background-clip: padding-box; /* Защищает фон от микро-сдвигов относительно рамок */
     font-weight: 600;
     text-align: center;
     
-    /* апаратное ускорение намертво блокирует микро-смещение на экранах с любым DPI */
+    /* Аппаратное ускорение намертво блокирует микро-смещение на экранах с любым DPI */
     transform: translate3d(0, 0, 0); 
     
-    /* Отрисовка рамок через shadow для стабильности сетки border-collapse: separate */
+    /* Прорисовываем рамки вокруг th. Внешняя тень сверху имитирует закрытую рамку контейнера */
     box-shadow: inset 0 -1px 0 var(--border-color), 
-                inset 0 1px 0 var(--border-color); 
+                inset -1px 0 0 var(--border-color),
+                0 -1px 0 var(--border-color); /* Рисует верхнюю рамку, которая не прыгает */
+}
+
+.project-table th:last-child {
+    box-shadow: inset 0 -1px 0 var(--border-color),
+                0 -1px 0 var(--border-color); /* Убираем правую внутреннюю рамку у последнего th */
 }
 
 
 /* ==========================================================================
-   ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ВНУТРИ СТРОК
+   ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ВНУТРИ СТРОК (БЕЛЫЕ)
    ========================================================================== */
 
 /* Поля ввода (Инпуты) */
@@ -90,7 +110,7 @@
     box-sizing: border-box !important;
     font-size: 13px !important;
     text-align: center;
-    background-color: #ffffff; /* Белый фон внутри инпута */
+    background-color: #ffffff !important; /* Гарантированно белый фон */
 }
 
 /* Выпадающие списки (Селекты) */
@@ -102,17 +122,17 @@
     border: 1px solid var(--border-color);
     box-sizing: border-box !important;
     font-size: 13px !important;
-    background-color: #ffffff; /* Белый фон внутри селекта */
+    background-color: #ffffff !important; /* Гарантированно белый фон */
 }
 
 /* Кнопки действий (💾 и 🗑️) */
 .project-table .btn-ghost {
     height: 22px !important;
-    line-height: 20px !important; /* Центрирует эмодзи по вертикали */
+    line-height: 20px !important; 
     padding: 0 4px !important;
     margin: 0 2px !important;
     font-size: 12px !important;
-    background-color: #ffffff; /* Белый фон для кнопок в покое */
+    background-color: #ffffff !important; /* Гарантированно белый фон */
 }
 
 
@@ -124,13 +144,13 @@
 .project-table .sub-text {
     font-size: 10px !important;
     color: var(--text-muted);
-    display: inline !important;  /* Принудительно выстраивает в одну строку с номером */
-    margin-left: 6px !important; /* Небольшой отступ от порядкового номера */
+    display: inline !important;  
+    margin-left: 6px !important; 
 }
 
 /* Выделение строки создания новой записи (перебивает белый цвет ячеек) */
 .project-table .new-row-highlight td {
-    background-color: #f0fdf4 !important; /* Легкий зеленый оттенок */
+    background-color: #f0fdf4 !important; 
 }
 
     </style>
