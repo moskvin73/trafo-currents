@@ -24,7 +24,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     overscroll-behavior-y: none; /* Запрещает "резиновую" пружину и люфты вверху */
-    background-color: #f1f5f9;   /* Фон совпадает с шапкой, убирая белые щели при загрузке */
+    background-color: #ffffff;   /* Чисто белый фон контейнера */
 }
 
 /* Базовые настройки таблицы */
@@ -34,6 +34,7 @@
     padding: 0 !important;
     border-collapse: separate !important; /* Убирает микро-смещения рамок при скролле */
     border-spacing: 0 !important;
+    background-color: #ffffff;   /* Чисто белый фон таблицы */
 }
 
 /* Компактные ячейки (Excel-стиль) */
@@ -46,6 +47,12 @@
     vertical-align: middle;         /* Строгое центрирование элементов по вертикали */
 }
 
+/* Белый фон для всех обычных ячеек данных */
+.project-table td {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid var(--border-color); /* Аккуратная тонкая линия между строками */
+}
+
 
 /* ==========================================================================
    ЛИПКИЙ (ФИКСИРОВАННЫЙ) ЗАГОЛОВК
@@ -54,10 +61,13 @@
     position: sticky;
     top: -1px; /* Сдвиг на 1px вверх полностью перекрывает рамку контейнера, убирая зазор */
     z-index: 10;
-    background-color: #f1f5f9;
+    background-color: #f1f5f9 !important; /* Серый цвет только для заголовка */
     background-clip: padding-box; /* Защищает фон от микро-сдвигов относительно рамок */
     font-weight: 600;
     text-align: center;
+    
+    /* апаратное ускорение намертво блокирует микро-смещение на экранах с любым DPI */
+    transform: translate3d(0, 0, 0); 
     
     /* Отрисовка рамок через shadow для стабильности сетки border-collapse: separate */
     box-shadow: inset 0 -1px 0 var(--border-color), 
@@ -80,6 +90,7 @@
     box-sizing: border-box !important;
     font-size: 13px !important;
     text-align: center;
+    background-color: #ffffff; /* Белый фон внутри инпута */
 }
 
 /* Выпадающие списки (Селекты) */
@@ -91,6 +102,7 @@
     border: 1px solid var(--border-color);
     box-sizing: border-box !important;
     font-size: 13px !important;
+    background-color: #ffffff; /* Белый фон внутри селекта */
 }
 
 /* Кнопки действий (💾 и 🗑️) */
@@ -100,6 +112,7 @@
     padding: 0 4px !important;
     margin: 0 2px !important;
     font-size: 12px !important;
+    background-color: #ffffff; /* Белый фон для кнопок в покое */
 }
 
 
@@ -115,10 +128,11 @@
     margin-left: 6px !important; /* Небольшой отступ от порядкового номера */
 }
 
-/* Выделение строки создания новой записи */
-.new-row-highlight {
+/* Выделение строки создания новой записи (перебивает белый цвет ячеек) */
+.project-table .new-row-highlight td {
     background-color: #f0fdf4 !important; /* Легкий зеленый оттенок */
 }
+
     </style>
 </head>
 <body>
