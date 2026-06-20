@@ -62,6 +62,49 @@ table td {
     padding: 1px;             /* Уменьшите это значение, если строка всё ещё высокая */
     vertical-align: middle;   /* Выравниваем поле строго по центру строки */
 }        
+
+.project-table th, 
+.project-table td {
+    padding: 2px 4px !important;    /* Минимальные отступы внутри ячеек */
+    height: 28px !important;        /* Фиксированная небольшая высота для всей строки */
+    line-height: 1 !important;      /* Убираем лишние межстрочные интервалы */
+    font-size: 13px !important;     /* Слегка уменьшаем общий шрифт текста */
+}
+
+/* 2. Делаем инпуты тонкими и аккуратными */
+.project-table .table-input {
+    height: 22px !important;        /* Компактная высота инпута */
+    padding: 0 4px !important;      /* Минимальный отступ слева/справа */
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    line-height: 22px !important;
+}
+
+/* 3. Делаем селекты тонкими (выравниваем с инпутами) */
+.project-table .table-select {
+    height: 22px !important;        /* Такая же высота, как у инпута */
+    padding: 0 4px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    font-size: 13px !important;
+}
+
+/* 4. Сжимаем кнопки действий (дискета и корзина) */
+.project-table .btn-ghost {
+    padding: 0 4px !important;      /* Убираем вертикальные отступы у кнопок */
+    height: 22px !important;        /* Фиксируем высоту кнопок */
+    line-height: 20px !important;   /* Центрируем эмодзи внутри кнопки */
+    margin: 0 2px !important;
+    font-size: 12px !important;     /* Уменьшаем размер иконки, если нужно */
+}
+
+/* 5. Дополнительно сжимаем подпись id */
+.project-table .sub-text {
+    font-size: 10px !important;
+    display: inline !important;     /* Гарантируем, что id не переносится на новую строку */
+    margin-left: 4px !important;
+    color: var(--text-muted);
+}
     </style>
 </head>
 <body>
