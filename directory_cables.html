@@ -214,6 +214,11 @@
             
             // Вставляем строку детализации строго под текущей строкой в tbody
             document.getElementById('cableTableBody').children[index].after(trDetails);
+
+            // ВАЖНО: Просим MathJax отрендерить формулы внутри только что вставленной строки
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([trDetails]).catch((err) => console.error("MathJax error:", err));
+            }            
         }
 
         // Добавление новой строки наверх таблицы (для Администратора)
