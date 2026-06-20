@@ -188,12 +188,17 @@
             const tableBody = document.getElementById('directoryTableBody');
             
             // Если администратор уже нажал кнопку и пустая строка ввода уже открыта сверху — не плодим дубликаты
-            if (document.getElementById('type_new_row')) return;
+            if (document.getElementById('type_new_row')) {
+                // Дополнительно: если строка уже есть, просто докрутим до неё
+                document.getElementById('type_new_row').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
 
             const tempId = "new_row"; 
 
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', tempId);
+            tr.id = "inserted_new_row_element"; // Добавляем временный id для поиска элемента скроллером
             tr.className = "new-row-highlight"; // Подсвечиваем зеленым для наглядности
             
             tr.innerHTML = `
@@ -214,8 +219,18 @@
                 </td>
             `;
             
-            // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Метод prepend вместо appendChild вставляет элемент в самое начало tbody
+            // Вставляем элемент в самое начало tbody
             tableBody.prepend(tr);
+
+            // АВТОМАТИЧЕСКИЙ СКРОЛЛИНГ: плавно перемещаем экран к созданной строке
+            // Метод scrollIntoView с флагом behavior: 'smooth' обеспечивает приятную гладкую анимацию прокрутки
+            tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Дополнительно ставим фокус на первый элемент ввода (выбор материала), чтобы админ мог сразу нажать Enter/стрелочки
+            setTimeout(() => {
+                const firstInput = document.getElementById(`type_${tempId}`);
+                if(firstInput) firstInput.focus();
+            }, 300);
         }
 
         // Сбор данных из строки и отправка в Apps Script через POST
