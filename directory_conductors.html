@@ -392,6 +392,7 @@
                 body: JSON.stringify({
                     action: "save_gost_conductor",
                     id: isNew ? null : Number(id),
+                    server_auth_login: localStorage.getItem('user_login'),
                     conductor_type: parseInt(type),
                     cross_section: section,
                     class: cls,
@@ -423,6 +424,7 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     action: "delete_gost_conductor",
+                    server_auth_login: localStorage.getItem('user_login'),
                     id: Number(id)
                 })
             })
