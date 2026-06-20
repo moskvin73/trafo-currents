@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Маркоразмеры кабелей</title>
     <link rel="stylesheet" href="./css/main-page.css">
+    
     <script src="./js/config.js"></script>
+
+    <!-- Подключение MathJax для рендеринга формул -->
+    <script src="./js/math-script.js"></script>
+
     <style>
         .table-input { width: 95%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; text-align: center; box-sizing: border-box; }
         .table-select { width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box; }
@@ -157,9 +162,9 @@
                     // Строка инженера (Кратко и чисто)
                     tr.innerHTML = `
                         <td>${index + 1}</td>
-                        <td><strong>${cable.cable_type}</strong></td>
+                        <td><strong>${cable.full_cable_name}</strong></td>
                         <td>Сеть ${cable.voltage_kv} кВ</td>
-                        <td>${cable.cross_section} мм² (${cable.r_20 > 0.2 ? 'Алюминий' : 'Медь'})</td>
+                        <td>${cable.cross_section} мм² (${cable.conductor_class > 1 ? 'Алюминий' : 'Медь'})</td>
                         <td>${cable.cores_count}</td>
                         <td style="font-family:monospace;">${cable.x_line.toFixed(4)}</td>
                         <td>${cable.current_capacity_air || '—'}</td>
@@ -185,23 +190,18 @@
             trDetails.id = `details_${cableId}`;
             trDetails.className = "details-row";
             
-            // Вычисляем коэффициент изменения сопротивления на основе материала
-            // Для меди (r_20 < 0.2 Ом/км условно или проверяем по данным) задаем альфа = 0.00393, для алюминия = 0.00403
-            const alpha = data.cross_section > 0 && data.r_20 > 0.25 ? 0.00403 : 0.00393;
-            const rTemp = data.r_20 * (1 + alpha * (data.t_max_operating - 20));
-
             trDetails.innerHTML = `
                 <td colspan="9">
                     <div class="details-container">
                         <div class="details-block">
                             <h5>📐 Геометрия и Конструкция</h5>
                             <p>• Наружный диаметр: <strong>${data.outer_diameter || '—'} мм</strong></p>
-                            <p>• Наличие брони: <strong>${data.outer_diameter > 38 ? 'Да (Бронированный)' : 'Нет'}</strong></p>
+                            <p>• Наличие брони: <strong>${data.is_armored ? 'Да (Бронированный)' : 'Нет'}</strong></p>
                         </div>
                         <div class="details-block">
                             <h5>⚡ Электрическое сопротивление жил</h5>
                             <p>• Активное при 20°C ($R_{20}$): <strong>${data.r_20.toFixed(4)} Ом/км</strong></p>
-                            <p>• Расчетное при макс. Т ($R_{раб}$): <strong>${rTemp.toFixed(4)} Ом/км</strong></p>
+                            <p>• Расчетное при макс. Т ($R_{раб}$): <strong>${data.r_max_temp.toFixed(4)} Ом/км</strong></p>
                         </div>
                         <div class="details-block">
                             <h5>🔥 Температурные пределы (ГОСТ)</h5>
