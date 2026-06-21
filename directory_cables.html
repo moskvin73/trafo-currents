@@ -209,10 +209,15 @@
             });
 
         new EditableTable('cableTableBody', {
-             onSave: (id) => {
-                console.log(`Автосохранение строки ${id}:`);    
+             onSave: (id, data, rollback) => {
+                console.log(`Отправляем строку ${id} на сервер...`);   
                 const row = document.querySelector(`#cableTableBody tr[data-id="${id}"]`);
-                setVisualStatus('cableTableBody', row, '');            
+                setVisualStatus('cableTableBody', row, '🔄');
+                setTimeout(() => {
+                    console.log('Прошло 0.5 секунды');
+                    rollback();
+                    setVisualStatus('cableTableBody', row, '➔');
+                }, 500);
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
                 /*
                 fetch(`/api/cables/${id}`, {
@@ -221,7 +226,7 @@
                     body: JSON.stringify(data)
                 });
                 */
-            },
+             },
             onRowSelect: (id, row) => {
                 console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
                 setVisualStatus('cableTableBody', row, '➔');

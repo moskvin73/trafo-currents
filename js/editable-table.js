@@ -351,14 +351,43 @@ class EditableTable {
     }
 
     triggerSave(row) {
-        const rowId = row.getAttribute('data-id');
+       const rowId = row.getAttribute('data-id');
         const currentDataJson = this.collectRowData(row);
 
+        // Если данные не менялись — ничего не делаем
         if (this.initialRowDataJson === currentDataJson) return;
 
+        // Запоминаем бэкап значений этой конкретной строки ПЕРЕД сохранением
+        const backupValues = [...this.initialFieldsValues];
+
+        // Функция отката, которую мы отдадим наружу в ваш HTML-скрипт
+        const rollback = () => {
+            console.warn(`Ошибка сохранения строки ${rowId}. Выполняется откат изменений...`);
+            
+            // Находим все поля в строке
+            const fields = row.querySelectorAll('.table-input, .table-select');
+            fields.forEach((field, index) => {
+                if (backupValues[index] !== undefined) {
+                    field.value = backupValues[index]; // возвращаем как было до редактирования
+                }
+            });
+
+            // Визуально подсвечиваем строку красным «тревожным» миганием
+            row.style.backgroundColor = '#fef2f2';
+            setTimeout(() => { row.style.backgroundColor = ''; }, 1000);
+
+            // Сбрасываем кэш, чтобы класс знал, что данные откатились
+            this.initialRowDataJson = this.collectRowData(row);
+        };
+
+        // Передаем в onSave три параметра: ID, чистые данные (опционально) и функцию отката
         if (typeof this.onSave === 'function') {
-            this.onSave(rowId);
+            const rawFields = row.querySelectorAll('.table-input, .table-select');
+            const data = Array.from(rawFields).map(f => f.value); // массив текущих значений
+            
+            this.onSave(rowId, data, rollback);
         }
+        
         this.initialRowDataJson = null;
     }
 }
