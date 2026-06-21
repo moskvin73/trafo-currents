@@ -139,7 +139,6 @@ class EditableTable {
                 if (prevRow) targetInput = prevRow.children[colIndex]?.querySelector('.table-input, .table-select');
                 break;
             case 'ArrowDown':
-            case 'Enter':
                 if (event.key === 'Enter' && input.tagName === 'SELECT') return;
                 event.preventDefault();
                 const nextRow = tr.nextElementSibling;
@@ -159,6 +158,18 @@ class EditableTable {
                     targetInput = nextTd?.querySelector('.table-input, .table-select');
                 }
                 break;
+            case 'Enter':
+                event.preventDefault();
+                    if (event.ctrlKey) {
+                        // Ctrl + Enter -> Переход ВЛЕВО
+                        const prevTd = td.previousElementSibling;
+                        targetInput = prevTd?.querySelector('.table-input, .table-select');
+                    } else {
+                        // Просто Enter -> Переход ВПРАВО
+                        const nextTd = td.nextElementSibling;
+                        targetInput = nextTd?.querySelector('.table-input, .table-select');
+                    }
+                    break;
         }
 
         if (targetInput) {
@@ -171,6 +182,23 @@ class EditableTable {
         const currentRow = event.target.closest('tr');
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
+
+        if (input.classList.contains('table-input') && input.getAttribute('inputmode') === 'decimal' && input.value !== '') {
+            const step = input.getAttribute('step');
+            if (step && step.includes('.')) {
+                // Считаем количество знаков после точки в атрибуте step (например, "0.0001" -> 4)
+                const decimalsCount = step.split('.')[1].length;
+                
+                // Переводим текущее значение в стандартное JS число для округления
+                const standardValue = input.value.replace(this.localeSeparator, '.');
+                const parsedNum = parseFloat(standardValue);
+                
+                if (!isNaN(parsedNum)) {
+                    // Округляем и возвращаем локальную запятую
+                    input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
+                }
+            }
+        }
 
         if (!nextRow || nextRow !== currentRow) {
             this.triggerSave(currentRow);
@@ -191,9 +219,13 @@ class EditableTable {
 }
 
 // Функция для красивого форматирования чисел в инпуте под локаль пользователя
-function formatLocaleNum(val) {
+function formatLocaleNum(val, decimals = null) {
     if (val === null || val === undefined) return '';
     // Переводим системное число (с точкой) в строку с запятой (для РФ)
+    let str = val.toString();
+    if (decimals !== null) {
+        str = val.toFixed(decimals); // Сразу принудительно выводим нули на конце, если нужно
+    }
     return val.toString().replace('.', (1.1).toLocaleString().substring(1, 2));
 }
 
