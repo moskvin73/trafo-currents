@@ -233,14 +233,12 @@
                             <tr>
                                 <th style="width: 40px;">№</th>
                                 <th style="width: 180px;">Марка кабеля</th>
-                                <th>Темп. группа / Напряжение</th>
-                                <th style="width: 220px;">Связанная жила по ГОСТ</th>
                                 <th style="width: 70px;">Кол-во жил</th>
-                                <th style="width: 80px;">Х (Ом/км)</th>
-                                <th style="width: 80px;">$I_{возд.}$(А)</th>
-                                <th style="width: 80px;">I земл.(А)</th>
-                                <th style="width: 90px;">I кз 1с (кА)</th>
-                                <th id="thAdminAction" style="display: none; width: 100px;">Действие</th>
+                                <th style="width: 220px;">Сечение ТПЖ</th>
+                                <th style="width: 80px;">$Х_{\\text {уд}}<br>Ом/км</th>
+                                <th style="width: 80px;">$I_{\\text {дд.б.возд}}$<br>А</th>
+                                <th style="width: 80px;">$I_{\\text {дд.б.земл}}<br>А</th>
+                                <th style="width: 90px;">$I_{\\text {кз.1с}}<br>кА</th>
                             </tr>
                         </thead>
                         <tbody id="cableTableBody"></tbody>
@@ -270,10 +268,9 @@
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td><strong>${cable.full_cable_name}</strong></td>
-                    <td>${cable.voltage_kv} кВ</td>
-                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'Алюминий' : 'Медь'})</td>
                     <td>${cable.cores_count}</td>
-                    <td style="font-family:monospace;">${cable.x_line.toFixed(4)}</td>
+                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'Алюминий' : 'Медь'})</td>
+                    <td>${cable.x_line.toFixed(4)}</td>
                     <td>${cable.current_capacity_air || '—'}</td>
                     <td>${cable.current_capacity_ground || '—'}</td>
                     <td>${cable.short_circuit_current_1s || '—'}</td>
