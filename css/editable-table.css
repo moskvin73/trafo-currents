@@ -1,0 +1,48 @@
+/* Стилизация полей ввода для режима чтения/записи */
+.table-input, 
+.table-select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 6px 4px;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-align: inherit;
+    outline: none;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    /* Убираем стандартную стрелочку у селектов для эффекта обычного текста */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Выравнивание текста в инпутах */
+.table-input[type="number"] {
+    text-align: center;
+}
+
+/* Прячем стрелочки увеличения/уменьшения у инпутов типа number */
+.table-input::-webkit-outer-spin-button,
+.table-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Состояние фокуса (когда зашли в ячейку кликом или стрелками) */
+.table-input:focus,
+.table-select:focus {
+    border-color: #4a90e2;
+    background-color: #ffffff;
+    box-shadow: 0 0 3px rgba(74, 144, 226, 0.4);
+    appearance: auto; /* Возвращаем стрелочку селекта при фокусе */
+}
+
+/* Дополнительный текст ID под номером */
+.sub-text {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted, #888);
+}

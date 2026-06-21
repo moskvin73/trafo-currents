@@ -8,6 +8,8 @@
 
     <script src="./js/config.js"></script>
 
+    <script src="./js/editable-table.js"></script>
+
     <!-- Подключение MathJax для рендеринга формул -->
     <script src="./js/math-script.js"></script>
 
@@ -88,31 +90,6 @@
             <div style="text-align: center; color: var(--text-muted); padding: 20px;">
                 Синхронизация реляционных таблиц и проверка прав...
             </div>
-        </div>        
-
-     <!--   <div class="table-container-fixed">
-            <table class="project-table" style="width: 100%; margin-top: 0;">
-                <thead>
-                    <tr>
-                        <th style="width: 40px;">№</th>
-                        <th>Марка кабеля</th>
-                        <th style="width: 180px;">Темп. группа / Напряжение</th>
-                        <th style="width: 220px;">Связанная жила по ГОСТ</th>
-                        <th style="width: 70px;">Кол-во жил</th>
-                        <th style="width: 80px;">Х (Ом/км)</th>
-                        <th style="width: 80px;">$I_{возд.}$(А)</th>
-                        <th style="width: 80px;">I земл.(А)</th>
-                        <th style="width: 90px;">I кз 1с (кА)</th>
-                        <th id="thAdminAction" style="display: none; width: 100px;">Действие</th>
-                    </tr>
-                </thead>
-                <tbody id="cableTableBody">
-                    <tr>
-                        <td colspan="10" style="text-align: center; color: var(--text-muted);">Синхронизация реляционных таблиц...</td>
-                    </tr>
-                </tbody>
-            </table> -->
-        </div>
     </div>
 
     <script>
@@ -193,7 +170,6 @@
             cablesCatalog.forEach((cable, index) => {
                 // Создаем основную строку
                 const tr = document.createElement('tr');
-                tr.className = userRole === 'admin' ? '' : 'clickable-row';
                 tr.setAttribute('data-id', cable.id);
                 
                 // Генерируем выпадающие списки для админа на основе загруженных справочников
@@ -220,6 +196,19 @@
                 `;
                 tableBody.appendChild(tr);
             });
+
+ new EditableTable('cableTableBody', (id, data) => {
+        console.log(`Автосохранение строки ${id}:`, data);
+        
+        // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
+        /*
+        fetch(`/api/cables/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        */
+    });            
         }
 
         function renderGuestView() {
