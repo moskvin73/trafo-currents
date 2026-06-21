@@ -23,6 +23,8 @@ class EditableTable {
         this.initialFieldsValues = []; 
         this.activeRowId = null;
 
+        this.currentFieldIndex = null;
+
         this.formatTableOnLoad();
 
         this.initEvents();
@@ -63,13 +65,14 @@ class EditableTable {
     }
 
     handleFocusIn(event) {
-        const currentRow = event.target.closest('tr');
+      const currentRow = event.target.closest('tr');
         if (!currentRow) return;
+
+        const fields = currentRow.querySelectorAll('.table-input, .table-select');
+        this.currentFieldIndex = Array.from(fields).indexOf(event.target);
 
         if (this.activeRowId !== currentRow.getAttribute('data-id')) {
             this.initialRowDataJson = this.collectRowData(currentRow);
-            
-            const fields = currentRow.querySelectorAll('.table-input, .table-select');
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
         }
         
