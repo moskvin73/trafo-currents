@@ -148,10 +148,10 @@
                     if (userRole === 'admin') renderAdminEditableView();
                     else renderGuestView();
                 } else {
-                    //tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Ошибка сервера: ${data.error || 'Неверный формат данных'}</td></tr>`;
+                    document.getElementById('tableRootContainer').innerHTML = `Ошибка сервера: ${data.error || 'Неверный формат данных'}`;
                 }
             }).catch(err => {
-                //tableBody.innerHTML = `<tr><td colspan="10" style="color:red;">Ошибка сети при чтении каталога.</td></tr>`;
+                document.getElementById('tableRootContainer').innerHTML = `Ошибка сети при чтении каталога.`;
             });
         }
 
