@@ -167,7 +167,7 @@ class EditableTable {
                 if (firstEditableField.select) firstEditableField.select(); 
             }, 50);
         }
-    }
+    } 
     
     // Вспомогательный метод для проверки строки перед уходом фокуса на новую строку
     validateRowBeforeLeave(row) {
