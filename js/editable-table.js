@@ -410,37 +410,69 @@ class EditableTable {
         const currentDataJson = this.collectRowData(row);
 
         if (this.initialRowDataJson === currentDataJson) return;
-		// Включаем режим сохранения (блокируем всю таблицу)
-		this.isSaving = true;const backupValues = [...this.initialFieldsValues];
-		// Функция отката
-		const rollback = () => {
-			console.warn("Ошибка сохранения строки ${rowId}. Выполняется откат изменений...");
-			// Выключаем блокировку сохранения, так как процесс завершен
-			this.isSaving = false;
-			this.activeRowId = rowId;
-			const fields = row.querySelectorAll('.table-input, .table-select');
-			fields.forEach((field, index) => {if (backupValues[index] !== undefined) {field.value = backupValues[index];}});
-			row.style.backgroundColor = '#fef2f2';setTimeout(() => { row.style.backgroundColor = ''; }, 1000);
-			this.initialRowDataJson = this.collectRowData(row);
-			// Триггерим отмену, чтобы внешние скрипты вернули иконку ➔
-			if (typeof this.onRowCancel === 'function') {
-				this.onRowCancel(rowId, row);
-			}
-		};
-		if (typeof this.onSave === 'function') {
-			const rawFields = row.querySelectorAll('.table-input, .table-select');
-			const data = Array.from(rawFields).map(f => f.value);
-			// Передаем четвертым параметром еще и функцию успешного завершения запроса!
-			const success = () => {this.isSaving = false; 
-				// Отпускаем блокировку таблицы
-				this.initialRowDataJson = this.collectRowData(row);
-			};
-			this.onSave(rowId, row, data, rollback, success);
-		} 
-		else {
-			this.isSaving = false;
-		}
-	}
+        
+        // Включаем режим сохранения (блокируем всю таблицу)
+        this.isSaving = true;
+        const backupValues = [...this.initialFieldsValues];
+        
+        // Запоминаем индекс поля, на котором фокус был прямо перед сохранением
+        const lastFocusedFieldIndex = this.currentFieldIndex;
+
+        // Функция отката
+        const rollback = () => {
+            // ВАЖНО: Исправлены кавычки на косые (``), чтобы переменная ${rowId} выводилась корректно
+            console.warn(`Ошибка сохранения строки ${rowId}. Выполняется откат изменений...`);
+            
+            // Выключаем блокировку сохранения, так как процесс завершен
+            this.isSaving = false;
+            this.activeRowId = rowId;
+            
+            const fields = row.querySelectorAll('.table-input, .table-select');
+            fields.forEach((field, index) => {
+                if (backupValues[index] !== undefined) {
+                    field.value = backupValues[index];
+                }
+            });
+            
+            row.style.backgroundColor = '#fef2f2';
+            setTimeout(() => { row.style.backgroundColor = ''; }, 1000);
+            
+            this.initialRowDataJson = this.collectRowData(row);
+            
+            // Триггерим отмену, чтобы внешние скрипты вернули иконку ➔
+            if (typeof this.onRowCancel === 'function') {
+                this.onRowCancel(rowId, row);
+            }
+
+            // НОВОЕ: Автоматически возвращаем фокус на последний редактируемый элемент строки
+            if (lastFocusedFieldIndex !== null && fields[lastFocusedFieldIndex]) {
+                const targetField = fields[lastFocusedFieldIndex];
+                
+                // Делаем микротамаут, чтобы браузер успел обработать разблокировку isSaving
+                setTimeout(() => {
+                    targetField.focus();
+                    if (targetField.tagName === 'INPUT') {
+                        targetField.select(); // Выделяем текст для удобного переввода
+                    }
+                }, 50);
+            }
+        };
+
+        if (typeof this.onSave === 'function') {
+            const rawFields = row.querySelectorAll('.table-input, .table-select');
+            const data = Array.from(rawFields).map(f => f.value);
+            
+            // Передаем по вашей новой сигнатуре: id, row, data, rollback, success
+            const success = () => {
+                this.isSaving = false; 
+                this.initialRowDataJson = this.collectRowData(row);
+            };
+            this.onSave(rowId, row, data, rollback, success);
+        } 
+        else {
+            this.isSaving = false;
+        }
+    }
 }		
 
 // Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
