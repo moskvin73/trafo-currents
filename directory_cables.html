@@ -198,18 +198,23 @@
                 tableBody.appendChild(tr);
             });
 
- new EditableTable('cableTableBody', (id, data) => {
-        console.log(`Автосохранение строки ${id}:`, data);
-        
-        // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
-        /*
-        fetch(`/api/cables/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        */
-    });            
+        new EditableTable('cableTableBody', (id, data) => {
+                console.log(`Автосохранение строки ${id}:`, data);
+                
+                // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
+                /*
+                fetch(`/api/cables/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                */
+            });
+
+            (id) => {
+                console.log(`Кликнули на проект ID: ${id}. Загружаем связанные кабели...`);
+                // ВАША процедура обновления подчиненной таблицы!
+            }                        
         }
 
         function renderGuestView() {
