@@ -2,10 +2,7 @@ class EditableTable {
     /**
      * @param {string} tbodyId - ID тела таблицы
      * @param {object} callbacks - Объект с функциями обратного вызова
-     * @param {function} callbacks.onSave - При уходе со строки (если были изменения)
-     * @param {function} [callbacks.onRowSelect] - При выборе строки (кликом или стрелками)
-     * @param {function} [callbacks.onRowEdit] - Когда строка перешла в режим редактирования
-     * @param {function} [callbacks.onRowCancel] - При отмене изменений через Esc
+     * @param {function} [callbacks.onValidateRow] - Кастомная валидация всей строки. Должна возвращать строку ошибки или null.
      */
     constructor(tbodyId, callbacks = {}) {
         this.tbody = document.getElementById(tbodyId);
@@ -15,6 +12,7 @@ class EditableTable {
         this.onRowSelect = callbacks.onRowSelect;
         this.onRowEdit = callbacks.onRowEdit;
         this.onRowCancel = callbacks.onRowCancel;
+        this.onValidateRow = callbacks.onValidateRow; // Кастомный валидатор строки
         
         this.localeSeparator = (1.1).toLocaleString().substring(1, 2); 
         this.forbiddenSeparator = this.localeSeparator === ',' ? '.' : ',';
@@ -22,11 +20,9 @@ class EditableTable {
         this.initialRowDataJson = null;
         this.initialFieldsValues = []; 
         this.activeRowId = null;
-
         this.currentFieldIndex = null;
 
         this.formatTableOnLoad();
-
         this.initEvents();
     }
 
@@ -42,13 +38,11 @@ class EditableTable {
         const fields = this.tbody.querySelectorAll('.table-input');
         fields.forEach(field => {
             if (field.getAttribute('inputmode') === 'decimal' && field.value !== '') {
-                // Заменяем стандартную точку из БД на локальный разделитель
                 let val = field.value.replace('.', this.localeSeparator);
                 const step = field.getAttribute('step');
                 
-                // Если задан шаг, выставляем фиксированное количество знаков (дописываем нули)
                 if (step && step.includes('.')) {
-                    const decimalsCount = step.split('.')[1].length;
+                    const decimalsCount = step.split('.').length;
                     const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
                     if (!isNaN(parsedNum)) {
                         val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
@@ -57,7 +51,7 @@ class EditableTable {
                 field.value = val;
             }
         });
-    }   
+    }
 
     collectRowData(row) {
         const fields = row.querySelectorAll('.table-input, .table-select');
@@ -65,7 +59,7 @@ class EditableTable {
     }
 
     handleFocusIn(event) {
-      const currentRow = event.target.closest('tr');
+        const currentRow = event.target.closest('tr');
         if (!currentRow) return;
 
         const fields = currentRow.querySelectorAll('.table-input, .table-select');
@@ -87,10 +81,8 @@ class EditableTable {
 
     checkRowSelection(row) {
         const rowId = row.getAttribute('data-id');
-        
         if (this.activeRowId !== rowId) {
             this.activeRowId = rowId;
-            
             if (typeof this.onRowSelect === 'function') {
                 this.onRowSelect(rowId, row);
             }
@@ -98,7 +90,7 @@ class EditableTable {
     }
 
     handleNumericInput(event) {
-       const input = event.target;
+        const input = event.target;
         const currentRow = input.closest('tr');
         
         if (currentRow) {
@@ -115,14 +107,10 @@ class EditableTable {
 
         const step = input.getAttribute('step');
         const isFloat = step && step.includes('.');
-
-        // ФИКС: Сохраняем информацию, был ли минус в самом начале строки
         const hasMinus = input.value.startsWith('-');
 
         if (!isFloat) {
-            // Удаляем всё, кроме цифр
             let value = input.value.replace(/[^0-9]/g, '');
-            // Если в начале был минус — возвращаем его на место
             if (hasMinus) value = '-' + value;
 
             if (input.value !== value) {
@@ -133,22 +121,17 @@ class EditableTable {
             return;
         }
 
-        // Логика для дробных чисел (float):
-        // 1. Подмена запрещенного разделителя на разрешенный
         const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
         let value = input.value.replace(regexForbidden, this.localeSeparator);
 
-        // 2. Валидация: разрешаем цифры и один разделитель локали
         const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
         value = value.replace(regexClean, '');
         
-        // 3. Контроль единственности разделителя
         const parts = value.split(this.localeSeparator);
         if (parts.length > 2) {
-            value = parts[0] + this.localeSeparator + parts.slice(1).join('');
+            value = parts + this.localeSeparator + parts.slice(1).join('');
         }
 
-        // ФИКС: Если в начале был минус — возвращаем его на место для дробного числа
         if (hasMinus) value = '-' + value;
 
         if (input.value !== value) {
@@ -164,6 +147,8 @@ class EditableTable {
         if (event.key === 'Escape') {
             const currentRow = input.closest('tr');
             if (!currentRow) return;
+
+            input.classList.remove('input-error');
 
             const fields = currentRow.querySelectorAll('.table-input, .table-select');
             fields.forEach((field, index) => {
@@ -193,7 +178,6 @@ class EditableTable {
                 if (prevRow) targetInput = prevRow.children[colIndex]?.querySelector('.table-input, .table-select');
                 break;
             case 'ArrowDown':
-                if (event.key === 'Enter' && input.tagName === 'SELECT') return;
                 event.preventDefault();
                 const nextRow = tr.nextElementSibling;
                 if (nextRow) targetInput = nextRow.children[colIndex]?.querySelector('.table-input, .table-select');
@@ -214,16 +198,14 @@ class EditableTable {
                 break;
             case 'Enter':
                 event.preventDefault();
-                    if (event.ctrlKey) {
-                        // Ctrl + Enter -> Переход ВЛЕВО
-                        const prevTd = td.previousElementSibling;
-                        targetInput = prevTd?.querySelector('.table-input, .table-select');
-                    } else {
-                        // Просто Enter -> Переход ВПРАВО
-                        const nextTd = td.nextElementSibling;
-                        targetInput = nextTd?.querySelector('.table-input, .table-select');
-                    }
-                    break;
+                if (event.ctrlKey) {
+                    const prevTd = td.previousElementSibling;
+                    targetInput = prevTd?.querySelector('.table-input, .table-select');
+                } else {
+                    const nextTd = td.nextElementSibling;
+                    targetInput = nextTd?.querySelector('.table-input, .table-select');
+                }
+                break;
         }
 
         if (targetInput) {
@@ -232,35 +214,18 @@ class EditableTable {
         }
     }
 
+    // Вспомогательный метод вызова красивой ошибки
+    showValidationError(input, message) {
+        input.classList.add('input-error');
+        input.setCustomValidity(message);
+        input.reportValidity();
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 0);
+    }
     handleFocusOut(event) {
-        /*const input = event.target; 
-
-        const currentRow = event.target.closest('tr');
-        const nextElement = event.relatedTarget;
-        const nextRow = nextElement ? nextElement.closest('tr') : null;
-
-        if (input.classList.contains('table-input') && input.getAttribute('inputmode') === 'decimal' && input.value !== '') {
-            const step = input.getAttribute('step');
-            if (step && step.includes('.')) {
-                // Считаем количество знаков после точки в атрибуте step (например, "0.0001" -> 4)
-                const decimalsCount = step.split('.')[1].length;
-                
-                // Переводим текущее значение в стандартное JS число для округления
-                const standardValue = input.value.replace(this.localeSeparator, '.');
-                const parsedNum = parseFloat(standardValue);
-                
-                if (!isNaN(parsedNum)) {
-                    // Округляем и возвращаем локальную запятую
-                    input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
-                }
-            }                
-        }
-
-        if (!nextRow || nextRow !== currentRow) {
-            this.triggerSave(currentRow);
-        }*/
-
-     const input = event.target;
+        const input = event.target;
         const currentRow = input.closest('tr');
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
@@ -269,6 +234,17 @@ class EditableTable {
         if (!input.classList.contains('table-input')) {
             if (!nextRow || nextRow !== currentRow) {
                 if (currentRow && !currentRow.querySelector('.input-error')) {
+                    // Перед сохранением проверяем валидацию всей строки
+                    if (this.onValidateRow) {
+                        const rowId = currentRow.getAttribute('data-id');
+                        const rowError = this.onValidateRow(rowId, currentRow);
+                        if (rowError) {
+                            event.preventDefault();
+                            const firstInput = currentRow.querySelector('.table-input');
+                            if (firstInput) this.showValidationError(firstInput, rowError);
+                            return;
+                        }
+                    }
                     this.triggerSave(currentRow);
                 }
             }
@@ -291,53 +267,56 @@ class EditableTable {
                 const min = input.getAttribute('min');
                 const max = input.getAttribute('max');
                 
-                // ПУНКТ 3: Валидация min/max границ
+                // А. Базовая проверка встроенных границ min/max
                 if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max))) {
                     event.preventDefault();
-                    
-                    // Делаем рамку красной
-                    input.classList.add('input-error');
-                    
-                    // Формируем и показываем подсказку браузера
-                    let msg = '';
-                    if (min !== null && max !== null) {
-                        msg = `Значение должно быть от ${min} до ${max}`;
-                    } else if (min !== null) {
-                        msg = `Значение должно быть не меньше ${min}`;
-                    } else if (max !== null) {
-                        msg = `Значение должно быть не больше ${max}`;
-                    }
-                    
-                    input.setCustomValidity(msg);
-                    input.reportValidity();
-
-                    // Жестко возвращаем фокус обратно в ошибочное поле
-                    setTimeout(() => {
-                        input.focus();
-                        input.select();
-                    }, 0);
-                    return; // Прерываем выполнение, сохранение не вызывается
+                    let msg = min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`);
+                    this.showValidationError(input, msg);
+                    return;
                 }
 
-                // Если проверка пройдена, очищаем ошибку
+                // Б. Кастомная программная валидация УРОВНЯ ЯЧЕЙКИ
+                const validatorName = input.getAttribute('data-validator');
+                if (validatorName && typeof window[validatorName] === 'function') {
+                    const customError = window[validatorName](parsedNum, currentRow);
+                    if (customError) {
+                        event.preventDefault();
+                        this.showValidationError(input, customError);
+                        return; // Блокируем выход
+                    }
+                }
+
+                // Если все проверки пройдены — очищаем ошибки и форматируем нули
                 input.classList.remove('input-error');
                 input.setCustomValidity(''); 
 
-                // Форматируем нули на конце, если это float (есть step с точкой)
                 const step = input.getAttribute('step');
                 if (step && step.includes('.')) {
-                    const decimalsCount = step.split('.')[1].length;
+                    const decimalsCount = step.split('.').length;
                     input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
             }
         }
 
-        // Если полностью ушли со строки и в ней нет других ошибок — сохраняем
+        // 3. Проверка ухода со всей строки
         if (!nextRow || nextRow !== currentRow) {
-            if (currentRow && currentRow.querySelector('.input-error')) return; // блокируем сохранение всей строки при ошибке
-            this.triggerSave(currentRow);
-        }            
+            if (currentRow && currentRow.querySelector('.input-error')) return;
+            
+            // В. Программная валидация УРОВНЯ СТРОКИ перед сохранением
+            if (this.onValidateRow && currentRow) {
+                const rowId = currentRow.getAttribute('data-id');
+                const rowError = this.onValidateRow(rowId, currentRow);
+                
+                if (rowError) {
+                    event.preventDefault();
+                    const firstInput = currentRow.querySelector('.table-input');
+                    if (firstInput) this.showValidationError(firstInput, rowError);
+                    return; // Отменяем сохранение
+                }
+            }
 
+            this.triggerSave(currentRow);
+        }
     }
 
     triggerSave(row) {
@@ -351,17 +330,6 @@ class EditableTable {
         }
         this.initialRowDataJson = null;
     }
-}
-
-// Функция для красивого форматирования чисел в инпуте под локаль пользователя
-function formatLocaleNum(val, decimals = null) {
-    if (val === null || val === undefined) return '';
-    // Переводим системное число (с точкой) в строку с запятой (для РФ)
-    let str = val.toString();
-    if (decimals !== null) {
-        str = val.toFixed(decimals); // Сразу принудительно выводим нули на конце, если нужно
-    }
-    return val.toString().replace('.', (1.1).toLocaleString().substring(1, 2));
 }
 
 // Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
