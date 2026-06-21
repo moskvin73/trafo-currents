@@ -292,6 +292,10 @@ class EditableTable {
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
+        if (input.classList.contains('table-input') && input.value.trim() === '-') {
+            input.value = '';
+        }
+
         // Если ушли из инпута — форматируем вещественные нули
         if (input.classList.contains('table-input') && input.value.trim() !== '') {
             if (input.getAttribute('inputmode') === 'decimal') {
