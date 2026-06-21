@@ -91,11 +91,14 @@
             <div style="text-align: center; color: var(--text-muted); padding: 20px;">
                 Синхронизация реляционных таблиц и проверка прав...
             </div>
+        </div>
 
-            <div class="fab-container" id="tableFabContainer">
-                <!-- Главная кнопка-шестеренка -->
-                <button class="fab-main" id="fabMainBtn">⚙️</button>
-                
+        <div class="fab-container" id="tableFabContainer">
+            <!-- Главная кнопка-шестеренка -->
+            <button class="fab-main" id="fabMainBtn">⚙️</button>
+            
+            <!-- Скрытый по умолчанию блок с дочерними кнопками-действиями -->
+            <div class="fab-subs">
                 <!-- Всплывающее меню с действиями -->
                 <div class="fab-subs">
                     <button class="fab-btn" data-tooltip="Добавить строку" data-action="add-row">➕</button>
@@ -103,8 +106,7 @@
                     <!-- <button class="fab-btn" data-tooltip="Экспорт в Excel" data-action="export">📥</button> -->
                 </div>
             </div>
-
-    </div>
+        </div>
 
 
     <script>
