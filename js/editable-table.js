@@ -126,7 +126,7 @@ class EditableTable {
             input.setSelectionRange(start, start);
         }*/
 
-        const input = event.target;
+       const input = event.target;
         const currentRow = input.closest('tr');
         
         if (currentRow) {
@@ -141,15 +141,28 @@ class EditableTable {
 
         if (!input.classList.contains('table-input') || input.style.textAlign === 'left') return;
 
-        // 1. Подмена запрещенного разделителя на разрешенный
+        // ПУНКТ 2: Если нет step, или step не содержит точку — запрещаем ввод разделителей (целое число)
+        const step = input.getAttribute('step');
+        const isFloat = step && step.includes('.');
+
+        if (!isFloat) {
+            // Удаляем вообще все не-цифры
+            let value = input.value.replace(/[^0-9]/g, '');
+            if (input.value !== value) {
+                const start = input.selectionStart;
+                input.value = value;
+                input.setSelectionRange(start, start);
+            }
+            return;
+        }
+
+        // Логика для дробных чисел (float):
         const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
         let value = input.value.replace(regexForbidden, this.localeSeparator);
 
-        // 2. Валидация: разрешаем только цифры и один разделитель локали
         const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
         value = value.replace(regexClean, '');
         
-        // 3. Контроль единственности разделителя
         const parts = value.split(this.localeSeparator);
         if (parts.length > 2) {
             value = parts[0] + this.localeSeparator + parts.slice(1).join('');
@@ -159,8 +172,7 @@ class EditableTable {
             const start = input.selectionStart;
             input.value = value;
             input.setSelectionRange(start, start);
-        }            
-
+        }
     }
 
     handleKeyDown(event) {
@@ -238,7 +250,7 @@ class EditableTable {
     }
 
     handleFocusOut(event) {
-        const input = event.target; 
+        /*const input = event.target; 
 
         const currentRow = event.target.closest('tr');
         const nextElement = event.relatedTarget;
@@ -258,12 +270,91 @@ class EditableTable {
                     // Округляем и возвращаем локальную запятую
                     input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
-            }
+            }                
         }
 
         if (!nextRow || nextRow !== currentRow) {
             this.triggerSave(currentRow);
+        }*/
+
+     const input = event.target;
+        const currentRow = input.closest('tr');
+        const nextElement = event.relatedTarget;
+        const nextRow = nextElement ? nextElement.closest('tr') : null;
+
+        // Если фокус ушел не из текстового инпута (например, из селекта)
+        if (!input.classList.contains('table-input')) {
+            if (!nextRow || nextRow !== currentRow) {
+                if (currentRow && !currentRow.querySelector('.input-error')) {
+                    this.triggerSave(currentRow);
+                }
+            }
+            return;
         }
+
+        // ПУНКТ 1: Валидация пустой строки -> восстанавливаем из бэкапа
+        if (input.value.trim() === '') {
+            if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
+                input.value = this.initialFieldsValues[this.currentFieldIndex];
+                input.classList.remove('input-error');
+            }
+        } 
+        // Логика проверки числовых значений
+        else if (input.getAttribute('inputmode') === 'decimal') {
+            const standardValue = input.value.replace(this.localeSeparator, '.');
+            const parsedNum = parseFloat(standardValue);
+            
+            if (!isNaN(parsedNum)) {
+                const min = input.getAttribute('min');
+                const max = input.getAttribute('max');
+                
+                // ПУНКТ 3: Валидация min/max границ
+                if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max))) {
+                    event.preventDefault();
+                    
+                    // Делаем рамку красной
+                    input.classList.add('input-error');
+                    
+                    // Формируем и показываем подсказку браузера
+                    let msg = '';
+                    if (min !== null && max !== null) {
+                        msg = `Значение должно быть от ${min} до ${max}`;
+                    } else if (min !== null) {
+                        msg = `Значение должно быть не меньше ${min}`;
+                    } else if (max !== null) {
+                        msg = `Значение должно быть не больше ${max}`;
+                    }
+                    
+                    input.setCustomValidity(msg);
+                    input.reportValidity();
+
+                    // Жестко возвращаем фокус обратно в ошибочное поле
+                    setTimeout(() => {
+                        input.focus();
+                        input.select();
+                    }, 0);
+                    return; // Прерываем выполнение, сохранение не вызывается
+                }
+
+                // Если проверка пройдена, очищаем ошибку
+                input.classList.remove('input-error');
+                input.setCustomValidity(''); 
+
+                // Форматируем нули на конце, если это float (есть step с точкой)
+                const step = input.getAttribute('step');
+                if (step && step.includes('.')) {
+                    const decimalsCount = step.split('.')[1].length;
+                    input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
+                }
+            }
+        }
+
+        // Если полностью ушли со строки и в ней нет других ошибок — сохраняем
+        if (!nextRow || nextRow !== currentRow) {
+            if (currentRow && currentRow.querySelector('.input-error')) return; // блокируем сохранение всей строки при ошибке
+            this.triggerSave(currentRow);
+        }            
+
     }
 
     triggerSave(row) {
