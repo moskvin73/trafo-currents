@@ -118,39 +118,12 @@ class EditableTable {
 
     // Вспомогательный метод сбора данных (вынесен отдельно, чтобы использовать и в focusin, и в focusout)
     collectRowData(row) {
-        const rowId = row.getAttribute('data-id');
-        const data = { id: rowId ? parseInt(rowId) : null };
-        
-        // Ищем элементы только по классам, как вы и просили
-        row.querySelectorAll('.table-input, .table-select').forEach(field => {
-            // Берем имя ключа для сервера из data-field
-            const fieldName = field.getAttribute('data-field');
-            if (!fieldName) return; // Если data-field нет, пропускаем
-
-            let value = field.value;
-
-            // Автоматически определяем тип данных:
-            // 1. Если это инпут с inputmode="decimal" — парсим как дробное число с локальной запятой
-            if (field.getAttribute('inputmode') === 'decimal') {
-                if (value === '') {
-                    value = null;
-                } else {
-                    const standardValue = value.replace(this.localeSeparator, '.');
-                    value = parseFloat(standardValue);
-                    if (isNaN(value)) value = null;
-                }
-            } 
-            // 2. Если это целое число (например, ID из селекта или количество)
-            else if (field.getAttribute('inputmode') === 'numeric' || field.tagName === 'SELECT') {
-                value = value === '' ? null : parseInt(value, 10);
-                if (isNaN(value)) value = null;
-            }
-            // 3. Во всех остальных случаях оставляем как текст (строку)
-
-            data[fieldName] = value;
-        });
-
-        return data;
+        // Находим все инпуты и селекты внутри текущей строки <tr>
+            const fields = row.querySelectorAll('.table-input, .table-select');
+            
+            // Собираем их текущие значения в массив и склеиваем через разделитель
+            // Получится строка вида: "ВВГ|2|15|3|0,0412|0|0|0"
+            return Array.from(fields).map(field => field.value).join('|');
     }
 
     triggerSave(row) {
