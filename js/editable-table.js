@@ -156,16 +156,21 @@ class EditableTable {
     }
 	
     handleRowClick(event) {
+        // БЛОКИРОВКА: Если идет сохранение на сервер, полностью игнорируем любые клики
+        if (this.isSaving) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+
         const targetRow = event.target.closest('tr');
         if (!targetRow) return;
 
         const activeElement = document.activeElement;
         const currentRow = activeElement ? activeElement.closest('tr') : null;
 
-        // Если кликнули на другую строку
         if (currentRow && currentRow !== targetRow) {
             if (!this.validateCurrentRow(currentRow)) {
-                // Если старая строка с ошибкой — блокируем переход намертво
                 event.preventDefault();
                 event.stopPropagation();
                 const firstInput = currentRow.querySelector('.table-input');
@@ -180,6 +185,9 @@ class EditableTable {
     }
 
     checkRowSelection(row) {
+        // БЛОКИРОВКА: Не меняем активную строку во время сохранения
+        if (this.isSaving) return;
+
         const rowId = row.getAttribute('data-id');
         if (this.activeRowId !== rowId) {
             this.activeRowId = rowId;
@@ -193,7 +201,6 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
-        // Снимаем старые системные ошибки перед перепроверкой строки
         row.querySelectorAll('.table-input').forEach(input => {
             if (input.classList.contains('input-error') && !input.hasAttribute('min') && !input.hasAttribute('max') && !input.hasAttribute('data-validator')) {
                 input.classList.remove('input-error');
@@ -225,7 +232,40 @@ class EditableTable {
     }
 
     handleKeyDown(event) {
+        // БЛОКИРОВКА: Запрещаем клавиатуру во время сохранения
+        if (this.isSaving) {
+            event.preventDefault();
+            return;
+        }
+
         const input = event.target;
+        const currentRow = input.closest('tr');
+        
+        if (event.key === 'Escape' && currentRow) {
+            event.preventDefault();
+
+            currentRow.querySelectorAll('.table-input, .table-select').forEach(field => {
+                field.classList.remove('input-error');
+                if (typeof field.setCustomValidity === 'function') field.setCustomValidity('');
+            });
+
+            const fields = currentRow.querySelectorAll('.table-input, .table-select');
+            fields.forEach((field, index) => {
+                if (this.initialFieldsValues[index] !== undefined) {
+                    field.value = this.initialFieldsValues[index];
+                }
+            });
+
+            const rowId = currentRow.getAttribute('data-id');
+            if (typeof this.onRowCancel === 'function') {
+                this.onRowCancel(rowId, currentRow);
+            }
+            
+            input.blur();
+            this.initialRowDataJson = this.collectRowData(currentRow);
+            return;
+        }
+
         if (!input.classList.contains('table-input') && !input.classList.contains('table-select')) return;
 
         const td = input.closest('td');
@@ -286,67 +326,82 @@ class EditableTable {
         }
     }
 
+    handleFocusIn(event) {
+        // БЛОКИРОВКА: Игнорируем фокус во время сохранения
+        if (this.isSaving) {
+            event.target.blur();
+            return;
+        }
+
+        const currentRow = event.target.closest('tr');
+        if (!currentRow) return;
+
+        const fields = currentRow.querySelectorAll('.table-input, .table-select');
+        this.currentFieldIndex = Array.from(fields).indexOf(event.target);
+
+        if (this.activeRowId !== currentRow.getAttribute('data-id')) {
+            this.initialRowDataJson = this.collectRowData(currentRow);
+            this.initialFieldsValues = Array.from(fields).map(field => field.value);
+            this.checkRowSelection(currentRow);
+        }
+    }
+
     handleFocusOut(event) {
+        // БЛОКИРОВКА: Если класс уже в режиме сохранения, не запускаем focusout повторными кругами
+        if (this.isSaving) return;
+
         const input = event.target;
         const currentRow = input.closest('tr');
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
-        if (input.classList.contains('table-input') && input.value.trim() === '-') {
-            input.value = '';
-        }
-
-        // Если ушли из инпута — форматируем вещественные нули
-        if (input.classList.contains('table-input') && input.value.trim() !== '') {
-            if (input.getAttribute('inputmode') === 'decimal') {
-                const standardValue = input.value.replace(this.localeSeparator, '.');
-                const parsedNum = parseFloat(standardValue);
-                
-                if (!isNaN(parsedNum)) {
-                    const min = input.getAttribute('min');
-                    const max = input.getAttribute('max');
-                    const validatorName = input.getAttribute('data-validator');
-                    let customError = null;
-                    
-                    if (validatorName && typeof window[validatorName] === 'function') {
-                        customError = window[validatorName](parsedNum, currentRow);
-                    }
-
-                    if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max)) || customError) {
-                        let msg = customError || (min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`));
-                        this.showValidationError(input, msg);
-                        return;
-                    }
-
-                    input.classList.remove('input-error');
-                    input.setCustomValidity(''); 
-
-                    const step = input.getAttribute('step');
-                    if (step && step.includes('.')) {
-                        const decimalsCount = step.split('.').length;
-                        input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
-                    }
-                }
+        if (!input.classList.contains('table-input')) {
+            if (!nextRow || nextRow !== currentRow) {
+                if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
             }
+            return;
         }
 
-        // Если пустая строка — восстанавливаем значение
-        if (input.classList.contains('table-input') && input.value.trim() === '') {
+        if (input.value.trim() === '') {
             if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
                 input.value = this.initialFieldsValues[this.currentFieldIndex];
                 input.classList.remove('input-error');
             }
-        }
+        } 
+        else if (input.getAttribute('inputmode') === 'decimal') {
+            const standardValue = input.value.replace(this.localeSeparator, '.');
+            const parsedNum = parseFloat(standardValue);
+            
+            if (!isNaN(parsedNum)) {
+                const min = input.getAttribute('min');
+                const max = input.getAttribute('max');
+                const validatorName = input.getAttribute('data-validator');
+                let customError = null;
+                
+                if (validatorName && typeof window[validatorName] === 'function') {
+                    customError = window[validatorName](parsedNum, currentRow);
+                }
 
-        // ВАЖНЫЙ ФИКС: Убираем задержки. Если фокус РЕАЛЬНО покинул строку
-        if (!nextRow || nextRow !== currentRow) {
-            if (currentRow && !currentRow.querySelector('.input-error')) {
-                if (this.validateCurrentRow(currentRow)) {
-                    this.triggerSave(currentRow);
+                if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max)) || customError) {
+                    let msg = customError || (min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`));
+                    this.showValidationError(input, msg);
+                    return;
+                }
+
+                input.classList.remove('input-error');
+                input.setCustomValidity(''); 
+
+                const step = input.getAttribute('step');
+                if (step && step.includes('.')) {
+                    const decimalsCount = step.split('.').length;
+                    input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
             }
-            // Если фокус ушел вообще из таблицы, сбрасываем активную запись
-            if (!nextRow) this.activeRowId = null; 
+        }
+
+        if (!nextRow || nextRow !== currentRow) {
+            if (currentRow && currentRow.querySelector('.input-error')) return;
+            if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
         }
     }
 
@@ -355,39 +410,38 @@ class EditableTable {
         const currentDataJson = this.collectRowData(row);
 
         if (this.initialRowDataJson === currentDataJson) return;
-
-        const backupValues = [...this.initialFieldsValues];
-
-        const rollback = () => {
-            console.log(`Ошибка сохранения строки ${rowId}. Выполняется откат изменений...`);
-            
-            // ФИКС: Принудительно восстанавливаем статус активной строки для класса на время отката,
-            // чтобы внешние скрипты визуализации не теряли цель
-            this.activeRowId = rowId;
-
-            const fields = row.querySelectorAll('.table-input, .table-select');
-            fields.forEach((field, index) => {
-                if (backupValues[index] !== undefined) {
-                    field.value = backupValues[index];
-                }
-            });
-
-            row.style.backgroundColor = '#fef2f2';
-            setTimeout(() => { row.style.backgroundColor = ''; }, 1000);
-
-            this.initialRowDataJson = this.collectRowData(row);
-        };
-
-        if (typeof this.onSave === 'function') {
-            const rawFields = row.querySelectorAll('.table-input, .table-select');
-            const data = Array.from(rawFields).map(f => f.value);
-            
-            this.onSave(rowId, data, rollback);
-        }
-        
-        this.initialRowDataJson = null;
-    }
-}
+		// Включаем режим сохранения (блокируем всю таблицу)
+		this.isSaving = true;const backupValues = [...this.initialFieldsValues];
+		// Функция отката
+		const rollback = () => {
+			console.warn(Ошибка сохранения строки ${rowId}. Выполняется откат изменений...);
+			// Выключаем блокировку сохранения, так как процесс завершен
+			this.isSaving = false;
+			this.activeRowId = rowId;
+			const fields = row.querySelectorAll('.table-input, .table-select');
+			fields.forEach((field, index) => {if (backupValues[index] !== undefined) {field.value = backupValues[index];}});
+			row.style.backgroundColor = '#fef2f2';setTimeout(() => { row.style.backgroundColor = ''; }, 1000);
+			this.initialRowDataJson = this.collectRowData(row);
+			// Триггерим отмену, чтобы внешние скрипты вернули иконку ➔
+			if (typeof this.onRowCancel === 'function') {
+				this.onRowCancel(rowId, row);
+			}
+		};
+		if (typeof this.onSave === 'function') {
+			const rawFields = row.querySelectorAll('.table-input, .table-select');
+			const data = Array.from(rawFields).map(f => f.value);
+			// Передаем четвертым параметром еще и функцию успешного завершения запроса!
+			const success = () => {this.isSaving = false; 
+				// Отпускаем блокировку таблицы
+				this.initialRowDataJson = this.collectRowData(row);
+			};
+			this.onSave(rowId, row, data, rollback, success);
+		} 
+		else {
+			this.isSaving = false;
+		}
+	}
+}		
 
 // Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
 function setVisualStatus(tbodyId, activeRow, icon) {
