@@ -2,11 +2,6 @@ class EditableTable {
     /**
      * @param {string} tbodyId - ID тела таблицы
      * @param {object} callbacks - Объект с функциями обратного вызова
-     * @param {function} [callbacks.onSave] - При сохранении строки
-     * @param {function} [callbacks.onRowSelect] - При переходе на строку
-     * @param {function} [callbacks.onRowEdit] - При начале редактирования
-     * @param {function} [callbacks.onRowCancel] - При отмене через Esc
-     * @param {function} [callbacks.onValidateRow] - Кастомная валидация всей строки
      */
     constructor(tbodyId, callbacks = {}) {
         this.tbody = document.getElementById(tbodyId);
@@ -36,7 +31,7 @@ class EditableTable {
         this.tbody.addEventListener('input', (e) => this.handleNumericInput(e));
         this.tbody.addEventListener('focusin', (e) => this.handleFocusIn(e));
         
-        // ВАЖНО: Перехватываем mousedown до того, как браузер переключит фокус
+        // Перехватываем нажатие мыши до смены фокуса
         this.tbody.addEventListener('mousedown', (e) => this.handleRowClick(e));
     }
 
@@ -71,6 +66,7 @@ class EditableTable {
         const fields = currentRow.querySelectorAll('.table-input, .table-select');
         this.currentFieldIndex = Array.from(fields).indexOf(event.target);
 
+        // ФИКС ESC: Надежно сохраняем массив исходных значений для отмены по Esc
         if (this.activeRowId !== currentRow.getAttribute('data-id')) {
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
@@ -134,17 +130,26 @@ class EditableTable {
         const targetRow = event.target.closest('tr');
         if (!targetRow) return;
 
-        // Находим строку, в которой фокус стоит прямо СЕЙЧАС (до клика)
         const activeElement = document.activeElement;
         const currentRow = activeElement ? activeElement.closest('tr') : null;
 
-        // Если пытаемся кликнуть на ДРУГУЮ строку
+        // ФИКС ВАЛИДАЦИИ: Даем селектам обновить свое значение в DOM перед валидацией
         if (currentRow && currentRow !== targetRow) {
-            // Проверяем текущую строку. Если нашли ошибку — блокируем клик и смену фокуса!
-            if (!this.validateCurrentRow(currentRow)) {
-                event.preventDefault(); 
-                return;
-            }
+            // Кратковременный таймаут разрывает цепочку mousedown и позволяет прочитать актуальный Al/Cu
+            setTimeout(() => {
+                if (!this.validateCurrentRow(currentRow)) {
+                    // Если строка невалидна, возвращаем фокус обратно в ее первый инпут
+                    const firstInput = currentRow.querySelector('.table-input');
+                    if (firstInput) {
+                        firstInput.focus();
+                        firstInput.select();
+                    }
+                } else {
+                    // Если строка валидна — безопасно переключаем активную строку
+                    this.checkRowSelection(targetRow);
+                }
+            }, 50);
+            return;
         }
 
         this.checkRowSelection(targetRow);
@@ -164,10 +169,8 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
-        // 1. Проверяем, нет ли уже ячеек с ошибками min/max
         if (row.querySelector('.input-error')) return false;
 
-        // 2. Вызываем программную валидацию строки
         if (this.onValidateRow) {
             const rowError = this.onValidateRow(rowId, row);
             if (rowError) {
@@ -197,10 +200,14 @@ class EditableTable {
             if (!currentRow) return;
 
             input.classList.remove('input-error');
+            input.setCustomValidity('');
 
+            // ФИКС ESC: Восстанавливаем точные текстовые бэкапы по индексам
             const fields = currentRow.querySelectorAll('.table-input, .table-select');
             fields.forEach((field, index) => {
-                field.value = this.initialFieldsValues[index];
+                if (this.initialFieldsValues[index] !== undefined) {
+                    field.value = this.initialFieldsValues[index];
+                }
             });
 
             const rowId = currentRow.getAttribute('data-id');
@@ -260,7 +267,6 @@ class EditableTable {
             const currentRow = input.closest('tr');
             const targetRow = targetInput.closest('tr');
 
-            // Защита переходов по Enter и стрелкам вверх/вниз
             if (currentRow && targetRow && currentRow !== targetRow) {
                 if (!this.validateCurrentRow(currentRow)) {
                     event.preventDefault();
@@ -342,8 +348,7 @@ class EditableTable {
         }
         this.initialRowDataJson = null;
     }
-}
-
+}	
 
 // Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
 function setVisualStatus(tbodyId, activeRow, icon) {
