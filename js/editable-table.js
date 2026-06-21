@@ -126,6 +126,7 @@ class EditableTable {
             input.setSelectionRange(start, start);
         }
     }
+	
     handleRowClick(event) {
         const targetRow = event.target.closest('tr');
         if (!targetRow) return;
@@ -133,19 +134,16 @@ class EditableTable {
         const activeElement = document.activeElement;
         const currentRow = activeElement ? activeElement.closest('tr') : null;
 
-        // ФИКС ВАЛИДАЦИИ: Даем селектам обновить свое значение в DOM перед валидацией
         if (currentRow && currentRow !== targetRow) {
-            // Кратковременный таймаут разрывает цепочку mousedown и позволяет прочитать актуальный Al/Cu
+            // Даем DOM обновиться перед валидацией при клике
             setTimeout(() => {
                 if (!this.validateCurrentRow(currentRow)) {
-                    // Если строка невалидна, возвращаем фокус обратно в ее первый инпут
                     const firstInput = currentRow.querySelector('.table-input');
                     if (firstInput) {
                         firstInput.focus();
                         firstInput.select();
                     }
                 } else {
-                    // Если строка валидна — безопасно переключаем активную строку
                     this.checkRowSelection(targetRow);
                 }
             }, 50);
@@ -169,6 +167,7 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
+        // Базовые ошибки min/max имеют абсолютный приоритет
         if (row.querySelector('.input-error')) return false;
 
         if (this.onValidateRow) {
@@ -202,7 +201,6 @@ class EditableTable {
             input.classList.remove('input-error');
             input.setCustomValidity('');
 
-            // ФИКС ESC: Восстанавливаем точные текстовые бэкапы по индексам
             const fields = currentRow.querySelectorAll('.table-input, .table-select');
             fields.forEach((field, index) => {
                 if (this.initialFieldsValues[index] !== undefined) {
@@ -287,9 +285,12 @@ class EditableTable {
 
         if (!input.classList.contains('table-input')) {
             if (!nextRow || nextRow !== currentRow) {
-                if (currentRow && !currentRow.querySelector('.input-error')) {
-                    if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
-                }
+                // ФИКС: Делаем проверку строки асинхронной, чтобы селекты успели обновиться в DOM
+                setTimeout(() => {
+                    if (currentRow && !currentRow.querySelector('.input-error')) {
+                        if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
+                    }
+                }, 60); // чуть больше, чем mousedown, чтобы не было конфликта
             }
             return;
         }
@@ -332,8 +333,11 @@ class EditableTable {
         }
 
         if (!nextRow || nextRow !== currentRow) {
-            if (currentRow && currentRow.querySelector('.input-error')) return;
-            if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
+            // ФИКС: Для обычных инпутов при уходе со строки тоже переносим валидацию в микро-таймаут
+            setTimeout(() => {
+                if (currentRow && currentRow.querySelector('.input-error')) return;
+                if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
+            }, 60);
         }
     }
 
