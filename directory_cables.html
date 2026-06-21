@@ -198,8 +198,8 @@
                 tableBody.appendChild(tr);
             });
 
-        new EditableTable('cableTableBody', 
-            (id) => {
+        new EditableTable('cableTableBody', {
+             onSave: (id) => {
                 console.log(`Автосохранение строки ${id}:`);                
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
                 /*
@@ -210,11 +210,16 @@
                 });
                 */
             },
-            (id) => {
-                console.log(`Кликнули на проект ID: ${id}. Загружаем связанные кабели...`);
-                // ВАША процедура обновления подчиненной таблицы!
-            })
-        }
+            onRowSelect: (id, row) => {
+                console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
+            },
+            onRowEdit: (id, row) => {
+                console.log(`Редактирование строки ID: ${id}. `);
+            },
+             onRowCancel: (id, row) => {
+                console.log(`Отмена редактирования строкм ID: ${id}. `);
+            }
+        });
 
         function renderGuestView() {
             const container = document.getElementById('tableRootContainer');
