@@ -147,12 +147,14 @@ class EditableTable {
                 break;
             case 'ArrowLeft':
                 if (input.tagName === 'SELECT' || input.selectionStart === 0) {
+                    if (input.tagName === 'SELECT') event.preventDefault(); 
                     const prevTd = td.previousElementSibling;
                     targetInput = prevTd?.querySelector('.table-input, .table-select');
                 }
                 break;
             case 'ArrowRight':
                 if (input.tagName === 'SELECT' || input.selectionStart === input.value.length) {
+                    if (input.tagName === 'SELECT') event.preventDefault(); 
                     const nextTd = td.nextElementSibling;
                     targetInput = nextTd?.querySelector('.table-input, .table-select');
                 }
