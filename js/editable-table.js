@@ -179,6 +179,8 @@ class EditableTable {
     }
 
     handleFocusOut(event) {
+        const input = event.target; 
+        
         const currentRow = event.target.closest('tr');
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
