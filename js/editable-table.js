@@ -1,3 +1,4 @@
+class EditableTable {
     /**
      * @param {string} tbodyId - ID тела таблицы
      * @param {function} onSaveCallback - Функция сохранения при изменении строки
