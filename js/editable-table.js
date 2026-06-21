@@ -26,13 +26,43 @@ class EditableTable {
     }
 
     initEvents() {
-        this.tbody.addEventListener('keydown', (e) => this.handleKeyDown(e), true);
+        // Обычные события таблицы
+        this.tbody.addEventListener('keydown', (e) => this.handleKeyDown(e));
         this.tbody.addEventListener('focusout', (e) => this.handleFocusOut(e));
         this.tbody.addEventListener('input', (e) => this.handleNumericInput(e));
         this.tbody.addEventListener('focusin', (e) => this.handleFocusIn(e));
+        this.tbody.addEventListener('click', (e) => this.handleRowClick(e));
+
+        // РЕШЕНИЕ ДЛЯ ESC: Слушаем его глобально на уровне документа. Браузер не сможет его скрыть!
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.activeRowId) {
+                const activeTr = this.tbody.querySelector(`tr[data-id="${this.activeRowId}"]`);
+                if (activeTr && (activeTr.contains(document.activeElement) || activeTr.querySelector('.input-error'))) {
+                    this.resetRowChanges(activeTr);
+                }
+            }
+        });
+    }
+
+    // Вынесли сброс по Esc в отдельный чистый метод
+    resetRowChanges(row) {
+        row.querySelectorAll('.table-input, .table-select').forEach(field => {
+            field.classList.remove('input-error');
+            if (typeof field.setCustomValidity === 'function') field.setCustomValidity('');
+        });
+
+        const fields = row.querySelectorAll('.table-input, .table-select');
+        fields.forEach((field, index) => {
+            if (this.initialFieldsValues[index] !== undefined) {
+                field.value = this.initialFieldsValues[index];
+            }
+        });
+
+        const rowId = row.getAttribute('data-id');
+        if (typeof this.onRowCancel === 'function') this.onRowCancel(rowId, row);
         
-        // Перехватываем нажатие мыши до смены фокуса
-        this.tbody.addEventListener('mousedown', (e) => this.handleRowClick(e));
+        if (document.activeElement) document.activeElement.blur();
+        this.initialRowDataJson = this.collectRowData(row);
     }
 
     formatTableOnLoad() {
@@ -66,13 +96,11 @@ class EditableTable {
         const fields = currentRow.querySelectorAll('.table-input, .table-select');
         this.currentFieldIndex = Array.from(fields).indexOf(event.target);
 
-        // ФИКС ESC: Надежно сохраняем массив исходных значений для отмены по Esc
         if (this.activeRowId !== currentRow.getAttribute('data-id')) {
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
+            this.checkRowSelection(currentRow);
         }
-        
-        this.checkRowSelection(currentRow);
     }
 
     handleNumericInput(event) {
@@ -134,21 +162,20 @@ class EditableTable {
         const activeElement = document.activeElement;
         const currentRow = activeElement ? activeElement.closest('tr') : null;
 
+        // Если кликнули на другую строку
         if (currentRow && currentRow !== targetRow) {
-            setTimeout(() => {
-                if (!this.validateCurrentRow(currentRow)) {
-                    const firstInput = currentRow.querySelector('.table-input');
-                    if (firstInput) {
-                        firstInput.focus();
-                        firstInput.select();
-                    }
-                } else {
-                    this.checkRowSelection(targetRow);
+            if (!this.validateCurrentRow(currentRow)) {
+                // Если старая строка с ошибкой — блокируем переход намертво
+                event.preventDefault();
+                event.stopPropagation();
+                const firstInput = currentRow.querySelector('.table-input');
+                if (firstInput) {
+                    firstInput.focus();
+                    firstInput.select();
                 }
-            }, 50);
-            return;
+                return;
+            }
         }
-
         this.checkRowSelection(targetRow);
     }
 
@@ -166,6 +193,7 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
+        // Снимаем старые системные ошибки перед перепроверкой строки
         row.querySelectorAll('.table-input').forEach(input => {
             if (input.classList.contains('input-error') && !input.hasAttribute('min') && !input.hasAttribute('max') && !input.hasAttribute('data-validator')) {
                 input.classList.remove('input-error');
@@ -198,39 +226,6 @@ class EditableTable {
 
     handleKeyDown(event) {
         const input = event.target;
-        const currentRow = input.closest('tr');
-        
-        // ФИКС ESC: Выносим в самый верх метода, чтобы срабатывало ВСЕГДА
-        if (event.key === 'Escape' && currentRow) {
-            event.preventDefault();
-
-            // Принудительно очищаем ошибки на ВСЕХ элементах строки перед возвратом значений
-            currentRow.querySelectorAll('.table-input, .table-select').forEach(field => {
-                field.classList.remove('input-error');
-                if (typeof field.setCustomValidity === 'function') {
-                    field.setCustomValidity('');
-                }
-            });
-
-            // Восстанавливаем точные текстовые бэкапы по индексам
-            const fields = currentRow.querySelectorAll('.table-input, .table-select');
-            fields.forEach((field, index) => {
-                if (this.initialFieldsValues[index] !== undefined) {
-                    field.value = this.initialFieldsValues[index];
-                }
-            });
-
-            const rowId = currentRow.getAttribute('data-id');
-            if (typeof this.onRowCancel === 'function') {
-                this.onRowCancel(rowId, currentRow);
-            }
-            
-            // Снимаем фокус и принудительно перезаписываем снимок, чтобы строка не пробовала сохраниться
-            input.blur();
-            this.initialRowDataJson = this.collectRowData(currentRow);
-            return;
-        }
-
         if (!input.classList.contains('table-input') && !input.classList.contains('table-select')) return;
 
         const td = input.closest('td');
@@ -297,57 +292,57 @@ class EditableTable {
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
-        if (!input.classList.contains('table-input')) {
-            if (!nextRow || nextRow !== currentRow) {
-                setTimeout(() => {
-                    if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
-                }, 60);
+        // Если ушли из инпута — форматируем вещественные нули
+        if (input.classList.contains('table-input') && input.value.trim() !== '') {
+            if (input.getAttribute('inputmode') === 'decimal') {
+                const standardValue = input.value.replace(this.localeSeparator, '.');
+                const parsedNum = parseFloat(standardValue);
+                
+                if (!isNaN(parsedNum)) {
+                    const min = input.getAttribute('min');
+                    const max = input.getAttribute('max');
+                    const validatorName = input.getAttribute('data-validator');
+                    let customError = null;
+                    
+                    if (validatorName && typeof window[validatorName] === 'function') {
+                        customError = window[validatorName](parsedNum, currentRow);
+                    }
+
+                    if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max)) || customError) {
+                        let msg = customError || (min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`));
+                        this.showValidationError(input, msg);
+                        return;
+                    }
+
+                    input.classList.remove('input-error');
+                    input.setCustomValidity(''); 
+
+                    const step = input.getAttribute('step');
+                    if (step && step.includes('.')) {
+                        const decimalsCount = step.split('.').length;
+                        input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
+                    }
+                }
             }
-            return;
         }
 
-        if (input.value.trim() === '') {
+        // Если пустая строка — восстанавливаем значение
+        if (input.classList.contains('table-input') && input.value.trim() === '') {
             if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
                 input.value = this.initialFieldsValues[this.currentFieldIndex];
                 input.classList.remove('input-error');
             }
-        } 
-        else if (input.getAttribute('inputmode') === 'decimal') {
-            const standardValue = input.value.replace(this.localeSeparator, '.');
-            const parsedNum = parseFloat(standardValue);
-            
-            if (!isNaN(parsedNum)) {
-                const min = input.getAttribute('min');
-                const max = input.getAttribute('max');
-                const validatorName = input.getAttribute('data-validator');
-                let customError = null;
-                
-                if (validatorName && typeof window[validatorName] === 'function') {
-                    customError = window[validatorName](parsedNum, currentRow);
-                }
-
-                if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max)) || customError) {
-                    let msg = customError || (min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`));
-                    this.showValidationError(input, msg);
-                    return;
-                }
-
-                input.classList.remove('input-error');
-                input.setCustomValidity(''); 
-
-                const step = input.getAttribute('step');
-                if (step && step.includes('.')) {
-                    const decimalsCount = step.split('.').length;
-                    input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
-                }
-            }
         }
 
+        // ВАЖНЫЙ ФИКС: Убираем задержки. Если фокус РЕАЛЬНО покинул строку
         if (!nextRow || nextRow !== currentRow) {
-            setTimeout(() => {
-                if (currentRow && currentRow.querySelector('.input-error')) return;
-                if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
-            }, 60);
+            if (currentRow && !currentRow.querySelector('.input-error')) {
+                if (this.validateCurrentRow(currentRow)) {
+                    this.triggerSave(currentRow);
+                }
+            }
+            // Если фокус ушел вообще из таблицы, сбрасываем активную запись
+            if (!nextRow) this.activeRowId = null; 
         }
     }
 
@@ -362,7 +357,7 @@ class EditableTable {
         }
         this.initialRowDataJson = null;
     }
-}	
+}
 
 // Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
 function setVisualStatus(tbodyId, activeRow, icon) {
