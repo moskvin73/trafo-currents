@@ -1,22 +1,50 @@
 class EditableTable {
-    /**
-     * @param {string} tbodyId - ID тела таблицы
-     * @param {function} onSaveCallback - Функция, которая вызовется для сохранения строки на сервер
-     */
     constructor(tbodyId, onSaveCallback) {
         this.tbody = document.getElementById(tbodyId);
         if (!this.tbody) return;
 
         this.onSave = onSaveCallback;
+        
+        // Определяем системный разделитель пользователя ("," или ".")
+        this.localeSeparator = (1.1).toLocaleString().substring(1, 2); 
+        // Символ, который нужно заменять (если локаль ",", то заменяем ".", и наоборот)
+        this.forbiddenSeparator = this.localeSeparator === ',' ? '.' : ',';
+
         this.initEvents();
     }
 
     initEvents() {
-        // Навигация кнопками клавиатуры
         this.tbody.addEventListener('keydown', (e) => this.handleNavigation(e));
-        
-        // Отслеживание ухода со строки для автосохранения
         this.tbody.addEventListener('focusout', (e) => this.handleFocusOut(e));
+        this.tbody.addEventListener('input', (e) => this.handleNumericInput(e));
+    }
+
+    // Региональный фильтр ввода чисел
+    handleNumericInput(event) {
+        const input = event.target;
+        if (input.getAttribute('inputmode') !== 'decimal') return;
+
+        // 1. Подменяем запрещенный разделитель на региональный (например, "." на ",")
+        const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
+        let value = input.value.replace(regexForbidden, this.localeSeparator);
+
+        // 2. Разрешаем только цифры и один региональный разделитель
+        // Удаляем всё, кроме цифр и нашего разделителя
+        const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
+        value = value.replace(regexClean, '');
+        
+        // Если разделителей больше одного, оставляем только первый
+        const parts = value.split(this.localeSeparator);
+        if (parts.length > 2) {
+            value = parts[0] + this.localeSeparator + parts.slice(1).join('');
+        }
+
+        // Обновляем значение в инпуте с сохранением позиции курсора
+        if (input.value !== value) {
+            const start = input.selectionStart;
+            input.value = value;
+            input.setSelectionRange(start, start);
+        }
     }
 
     handleNavigation(event) {
@@ -37,7 +65,6 @@ class EditableTable {
 
             case 'ArrowDown':
             case 'Enter':
-                // Для селектов Enter пускай работает стандартно (открывает список)
                 if (event.key === 'Enter' && input.tagName === 'SELECT') return;
                 
                 event.preventDefault();
@@ -46,7 +73,6 @@ class EditableTable {
                 break;
 
             case 'ArrowLeft':
-                // Переходим влево, только если курсор в самом начале текста (или это селект)
                 if (input.tagName === 'SELECT' || input.selectionStart === 0) {
                     const prevTd = td.previousElementSibling;
                     targetInput = prevTd?.querySelector('.table-input, .table-select');
@@ -54,7 +80,6 @@ class EditableTable {
                 break;
 
             case 'ArrowRight':
-                // Переходим вправо, только если курсор в самом конце текста (или это селект)
                 if (input.tagName === 'SELECT' || input.selectionStart === input.value.length) {
                     const nextTd = td.nextElementSibling;
                     targetInput = nextTd?.querySelector('.table-input, .table-select');
@@ -65,7 +90,7 @@ class EditableTable {
         if (targetInput) {
             targetInput.focus();
             if (targetInput.tagName === 'INPUT') {
-                setTimeout(() => targetInput.select(), 0); // Автовыделение текста при переходе
+                setTimeout(() => targetInput.select(), 0);
             }
         }
     }
@@ -75,7 +100,6 @@ class EditableTable {
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
-        // Если фокус перешел на другую строку или вообще ушел из таблицы
         if (!nextRow || nextRow !== currentRow) {
             this.triggerSave(currentRow);
         }
@@ -83,25 +107,34 @@ class EditableTable {
 
     triggerSave(row) {
         const rowId = row.getAttribute('data-id');
-        
-        // Автоматически собираем все поля в один аккуратный объект
         const data = { id: rowId };
         
-        // Ищем все элементы с атрибутом name внутри этой строки
         row.querySelectorAll('[name]').forEach(field => {
             let value = field.value;
             
-            // Преобразуем типы данных, если это числовое поле
-            if (field.type === 'number') {
-                value = value === '' ? null : parseFloat(value);
+            if (field.getAttribute('inputmode') === 'decimal') {
+                if (value === '') {
+                    value = null;
+                } else {
+                    // Перед отправкой на сервер ВСЕГДА переводим региональный разделитель в стандартную точку JS
+                    const standardValue = value.replace(this.localeSeparator, '.');
+                    value = parseFloat(standardValue);
+                    if (isNaN(value)) value = null;
+                }
             }
             
             data[field.name] = value;
         });
 
-        // Передаем собранные данные в ваш внешний обработчик сохранения
         if (typeof this.onSave === 'function') {
             this.onSave(rowId, data);
         }
     }
+}
+
+// Функция для красивого форматирования чисел в инпуте под локаль пользователя
+function formatLocaleNum(val) {
+    if (val === null || val === undefined) return '';
+    // Переводим системное число (с точкой) в строку с запятой (для РФ)
+    return val.toString().replace('.', (1.1).toLocaleString().substring(1, 2));
 }
