@@ -23,6 +23,8 @@ class EditableTable {
         this.initialFieldsValues = []; 
         this.activeRowId = null;
 
+        this.formatTableOnLoad();
+
         this.initEvents();
     }
 
@@ -33,6 +35,27 @@ class EditableTable {
         this.tbody.addEventListener('focusin', (e) => this.handleFocusIn(e));
         this.tbody.addEventListener('click', (e) => this.handleRowClick(e));
     }
+
+    formatTableOnLoad() {
+        const fields = this.tbody.querySelectorAll('.table-input');
+        fields.forEach(field => {
+            if (field.getAttribute('inputmode') === 'decimal' && field.value !== '') {
+                // Заменяем стандартную точку из БД на локальный разделитель
+                let val = field.value.replace('.', this.localeSeparator);
+                const step = field.getAttribute('step');
+                
+                // Если задан шаг, выставляем фиксированное количество знаков (дописываем нули)
+                if (step && step.includes('.')) {
+                    const decimalsCount = step.split('.')[1].length;
+                    const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
+                    if (!isNaN(parsedNum)) {
+                        val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
+                    }
+                }
+                field.value = val;
+            }
+        });
+    }   
 
     collectRowData(row) {
         const fields = row.querySelectorAll('.table-input, .table-select');
@@ -72,7 +95,7 @@ class EditableTable {
     }
 
     handleNumericInput(event) {
-        const input = event.target;
+       /* const input = event.target;
         const currentRow = input.closest('tr');
         
         if (currentRow) {
@@ -101,7 +124,43 @@ class EditableTable {
             const start = input.selectionStart;
             input.value = value;
             input.setSelectionRange(start, start);
+        }*/
+
+        const input = event.target;
+        const currentRow = input.closest('tr');
+        
+        if (currentRow) {
+            const currentSnapshot = this.collectRowData(currentRow);
+            const rowId = currentRow.getAttribute('data-id');
+            if (this.initialRowDataJson !== currentSnapshot) {
+                if (typeof this.onRowEdit === 'function') this.onRowEdit(rowId, currentRow);
+            } else {
+                if (typeof this.onRowSelect === 'function') this.onRowSelect(rowId, currentRow);
+            }
         }
+
+        if (!input.classList.contains('table-input') || input.style.textAlign === 'left') return;
+
+        // 1. Подмена запрещенного разделителя на разрешенный
+        const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
+        let value = input.value.replace(regexForbidden, this.localeSeparator);
+
+        // 2. Валидация: разрешаем только цифры и один разделитель локали
+        const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
+        value = value.replace(regexClean, '');
+        
+        // 3. Контроль единственности разделителя
+        const parts = value.split(this.localeSeparator);
+        if (parts.length > 2) {
+            value = parts[0] + this.localeSeparator + parts.slice(1).join('');
+        }
+
+        if (input.value !== value) {
+            const start = input.selectionStart;
+            input.value = value;
+            input.setSelectionRange(start, start);
+        }            
+
     }
 
     handleKeyDown(event) {
@@ -180,7 +239,7 @@ class EditableTable {
 
     handleFocusOut(event) {
         const input = event.target; 
-        
+
         const currentRow = event.target.closest('tr');
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
