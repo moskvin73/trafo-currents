@@ -234,7 +234,7 @@
                                 <th style="text-align: center; width: 40px;">№</th>
                                 <th style="text-align: center; width: 180px;">Марка кабеля</th>
                                 <th style="text-align: center; width: 40px;">Кол-во жил</th>
-                                <th style="text-align: center; width: 80px;">Сечение ТПЖ</th>
+                                <th style="text-align: center; width: 100px;">Сечение ТПЖ</th>
                                 <th style="text-align: center; width: 80px;">$Х_{\\text {уд}}$<br>Ом/км</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.возд}}$<br>А</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.земл}}$<br>А</th>
@@ -257,23 +257,20 @@
             cablesCatalog.forEach((cable, index) => {
                 // Создаем основную строку
                 const tr = document.createElement('tr');
-                tr.className = userRole === 'admin' ? '' : 'clickable-row';
-                tr.setAttribute('data-id', cable.id);
-                
+                tr.className = 'clickable-row';
+                tr.setAttribute('data-id', cable.id);                
                 tr.onclick = () => toggleDetailsRow(cable.id, index, cable);
-
-                // Строка инженера (Кратко и чисто)
                 tr.setAttribute('data-tooltip', 'Кликните для просмотра геометрии, сопротивления и ГОСТ');
                 tr.style.position = 'relative'; // Важно для позиционирования подсказки
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong>${cable.full_cable_name}</strong></td>
-                    <td>${cable.cores_count}</td>
-                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'AL' : 'Cu'})</td>
-                    <td>${cable.x_line.toFixed(4)}</td>
-                    <td>${cable.current_capacity_air || '—'}</td>
-                    <td>${cable.current_capacity_ground || '—'}</td>
-                    <td>${cable.short_circuit_current_1s || '—'}</td>
+                    <td style="text-align: center;>${index + 1}</td>
+                    <td>${cable.full_cable_name}</td>
+                    <td style="text-align: center;>${cable.cores_count}</td>
+                    <td style="text-align: center;>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'AL' : 'Cu'})</td>
+                    <td style="text-align: center;>${cable.x_line.toFixed(4)}</td>
+                    <td style="text-align: center;>${cable.current_capacity_air || '—'}</td>
+                    <td style="text-align: center;>${cable.current_capacity_ground || '—'}</td>
+                    <td style="text-align: center;>${cable.short_circuit_current_1s || '—'}</td>
                 `;
                 tableBody.appendChild(tr);
             });
