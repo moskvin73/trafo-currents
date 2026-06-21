@@ -23,6 +23,7 @@ class EditableTable {
 
         this.formatTableOnLoad();
         this.initEvents();
+        this.initFabMenu();
     }
 
     initEvents() {
@@ -83,6 +84,100 @@ class EditableTable {
             }
         });
     }
+
+    initFabMenu() {
+        const container = document.getElementById('tableFabContainer');
+        const mainBtn = document.getElementById('fabMainBtn');
+        
+        if (!container || !mainBtn) return;
+
+        // 1. Тогл открытия/закрытия меню
+        mainBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.isSaving) return; // Блокируем интерфейс при сохранении
+            container.classList.toggle('open');
+            mainBtn.textContent = container.classList.contains('open') ? '❌' : '⚙️';
+        });
+
+        // 2. Закрытие меню при клике в любое другое место экрана
+        document.addEventListener('click', () => {
+            container.classList.remove('open');
+            mainBtn.textContent = '⚙️';
+        });
+
+        // 3. Делегирование кликов на кнопки действий
+        container.addEventListener('click', (e) => {
+            const btn = e.target.closest('.fab-btn');
+            if (!btn) return;
+            
+            const action = btn.dataset.action;
+            if (action === 'add-row') {
+                this.addRow();
+            }
+        });
+    }
+
+    addRow() {
+        // Если идет сохранение — игнорируем команду
+        if (this.isSaving) return;
+
+        // ВАЖНО: Если сейчас сфокусирована какая-то ячейка, 
+        // принудительно запускаем валидацию текущей активной строки перед созданием новой
+        if (document.activeElement && this.table.contains(document.activeElement)) {
+            const currentCell = document.activeElement.closest('td');
+            if (currentCell) {
+                // Ваша логика валидации текущей строки. 
+                // Если onValidateRow вернул false — прерываем добавление новой строки
+                const currentRow = currentCell.closest('tr');
+                if (!this.validateRowBeforeLeave(currentRow)) {
+                    return; 
+                }
+            }
+        }
+
+        // 1. Формируем структуру новых данных (Blueprint)
+        // Сюда передаем null в качестве id, как требует сервер
+        const newRowData = {
+            id: null,
+            // Добавьте дефолтные свойства в зависимости от колонок вашей таблицы
+            // например: name: '', price: 0, category_id: this.currentParentId
+        };
+
+        // 2. Генерируем HTML новой строки 
+        // (Используйте вашу текущую функцию рендера строки tr)
+        const tr = this.renderRowHtml(newRowData); 
+        
+        // Устанавливаем маркер, чтобы методы валидации и rollback понимали, что это новая запись
+        tr.dataset.id = 'null'; 
+
+        // 3. Добавляем строку в самый конец тела таблицы (tbody)
+        const tbody = this.table.querySelector('tbody') || this.table;
+        tbody.appendChild(tr);
+
+        // 4. Обновляем ваш внутренний массив данных/стейт (если вы его ведете внутри класса)
+        // this.data.push(newRowData);
+
+        // 5. Автоматически переводим фокус на первую редактируемую ячейку новой строки
+        // Ищем первый input или ячейку с contenteditable
+        const firstEditableField = tr.querySelector('input:not([disabled]), [contenteditable="true"]');
+        if (firstEditableField) {
+            setTimeout(() => {
+                firstEditableField.focus();
+                // Если это input типа text — выделяем текст для удобства ввода
+                if (firstEditableField.select) firstEditableField.select(); 
+            }, 50);
+        }
+    }
+    
+    // Вспомогательный метод для проверки строки перед уходом фокуса на новую строку
+    validateRowBeforeLeave(row) {
+        if (typeof this.onValidateRow === 'function') {
+            // Передаем строку или данные в ваш кастомный валидатор
+            return this.onValidateRow(row); 
+        }
+        return true;
+    }
+}
 
     collectRowData(row) {
         const fields = row.querySelectorAll('.table-input, .table-select');
