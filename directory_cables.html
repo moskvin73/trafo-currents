@@ -247,6 +247,12 @@
                     </table>
                 </div>
             `;
+
+            // ВАЖНО: Просим MathJax отрендерить формулы внутри только что вставленной строки
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([container]).catch((err) => console.error("MathJax error:", err));
+            }            
+
             const tableBody = container.querySelector('#cableTableBody');
             tableBody.innerHTML = "";
 
@@ -277,64 +283,6 @@
         }
 
 
-        function renderCableTable() {
-            const tableBody = document.getElementById('cableTableBody');
-            tableBody.innerHTML = "";
-
-            cablesCatalog.forEach((cable, index) => {
-                // Создаем основную строку
-                const tr = document.createElement('tr');
-                tr.className = userRole === 'admin' ? '' : 'clickable-row';
-                tr.setAttribute('data-id', cable.id);
-                
-                // Если обычный пользователь — клик по строке открывает/закрывает детали
-                if (userRole !== 'admin') {
-                    tr.onclick = () => toggleDetailsRow(cable.id, index, cable);
-                }
-
-                if (userRole === 'admin') {
-                    // Генерируем выпадающие списки для админа на основе загруженных справочников
-                    let groupOptions = dbGroups.map(g => `<option value="${g.id}" ${g.voltage_kv === cable.voltage_kv ? 'selected' : ''}>${g.standard_name} (${g.voltage_kv}кВ, ${g.insulation_type_ru})</option>`).join('');
-                    let condOptions = dbConductors.map(c => {
-                        let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
-                        return `<option value="${c.id}" ${c.cross_section === cable.cross_section && c.resistance === cable.r_20 ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
-                    }).join('');
-
-                    tr.innerHTML = `
-                        <td>${index + 1}<span class="sub-text">id:${cable.id}</span></td>
-                        <td><input type="text" class="table-input" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
-                        <td><select class="table-select" id="group_${cable.id}">${groupOptions}</select></td>
-                        <td><select class="table-select" id="cond_${cable.id}">${condOptions}</select></td>
-                        <td><input type="number" class="table-input" id="cores_${cable.id}" value="${cable.cores_count}"></td>
-                        <td><input type="number" step="0.0001" class="table-input" id="x_${cable.id}" value="${cable.x_line}"></td>
-                        <td><input type="number" class="table-input" id="air_${cable.id}" value="${cable.current_capacity_air || 0}"></td>
-                        <td><input type="number" class="table-input" id="ground_${cable.id}" value="${cable.current_capacity_ground || 0}"></td>
-                        <td><input type="number" step="0.01" class="table-input" id="sc_${cable.id}" value="${cable.short_circuit_current_1s || 0}"></td>
-                        <td>
-                            <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable(${cable.id})">💾</button>
-                            <button class="btn btn-ghost" style="padding:2px 6px; color:red; border-color:#fca5a5;" onclick="deleteCable(${cable.id})">🗑️</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(tr);
-                } else {
-                    // Строка инженера (Кратко и чисто)
-                    tr.setAttribute('data-tooltip', 'Кликните для просмотра геометрии, сопротивления и ГОСТ');
-                    tr.style.position = 'relative'; // Важно для позиционирования подсказки
-                    tr.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td><strong>${cable.full_cable_name}</strong></td>
-                        <td>Сеть ${cable.voltage_kv} кВ</td>
-                        <td>${cable.cross_section} мм² (${cable.conductor_class > 1 ? 'Алюминий' : 'Медь'})</td>
-                        <td>${cable.cores_count}</td>
-                        <td style="font-family:monospace;">${cable.x_line.toFixed(4)}</td>
-                        <td>${cable.current_capacity_air || '—'}</td>
-                        <td>${cable.current_capacity_ground || '—'}</td>
-                        <td>${cable.short_circuit_current_1s || '—'}</td>
-                    `;
-                    tableBody.appendChild(tr);
-                }
-            });
-        }
         // Логика разворачивания скрытых параметров (для Инженеров)
         function toggleDetailsRow(cableId, index, data) {
             const nextRow = document.getElementById(`details_${cableId}`);
