@@ -98,37 +98,6 @@ class EditableTable {
     }
 
     handleNumericInput(event) {
-       /* const input = event.target;
-        const currentRow = input.closest('tr');
-        
-        if (currentRow) {
-            const currentSnapshot = this.collectRowData(currentRow);
-            const rowId = currentRow.getAttribute('data-id');
-
-            if (this.initialRowDataJson !== currentSnapshot) {
-                if (typeof this.onRowEdit === 'function') this.onRowEdit(rowId, currentRow);
-            } else {
-                // Если пользователь стёр изменения обратно до исходных
-                if (typeof this.onRowSelect === 'function') this.onRowSelect(rowId, currentRow);
-            }
-        }
-
-        if (!input.classList.contains('table-input') || input.style.textAlign === 'left') return;
-
-        const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
-        let value = input.value.replace(regexForbidden, this.localeSeparator);
-        const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
-        value = value.replace(regexClean, '');
-        
-        const parts = value.split(this.localeSeparator);
-        if (parts.length > 2) value = parts + this.localeSeparator + parts.slice(1).join('');
-
-        if (input.value !== value) {
-            const start = input.selectionStart;
-            input.value = value;
-            input.setSelectionRange(start, start);
-        }*/
-
        const input = event.target;
         const currentRow = input.closest('tr');
         
@@ -144,13 +113,18 @@ class EditableTable {
 
         if (!input.classList.contains('table-input') || input.style.textAlign === 'left') return;
 
-        // ПУНКТ 2: Если нет step, или step не содержит точку — запрещаем ввод разделителей (целое число)
         const step = input.getAttribute('step');
         const isFloat = step && step.includes('.');
 
+        // ФИКС: Сохраняем информацию, был ли минус в самом начале строки
+        const hasMinus = input.value.startsWith('-');
+
         if (!isFloat) {
-            // Удаляем вообще все не-цифры
+            // Удаляем всё, кроме цифр
             let value = input.value.replace(/[^0-9]/g, '');
+            // Если в начале был минус — возвращаем его на место
+            if (hasMinus) value = '-' + value;
+
             if (input.value !== value) {
                 const start = input.selectionStart;
                 input.value = value;
@@ -160,16 +134,22 @@ class EditableTable {
         }
 
         // Логика для дробных чисел (float):
+        // 1. Подмена запрещенного разделителя на разрешенный
         const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
         let value = input.value.replace(regexForbidden, this.localeSeparator);
 
+        // 2. Валидация: разрешаем цифры и один разделитель локали
         const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
         value = value.replace(regexClean, '');
         
+        // 3. Контроль единственности разделителя
         const parts = value.split(this.localeSeparator);
         if (parts.length > 2) {
             value = parts[0] + this.localeSeparator + parts.slice(1).join('');
         }
+
+        // ФИКС: Если в начале был минус — возвращаем его на место для дробного числа
+        if (hasMinus) value = '-' + value;
 
         if (input.value !== value) {
             const start = input.selectionStart;
