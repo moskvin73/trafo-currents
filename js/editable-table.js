@@ -135,7 +135,6 @@ class EditableTable {
         const currentRow = activeElement ? activeElement.closest('tr') : null;
 
         if (currentRow && currentRow !== targetRow) {
-            // Даем DOM обновиться перед валидацией при клике
             setTimeout(() => {
                 if (!this.validateCurrentRow(currentRow)) {
                     const firstInput = currentRow.querySelector('.table-input');
@@ -167,20 +166,15 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
-        // ВАЖНЫЙ ФИКС: Перед новой проверкой сбрасываем кастомные ошибки строки у ВСЕХ инпутов в ряду,
-        // чтобы браузер снял блокировку фокуса, если пользователь всё исправил.
         row.querySelectorAll('.table-input').forEach(input => {
-            // Сбрасываем только те ошибки, которые были установлены программно нашей валидацией строки
             if (input.classList.contains('input-error') && !input.hasAttribute('min') && !input.hasAttribute('max') && !input.hasAttribute('data-validator')) {
                 input.classList.remove('input-error');
                 input.setCustomValidity('');
             }
         });
 
-        // Если после сброса ошибок строки всё еще висит .input-error (значит это жесткий min/max ячейки) - не пускаем
         if (row.querySelector('.input-error')) return false;
 
-        // Вызываем вашу программную валидацию строки
         if (this.onValidateRow) {
             const rowError = this.onValidateRow(rowId, row);
             if (rowError) {
@@ -204,14 +198,21 @@ class EditableTable {
 
     handleKeyDown(event) {
         const input = event.target;
+        const currentRow = input.closest('tr');
         
-        if (event.key === 'Escape') {
-            const currentRow = input.closest('tr');
-            if (!currentRow) return;
+        // ФИКС ESC: Выносим в самый верх метода, чтобы срабатывало ВСЕГДА
+        if (event.key === 'Escape' && currentRow) {
+            event.preventDefault();
 
-            input.classList.remove('input-error');
-            input.setCustomValidity('');
+            // Принудительно очищаем ошибки на ВСЕХ элементах строки перед возвратом значений
+            currentRow.querySelectorAll('.table-input, .table-select').forEach(field => {
+                field.classList.remove('input-error');
+                if (typeof field.setCustomValidity === 'function') {
+                    field.setCustomValidity('');
+                }
+            });
 
+            // Восстанавливаем точные текстовые бэкапы по индексам
             const fields = currentRow.querySelectorAll('.table-input, .table-select');
             fields.forEach((field, index) => {
                 if (this.initialFieldsValues[index] !== undefined) {
@@ -224,7 +225,9 @@ class EditableTable {
                 this.onRowCancel(rowId, currentRow);
             }
             
+            // Снимаем фокус и принудительно перезаписываем снимок, чтобы строка не пробовала сохраниться
             input.blur();
+            this.initialRowDataJson = this.collectRowData(currentRow);
             return;
         }
 
@@ -273,11 +276,11 @@ class EditableTable {
         }
 
         if (targetInput) {
-            const currentRow = input.closest('tr');
+            const currentRowNav = input.closest('tr');
             const targetRow = targetInput.closest('tr');
 
-            if (currentRow && targetRow && currentRow !== targetRow) {
-                if (!this.validateCurrentRow(currentRow)) {
+            if (currentRowNav && targetRow && currentRowNav !== targetRow) {
+                if (!this.validateCurrentRow(currentRowNav)) {
                     event.preventDefault();
                     return;
                 }
@@ -342,6 +345,7 @@ class EditableTable {
 
         if (!nextRow || nextRow !== currentRow) {
             setTimeout(() => {
+                if (currentRow && currentRow.querySelector('.input-error')) return;
                 if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
             }, 60);
         }
