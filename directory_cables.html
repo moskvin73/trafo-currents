@@ -265,7 +265,7 @@
                     <td>${index + 1}</td>
                     <td><strong>${cable.full_cable_name}</strong></td>
                     <td>${cable.voltage_kv} кВ</td>
-                    <td>${cable.cross_section} мм² (${cable.conductor_class > 1 ? 'Алюминий' : 'Медь'})</td>
+                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'Алюминий' : 'Медь'})</td>
                     <td>${cable.cores_count}</td>
                     <td style="font-family:monospace;">${cable.x_line.toFixed(4)}</td>
                     <td>${cable.current_capacity_air || '—'}</td>
