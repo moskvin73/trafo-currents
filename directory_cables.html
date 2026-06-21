@@ -149,13 +149,15 @@
                     <table class="project-table" style="width: 100%;">
                         <thead>
                             <tr>
+                                <th style="width: 24px; padding: 0;"></th> 
+
                                 <th style="width: 40px;">№</th>
                                 <th>Марка кабеля</th>
                                 <th style="width: 180px;">Темп. группа / Напряжение</th>
                                 <th style="width: 220px;">Связанная жила по ГОСТ</th>
                                 <th style="width: 70px;">Кол-во жил</th>
                                 <th style="width: 80px;">Х (Ом/км)</th>
-                                <th style="width: 80px;">$I_{возд.}$(А)</th>
+                                <th style="width: 80px;">I_{возд.}(А)</th>
                                 <th style="width: 80px;">I земл.(А)</th>
                                 <th style="width: 90px;">I кз 1с (кА)</th>
                                 <th id="thAdminAction" style="display: table-cell; width: 100px;">Действие</th>
@@ -165,6 +167,11 @@
                     </table>
                 </div>
             `;
+
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([container]).catch((err) => console.error("MathJax error:", err));
+            }            
+
             const tableBody = container.querySelector('#cableTableBody');
             tableBody.innerHTML = "";
 
@@ -181,6 +188,9 @@
                 }).join('');
 
                 tr.innerHTML = `
+                    <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
+                        <span class="row-indicator"></span>
+                    </td>                
                     <td>${index + 1}<span class="sub-text">id:${cable.id}</span></td>
                     <td><input type="text" class="table-input" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
                     <td><select class="table-select" id="group_${cable.id}">${groupOptions}</select></td>
@@ -200,7 +210,9 @@
 
         new EditableTable('cableTableBody', {
              onSave: (id) => {
-                console.log(`Автосохранение строки ${id}:`);                
+                console.log(`Автосохранение строки ${id}:`);    
+                const row = document.querySelector(`#cableTableBody tr[data-id="${id}"]`);
+                setVisualStatus('cableTableBody', row, '');            
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
                 /*
                 fetch(`/api/cables/${id}`, {
@@ -212,12 +224,15 @@
             },
             onRowSelect: (id, row) => {
                 console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
+                setVisualStatus('cableTableBody', row, '➔');
             },
             onRowEdit: (id, row) => {
                 console.log(`Редактирование строки ID: ${id}. `);
+                setVisualStatus('cableTableBody', row, '✎');
             },
              onRowCancel: (id, row) => {
                 console.log(`Отмена редактирования строкм ID: ${id}. `);
+                setVisualStatus('cableTableBody', row, '➔');
             }
             });
         }

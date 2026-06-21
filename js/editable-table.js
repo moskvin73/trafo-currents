@@ -194,3 +194,25 @@ function formatLocaleNum(val) {
     // Переводим системное число (с точкой) в строку с запятой (для РФ)
     return val.toString().replace('.', (1.1).toLocaleString().substring(1, 2));
 }
+
+// Вспомогательная функция отрисовки статуса (живет в HTML-скрипте страницы)
+function setVisualStatus(tbodyId, activeRow, icon) {
+    // Очищаем индикаторы у всех строк в этой таблице
+    document.querySelectorAll(`#${tbodyId} tr`).forEach(tr => {
+        const indicator = tr.querySelector('.row-indicator');
+        if (indicator) indicator.textContent = '';
+    });
+
+    // Ставим нужную иконку активной строке
+    if (activeRow) {
+        let indicator = activeRow.querySelector('.row-indicator');
+        if (!indicator) {
+            // Если тега для иконки еще нет в первом td, создаем его
+            indicator = document.createElement('span');
+            indicator.className = 'row-indicator';
+            indicator.style.marginRight = '5px';
+            activeRow.children[0].insertBefore(indicator, activeRow.children[0].firstChild);
+        }
+        indicator.textContent = icon;
+    }
+}
