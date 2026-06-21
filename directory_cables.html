@@ -233,8 +233,8 @@
                             <tr>
                                 <th style="text-align: center; width: 40px;">№</th>
                                 <th style="text-align: center; width: 180px;">Марка кабеля</th>
-                                <th style="text-align: center; width: 70px;">Кол-во жил</th>
-                                <th style="text-align: center; width: 220px;">Сечение ТПЖ</th>
+                                <th style="text-align: center; width: 40px;">Кол-во жил</th>
+                                <th style="text-align: center; width: 80px;">Сечение ТПЖ</th>
                                 <th style="text-align: center; width: 80px;">$Х_{\\text {уд}}$<br>Ом/км</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.возд}}$<br>А</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.земл}}$<br>А</th>
@@ -269,7 +269,7 @@
                     <td>${index + 1}</td>
                     <td><strong>${cable.full_cable_name}</strong></td>
                     <td>${cable.cores_count}</td>
-                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'Алюминий' : 'Медь'})</td>
+                    <td>${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'AL' : 'Cu'})</td>
                     <td>${cable.x_line.toFixed(4)}</td>
                     <td>${cable.current_capacity_air || '—'}</td>
                     <td>${cable.current_capacity_ground || '—'}</td>
