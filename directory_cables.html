@@ -195,11 +195,11 @@
                     <td><input type="text" class="table-input" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
                     <td><select class="table-select" id="group_${cable.id}">${groupOptions}</select></td>
                     <td><select class="table-select" id="cond_${cable.id}">${condOptions}</select></td>
-                    <td><input type="text" inputmode="decimal" class="table-input" id="cores_${cable.id}" value="${formatLocaleNum(cable.cores_count)}"></td>
-                    <td><input type="text" inputmode="decimal" step="0.0001" class="table-input" id="x_${cable.id}" value="${formatLocaleNum(cable.x_line)}"></td>
-                    <td><input type="text" inputmode="decimal" class="table-input" id="air_${cable.id}" value="${formatLocaleNum(cable.current_capacity_air || 0)}"></td>
-                    <td><input type="text" inputmode="decimal" class="table-input" id="ground_${cable.id}" value="${formatLocaleNum(cable.current_capacity_ground || 0)}"></td>
-                    <td><input type="text" inputmode="decimal" step="0.01" class="table-input" id="sc_${cable.id}" value="${formatLocaleNum(cable.short_circuit_current_1s || 0)}"></td>
+                    <td><input type="text" inputmode="decimal" class="table-input" id="cores_${cable.id}" value="${cable.cores_count}"></td>
+                    <td><input type="text" inputmode="decimal" step="0.0001" class="table-input" id="x_${cable.id}" value="${cable.x_line}"></td>
+                    <td><input type="text" inputmode="decimal" class="table-input" id="air_${cable.id}" value="${cable.current_capacity_air || 0}"></td>
+                    <td><input type="text" inputmode="decimal" class="table-input" id="ground_${cable.id}" value="${cable.current_capacity_ground || 0}"></td>
+                    <td><input type="text" inputmode="decimal" step="0.01" class="table-input" id="sc_${cable.id}" value="${cable.short_circuit_current_1s || 0}"></td>
                     <td>
                         <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable(${cable.id})">💾</button>
                         <button class="btn btn-ghost" style="padding:2px 6px; color:red; border-color:#fca5a5;" onclick="deleteCable(${cable.id})">🗑️</button>
