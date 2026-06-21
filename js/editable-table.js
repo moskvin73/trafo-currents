@@ -167,9 +167,20 @@ class EditableTable {
         if (!row) return true;
         const rowId = row.getAttribute('data-id');
 
-        // Базовые ошибки min/max имеют абсолютный приоритет
+        // ВАЖНЫЙ ФИКС: Перед новой проверкой сбрасываем кастомные ошибки строки у ВСЕХ инпутов в ряду,
+        // чтобы браузер снял блокировку фокуса, если пользователь всё исправил.
+        row.querySelectorAll('.table-input').forEach(input => {
+            // Сбрасываем только те ошибки, которые были установлены программно нашей валидацией строки
+            if (input.classList.contains('input-error') && !input.hasAttribute('min') && !input.hasAttribute('max') && !input.hasAttribute('data-validator')) {
+                input.classList.remove('input-error');
+                input.setCustomValidity('');
+            }
+        });
+
+        // Если после сброса ошибок строки всё еще висит .input-error (значит это жесткий min/max ячейки) - не пускаем
         if (row.querySelector('.input-error')) return false;
 
+        // Вызываем вашу программную валидацию строки
         if (this.onValidateRow) {
             const rowError = this.onValidateRow(rowId, row);
             if (rowError) {
@@ -285,12 +296,9 @@ class EditableTable {
 
         if (!input.classList.contains('table-input')) {
             if (!nextRow || nextRow !== currentRow) {
-                // ФИКС: Делаем проверку строки асинхронной, чтобы селекты успели обновиться в DOM
                 setTimeout(() => {
-                    if (currentRow && !currentRow.querySelector('.input-error')) {
-                        if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
-                    }
-                }, 60); // чуть больше, чем mousedown, чтобы не было конфликта
+                    if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
+                }, 60);
             }
             return;
         }
@@ -333,9 +341,7 @@ class EditableTable {
         }
 
         if (!nextRow || nextRow !== currentRow) {
-            // ФИКС: Для обычных инпутов при уходе со строки тоже переносим валидацию в микро-таймаут
             setTimeout(() => {
-                if (currentRow && currentRow.querySelector('.input-error')) return;
                 if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
             }, 60);
         }
