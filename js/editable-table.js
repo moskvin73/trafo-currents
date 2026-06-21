@@ -26,7 +26,7 @@ class EditableTable {
     }
 
     initEvents() {
-        this.tbody.addEventListener('keydown', (e) => this.handleKeyDown(e));
+        this.tbody.addEventListener('keydown', (e) => this.handleKeyDown(e), true);
         this.tbody.addEventListener('focusout', (e) => this.handleFocusOut(e));
         this.tbody.addEventListener('input', (e) => this.handleNumericInput(e));
         this.tbody.addEventListener('focusin', (e) => this.handleFocusIn(e));
