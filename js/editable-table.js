@@ -177,7 +177,7 @@ class EditableTable {
         }
         return true;
     }
-}
+
 
     collectRowData(row) {
         const fields = row.querySelectorAll('.table-input, .table-select');
