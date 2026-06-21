@@ -234,7 +234,10 @@
                                 <th style="text-align: center; width: 40px;">№</th>
                                 <th style="text-align: center; width: 180px;">Марка кабеля</th>
                                 <th style="text-align: center; width: 40px;">Кол-во жил</th>
+                                <th style="text-align: center; width: 40px;">Колacc гибк.</th>
                                 <th style="text-align: center; width: 100px;">Сечение ТПЖ</th>
+                                <th style="text-align: center; width: 100px;">Сечение N</th>
+                                <th style="text-align: center; width: 80px;">Вес<br>кг/км</th>
                                 <th style="text-align: center; width: 80px;">$Х_{\\text {уд}}$<br>Ом/км</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.возд}}$<br>А</th>
                                 <th style="text-align: center; width: 80px;">$I_{\\text {дд.б.земл}}$<br>А</th>
@@ -266,7 +269,10 @@
                     <td style="text-align: center;">${index + 1}</td>
                     <td>${cable.full_cable_name}</td>
                     <td style="text-align: center;">${cable.cores_count}</td>
+                    <td style="text-align: center;">${cable.conductor_class}</td>
                     <td style="text-align: center;">${cable.cross_section} мм² (${cable.conductor_type == 2 ? 'AL' : 'Cu'})</td>
+                    <td style="text-align: center;">${cable.neutral_cross_section === null ? '-' : cable.neutral_cross_section + " мм²"}</td>
+                    <td style="text-align: center;">${cable.theoretical_weight}</td>
                     <td style="text-align: center;">${cable.x_line.toFixed(4)}</td>
                     <td style="text-align: center;">${cable.current_capacity_air || '—'}</td>
                     <td style="text-align: center;">${cable.current_capacity_ground || '—'}</td>
