@@ -414,7 +414,7 @@ class EditableTable {
 		this.isSaving = true;const backupValues = [...this.initialFieldsValues];
 		// Функция отката
 		const rollback = () => {
-			console.warn(Ошибка сохранения строки ${rowId}. Выполняется откат изменений...);
+			console.warn("Ошибка сохранения строки ${rowId}. Выполняется откат изменений...");
 			// Выключаем блокировку сохранения, так как процесс завершен
 			this.isSaving = false;
 			this.activeRowId = rowId;
