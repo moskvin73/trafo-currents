@@ -5,10 +5,11 @@ class EditableTable {
 
         this.onSave = onSaveCallback;
         
-        // Определяем системный разделитель пользователя ("," или ".")
         this.localeSeparator = (1.1).toLocaleString().substring(1, 2); 
-        // Символ, который нужно заменять (если локаль ",", то заменяем ".", и наоборот)
         this.forbiddenSeparator = this.localeSeparator === ',' ? '.' : ',';
+
+        // Хранилище для исходного состояния редактируемой строки
+        this.initialRowDataJson = null;
 
         this.initEvents();
     }
@@ -17,29 +18,38 @@ class EditableTable {
         this.tbody.addEventListener('keydown', (e) => this.handleNavigation(e));
         this.tbody.addEventListener('focusout', (e) => this.handleFocusOut(e));
         this.tbody.addEventListener('input', (e) => this.handleNumericInput(e));
+        
+        // НОВОЕ: Фиксируем состояние строки в момент, когда пользователь в неё зашёл
+        this.tbody.addEventListener('focusin', (e) => this.handleFocusIn(e));
     }
 
-    // Региональный фильтр ввода чисел
+    // НОВОЕ: Запоминаем данные при входе в строку
+    handleFocusIn(event) {
+        const currentRow = event.target.closest('tr');
+        if (!currentRow) return;
+
+        // Собираем текущие данные этой строки
+        const currentData = this.collectRowData(currentRow);
+        
+        // Превращаем в строку для быстрого и точного сравнения
+        this.initialRowDataJson = JSON.stringify(currentData);
+    }
+
     handleNumericInput(event) {
         const input = event.target;
         if (input.getAttribute('inputmode') !== 'decimal') return;
 
-        // 1. Подменяем запрещенный разделитель на региональный (например, "." на ",")
         const regexForbidden = new RegExp(`\\${this.forbiddenSeparator}`, 'g');
         let value = input.value.replace(regexForbidden, this.localeSeparator);
 
-        // 2. Разрешаем только цифры и один региональный разделитель
-        // Удаляем всё, кроме цифр и нашего разделителя
         const regexClean = new RegExp(`[^0-9\\${this.localeSeparator}]`, 'g');
         value = value.replace(regexClean, '');
         
-        // Если разделителей больше одного, оставляем только первый
         const parts = value.split(this.localeSeparator);
         if (parts.length > 2) {
-            value = parts[0] + this.localeSeparator + parts.slice(1).join('');
+            value = parts + this.localeSeparator + parts.slice(1).join('');
         }
 
-        // Обновляем значение в инпуте с сохранением позиции курсора
         if (input.value !== value) {
             const start = input.selectionStart;
             input.value = value;
@@ -100,12 +110,14 @@ class EditableTable {
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
+        // Если фокус перешел на другую строку или вообще ушел из таблицы
         if (!nextRow || nextRow !== currentRow) {
             this.triggerSave(currentRow);
         }
     }
 
-    triggerSave(row) {
+    // Вспомогательный метод сбора данных (вынесен отдельно, чтобы использовать и в focusin, и в focusout)
+    collectRowData(row) {
         const rowId = row.getAttribute('data-id');
         const data = { id: rowId };
         
@@ -116,7 +128,6 @@ class EditableTable {
                 if (value === '') {
                     value = null;
                 } else {
-                    // Перед отправкой на сервер ВСЕГДА переводим региональный разделитель в стандартную точку JS
                     const standardValue = value.replace(this.localeSeparator, '.');
                     value = parseFloat(standardValue);
                     if (isNaN(value)) value = null;
@@ -126,9 +137,29 @@ class EditableTable {
             data[field.name] = value;
         });
 
-        if (typeof this.onSave === 'function') {
-            this.onSave(rowId, data);
+        return data;
+    }
+
+    triggerSave(row) {
+        const rowId = row.getAttribute('data-id');
+        
+        // 1. Собираем новые измененные данные
+        const currentData = this.collectRowData(row);
+        const currentDataJson = JSON.stringify(currentData);
+
+        // 2. СРАВНИВАЕМ: Если данные абсолютно такие же, как при входе — ничего не делаем
+        if (this.initialRowDataJson === currentDataJson) {
+            console.log(`Строка ${rowId} закрыта без изменений. Сохранение отменено.`);
+            return;
         }
+
+        // 3. Если данные изменились — отправляем на сервер
+        if (typeof this.onSave === 'function') {
+            this.onSave(rowId, currentData);
+        }
+
+        // Очищаем кэш после успешного триггера сохранения
+        this.initialRowDataJson = null;
     }
 }
 
