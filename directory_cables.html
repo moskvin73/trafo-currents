@@ -124,7 +124,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (userRole === 'admin') {
                 document.getElementById('adminAddCableBtn').style.display = 'inline-flex';
-                document.getElementById('thAdminAction').style.display = 'table-cell';
             }
             // Сначала загружаем вспомогательные справочники, затем основной каталог
             Promise.all([fetchConductors(), fetchGroups()])
@@ -181,7 +180,7 @@
                                 <th style="width: 80px;">$I_{возд.}$(А)</th>
                                 <th style="width: 80px;">I земл.(А)</th>
                                 <th style="width: 90px;">I кз 1с (кА)</th>
-                                <th id="thAdminAction" style="display: none; width: 100px;">Действие</th>
+                                <th id="thAdminAction" style="display: table-cell; width: 100px;">Действие</th>
                             </tr>
                         </thead>
                         <tbody id="cableTableBody"></tbody>
