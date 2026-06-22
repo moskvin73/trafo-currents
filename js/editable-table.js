@@ -67,28 +67,29 @@ class EditableTable {
     }
 
     formatTableOnLoad() {
-    // Если передали конкретную строку (например, новую) — форматируем только её поля.
-    // Если ничего не передали — форматируем, как обычно, весь tbody.
-    const container = targetRow || this.tbody || this.table;
-    if (!container) return;
+   if (!this.tbody) return; // Защита от запуска на пустом DOM
 
-    const fields = container.querySelectorAll('.table-input');
-        fields.forEach(field => {
-            if (field.getAttribute('inputmode') === 'decimal' && field.value !== '') {
-                let val = field.value.replace('.', this.localeSeparator);
-                const step = field.getAttribute('step');
+    const fields = this.tbody.querySelectorAll('.table-input');
+    fields.forEach(field => {
+        if (field.getAttribute('inputmode') === 'decimal' && field.value !== '') {
+            let val = field.value.replace('.', this.localeSeparator);
+            const step = field.getAttribute('step');
+            
+            if (step && step.includes('.')) {
+                // БЕЗОПАСНЫЙ ПОДСЧЕТ: разбиваем строку по точке
+                const stepParts = step.split('.');
+                // Если дробная часть существует (индекс 1), берем её длину, иначе 0
+                const decimalsCount = stepParts[1] ? stepParts[1].length : 0;
                 
-                if (step && step.includes('.')) {
-                    // ИСПРАВЛЕНО: берем длину именно дробной части (индекс 1)
-                    const decimalsCount = step.split('.')[1]?.length;
-                    const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
-                    if (!isNaN(parsedNum)) {
-                        val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
-                    }
+                const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
+                if (!isNaN(parsedNum)) {
+                    val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
-                field.value = val;
             }
-        });
+            field.value = val;
+        }
+    });
+
     }
 
     initFabMenu() {
