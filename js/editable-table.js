@@ -126,6 +126,18 @@ class EditableTable {
             return;
         }
 
+        // ПРОВЕРКА: Если в таблице УЖЕ есть новая несохраненная строка
+        const existingNewRow = tableElement.querySelector('tr[data-id="null"]');
+        if (existingNewRow) {
+            // Вместо создания новой, просто переводим фокус на первую ячейку существующей новой строки
+            const firstField = existingNewRow.querySelector('input:not([disabled]), [contenteditable="true"]');
+            if (firstField) {
+                firstField.focus();
+                if (firstField.select) firstField.select();
+            }
+            return; // Блокируем создание второй строки
+        }        
+
         // Проверка валидности текущей строки перед созданием новой
         if (document.activeElement && tableElement.contains(document.activeElement)) {
             const currentCell = document.activeElement.closest('td');
@@ -366,6 +378,29 @@ class EditableTable {
         if (event.key === 'Escape' && currentRow) {
             event.preventDefault();
 
+            const rowId = currentRow.getAttribute('data-id');
+
+            // Проверка на новую строку
+            if (rowId === 'null') {
+                // Находим строку выше, чтобы безопасно вернуть фокус
+                const previousRow = currentRow.previousElementSibling;
+                if (previousRow) {
+                    const prevField = previousRow.querySelector('.table-input, .table-select, input, [contenteditable="true"]');
+                    if (prevField) prevField.focus();
+                } else {
+                    input.blur();
+                }
+
+                // Вызываем колбэк отмены, чтобы внешняя логика знала об удалении строки
+                if (typeof this.onRowCancel === 'function') {
+                    this.onRowCancel(rowId, currentRow);
+                }
+
+                // Удаляем строку из таблицы
+                currentRow.remove();
+                return; // Завершаем выполнение, старый код отката для этой строки не нужен
+            }
+
             currentRow.querySelectorAll('.table-input, .table-select').forEach(field => {
                 field.classList.remove('input-error');
                 if (typeof field.setCustomValidity === 'function') field.setCustomValidity('');
@@ -378,7 +413,6 @@ class EditableTable {
                 }
             });
 
-            const rowId = currentRow.getAttribute('data-id');
             if (typeof this.onRowCancel === 'function') {
                 this.onRowCancel(rowId, currentRow);
             }
