@@ -303,6 +303,14 @@
                 MathJax.typesetPromise([container]).catch((err) => console.error("MathJax error:", err));
             }            
 
+            const exportButton = document.getElementById('btnWordExport');
+            if (exportButton) {
+                exportButton.addEventListener('click', function() {
+                    // Вызываем нашу функцию, передавая ID созданной таблицы
+                    exportTableToWordWithMathML('projectCableTable', 'Кабельный_Журнал');
+                });
+            }
+
             const tableBody = container.querySelector('#cableTableBody');
             tableBody.innerHTML = "";
 
