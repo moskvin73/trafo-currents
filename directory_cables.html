@@ -230,6 +230,7 @@
                 setTimeout(() => {
                     console.log('Прошло 0.5 секунды');
                     success();
+                    setVisualStatus('cableTableBody', row, '➔');
                     //rollback();
                 }, 500);
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
