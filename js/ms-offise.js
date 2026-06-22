@@ -66,7 +66,7 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
 
             if (mathElement) {
                 // Указываем обязательные для Word стандарты разметки
-                mathElement.setAttribute('xmlns', 'http://w3.org');
+                mathElement.setAttribute('xmlns', 'http://schemas.microsoft.com/office/2004/12/omml');
                 mathElement.setAttribute('display', 'inline');
                 mathElement.style.fontFamily = '"Cambria Math", "MS Symbol", serif';
                 
