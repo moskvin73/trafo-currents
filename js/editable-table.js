@@ -118,52 +118,53 @@ class EditableTable {
     }
 
     addRow() {
-        // Если идет сохранение — игнорируем команду
         if (this.isSaving) return;
 
-        // ВАЖНО: Если сейчас сфокусирована какая-то ячейка, 
-        // принудительно запускаем валидацию текущей активной строки перед созданием новой
-        if (document.activeElement && this.table.contains(document.activeElement)) {
+        // Определяем элемент таблицы: сначала ищем в свойствах класса, 
+        // если там пусто — находим в DOM по вашему CSS-классу
+        const tableElement = this.table || this.tableEl || this.el || document.querySelector('.project-table');
+
+        if (!tableElement) {
+            console.error("EditableTable: Элемент .project-table не найден на странице.");
+            return;
+        }
+
+        // Проверяем, находится ли фокус внутри текущей таблицы
+        if (document.activeElement && tableElement.contains(document.activeElement)) {
             const currentCell = document.activeElement.closest('td');
             if (currentCell) {
-                // Ваша логика валидации текущей строки. 
-                // Если onValidateRow вернул false — прерываем добавление новой строки
                 const currentRow = currentCell.closest('tr');
-                if (!this.validateRowBeforeLeave(currentRow)) {
-                    return; 
+                if (currentRow && typeof this.onValidateRow === 'function') {
+                    // Запускаем вашу трехэтапную валидацию для строки
+                    if (!this.onValidateRow(currentRow)) {
+                        return; // Блокируем добавление, если строка заполнена некорректно
+                    }
                 }
             }
         }
 
-        // 1. Формируем структуру новых данных (Blueprint)
-        // Сюда передаем null в качестве id, как требует сервер
-        const newRowData = {
-            id: null,
-            // Добавьте дефолтные свойства в зависимости от колонок вашей таблицы
-            // например: name: '', price: 0, category_id: this.currentParentId
-        };
+        // 1. Формируем дефолтный объект данных с null-id для сервера
+        const newRowData = { id: null };
 
-        // 2. Генерируем HTML новой строки 
-        // (Используйте вашу текущую функцию рендера строки tr)
+        // 2. Генерируем HTML-строку (вызываем ваш готовый метод рендера tr)
         const tr = this.renderRowHtml(newRowData); 
-        
-        // Устанавливаем маркер, чтобы методы валидации и rollback понимали, что это новая запись
-        tr.dataset.id = 'null'; 
+        tr.dataset.id = 'null'; // Маркер новой строки для rollback() и сохранения
 
-        // 3. Добавляем строку в самый конец тела таблицы (tbody)
-        const tbody = this.table.querySelector('tbody') || this.table;
+        // 3. Добавляем в tbody таблицы
+        const tbody = tableElement.querySelector('tbody') || tableElement;
         tbody.appendChild(tr);
 
-        // 4. Обновляем ваш внутренний массив данных/стейт (если вы его ведете внутри класса)
-        // this.data.push(newRowData);
+        // Скроллим контейнер вниз, чтобы новую строку было видно, если таблица большая
+        const container = tableElement.closest('.table-container-fixed');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
 
-        // 5. Автоматически переводим фокус на первую редактируемую ячейку новой строки
-        // Ищем первый input или ячейку с contenteditable
+        // 4. Автоматический фокус на первую редактируемую ячейку/input в новой строке
         const firstEditableField = tr.querySelector('input:not([disabled]), [contenteditable="true"]');
         if (firstEditableField) {
             setTimeout(() => {
                 firstEditableField.focus();
-                // Если это input типа text — выделяем текст для удобства ввода
                 if (firstEditableField.select) firstEditableField.select(); 
             }, 50);
         }
