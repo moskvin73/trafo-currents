@@ -118,49 +118,75 @@ class EditableTable {
     }
 
     addRow() {
-        if (this.isSaving) return;
+    if (this.isSaving) return;
 
-        // Определяем элемент таблицы: сначала ищем в свойствах класса, 
-        // если там пусто — находим в DOM по вашему CSS-классу
         const tableElement = this.table || this.tableEl || this.el || document.querySelector('.project-table');
-
         if (!tableElement) {
-            console.error("EditableTable: Элемент .project-table не найден на странице.");
+            console.error("EditableTable: Элемент .project-table не найден.");
             return;
         }
 
-        // Проверяем, находится ли фокус внутри текущей таблицы
+        // Проверка валидности текущей строки перед созданием новой
         if (document.activeElement && tableElement.contains(document.activeElement)) {
             const currentCell = document.activeElement.closest('td');
             if (currentCell) {
                 const currentRow = currentCell.closest('tr');
                 if (currentRow && typeof this.onValidateRow === 'function') {
-                    // Запускаем вашу трехэтапную валидацию для строки
-                    if (!this.onValidateRow(currentRow)) {
-                        return; // Блокируем добавление, если строка заполнена некорректно
-                    }
+                    if (!this.onValidateRow(currentRow)) return; 
                 }
             }
         }
 
-        // 1. Формируем дефолтный объект данных с null-id для сервера
-        const newRowData = { id: null };
-
-        // 2. Генерируем HTML-строку (вызываем ваш готовый метод рендера tr)
-        const tr = this.renderRowHtml(newRowData); 
-        tr.dataset.id = 'null'; // Маркер новой строки для rollback() и сохранения
-
-        // 3. Добавляем в tbody таблицы
         const tbody = tableElement.querySelector('tbody') || tableElement;
+        
+        // Находим последнюю существующую строку, чтобы использовать её как шаблон
+        const lastRow = tbody.querySelector('tr:last-child');
+        if (!lastRow) {
+            console.error("EditableTable: Не удалось найти шаблонную строку (tr) в таблице для клонирования.");
+            return;
+        }
+
+        // Клонируем строку со всей внутренней структурой ячеек
+        const tr = lastRow.cloneNode(true);
+
+        // Маркируем новую строку для сервера и логики rollback
+        tr.dataset.id = 'null'; 
+
+        // Очищаем значения во всех текстовых полях и инпутах новой строки
+        const inputs = tr.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                input.checked = false;
+            } else {
+                input.value = ''; // Очищаем текст/числа
+            }
+            input.removeAttribute('disabled'); // Снимаем блокировку, если была
+        });
+
+        // Очищаем ячейки, если у вас используется contenteditable="true"
+        const editables = tr.querySelectorAll('[contenteditable="true"]');
+        editables.forEach(cell => {
+            cell.textContent = '';
+        });
+
+        // Добавляем новую чистую строку в конец таблицы
         tbody.appendChild(tr);
 
-        // Скроллим контейнер вниз, чтобы новую строку было видно, если таблица большая
+        // Автоскролл контейнера вниз
         const container = tableElement.closest('.table-container-fixed');
         if (container) {
             container.scrollTop = container.scrollHeight;
         }
 
-        // 4. Автоматический фокус на первую редактируемую ячейку/input в новой строке
+        // Навешиваем ваши стандартные обработчики событий на новую строку, если это необходимо
+        if (typeof this.bindRowEvents === 'function') {
+            this.bindRowEvents(tr);
+        } else if (typeof this.initListeners === 'function') {
+            // Если у вас глобальное делегирование событий на уровне всей таблицы, 
+            // то повторно навешивать события на строку не нужно — они поймаются сами
+        }
+
+        // Автофокус на первую редактируемую ячейку новой строки
         const firstEditableField = tr.querySelector('input:not([disabled]), [contenteditable="true"]');
         if (firstEditableField) {
             setTimeout(() => {
