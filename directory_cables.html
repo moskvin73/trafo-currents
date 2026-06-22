@@ -124,6 +124,9 @@
             // Сначала загружаем вспомогательные справочники, затем основной каталог
             Promise.all([fetchConductors(), fetchGroups()])
                 .then(() => loadCablesCatalog());
+
+            Promise.all([fetchConductors()]) 
+                .then(() => fetchGroups());
         });
 
         function fetchConductors() {
@@ -132,8 +135,7 @@
         }
 
         function fetchGroups() {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`)
-            .then(r => r.json())
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
@@ -154,8 +156,7 @@
             if (targetId !== undefined && targetId !== null) {
                 url.searchParams.set('Id', targetId);
             }            
-            fetch(url.toString())
-            .then(r => r.json())
+            fetch(url.toString()).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (data.success && Array.isArray(data.data)) {
@@ -169,8 +170,7 @@
         }
 
         function loadCablesCatalog() {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`)
-            .then(r => r.json())
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
