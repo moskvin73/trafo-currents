@@ -41,26 +41,33 @@
     overflow-y: auto; 
     border: 1px solid var(--border-color); 
     border-radius: 6px; 
-    
-    /* Оставляем вашу динамическую переменную для нативного фокуса, 
-       которую мы успешно настроили в JS */
-    scroll-padding-top: var(--table-header-height, 0px); 
-}
-
-.project-table th { 
-    position: sticky; 
-    top: 0; /* После замены margin на padding здесь встанет идеальный ноль */
-    z-index: 10; 
-    background-color: #f1f5f9; 
-    box-shadow: inset 0 -2px 0 var(--border-color); 
+    /* Никаких scroll-padding и переменных тут больше нет */
 }
 
 .project-table {
     border-collapse: separate; 
     border-spacing: 0; 
     width: 100%;
+    /* КРИТИЧЕСКИЙ ФИКС: Принудительно обнуляем верхнюю рамку и отступ самой таблицы, 
+       которые выталкивали шапку вниз на 20-30px */
+    border-top: 0 !important;
+    margin-top: 0 !important;
 }
 
+.project-table th { 
+    position: sticky; 
+    /* Намертво прижимаем th к самому верхнему пикселю скролл-контейнера */
+    top: 0; 
+    z-index: 10; 
+    background-color: #f1f5f9; 
+    
+    /* Восстанавливаем визуальную верхнюю и нижнюю рамку ячейки через inset тени, 
+       чтобы они рисовались ВНУТРИ шапки и не отталкивали её от краев */
+    box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color); 
+    
+    /* Обнуляем внешний border-top у th, чтобы он не конфликтовал со sticky */
+    border-top: 0 !important; 
+}
         .new-row-highlight { background-color: #f0fdf4 !important; }
         
         /* Стили для раскрывающихся деталей кабеля */
