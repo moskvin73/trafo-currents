@@ -300,7 +300,9 @@ class EditableTable {
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
             this.checkRowSelection(currentRow);
-            this.scrollToRow(currentRow, event.target);
+            setTimeout(() => {
+                this.scrollToRow(currentRow, event.target);
+            }, 0);
         }
     }
 
