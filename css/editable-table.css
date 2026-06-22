@@ -139,4 +139,10 @@ select.table-select.align-left option {
     color: var(--text-muted);
     display: inline !important;  
     margin-left: 6px !important; 
+    
+    /* НАМЕРТВО ВЫРАВНИВАЕМ ПО ЦЕНТРУ СТРОКИ */
+    vertical-align: middle !important;
+    
+    /* Убираем влияние высоты строки самого спана */
+    line-height: normal !important; 
 }
