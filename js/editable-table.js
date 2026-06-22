@@ -502,11 +502,12 @@ class EditableTable {
         const fields = currentRow.querySelectorAll('.table-input, .table-select');
         this.currentFieldIndex = Array.from(fields).indexOf(event.target);
 
-        if (this.activeRowId !== currentRow.getAttribute('data-id')) {
+        if (this.activeRowId !== rowId) {
+            this.activeRowId = rowId;
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
             this.checkRowSelection(currentRow);
-        }
+        }        
     }
 
     handleFocusOut(event) {
@@ -556,7 +557,9 @@ class EditableTable {
 
                 const step = input.getAttribute('step');
                 if (step && step.includes('.')) {
-                    const decimalsCount = step.split('.').length;
+                    // ИСПРАВЛЕНО: Безопасный подсчет знаков дробной части
+                    const stepParts = step.split('.');
+                    const decimalsCount = stepParts[1] ? stepParts[1].length : 0;
                     input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
             }
@@ -569,7 +572,7 @@ class EditableTable {
     }
 
     triggerSave(row) {
-        const rowId = row.getAttribute('data-id');
+       const rowId = row.getAttribute('data-id');
         const currentDataJson = this.collectRowData(row);
 
         if (this.initialRowDataJson === currentDataJson) return;
@@ -583,11 +586,28 @@ class EditableTable {
 
         // Функция отката
         const rollback = () => {
-            // ВАЖНО: Исправлены кавычки на косые (``), чтобы переменная ${rowId} выводилась корректно
             console.warn(`Ошибка сохранения строки ${rowId}. Выполняется откат изменений...`);
             
             // Выключаем блокировку сохранения, так как процесс завершен
             this.isSaving = false;
+
+            // ИСПРАВЛЕНО ДЛЯ НОВОЙ СТРОКИ: Если сервер не смог создать новую строку, полностью удаляем её из DOM
+            if (rowId === 'null') {
+                const previousRow = row.previousElementSibling;
+                if (previousRow) {
+                    const prevField = previousRow.querySelector('.table-input, .table-select');
+                    if (prevField) prevField.focus();
+                }
+                
+                if (typeof this.onRowCancel === 'function') {
+                    this.onRowCancel(rowId, row);
+                }
+                
+                row.remove();
+                this.activeRowId = null;
+                return; // Прерываем выполнение, восстанавливать ячейки удаленной строки не нужно
+            }
+            
             this.activeRowId = rowId;
             
             const fields = row.querySelectorAll('.table-input, .table-select');
@@ -607,11 +627,10 @@ class EditableTable {
                 this.onRowCancel(rowId, row);
             }
 
-            // НОВОЕ: Автоматически возвращаем фокус на последний редактируемый элемент строки
+            // Автоматически возвращаем фокус на последний редактируемую ячейку строки
             if (lastFocusedFieldIndex !== null && fields[lastFocusedFieldIndex]) {
                 const targetField = fields[lastFocusedFieldIndex];
                 
-                // Делаем микротамаут, чтобы браузер успел обработать разблокировку isSaving
                 setTimeout(() => {
                     targetField.focus();
                     if (targetField.tagName === 'INPUT') {
@@ -625,16 +644,27 @@ class EditableTable {
             const rawFields = row.querySelectorAll('.table-input, .table-select');
             const data = Array.from(rawFields).map(f => f.value);
             
-            // Передаем по вашей новой сигнатуре: id, row, data, rollback, success
-            const success = () => {
+            // ИСПРАВЛЕНО ДЛЯ УСПЕШНОГО СОХРАНЕНИЯ: Научили success принимать сгенерированный сервером ID
+            const success = (newId = null) => {
                 this.isSaving = false; 
+
+                // Если это была новая строка (rowId === 'null') и сервер вернул её реальный ID
+                if (rowId === 'null' && newId !== null) {
+                    row.setAttribute('data-id', newId); // Заменяем "null" на реальный ID (например, 42)
+                    this.activeRowId = newId;
+                }
+
                 this.initialRowDataJson = this.collectRowData(row);
             };
-            this.onSave(rowId, row, data, rollback, success);
+
+            // Передаем по вашей новой сигнатуре: id, row, data, rollback, success
+            // Если строка новая, передаем чистый тип null вместо строки "null" во внешний мир
+            this.onSave(rowId === 'null' ? null : rowId, row, data, rollback, success);
         } 
         else {
             this.isSaving = false;
         }
+
     }
 }		
 
