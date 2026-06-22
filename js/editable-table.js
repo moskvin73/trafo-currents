@@ -27,7 +27,7 @@ class EditableTable {
         this.initFabMenu();
 
         // Автоматически считаем высоту шапки под текущий текст и браузер
-        this.updateHeaderHeight();        
+        //this.updateHeaderHeight();        
     }
 
     initEvents() {
