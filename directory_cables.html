@@ -121,12 +121,13 @@
         let dbSpecProp = [];     // Для списков админа
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Сначала загружаем вспомогательные справочники, затем основной каталог
-            Promise.all([fetchConductors(), fetchGroups()])
-                .then(() => loadCablesCatalog());
-
-            Promise.all([fetchConductors()]) 
-                .then(() => fetchGroups());
+            if (userRole === 'admin') {
+                Promise.all([fetchConductors()]) 
+                    .then(() => fetchGroups());
+            }
+            else {
+                loadCablesCatalog();
+            }
         });
 
         function fetchConductors() {
@@ -140,6 +141,7 @@
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
                     dbGroups = data;
+                    renderAdminEditableView();
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
                 }
@@ -175,8 +177,7 @@
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
                     cablesCatalog = data;
-                    if (userRole === 'admin') renderAdminEditableView();
-                    else renderGuestView();
+                    renderGuestView();
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
                 }
