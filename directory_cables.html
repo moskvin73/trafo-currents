@@ -227,12 +227,12 @@
              onSave: (id, row, data, rollback, success) => {
                 console.log(`Отправляем строку ${id} на сервер...`);   
                 setVisualStatus('cableTableBody', row, '🔄');
-                setTimeout(() => {
-                    console.log('Прошло 0.5 секунды');
+                //setTimeout(() => {
+                    //console.log('Прошло 0.5 секунды');
                     success();
                     setVisualStatus('cableTableBody', row, '➔');
                     //rollback();
-                }, 500);
+                //}, 500);
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
                 /*
                 fetch(`/api/cables/${id}`, {
