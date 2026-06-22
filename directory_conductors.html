@@ -6,6 +6,7 @@
     <title>ГОСТ 22483 — Справочник жил</title>
 
     <link rel="stylesheet" href="./css/main-page.css">
+    <link rel="stylesheet" href="./css/editable-table.css">
 
     <script src="./js/config.js"></script>
 
@@ -14,141 +15,7 @@
        
     <style>
 
-/* ==========================================================================
-   КОНТЕЙНЕР И СЕТКА ТАБЛИЦЫ
-   ========================================================================== */
-
-/* Фиксированный контейнер со скроллом */
-.table-container-fixed {
-    max-height: 75vh;
-    overflow-y: auto;
-    overflow-x: auto;            /* Включает горизонтальную прокрутку */
-    border-left: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    border-top: none !important; 
-    border-radius: 6px;
-    overscroll-behavior-y: none; 
-    background-color: #ffffff;   
-}
-
-/* Красивый тонкий скроллбар для контейнера таблицы */
-.table-container-fixed::-webkit-scrollbar {
-    width: 6px;  /* Ширина вертикального скролла */
-    height: 6px; /* Высота горизонтального скролла */
-}
-.table-container-fixed::-webkit-scrollbar-track {
-    background: #f1f5f9; 
-    border-radius: 6px;
-}
-.table-container-fixed::-webkit-scrollbar-thumb {
-    background: #cbd5e1; /* Неброский серый цвет бегунка */
-    border-radius: 6px;
-}
-.table-container-fixed::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8; 
-}
-
-/* Базовые настройки таблицы */
-.project-table {
-    width: 100%;
-    min-width: max-content;      /* Не дает таблице сжиматься меньше содержимого */
-    margin: 0 !important;
-    padding: 0 !important;
-    border-collapse: separate !important; 
-    border-spacing: 0 !important;
-    background-color: #ffffff;   
-}
-
-/* Компактные ячейки (Excel-стиль) */
-.project-table th, 
-.project-table td {
-    padding: 1px 4px !important;    /* Минимальные отступы внутри ячеек */
-    height: 24px !important;        /* Компактная высота строки */
-    line-height: 1 !important;      
-    font-size: 13px !important;     
-    vertical-align: middle;         
-    white-space: nowrap;            /* Запрет переноса строк для данных */
-}
-
-/* Белый фон и тонкие полупрозрачные границы ячеек */
-.project-table td {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* Тонкая и мягкая линия между строками */
-    border-right: 1px solid rgba(0, 0, 0, 0.08);  /* Тонкая линия между столбцами */
-}
-
-.project-table td:last-child {
-    border-right: none; 
-}
-
-
-/* ==========================================================================
-   ЛИПКИЙ (ФИКСИРОВАННЫЙ) ЗАГОЛОВК
-   ========================================================================== */
-.project-table th {
-    position: sticky;
-    top: 0; 
-    z-index: 10;
-    background-color: #f1f5f9 !important; 
-    font-weight: 600;
-    text-align: center;
-    transform: translate3d(0, 0, 0); 
     
-    box-shadow: inset 0 -1px 0 var(--border-color), 
-                inset -1px 0 0 var(--border-color),
-                0 -1px 0 var(--border-color); 
-}
-
-.project-table th:last-child {
-    box-shadow: inset 0 -1px 0 var(--border-color),
-                0 -1px 0 var(--border-color); 
-}
-
-
-/* ==========================================================================
-   ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ВНУТРИ СТРОК (100% ШИРИНЫ, ТОНКИЕ РАМКИ)
-   ========================================================================== */
-
-/* Общие базовые сбросы для полей ввода и селектов */
-.project-table .table-input,
-.project-table .table-select {
-    width: 100% !important;         /* Занимают всё свободное пространство ячейки */
-    height: 19px !important;        
-    margin: 0 !important;
-    box-sizing: border-box !important;
-    background-color: #ffffff !important;
-    
-    /* Делаем рамку максимально тонкой и аккуратной */
-    border: 1px solid rgba(0, 0, 0, 0.12) !important; 
-    border-radius: 2px !important;  /* Легкое, едва заметное скругление */
-    
-    outline: none !important;       /* Полностью убираем жирную стандартную рамку браузера */
-    transition: border-color 0.15s ease;
-}
-
-/* Инпуты */
-.project-table .table-input {
-    line-height: 19px !important;
-    padding: 0 4px !important;
-    font-size: 12px !important;     
-    text-align: center;
-}
-
-/* Селекты */
-.project-table .table-select {
-    line-height: 1 !important;
-    padding: 0 2px !important;
-    font-size: 12px !important;     
-}
-
-/* Мягкое выделение элементов при клике (фокусе) без жирноты */
-.project-table .table-input:focus,
-.project-table .table-select:focus {
-    border-color: #3b82f6 !important; /* Деликатная синяя рамка вместо жирного outline */
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2) !important; /* Едва заметное мягкое свечение */
-}
-
 /* Кнопки действий (💾 и 🗑️) */
 .project-table .btn-ghost {
     height: 19px !important;        
