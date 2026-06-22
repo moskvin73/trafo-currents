@@ -56,14 +56,16 @@ class EditableTable {
         if (!container) return;
 
         // Находим реальный элемент шапки tr внутри thead
-        const headerTr = container.querySelector('thead tr');
+        const headerTr = container.querySelector('thead tr') || container.querySelector('.project-table th');
         if (!headerTr) return;
 
         // Измеряем точную физическую высоту шапки в текущем браузере (включая padding и border)
         const realHeight = headerTr.offsetHeight;
 
         // Записываем это значение в CSS-переменную прямо на контейнер таблицы
-        container.style.setProperty('--table-header-height', `${realHeight}px`);
+        container.style.scrollPaddingTop = `${realHeight}px`;
+
+        this.headerHeight = realHeight;
     }   
 
     resetRowChanges(row) {
