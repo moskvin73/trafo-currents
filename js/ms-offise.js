@@ -63,7 +63,7 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             if (mathElement) {
                 // ВАЖНО ДЛЯ WORD: Добавляем стандартный неймспейс MathML, чтобы Ворд его точно узнал
                 if (!mathElement.getAttribute('xmlns')) {
-                    mathElement.setAttribute('xmlns', 'http://w3.org');
+                    mathElement.setAttribute('xmlns', 'http://www.w3.org/1998/Math/MathML');
                 }
                 
                 // Заменяем сложный SVG-контейнер MathJax на чистый тег <math>
