@@ -5,13 +5,10 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
     // 1. Клонируем таблицу для работы в фоне
     const clonedTable = originalTable.cloneNode(true);
 
-    // 2. ПРОГРАММНЫЙ ФИКС: Вытаскиваем MathML из MathJax
-    // Находим все контейнеры формул на клонированной странице
+    // 2. ПРОГРАММНЫЙ ФИКС: Вытаскиваем MathML из MathJax и конвертируем в OMML для Word
     const mathJaxContainers = clonedTable.querySelectorAll('.MathJax, mjx-container, [data-mathml]');
     
     mathJaxContainers.forEach((container, index) => {
-        // Нам нужно найти реальный элемент в оригинальной таблице, 
-        // так как у MathJax v3+ методы генерации привязаны к живым объектам в DOM
         const originalContainers = originalTable.querySelectorAll('.MathJax, mjx-container, [data-mathml]');
         const origContainer = originalContainers[index];
         
@@ -19,7 +16,6 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
 
         if (window.MathJax) {
             if (window.MathJax.version && window.MathJax.version.startsWith('3')) {
-                // ДЛЯ MATHJAX v3+: получаем MathML через встроенный экспортер
                 try {
                     const mathItem = window.MathJax.startup.document.getMathId(origContainer.id || origContainer.querySelector('[id]')?.id);
                     if (mathItem) {
@@ -27,13 +23,11 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
                     }
                 } catch(e) {}
                 
-                // Если через API не вышло, ищем скрытую разметку внутри MathML вывода
                 if (!mathMLString) {
                     const mathNode = origContainer.querySelector('math');
                     if (mathNode) mathMLString = mathNode.outerHTML;
                 }
             } else {
-                // ДЛЯ MATHJAX v2+: получаем MathML через элемент Jax
                 try {
                     const elementJax = window.MathJax.Hub.getJaxFor(origContainer);
                     if (elementJax && elementJax.root) {
@@ -43,7 +37,6 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             }
         }
 
-        // Если MathJax API не ответил, пробуем достать строку MathML из скрытых атрибутов
         if (!mathMLString) {
             const hiddenMath = origContainer.querySelector('.mathml, annotation-xml, math');
             if (hiddenMath) {
@@ -53,24 +46,51 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             }
         }
 
-        // Если мы успешно добыли MathML код формулы
+        // --- МОДИФИЦИРОВАННЫЙ БЛОК КОНВЕРТАЦИИ ФОРМУЛ ---
         if (mathMLString) {
-            // Создаем временный элемент-контейнер и помещаем туда строку
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = mathMLString.trim();
-            const mathElement = wrapper.querySelector('math');
+            mathMLString = mathMLString.trim();
+            
+            // Гарантируем наличие правильного неймспейса MathML перед обработкой
+            if (!mathMLString.includes('xmlns=')) {
+                mathMLString = mathMLString.replace('<math', '<math xmlns="http://www.w3.org/1998/Math/MathML"');
+            } else {
+                // Если неймспейс был битым/обрезанным, исправляем его на валидный
+                mathMLString = mathMLString.replace(/xmlns=['"][^'"]+['"]/, 'xmlns="http://www.w3.org/1998/Math/MathML"');
+            }
 
-            if (mathElement) {
-                // ВАЖНО ДЛЯ WORD: Добавляем стандартный неймспейс MathML, чтобы Ворд его точно узнал
-                if (!mathElement.getAttribute('xmlns')) {
-                    mathElement.setAttribute('xmlns', 'http://www.w3.org/1998/Math/MathML');
+            // Проверяем, доступна ли подключенная через CDN библиотека mathml2omml
+            if (typeof mathml2omml !== 'undefined' && mathml2omml.mml2omml) {
+                try {
+                    // Конвертируем MathML строку в родной XML-код Word (OMML)
+                    const ommlString = mathml2omml.mml2omml(mathMLString);
+                    
+                    // Создаем контейнер-обертку, чтобы корректно внедрить XML-теги <m:oMath> в DOM таблицы
+                    const ommlWrapper = document.createElement('span');
+                    ommlWrapper.innerHTML = ommlString;
+                    
+                    // Заменяем MathJax-контейнер на готовый OMML код
+                    container.parentNode.replaceChild(ommlWrapper, container);
+                } catch(err) {
+                    console.error("Ошибка конвертации в OMML: ", err);
+                    useMathMLFallback(mathMLString, container);
                 }
-                
-                // Заменяем сложный SVG-контейнер MathJax на чистый тег <math>
-                container.parentNode.replaceChild(mathElement, container);
+            } else {
+                // Если библиотека не загрузилась, используем исправленный MathML как резервный вариант
+                useMathMLFallback(mathMLString, container);
             }
         }
     });
+
+    // Вспомогательная функция на случай отсутствия библиотеки
+    function useMathMLFallback(mmlStr, containerNode) {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = mmlStr;
+        const mathElement = wrapper.querySelector('math');
+        if (mathElement) {
+            containerNode.parentNode.replaceChild(mathElement, containerNode);
+        }
+    }
+    // --- КОНЕЦ МОДИФИЦИРОВАННОГО БЛОКА ---
 
     // 3. Копируем стили (как и раньше)
     const originalCells = originalTable.querySelectorAll('th, td');
@@ -120,7 +140,8 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
     });
 
     // 5. Генерируем финальный файл для скачивания
-    const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns:m='http://schemas.microsoft.com/office/2004/12/omml' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>`;
+    // У вас здесь уже правильно прописан неймспейс xmlns:m='http://microsoft.com'
+    const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns:m='http://microsoft.com' xmlns='http://w3.org'><head><meta charset='utf-8'></head><body>`;
     const htmlFooter = "</body></html>";
     
     clonedTable.style.borderCollapse = 'collapse';
