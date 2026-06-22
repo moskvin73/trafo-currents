@@ -131,12 +131,20 @@
         }
 
         function fetchGroups() {
-            // Заглушка, пока не создали вкладку групп. Наполним базовыми данными для тестов:
-            dbGroups = [
-                { id: 1, standard_name: "ГОСТ 31996", voltage_kv: 10, insulation_type_ru: "СПЭ" },
-                { id: 2, standard_name: "ГОСТ 18410", voltage_kv: 6, insulation_type_ru: "БПИ" }
-            ];
-            return Promise.resolve();
+            const tableBody = document.getElementById('cableTableBody');
+            // Вызываем агрегированную функцию, написанную ранее на сервере
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`)
+            .then(r => r.json())
+            .then(data => {
+                // Если сервер вернул массив
+                if (Array.isArray(data)) {
+                    dbGroups = data;
+                } else {
+                    document.getElementById('tableRootContainer').innerHTML = `Ошибка сервера: ${data.error || 'Неверный формат данных'}`;
+                }
+            }).catch(err => {
+                document.getElementById('tableRootContainer').innerHTML = `Ошибка сети при чтении каталога.`;
+            });
         }
 
         function loadCablesCatalog() {
