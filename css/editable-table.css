@@ -78,11 +78,6 @@
     -moz-appearance: none;
 }
 
-/* Этот селектор будет иметь двойной приоритет и победит обычный .table-input */
-input.table-input.align-left {
-    text-align: left !important;
-}
-
 /* Состояние фокуса (когда зашли в ячейку) */
 .table-input:focus,
 .table-select:focus {
@@ -99,6 +94,12 @@ input.table-input.align-left {
 
 /* ИСКЛЮЧЕНИЕ ДЛЯ ЛЕВЫХ ИНПУТОВ: Если у инпута задан класс .align-left, 
 он должен оставаться слева и при фокусе */
+
+input.table-input.align-left {
+    text-align: left !important;
+    text-align-last: left !important;
+}
+
 .table-input.align-left:focus {
     text-align: left !important;
     text-align-last: left !important;
