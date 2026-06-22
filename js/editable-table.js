@@ -203,35 +203,59 @@ class EditableTable {
         return Array.from(fields).map(field => field.value).join('|');
     }
 
-     scrollToRow(row) {
-        if (!row) return;
-        // Находим ваш фиксированный контейнер со скроллом
+     scrollToRow(row, targetInput = null) {
+     if (!row) return;
         const container = row.closest('.table-container-fixed');
         if (!container) return;
 
-        // Положение верхней и нижней границы строки относительно контейнера
+        // ==========================================
+        // 1. ВЕРТИКАЛЬНЫЙ СКРОЛЛ (ВВЕРХ / ВНИЗ) - Без изменений
+        // ==========================================
         const rowTop = row.offsetTop;
         const rowBottom = rowTop + row.offsetHeight;
-
-        // Текущая видимая область контейнера
         const containerTop = container.scrollTop;
-        
-        // Учитываем высоту шапки, если она зафиксирована (например, 40px). 
-        // Если шапка не липнет, поставьте здесь 0.
         const headerHeight = container.querySelector('thead')?.offsetHeight || 0; 
         const containerBottom = containerTop + container.clientHeight;
 
-        // 1. Если двигаемся ВВЕРХ и строка уходит под верхний край (или под шапку)
         if (rowTop < containerTop + headerHeight) {
             container.scrollTo({
                 top: rowTop - headerHeight,
                 behavior: 'smooth'
             });
         }
-        // 2. Если двигаемся ВНИЗ и строка уходит за нижний край
         else if (rowBottom > containerBottom) {
             container.scrollTo({
                 top: rowBottom - container.clientHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // ==========================================
+        // 2. ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ (ВЛЕВО / ВПРАВО)
+        // ==========================================
+        if (!targetInput) return;
+        
+        // Находим родительскую ячейку (td) инпута, чтобы знать её точные размеры
+        const td = targetInput.closest('td');
+        if (!td) return;
+
+        const tdLeft = td.offsetLeft;
+        const tdRight = tdLeft + td.offsetWidth;
+        
+        const containerLeft = container.scrollLeft;
+        const containerRight = containerLeft + container.clientWidth;
+
+        // Если ячейка ушла за левую границу экрана
+        if (tdLeft < containerLeft) {
+            container.scrollTo({
+                left: tdLeft,
+                behavior: 'smooth'
+            });
+        }
+        // Если ячейка ушла за правую границу экрана
+        else if (tdRight > containerRight) {
+            container.scrollTo({
+                left: tdRight - container.clientWidth,
                 behavior: 'smooth'
             });
         }
@@ -253,7 +277,7 @@ class EditableTable {
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
             this.checkRowSelection(currentRow);
-            this.scrollToRow(currentRow);
+            this.scrollToRow(currentRow, event.target);
         }
     }
 
@@ -579,7 +603,7 @@ class EditableTable {
             targetInput.focus();
 
             if (targetRow) {
-                this.scrollToRow(targetRow);
+                this.scrollToRow(targetRow, targetInput);
             }            
 
             if (targetInput.tagName === 'INPUT') setTimeout(() => targetInput.select(), 0);
