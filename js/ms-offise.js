@@ -1,29 +1,25 @@
 function exportTableToWordWithMathML(tableID, filename = 'table_export') {
     const originalTable = document.getElementById(tableID);
-    if (!originalTable) {
-        console.error(`Таблица с ID "${tableID}" не найдена!`);
-        return;
-    }
+    if (!originalTable) return;
 
-    // 1. Клонируем таблицу для работы с копией в памяти (не ломая оригинал)
+    // 1. Клонируем таблицу для работы в фоне
     const clonedTable = originalTable.cloneNode(true);
 
-    // 2. ПРОГРАММНЫЙ ФИКС ДЛЯ MATHJAX И ИНДЕКСОВ (MathML)
+    // 2. ПРОГРАММНЫЙ ФИКС: Вытаскиваем MathML из MathJax
     // Находим все контейнеры формул на клонированной странице
     const mathJaxContainers = clonedTable.querySelectorAll('.MathJax, mjx-container, [data-mathml]');
     
     mathJaxContainers.forEach((container, index) => {
-        // Ищем соответствующий живой контейнер в исходной таблице
+        // Нам нужно найти реальный элемент в оригинальной таблице, 
+        // так как у MathJax v3+ методы генерации привязаны к живым объектам в DOM
         const originalContainers = originalTable.querySelectorAll('.MathJax, mjx-container, [data-mathml]');
         const origContainer = originalContainers[index];
-        if (!origContainer) return;
         
         let mathMLString = '';
 
-        // Проверяем наличие MathJax в глобальной области видимости
         if (window.MathJax) {
             if (window.MathJax.version && window.MathJax.version.startsWith('3')) {
-                // ДЛЯ MATHJAX v3+
+                // ДЛЯ MATHJAX v3+: получаем MathML через встроенный экспортер
                 try {
                     const mathItem = window.MathJax.startup.document.getMathId(origContainer.id || origContainer.querySelector('[id]')?.id);
                     if (mathItem) {
@@ -31,12 +27,13 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
                     }
                 } catch(e) {}
                 
+                // Если через API не вышло, ищем скрытую разметку внутри MathML вывода
                 if (!mathMLString) {
                     const mathNode = origContainer.querySelector('math');
                     if (mathNode) mathMLString = mathNode.outerHTML;
                 }
             } else {
-                // ДЛЯ MATHJAX v2+
+                // ДЛЯ MATHJAX v2+: получаем MathML через элемент Jax
                 try {
                     const elementJax = window.MathJax.Hub.getJaxFor(origContainer);
                     if (elementJax && elementJax.root) {
@@ -46,7 +43,7 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             }
         }
 
-        // Резервный поиск, если API MathJax не вернул строку
+        // Если MathJax API не ответил, пробуем достать строку MathML из скрытых атрибутов
         if (!mathMLString) {
             const hiddenMath = origContainer.querySelector('.mathml, annotation-xml, math');
             if (hiddenMath) {
@@ -56,81 +53,61 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             }
         }
 
+        // Если мы успешно добыли MathML код формулы
         if (mathMLString) {
-            // КРИТИЧЕСКИ ВАЖНО: убираем пробелы между тегами MathML, чтобы Word не читал их как обычный текст
-            mathMLString = mathMLString.replace(/>\s+</g, '><').trim();
-
+            // Создаем временный элемент-контейнер и помещаем туда строку
             const wrapper = document.createElement('div');
-            wrapper.innerHTML = mathMLString;
+            wrapper.innerHTML = mathMLString.trim();
             const mathElement = wrapper.querySelector('math');
 
             if (mathElement) {
-                // Указываем обязательные для Word стандарты разметки
-                mathElement.setAttribute('xmlns', 'http://schemas.microsoft.com/office/2004/12/omml');
-                mathElement.setAttribute('display', 'inline');
-                mathElement.style.fontFamily = '"Cambria Math", "MS Symbol", serif';
+                // ВАЖНО ДЛЯ WORD: Добавляем стандартный неймспейс MathML, чтобы Ворд его точно узнал
+                if (!mathElement.getAttribute('xmlns')) {
+                    mathElement.setAttribute('xmlns', 'http://w3.org');
+                }
                 
-                // Обертка со специальным mso-классом, переводящим Word в режим математических полей
-                const officeMathWrapper = document.createElement('span');
-                officeMathWrapper.className = 'word-math-container';
-                officeMathWrapper.appendChild(mathElement);
-
-                container.parentNode.replaceChild(officeMathWrapper, container);
+                // Заменяем сложный SVG-контейнер MathJax на чистый тег <math>
+                container.parentNode.replaceChild(mathElement, container);
             }
         }
     });
 
-    // 3. ПРОГРАММНОЕ КОПИРОВАНИЕ СТИЛЕЙ ЯЧЕЕК ИЗ БРАУЗЕРА
+    // 3. Копируем стили (как и раньше)
     const originalCells = originalTable.querySelectorAll('th, td');
     const clonedCells = clonedTable.querySelectorAll('th, td');
-
     originalCells.forEach((origCell, index) => {
         const clonedCell = clonedCells[index];
-        if (!clonedCell) return;
-
-        // Считываем финальный скомпилированный CSS из браузера
         const computedStyle = window.getComputedStyle(origCell);
-
-        // Инлайним свойства, которые понимает Word
         clonedCell.style.backgroundColor = computedStyle.backgroundColor;
         clonedCell.style.color = computedStyle.color;
         clonedCell.style.fontWeight = computedStyle.fontWeight;
         clonedCell.style.fontSize = computedStyle.fontSize;
         clonedCell.style.textAlign = computedStyle.textAlign;
         clonedCell.style.padding = computedStyle.padding;
-        
-        // Рисуем явные границы, иначе Word скроет сетку таблицы
         clonedCell.style.border = "1px solid #cbd5e1"; 
     });
 
-    // 4. ОЧИСТКА ФОРМ: заменяем элементы управления (input, select) на их чистый текст
+    // 4. Заменяем инпуты и селекты на их текстовые значения
     clonedTable.querySelectorAll('input, select').forEach(element => {
         let textValue = '';
-        
         if (element.tagName.toLowerCase() === 'select') {
-            // Берем текст активного пункта списка
             const selectedOption = element.options[element.selectedIndex];
             textValue = selectedOption ? selectedOption.textContent : '';
         } else {
-            // Берем текущее введенное значение инпута
             textValue = element.value;
         }
-
-        // Сохраняем выравнивание текста инпута (например, если был класс .align-left)
         const elementStyle = window.getComputedStyle(element);
         const textNode = document.createElement('span');
         textNode.textContent = textValue;
         textNode.style.textAlign = elementStyle.textAlign;
-        
         if (elementStyle.textAlign === 'left') {
             textNode.style.display = 'block';
             textNode.style.width = '100%';
         }
-
         element.parentNode.replaceChild(textNode, element);
     });
 
-    // Дополнительный перенос стилей для ваших мелких подписей ID (.sub-text)
+    // Обертка подписей ID (.sub-text)
     const originalSubTexts = originalTable.querySelectorAll('.sub-text');
     const clonedSubTexts = clonedTable.querySelectorAll('.sub-text');
     originalSubTexts.forEach((origSub, index) => {
@@ -142,48 +119,16 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
         }
     });
 
-    // 5. ФОРМИРОВАНИЕ ФАЙЛА И СКАЧИВАНИЕ
-    // Заголовок с объявлением Microsoft Office XML пространств имен для формул
-    const htmlHeader = `
-<html xmlns:o='urn:schemas-microsoft-com:office:office' 
-      xmlns:w='urn:schemas-microsoft-com:office:word' 
-      xmlns:m='http://schemas.microsoft.com/office/2004/12/omml' 
-      xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-<meta charset='utf-8'>
-<!--[if gte mso 9]>
-<xml>
- <o:DocumentProperties>
-  <o:RelyOnVML/>
-  <o:AllowPNG/>
- </o:DocumentProperties>
- <w:WordDocument>
-  <w:View>Normal</w:View>
-  <w:Zoom>100</w:Zoom>
- </w:WordDocument>
-</xml>
-<![endif]-->
-<style>
-    /* Инструкции Word для обработки математического синтаксиса */
-    math { display: inline-block; font-family: "Cambria Math"; }
-    .word-math-container { mso-element: field-begin; }
-</style>
-</head>
-<body>`;
-
+    // 5. Генерируем финальный файл для скачивания
+    const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns:m='http://microsoft.com' xmlns='http://w3.org'><head><meta charset='utf-8'></head><body>`;
     const htmlFooter = "</body></html>";
     
-    // Базовая геометрия таблицы для Word
     clonedTable.style.borderCollapse = 'collapse';
     clonedTable.style.width = '100%';
 
-    // Собираем документ воедино
     const totalHTML = htmlHeader + clonedTable.outerHTML + htmlFooter;
 
-    // Создаем виртуальный файл в кодировке UTF-8 с BOM-маркером (\ufeff)
     const blob = new Blob(['\ufeff' + totalHTML], { type: 'application/msword' });
-    
-    // Скачиваем файл через искусственный клик по ссылке
     const downloadLink = document.createElement("a");
     downloadLink.href = URL.createObjectURL(blob);
     downloadLink.download = filename + '.doc';
