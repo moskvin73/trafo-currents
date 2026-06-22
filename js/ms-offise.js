@@ -147,8 +147,8 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
     const htmlHeader = `
 <html xmlns:o='urn:schemas-microsoft-com:office:office' 
       xmlns:w='urn:schemas-microsoft-com:office:word' 
-      xmlns:m='http://microsoft.com' 
-      xmlns='http://w3.org'>
+      xmlns:m='http://schemas.microsoft.com/office/2004/12/omml' 
+      xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
 <meta charset='utf-8'>
 <!--[if gte mso 9]>
