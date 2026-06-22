@@ -403,7 +403,7 @@
                 const tr = document.createElement('tr');
                 tr.className = 'clickable-row';
                 tr.setAttribute('data-id', cable.id);                
-                tr.onclick = () => toggleDetailsRow(cable.id, index, cable);
+                tr.onclick = () => toggleDetailsRow(cable.id, index, cable, tr);
                 tr.setAttribute('data-tooltip', 'Кликните для просмотра геометрии, сопротивления и ГОСТ');
                 tr.style.position = 'relative'; // Важно для позиционирования подсказки
                 tr.innerHTML = `
@@ -424,7 +424,7 @@
         }
 
         // Логика разворачивания скрытых параметров (для Инженеров)
-        function toggleDetailsRow(cableId, index, data) {
+        function toggleDetailsRow(cableId, index, data, clickedRow) {
             const nextRow = document.getElementById(`details_${cableId}`);
             if (nextRow) {
                 nextRow.remove();
@@ -433,6 +433,9 @@
             
             // Закрываем другие открытые карточки, чтобы не захламлять экран
             document.querySelectorAll('.details-row').forEach(el => el.remove());
+
+            // АВТОМАТИЗАЦИЯ: Считаем ячейки именно той строки, на которую кликнули
+            const columnsCount = clickedRow.cells.length;
 
             const trDetails = document.createElement('tr');
             trDetails.id = `details_${cableId}`;
