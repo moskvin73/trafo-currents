@@ -457,6 +457,11 @@ class EditableTable {
         const colIndex = Array.from(tr.children).indexOf(td);
         let targetInput = null;
 
+       // Вспомогательные переменные для навигации по всей таблице
+        const allRows = Array.from(this.tbody.querySelectorAll('tr'));
+        const currentRowIndex = allRows.indexOf(tr);
+        const rowFields = tr.querySelectorAll('.table-input, .table-select');        
+
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();
@@ -507,6 +512,57 @@ class EditableTable {
                     }
                 }
                 break;
+
+            case 'Home':
+                event.preventDefault();
+                if (event.ctrlKey) {
+                    // Ctrl + Home -> В начало таблицы (первая ячейка первой строки)
+                    const firstRow = allRows[0];
+                    if (firstRow) targetInput = firstRow.querySelector('.table-input, .table-select');
+                } else {
+                    // Home -> В начало строки (первое редактируемое поле) [1]
+                    targetInput = rowFields[0];
+                }
+                break;
+
+            case 'End':
+                event.preventDefault();
+                if (event.ctrlKey) {
+                    // Ctrl + End -> В конец таблицы (последняя ячейка последней строки)
+                    const lastRow = allRows[allRows.length - 1];
+                    if (lastRow) {
+                        const lastRowFields = lastRow.querySelectorAll('.table-input, .table-select');
+                        targetInput = lastRowFields[lastRowFields.length - 1];
+                    }
+                } else {
+                    // End -> В конец строки (последнее редактируемое поле) [1]
+                    targetInput = rowFields[rowFields.length - 1];
+                }
+                break;
+                
+            case 'PageUp':
+                event.preventDefault();
+                // Страница вверх -> Прыгаем на 10 строк назад (или до упора в первую строку) [1]
+                const targetPrevIndex = Math.max(0, currentRowIndex - 10);
+                const pageUpRow = allRows[targetPrevIndex];
+                if (pageUpRow) targetInput = pageUpRow.children[colIndex]?.querySelector('.table-input, .table-select');
+                break;
+
+            case 'PageDown':
+                event.preventDefault();
+                // Страница вниз -> Прыгаем на 10 строк вперед [1]
+                const targetNextIndex = currentRowIndex + 10;
+                
+                if (targetNextIndex < allRows.length) {
+                    // Если строка в пределах существующей таблицы — прыгаем на неё
+                    const pageDownRow = allRows[targetNextIndex];
+                    if (pageDownRow) targetInput = pageDownRow.children[colIndex]?.querySelector('.table-input, .table-select');
+                } else {
+                    // Если прыжок выходит за пределы таблицы — упираемся в последнюю строку
+                    const lastRow = allRows[allRows.length - 1];
+                    if (lastRow) targetInput = lastRow.children[colIndex]?.querySelector('.table-input, .table-select');
+                }
+                break;                
         }
 
         if (targetInput) {
