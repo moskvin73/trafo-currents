@@ -36,29 +36,30 @@
             border-radius: 6px; 
         }*/
 
-        .table-container-fixed { 
-            max-height: 70vh; 
-            overflow-y: auto; 
-            border: 1px solid var(--border-color); 
-            border-radius: 6px; 
-            
-            /* ДИНАМИЧЕСКИЙ ОТСТУП: Браузер сам возьмет точную высоту шапки из JS */
-            scroll-padding-top: var(--table-header-height, 0px); 
-        }
+.table-container-fixed { 
+    max-height: 70vh; 
+    overflow-y: auto; 
+    border: 1px solid var(--border-color); 
+    border-radius: 6px; 
+    
+    /* Оставляем вашу динамическую переменную для нативного фокуса, 
+       которую мы успешно настроили в JS */
+    scroll-padding-top: var(--table-header-height, 0px); 
+}
 
-        .project-table th { 
-            position: sticky; 
-            top: -1px; 
-            z-index: 10; 
-            background-color: #f1f5f9; 
-            box-shadow: inset 0 -2px 0 var(--border-color); 
-        }
+.project-table th { 
+    position: sticky; 
+    top: 0; /* После замены margin на padding здесь встанет идеальный ноль */
+    z-index: 10; 
+    background-color: #f1f5f9; 
+    box-shadow: inset 0 -2px 0 var(--border-color); 
+}
 
-        .project-table {
-            border-collapse: separate; 
-            border-spacing: 0; 
-            width: 100%;
-        }
+.project-table {
+    border-collapse: separate; 
+    border-spacing: 0; 
+    width: 100%;
+}
 
         .new-row-highlight { background-color: #f0fdf4 !important; }
         
@@ -122,12 +123,14 @@
     </header>
 
     <div class="panel" style="max-width: 1200px; margin: 20px auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <!-- ИСПРАВЛЕНО: заменили margin-bottom на padding-bottom -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px;">
             <h2 style="margin: 0; border: none; padding: 0;">📦 Каталог силовых кабелей 6-10 кВ</h2>
             <button id="adminAddCableBtn" class="btn" style="display: none;" onclick="addNewCableRow()">+ Добавить кабель</button>
         </div>
 
         <div id="tableRootContainer">
+            <!-- Сюда JS монтирует вашу таблицу с классом .table-container-fixed -->
             <div style="text-align: center; color: var(--text-muted); padding: 20px;">
                 Синхронизация реляционных таблиц и проверка прав...
             </div>
