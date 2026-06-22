@@ -225,12 +225,11 @@
         new EditableTable('cableTableBody', {
              onSave: (id, row, data, rollback) => {
                 console.log(`Отправляем строку ${id} на сервер...`);   
-                //const row = document.querySelector(`#cableTableBody tr[data-id="${id}"]`);
                 setVisualStatus('cableTableBody', row, '🔄');
-                setTimeout(() => {
+                /*setTimeout(() => {
                     console.log('Прошло 0.5 секунды');
                     rollback();
-                }, 500);
+                }, 500);*/
                 // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
                 /*
                 fetch(`/api/cables/${id}`, {
