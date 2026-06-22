@@ -118,6 +118,7 @@
         let cablesCatalog = [];
         let dbConductors = []; // Для списков админа
         let dbGroups = [];     // Для списков админа
+        let dbSpecProp = [];     // Для списков админа
 
         document.addEventListener("DOMContentLoaded", () => {
             // Сначала загружаем вспомогательные справочники, затем основной каталог
@@ -137,6 +138,21 @@
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
                     dbGroups = data;
+                } else {
+                    renderTableError(data.error || 'Неверный формат данных');
+                }
+            }).catch(err => {
+                renderTableError('Ошибка сети при чтении каталога.');
+            });
+        }
+
+        function loadCableSpecProp(targetId) {
+            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_spec_prop&Id=${targetId}`)
+            .then(r => r.json())
+            .then(data => {
+                // Если сервер вернул массив
+                if (Array.isArray(data)) {
+                    dbSpecProp = data;
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
                 }
