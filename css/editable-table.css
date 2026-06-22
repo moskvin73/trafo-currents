@@ -30,10 +30,13 @@
 
 /* Стилизация липкой шапки */
 .project-table th { 
+     /* Создаем локальную переменную для фона заголовка */
+    --th-bg: #f1f5f9;   
+
     position: sticky; 
     top: 0; 
     z-index: 10; 
-    background-color: #f1f5f9; 
+    background-color: var(--th-bg); 
     box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color); 
     
     /* Стили текста шапки */
@@ -43,6 +46,10 @@
     
     /* Задаем плотный вертикальный отступ только для текста шапки, чтобы она не была слишком зажатой */
     padding: 8px 4px !important; 
+}
+
+.project-table .cell-indicator {
+    background-color: var(--th-bg, #f1f5f9) !important;
 }
 
 /* ==========================================
