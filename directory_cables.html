@@ -166,6 +166,23 @@
             });
         }
 
+        function renderTableError(message) {
+            const container = document.getElementById('tableRootContainer');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="
+                    text-align: center; 
+                    color: #dc3545; 
+                    padding: 20px; 
+                    font-weight: 500;
+                    font-family: sans-serif;
+                ">
+                    ⚠️ ${message}
+                </div>
+            `;
+        }        
+
         function renderAdminEditableView() {
             const container = document.getElementById('tableRootContainer');
             // Создаем структуру ОДНОЙ таблицы
