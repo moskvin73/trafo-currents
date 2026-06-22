@@ -392,6 +392,10 @@
             }).join('');
 
             tr.innerHTML = `
+                <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
+                    <span class="row-indicator"></span>
+                </td>                
+
                 <td>*</td>
                 <td><input type="text" class="table-input" id="type_${tempId}" placeholder="АПвПг" style="text-align:left; font-weight:600;"></td>
                 <td><select class="table-select" id="group_${tempId}">${groupOptions}</select></td>
