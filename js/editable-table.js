@@ -203,6 +203,40 @@ class EditableTable {
         return Array.from(fields).map(field => field.value).join('|');
     }
 
+     scrollToRow(row) {
+        if (!row) return;
+        // Находим ваш фиксированный контейнер со скроллом
+        const container = row.closest('.table-container-fixed');
+        if (!container) return;
+
+        // Положение верхней и нижней границы строки относительно контейнера
+        const rowTop = row.offsetTop;
+        const rowBottom = rowTop + row.offsetHeight;
+
+        // Текущая видимая область контейнера
+        const containerTop = container.scrollTop;
+        
+        // Учитываем высоту шапки, если она зафиксирована (например, 40px). 
+        // Если шапка не липнет, поставьте здесь 0.
+        const headerHeight = container.querySelector('thead')?.offsetHeight || 0; 
+        const containerBottom = containerTop + container.clientHeight;
+
+        // 1. Если двигаемся ВВЕРХ и строка уходит под верхний край (или под шапку)
+        if (rowTop < containerTop + headerHeight) {
+            container.scrollTo({
+                top: rowTop - headerHeight,
+                behavior: 'smooth'
+            });
+        }
+        // 2. Если двигаемся ВНИЗ и строка уходит за нижний край
+        else if (rowBottom > containerBottom) {
+            container.scrollTo({
+                top: rowBottom - container.clientHeight,
+                behavior: 'smooth'
+            });
+        }
+    }   
+
     handleFocusIn(event) {
         if (this.isSaving) {
             event.target.blur();
@@ -219,6 +253,7 @@ class EditableTable {
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
             this.checkRowSelection(currentRow);
+            this.scrollToRow(currentRow);
         }
     }
 
@@ -486,6 +521,11 @@ class EditableTable {
             }
 
             targetInput.focus();
+
+            if (targetRow) {
+                this.scrollToRow(targetRow);
+            }            
+
             if (targetInput.tagName === 'INPUT') setTimeout(() => targetInput.select(), 0);
         }
     }
