@@ -131,8 +131,6 @@
         }
 
         function fetchGroups() {
-            const tableBody = document.getElementById('cableTableBody');
-            // Вызываем агрегированную функцию, написанную ранее на сервере
             fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`)
             .then(r => r.json())
             .then(data => {
@@ -148,8 +146,6 @@
         }
 
         function loadCablesCatalog() {
-            const tableBody = document.getElementById('cableTableBody');
-            // Вызываем агрегированную функцию, написанную ранее на сервере
             fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`)
             .then(r => r.json())
             .then(data => {
