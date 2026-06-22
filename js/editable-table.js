@@ -277,7 +277,7 @@ class EditableTable {
         
         const parts = value.split(this.localeSeparator);
         if (parts.length > 2) {
-            value = parts + this.localeSeparator + parts.slice(1).join('');
+            value = parts[0] + this.localeSeparator + parts.slice(1).join('');
         }
 
         if (hasMinus) value = '-' + value;
