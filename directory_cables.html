@@ -217,9 +217,6 @@
         let dbGroups = [];     // Для списков админа
 
         document.addEventListener("DOMContentLoaded", () => {
-            if (userRole === 'admin') {
-                document.getElementById('adminAddCableBtn').style.display = 'inline-flex';
-            }
             // Сначала загружаем вспомогательные справочники, затем основной каталог
             Promise.all([fetchConductors(), fetchGroups()])
                 .then(() => loadCablesCatalog());
