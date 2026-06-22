@@ -400,11 +400,11 @@
                 <td><input type="text" class="table-input" id="type_${tempId}" placeholder="АПвПг" style="text-align:left; font-weight:600;"></td>
                 <td><select class="table-select" id="group_${tempId}">${groupOptions}</select></td>
                 <td><select class="table-select" id="cond_${tempId}">${condOptions}</select></td>
-                <td><input type="number" class="table-input" id="cores_${tempId}" value="3"></td>
-                <td><input type="number" step="0.0001" class="table-input" id="x_${tempId}" placeholder="0.1200"></td>
-                <td><input type="number" class="table-input" id="air_${tempId}" placeholder="0"></td>
-                <td><input type="number" class="table-input" id="ground_${tempId}" placeholder="0"></td>
-                <td><input type="number" step="0.01" class="table-input" id="sc_${tempId}" placeholder="0"></td>
+                <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="cores_${tempId}" value="3"></td>
+                <td><input type="text" inputmode="decimal" min="0" step="0.0001" class="table-input" id="x_${tempId}" placeholder="0.1200"></td>
+                <td><input type="text" inputmode="decimal" class="table-input" id="air_${tempId}" placeholder="0"></td>
+                <td><input type="text" inputmode="decimal" id="ground_${tempId}" placeholder="0"></td>
+                <td><input type="text" inputmode="decimal" class="table-input" id="sc_${tempId}" placeholder="0"></td>
                 <td>
                     <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable('${tempId}')">💾</button>
                     <button class="btn btn-ghost" style="padding:2px 6px; color:#475569;" onclick="renderCableTable()">❌</button>
