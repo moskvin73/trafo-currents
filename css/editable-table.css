@@ -78,6 +78,11 @@
     -moz-appearance: none;
 }
 
+/* Этот селектор будет иметь двойной приоритет и победит обычный .table-input */
+input.table-input.align-left {
+    text-align: left !important;
+}
+
 /* Состояние фокуса (когда зашли в ячейку) */
 .table-input:focus,
 .table-select:focus {
