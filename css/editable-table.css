@@ -107,9 +107,14 @@
 }        .new-row-highlight { background-color: #f0fdf4 !important; }
 
 
-/* Дополнительный текст ID под номером */
-.sub-text {
-    /*display: block;*/
-    font-size: 10px;
-    color: var(--text-muted, #888);
+/* ==========================================================================
+   ВСПОМОГАТЕЛЬНЫЕ СТИЛИ
+   ========================================================================== */
+
+/* Компактная подпись ID в первой ячейке */
+.project-table .sub-text {
+    font-size: 10px !important;
+    color: var(--text-muted);
+    display: inline !important;  
+    margin-left: 6px !important; 
 }
