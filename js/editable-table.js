@@ -237,12 +237,12 @@ class EditableTable {
             return;
         }
 
-        if (input.value.trim() === '') {
+        if (input.value.trim() === '' || input.value === '-') {
             if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
                 input.value = this.initialFieldsValues[this.currentFieldIndex];
                 input.classList.remove('input-error');
             }
-        } 
+        }
         else if (input.getAttribute('inputmode') === 'decimal') {
             const standardValue = input.value.replace(this.localeSeparator, '.');
             const parsedNum = parseFloat(standardValue);
