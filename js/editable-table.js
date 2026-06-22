@@ -80,7 +80,7 @@ class EditableTable {
                 
                 if (step && step.includes('.')) {
                     // ИСПРАВЛЕНО: берем длину именно дробной части (индекс 1)
-                    const decimalsCount = step.split('.')[1].length;
+                    const decimalsCount = step.split('.')[1]?.length;
                     const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
                     if (!isNaN(parsedNum)) {
                         val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
