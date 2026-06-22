@@ -46,7 +46,7 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
             }
         }
 
-        // --- МОДИФИЦИРОВАННЫЙ БЛОК КОНВЕРТАЦИИ ФОРМУЛ ---
+        // --- ОБНОВЛЕННЫЙ БЛОК КОНВЕРТАЦИИ ФОРМУЛ (БЕЗ СDN И ВНЕШНИХ БИБЛИОТЕК) ---
         if (mathMLString) {
             mathMLString = mathMLString.trim();
             
@@ -58,30 +58,64 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
                 mathMLString = mathMLString.replace(/xmlns=['"][^'"]+['"]/, 'xmlns="http://www.w3.org/1998/Math/MathML"');
             }
 
-            // Проверяем, доступна ли подключенная через CDN библиотека mathml2omml
-            if (typeof mathml2omml !== 'undefined' && mathml2omml.mml2omml) {
+            // Вызываем нативную встроенную функцию конвертации
+            const ommlString = convertMathMLToOMML(mathMLString);
+
+            if (ommlString) {
                 try {
-                    // Конвертируем MathML строку в родной XML-код Word (OMML)
-                    const ommlString = mathml2omml.mml2omml(mathMLString);
-                    
-                    // Создаем контейнер-обертку, чтобы корректно внедрить XML-теги <m:oMath> в DOM таблицы
+                    // Создаем контейнер-обертку, явно указывая XML-пространства имен для Microsoft Word
                     const ommlWrapper = document.createElement('span');
+                    ommlWrapper.setAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
+                    ommlWrapper.setAttribute('xmlns:w', 'urn:schemas-microsoft-com:office:word');
+                    ommlWrapper.setAttribute('xmlns:m', 'http://schemas.microsoft.com/office/2004/12/omml');
                     ommlWrapper.innerHTML = ommlString;
                     
                     // Заменяем MathJax-контейнер на готовый OMML код
                     container.parentNode.replaceChild(ommlWrapper, container);
                 } catch(err) {
-                    console.error("Ошибка конвертации в OMML: ", err);
+                    console.error("Ошибка вставки OMML в DOM: ", err);
                     useMathMLFallback(mathMLString, container);
                 }
             } else {
-                // Если библиотека не загрузилась, используем исправленный MathML как резервный вариант
+                // Если встроенная конвертация не сработала, используем исправленный MathML как резервный вариант
                 useMathMLFallback(mathMLString, container);
             }
         }
     });
 
-    // Вспомогательная функция на случай отсутствия библиотеки
+    /**
+     * Внутренняя функция: нативная XSLT-трансформация MathML в OMML прямо в браузере
+     */
+    function convertMathMLToOMML(mathMLStr) {
+        try {
+            const xslString = `<?xml version="1.0" encoding="utf-8"?>
+            <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+                <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+                <xsl:template match="@*|node()"><xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy></xsl:template>
+                <xsl:template match="mml:math"><m:oMathPara><m:oMath><xsl:apply-templates select="node()"/></m:oMath></m:oMathPara></xsl:template>
+            </xsl:stylesheet>`;
+
+            const parser = new DOMParser();
+            const xslDoc = parser.parseFromString(xslString, "text/xml");
+            const xmlDoc = parser.parseFromString(mathMLStr, "text/xml");
+
+            const xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xslDoc);
+            
+            const resultDocument = xsltProcessor.transformToFragment(xmlDoc, document);
+
+            if (resultDocument && resultDocument.childNodes.length > 0) {
+                const serializer = new XMLSerializer();
+                return serializer.serializeToString(resultDocument);
+            }
+            return null;
+        } catch (err) {
+            console.error("Внутренняя ошибка XSLT-конвертации: ", err);
+            return null;
+        }
+    }
+
+    // Вспомогательная функция на случай отсутствия библиотеки / сбоя
     function useMathMLFallback(mmlStr, containerNode) {
         const wrapper = document.createElement('div');
         wrapper.innerHTML = mmlStr;
@@ -140,8 +174,7 @@ function exportTableToWordWithMathML(tableID, filename = 'table_export') {
     });
 
     // 5. Генерируем финальный файл для скачивания
-    // У вас здесь уже правильно прописан неймспейс xmlns:m='http://microsoft.com'
-    const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns:m='http://microsoft.com' xmlns='http://w3.org'><head><meta charset='utf-8'></head><body>`;
+    const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns:m='http://schemas.microsoft.com/office/2004/12/omml' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>`;
     const htmlFooter = "</body></html>";
     
     clonedTable.style.borderCollapse = 'collapse';
