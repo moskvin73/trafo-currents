@@ -112,6 +112,22 @@ input.table-input.align-left {
     margin: 0;
 }        .new-row-highlight { background-color: #f0fdf4 !important; }
 
+/* ИСКЛЮЧЕНИЕ ДЛЯ ЛЕВЫХ СЕЛЕКТОВ: удержание текста слева в обычном состоянии */
+select.table-select.align-left {
+    text-align: left !important;
+    text-align-last: left !important;
+}
+
+/* Удержание текста слева при открытии/фокусе селекта */
+.table-select.align-left:focus {
+    text-align: left !important;
+    text-align-last: left !important;
+}
+
+/* Жесткий фикс для самих выпадающих пунктов (option) внутри левого списка */
+select.table-select.align-left option {
+    text-align: left !important;
+}
 
 /* ==========================================================================
    ВСПОМОГАТЕЛЬНЫЕ СТИЛИ
