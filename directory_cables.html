@@ -147,11 +147,18 @@
         }
 
         function loadCableSpecProp(targetId) {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_spec_prop&Id=${targetId}`)
+            const url = new URL(AppConfig.GOOGLE_WEB_APP_URL);
+            url.searchParams.set('action', 'get_cable_spec_prop');
+
+            // Добавляем Id ТОЛЬКО если targetId передан (не null и не undefined)
+            if (targetId !== undefined && targetId !== null) {
+                url.searchParams.set('Id', targetId);
+            }            
+            fetch(url.toString())
             .then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
-                if (Array.isArray(data)) {
+                if (data.success && Array.isArray(data.data)) {
                     dbSpecProp = data;
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
