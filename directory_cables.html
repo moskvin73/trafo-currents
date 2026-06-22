@@ -118,9 +118,20 @@
 .table-select:focus {
     border-color: #4a90e2 !important;
     background-color: #ffffff !important;
-    box-shadow: inset 0 0 0 1px #4a90e2; /* Подсветка рамки внутрь, чтобы не раздувать размеры ячейки */
-    appearance: auto; /* Возвращаем стрелочку селекта при фокусе */
-    text-align-last: start; /* При фокусе в селект возвращаем выравнивание списка по левому краю для читаемости */
+    box-shadow: inset 0 0 0 1px #4a90e2; 
+    appearance: auto; 
+    
+    /* ЖЕСТКИЙ ФИКС: Принудительно удерживаем текст по центру в момент редактирования, 
+       чтобы он не прыгал влево при фокусе */
+    text-align: center !important;
+    text-align-last: center !important; 
+}
+
+/* ИСКЛЮЧЕНИЕ ДЛЯ ЛЕВЫХ ИНПУТОВ: Если у инпута задан класс .align-left, 
+   он должен оставаться слева и при фокусе */
+.table-input.align-left:focus {
+    text-align: left !important;
+    text-align-last: left !important;
 }
 
 /* Прячем стрелочки увеличения/уменьшения у инпутов типа number */
@@ -315,7 +326,7 @@
                         <span class="row-indicator"></span>
                     </td>                
                     <td>${index + 1}<span class="sub-text">id:${cable.id}</span></td>
-                    <td><input type="text" class="table-input" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
+                    <td><input type="text" class="table-input" style="text-align: left !important;" id="type_${cable.id}" value="${cable.cable_type}" style="text-align:left; font-weight:600;"></td>
                     <td><select class="table-select" id="group_${cable.id}">${groupOptions}</select></td>
                     <td><select class="table-select" id="cond_${cable.id}">${condOptions}</select></td>
                     <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="cores_${cable.id}" value="${cable.cores_count}"></td>
