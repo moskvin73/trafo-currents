@@ -25,6 +25,9 @@ class EditableTable {
         this.formatTableOnLoad();
         this.initEvents();
         this.initFabMenu();
+
+        // Автоматически считаем высоту шапки под текущий текст и браузер
+        this.updateHeaderHeight();        
     }
 
     initEvents() {
@@ -44,6 +47,24 @@ class EditableTable {
             }
         });
     }
+
+    updateHeaderHeight() {
+        if (!this.tbody) return;
+        
+        // Находим контейнер таблицы
+        const container = this.tbody.closest('.table-container-fixed');
+        if (!container) return;
+
+        // Находим реальный элемент шапки tr внутри thead
+        const headerTr = container.querySelector('thead tr');
+        if (!headerTr) return;
+
+        // Измеряем точную физическую высоту шапки в текущем браузере (включая padding и border)
+        const realHeight = headerTr.offsetHeight;
+
+        // Записываем это значение в CSS-переменную прямо на контейнер таблицы
+        container.style.setProperty('--table-header-height', `${realHeight}px`);
+    }   
 
     resetRowChanges(row) {
         const rowId = row.getAttribute('data-id');

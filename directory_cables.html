@@ -19,8 +19,47 @@
         /*.table-input { width: 95%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; text-align: center; box-sizing: border-box; }
         .table-select { width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box; }
         */
-        .project-table th { position: sticky; top: 0; z-index: 10; background-color: #f1f5f9; box-shadow: inset 0 -2px 0 var(--border-color); }
-        .table-container-fixed { max-height: 70vh; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        /*.project-table th 
+        { 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+            background-color: #f1f5f9; 
+            box-shadow: inset 0 -2px 0 var(--border-color); 
+        }
+        .table-container-fixed 
+        { 
+            max-height: 70vh; 
+            overflow-y: auto; 
+            border: 1px solid 
+            var(--border-color); 
+            border-radius: 6px; 
+        }*/
+
+        .table-container-fixed { 
+            max-height: 70vh; 
+            overflow-y: auto; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            
+            /* ДИНАМИЧЕСКИЙ ОТСТУП: Браузер сам возьмет точную высоту шапки из JS */
+            scroll-padding-top: var(--table-header-height, 0px); 
+        }
+
+        .project-table th { 
+            position: sticky; 
+            top: -1px; 
+            z-index: 10; 
+            background-color: #f1f5f9; 
+            box-shadow: inset 0 -2px 0 var(--border-color); 
+        }
+
+        .project-table {
+            border-collapse: separate; 
+            border-spacing: 0; 
+            width: 100%;
+        }
+        
         .new-row-highlight { background-color: #f0fdf4 !important; }
         
         /* Стили для раскрывающихся деталей кабеля */
