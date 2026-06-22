@@ -21,7 +21,7 @@ class EditableTable {
         this.activeRowId = null;
         this.currentFieldIndex = null;
 
-        this.formatTableOnLoad();
+        //this.formatTableOnLoad();
         this.initEvents();
         this.initFabMenu();
     }
