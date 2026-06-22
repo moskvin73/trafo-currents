@@ -490,7 +490,7 @@ class EditableTable {
     }
 
     handleFocusIn(event) {
-        // БЛОКИРОВКА: Игнорируем фокус во время сохранения
+      // БЛОКИРОВКА: Игнорируем фокус во время сохранения
         if (this.isSaving) {
             event.target.blur();
             return;
@@ -502,12 +502,15 @@ class EditableTable {
         const fields = currentRow.querySelectorAll('.table-input, .table-select');
         this.currentFieldIndex = Array.from(fields).indexOf(event.target);
 
+        // ИСПРАВЛЕНО: Объявляем переменную rowId, чтобы браузер больше не ругался
+        const rowId = currentRow.getAttribute('data-id');
+
         if (this.activeRowId !== rowId) {
-            this.activeRowId = rowId;
+            this.activeRowId = rowId; // Теперь переменная существует и стейт обновится корректно
             this.initialRowDataJson = this.collectRowData(currentRow);
             this.initialFieldsValues = Array.from(fields).map(field => field.value);
             this.checkRowSelection(currentRow);
-        }        
+        }
     }
 
     handleFocusOut(event) {
