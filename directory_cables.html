@@ -61,7 +61,18 @@
             opacity: 1;
             /* Задержка появления в 0.6 секунды (измените под себя, например 0.8s или 1s) */
             transition-delay: 0.8s; 
-        }        
+        }
+
+/* Находим select внутри отцентрированных ячеек */
+td select {
+    text-align: left !important;
+    text-align-last: left !important;
+}
+
+/* На всякий случай фиксируем выравнивание самих выпадающих пунктов */
+td select option {
+    text-align: left !important;
+}        
     </style>
 </head>
 <body>
