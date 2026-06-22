@@ -15,6 +15,8 @@
     <!-- Подключение MathJax для рендеринга формул -->
     <script src="./js/math-script.js"></script>
 
+    <script src="./js/ms-offise.js"></script>
+
     <style>
        
         /* Стили для раскрывающихся деталей кабеля */
@@ -180,7 +182,15 @@
 
             if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
                 MathJax.typesetPromise([container]).catch((err) => console.error("MathJax error:", err));
-            }            
+            }           
+
+            const exportButton = document.getElementById('btnWordExport');
+            if (exportButton) {
+                exportButton.addEventListener('click', function() {
+                    // Вызываем нашу функцию, передавая ID созданной таблицы
+                    exportTableToWordWithMathML('projectCableTable', 'Кабельный_Журнал');
+                });
+            }
 
             const tableBody = container.querySelector('#cableTableBody');
             tableBody.innerHTML = "";
