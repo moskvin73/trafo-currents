@@ -16,130 +16,111 @@
     <script src="./js/math-script.js"></script>
 
     <style>
-        /*.table-input { width: 95%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; text-align: center; box-sizing: border-box; }
-        .table-select { width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box; }
-        */
-        /*.project-table th 
-        { 
+
+        .table-container-fixed { 
+            max-height: 70vh; 
+            overflow-y: auto; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            /* Никаких scroll-padding и переменных тут больше нет */
+        }
+
+        .project-table {
+            border-collapse: separate; 
+            border-spacing: 0; 
+            width: 100%;
+            /* КРИТИЧЕСКИЙ ФИКС: Принудительно обнуляем верхнюю рамку и отступ самой таблицы, 
+            которые выталкивали шапку вниз на 20-30px */
+            border-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* Минимизируем высоту строк таблицы за счет обнуления padding у td и th */
+        .project-table th,
+        .project-table td {
+            padding: 0 !important; /* Убираем воздух вокруг инпутов */
+            height: 1px; /* Сверхсекретный CSS-хак: заставляет td сжиматься до минимально возможной высоты контента */
+            vertical-align: middle !important; /* Выравнивание статического текста строго по середине высоты */
+            text-align: center; /* Выравнивание статического контента по центру по умолчанию */
+        }
+
+        /* Стилизация липкой шапки */
+        .project-table th { 
             position: sticky; 
             top: 0; 
             z-index: 10; 
             background-color: #f1f5f9; 
-            box-shadow: inset 0 -2px 0 var(--border-color); 
+            box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color); 
+            
+            /* Стили текста шапки */
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center; /* По умолчанию текст шапки по центру */
+            
+            /* Задаем плотный вертикальный отступ только для текста шапки, чтобы она не была слишком зажатой */
+            padding: 8px 4px !important; 
         }
-        .table-container-fixed 
-        { 
-            max-height: 70vh; 
-            overflow-y: auto; 
-            border: 1px solid 
-            var(--border-color); 
-            border-radius: 6px; 
-        }*/
 
-.table-container-fixed { 
-    max-height: 70vh; 
-    overflow-y: auto; 
-    border: 1px solid var(--border-color); 
-    border-radius: 6px; 
-    /* Никаких scroll-padding и переменных тут больше нет */
-}
+        /* ==========================================
+        2. КОМПАКТНЫЕ ИНПУТЫ НА ВСЮ ШИРИНУ И ВЫСОТУ
+        ========================================== */
+        .table-input, 
+        .table-select {
+            display: block; /* Превращаем в блок, чтобы убрать микро-зазоры снизу инпута */
+            width: 100% !important; /* Растягиваем на всю ширину колонки */
+            height: 100% !important; /* Намертво растягиваем на всю доступную высоту ячейки td */
+            min-height: 30px; /* Задаем базовую аккуратную высоту строки (можете уменьшить до 28px, если нужно еще плотнее) */
+            
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            background: transparent;
+            
+            /* Компактные внутренние отступы внутри самого инпута */
+            padding: 4px 6px !important; 
+            
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            outline: none;
+            border-radius: 0; /* Убираем скругления, чтобы инпут идеально вписывался в прямоугольник ячейки */
+            
+            /* ВЫРАВНИВАНИЕ ТЕКСТА: по центру по умолчанию для всех инпутов и селектов */
+            text-align: center !important;
+            text-align-last: center; /* Специальное свойство для выравнивания текста внутри тега <select> */
+            
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
 
-.project-table {
-    border-collapse: separate; 
-    border-spacing: 0; 
-    width: 100%;
-    /* КРИТИЧЕСКИЙ ФИКС: Принудительно обнуляем верхнюю рамку и отступ самой таблицы, 
-       которые выталкивали шапку вниз на 20-30px */
-    border-top: 0 !important;
-    margin-top: 0 !important;
-}
+        /* Состояние фокуса (когда зашли в ячейку) */
+        .table-input:focus,
+        .table-select:focus {
+            border-color: #4a90e2 !important;
+            background-color: #ffffff !important;
+            box-shadow: inset 0 0 0 1px #4a90e2; 
+            appearance: auto; 
+            
+            /* ЖЕСТКИЙ ФИКС: Принудительно удерживаем текст по центру в момент редактирования, 
+            чтобы он не прыгал влево при фокусе */
+            text-align: center !important;
+            text-align-last: center !important; 
+        }
 
-/* Минимизируем высоту строк таблицы за счет обнуления padding у td и th */
-.project-table th,
-.project-table td {
-    padding: 0 !important; /* Убираем воздух вокруг инпутов */
-    height: 1px; /* Сверхсекретный CSS-хак: заставляет td сжиматься до минимально возможной высоты контента */
-    vertical-align: middle !important; /* Выравнивание статического текста строго по середине высоты */
-    text-align: center; /* Выравнивание статического контента по центру по умолчанию */
-}
+        /* ИСКЛЮЧЕНИЕ ДЛЯ ЛЕВЫХ ИНПУТОВ: Если у инпута задан класс .align-left, 
+        он должен оставаться слева и при фокусе */
+        .table-input.align-left:focus {
+            text-align: left !important;
+            text-align-last: left !important;
+        }
 
-/* Стилизация липкой шапки */
-.project-table th { 
-    position: sticky; 
-    top: 0; 
-    z-index: 10; 
-    background-color: #f1f5f9; 
-    box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color); 
-    
-    /* Стили текста шапки */
-    font-weight: 600;
-    font-size: 13px;
-    text-align: center; /* По умолчанию текст шапки по центру */
-    
-    /* Задаем плотный вертикальный отступ только для текста шапки, чтобы она не была слишком зажатой */
-    padding: 8px 4px !important; 
-}
-
-/* ==========================================
-   2. КОМПАКТНЫЕ ИНПУТЫ НА ВСЮ ШИРИНУ И ВЫСОТУ
-   ========================================== */
-.table-input, 
-.table-select {
-    display: block; /* Превращаем в блок, чтобы убрать микро-зазоры снизу инпута */
-    width: 100% !important; /* Растягиваем на всю ширину колонки */
-    height: 100% !important; /* Намертво растягиваем на всю доступную высоту ячейки td */
-    min-height: 30px; /* Задаем базовую аккуратную высоту строки (можете уменьшить до 28px, если нужно еще плотнее) */
-    
-    box-sizing: border-box;
-    border: 1px solid transparent;
-    background: transparent;
-    
-    /* Компактные внутренние отступы внутри самого инпута */
-    padding: 4px 6px !important; 
-    
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
-    outline: none;
-    border-radius: 0; /* Убираем скругления, чтобы инпут идеально вписывался в прямоугольник ячейки */
-    
-    /* ВЫРАВНИВАНИЕ ТЕКСТА: по центру по умолчанию для всех инпутов и селектов */
-    text-align: center !important;
-    text-align-last: center; /* Специальное свойство для выравнивания текста внутри тега <select> */
-    
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-/* Состояние фокуса (когда зашли в ячейку) */
-.table-input:focus,
-.table-select:focus {
-    border-color: #4a90e2 !important;
-    background-color: #ffffff !important;
-    box-shadow: inset 0 0 0 1px #4a90e2; 
-    appearance: auto; 
-    
-    /* ЖЕСТКИЙ ФИКС: Принудительно удерживаем текст по центру в момент редактирования, 
-       чтобы он не прыгал влево при фокусе */
-    text-align: center !important;
-    text-align-last: center !important; 
-}
-
-/* ИСКЛЮЧЕНИЕ ДЛЯ ЛЕВЫХ ИНПУТОВ: Если у инпута задан класс .align-left, 
-   он должен оставаться слева и при фокусе */
-.table-input.align-left:focus {
-    text-align: left !important;
-    text-align-last: left !important;
-}
-
-/* Прячем стрелочки увеличения/уменьшения у инпутов типа number */
-.table-input::-webkit-outer-spin-button,
-.table-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}        .new-row-highlight { background-color: #f0fdf4 !important; }
+        /* Прячем стрелочки увеличения/уменьшения у инпутов типа number */
+        .table-input::-webkit-outer-spin-button,
+        .table-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }        .new-row-highlight { background-color: #f0fdf4 !important; }
         
         /* Стили для раскрывающихся деталей кабеля */
         .details-row { background-color: #f8fafc; font-size: 14px; }
@@ -201,14 +182,13 @@
     </header>
 
     <div class="panel" style="max-width: 1200px; margin: 20px auto;">
-        <!-- ИСПРАВЛЕНО: заменили margin-bottom на padding-bottom -->
         <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px;">
             <h2 style="margin: 0; border: none; padding: 0;">📦 Каталог силовых кабелей 6-10 кВ</h2>
-            <button id="adminAddCableBtn" class="btn" style="display: none;" onclick="addNewCableRow()">+ Добавить кабель</button>
+           <!-- <button id="adminAddCableBtn" class="btn" style="display: none;" onclick="addNewCableRow()">+ Добавить кабель</button> -->
         </div>
 
         <div id="tableRootContainer">
-            <!-- Сюда JS монтирует вашу таблицу с классом .table-container-fixed -->
+            <!-- Сюда JS монтирует таблицу с классом .table-container-fixed -->
             <div style="text-align: center; color: var(--text-muted); padding: 20px;">
                 Синхронизация реляционных таблиц и проверка прав...
             </div>
@@ -222,8 +202,11 @@
         <!-- Всплывающее меню с действиями -->
         <div class="fab-subs">
             <button class="fab-btn" data-tooltip="Добавить строку" data-action="add-row">➕</button>
+            <button class="fab-btn" data-tooltip="Удалить строку" data-action="delete-row">➖</button>
+            <button class="fab-btn" data-tooltip="В начало таблицы" data-action="up-row">🔼</button>
+            <button class="fab-btn" data-tooltip="В конец таблицы" data-action="down-row">🔽</button>
             <!-- Сюда в будущем можно добавить другие кнопки, например: -->
-            <!-- <button class="fab-btn" data-tooltip="Экспорт в Excel" data-action="export">📥</button> -->
+            <button class="fab-btn" data-tooltip="Экспорт в Excel" data-action="export">📥</button>
         </div>
     </div>   
 
@@ -284,7 +267,6 @@
                         <thead>
                             <tr>
                                 <th style="width: 24px; padding: 0;"></th> 
-
                                 <th style="width: 40px;">№</th>
                                 <th>Марка кабеля</th>
                                 <th style="width: 180px;">Темп. группа / Напряжение</th>
@@ -294,7 +276,6 @@
                                 <th style="width: 80px;">I_{возд.}(А)</th>
                                 <th style="width: 80px;">I земл.(А)</th>
                                 <th style="width: 90px;">I кз 1с (кА)</th>
-                                <th id="thAdminAction" style="display: table-cell; width: 100px;">Действие</th>
                             </tr>
                         </thead>
                         <tbody id="cableTableBody"></tbody>
@@ -334,10 +315,6 @@
                     <td><input type="text" inputmode="decimal" class="table-input" id="air_${cable.id}" value="${cable.current_capacity_air || 0}"></td>
                     <td><input type="text" inputmode="decimal" class="table-input" id="ground_${cable.id}" value="${cable.current_capacity_ground || 0}"></td>
                     <td><input type="text" inputmode="decimal" step="0.01" class="table-input" id="sc_${cable.id}" value="${cable.short_circuit_current_1s || 0}"></td>
-                    <td>
-                        <button class="btn btn-ghost" style="padding:2px 6px; color:green; border-color:#bbf7d0;" onclick="saveCable(${cable.id})">💾</button>
-                        <button class="btn btn-ghost" style="padding:2px 6px; color:red; border-color:#fca5a5;" onclick="deleteCable(${cable.id})">🗑️</button>
-                    </td>
                 `;
                 tableBody.appendChild(tr);
             });
