@@ -67,14 +67,20 @@ class EditableTable {
     }
 
     formatTableOnLoad() {
-        const fields = this.tbody.querySelectorAll('.table-input');
+    // Если передали конкретную строку (например, новую) — форматируем только её поля.
+    // Если ничего не передали — форматируем, как обычно, весь tbody.
+    const container = targetRow || this.tbody || this.table;
+    if (!container) return;
+
+    const fields = container.querySelectorAll('.table-input');
         fields.forEach(field => {
             if (field.getAttribute('inputmode') === 'decimal' && field.value !== '') {
                 let val = field.value.replace('.', this.localeSeparator);
                 const step = field.getAttribute('step');
                 
                 if (step && step.includes('.')) {
-                    const decimalsCount = step.split('.').length;
+                    // ИСПРАВЛЕНО: берем длину именно дробной части (индекс 1)
+                    const decimalsCount = step.split('.')[1].length;
                     const parsedNum = parseFloat(val.replace(this.localeSeparator, '.'));
                     if (!isNaN(parsedNum)) {
                         val = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
