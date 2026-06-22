@@ -140,10 +140,10 @@
                 if (Array.isArray(data)) {
                     dbGroups = data;
                 } else {
-                    document.getElementById('tableRootContainer').innerHTML = `Ошибка сервера: ${data.error || 'Неверный формат данных'}`;
+                    renderTableError(data.error || 'Неверный формат данных');
                 }
             }).catch(err => {
-                document.getElementById('tableRootContainer').innerHTML = `Ошибка сети при чтении каталога.`;
+                renderTableError('Ошибка сети при чтении каталога.');
             });
         }
 
@@ -159,10 +159,10 @@
                     if (userRole === 'admin') renderAdminEditableView();
                     else renderGuestView();
                 } else {
-                    document.getElementById('tableRootContainer').innerHTML = `Ошибка сервера: ${data.error || 'Неверный формат данных'}`;
+                    renderTableError(data.error || 'Неверный формат данных');
                 }
             }).catch(err => {
-                document.getElementById('tableRootContainer').innerHTML = `Ошибка сети при чтении каталога.`;
+                renderTableError('Ошибка сети при чтении каталога.');
             });
         }
 
