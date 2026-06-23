@@ -155,16 +155,18 @@
             if (targetId !== undefined && targetId !== null) {
                 url.searchParams.set('Id', targetId);
             }            
-            fetch(url.toString()).then(r => r.json())
+            return fetch(url.toString()).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (data.success && Array.isArray(data.data)) {
-                    dbSpecProp = data.data;
+                   return data.data;
                 } else {
-                    renderTableError(data.error || 'Неверный формат данных');
+                    //renderTableError(data.error || 'Неверный формат данных');
+                    return [];
                 }
             }).catch(err => {
-                renderTableError('Ошибка сети при чтении каталога.');
+                //renderTableError('Ошибка сети при чтении каталога.');
+                return [];
             });
         }
 
