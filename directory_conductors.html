@@ -96,7 +96,6 @@
 
     <script>
 
-
         const userRole = localStorage.getItem('user_role') || 'guest';
         let currentConductors = []; // Храним загруженные данные в памяти
         // Получаем клиента
@@ -118,7 +117,8 @@
             const cachedData = localStorage.getItem('gost_table_cache');
             if (cachedData) {
                 console.log('Данные мгновенно взяты из кэша браузера!');
-                renderTable(JSON.parse(cachedData));
+                urrentConductors = JSON.parse(cachedData);
+                renderTable();
                 return;
             }
 
@@ -127,7 +127,8 @@
             
             // 3. Сохраняем в кэш и отрисовываем
             localStorage.setItem('gost_table_cache', JSON.stringify(data));
-            renderTable(data);
+            urrentConductors = data;
+            renderTable();
 
         } catch (err) {
             console.error('Критическая ошибка:', err.message);
