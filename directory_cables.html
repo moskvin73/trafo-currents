@@ -344,26 +344,36 @@
                 trDetails.className = "details-row-"; 
                 
                 trDetails.innerHTML = `
-                <div class="table-container-fixed">
-                    <table id="projectCableTable" class="project-table" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="width: 24px; padding: 0;"></th> 
-                                <th style="width: 40px;">№</th>
-                                <th>НТД ГОСТ/ТУ</th>
-                                <th style="width: 80px; title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
-                                <th style="width: 220px;">тип изоляции</th>
-                                <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\\text{н.гр}}$<br>К·см/Вт</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cableTableBody"></tbody>
-                    </table>
-                </div>
+                <td colspan="${columnsCount}">
+                    <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
+                        <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
+                            📋 Подчиненный справочник: Сечения и жилы для группы ID ${groupId}
+                        </span>
+
+                            <div class="table-container-fixed">
+                                <table id="projectCableTable" class="project-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 24px; padding: 0;"></th> 
+                                            <th style="width: 40px;">№</th>
+                                            <th>НТД ГОСТ/ТУ</th>
+                                            <th style="width: 80px; title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
+                                            <th style="width: 220px;">тип изоляции</th>
+                                            <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
+                                            <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
+                                            <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
+                                            <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
+                                            <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$<br>°С</th>
+                                            <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\\text{н.гр}}$<br>К·см/Вт</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cableTableBody"></tbody>
+                                </table>
+                            </div>
+
+
+                    </div>
+                </td>
                 `;
 
         }
