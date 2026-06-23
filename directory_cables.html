@@ -418,7 +418,7 @@
             `;
 
             if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-                MathJax.typesetPromise([twrapper]).catch((err) => console.error("MathJax error:", err));
+                MathJax.typesetPromise([wrapper]).catch((err) => console.error("MathJax error:", err));
             }
             
             const tableBody = twrapper.querySelector('#cableSubTableBody');
