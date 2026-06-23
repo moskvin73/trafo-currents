@@ -136,7 +136,7 @@
             fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
-                if (Array.isArray(data)) {
+                if (data.success && Array.isArray(data.data)) {
                     dbGroups = data;
                     renderAdminEditableView();
                 } else {
