@@ -343,19 +343,28 @@
                 trDetails.id = `admin_details_${groupId}`;
                 trDetails.className = "details-row-"; 
                 
-                // Генерируем строки подчиненной таблицы
-                    const subRowsHtml = conductors.map((cond, subIndex) => {
-                        let mat = cond.conductor_type === 0 ? "Cu голая" : (cond.conductor_type === 1 ? "Cu луж" : "Al");
-                        return `
-                            <tr data-sub-id="${cond.id}">
-                                <td style="width: 50px; font-size: 11px; color: #64748b;">${subIndex + 1}</td>
-                                <td><input type="text" class="table-input" id="sub_section_${cond.id}" value="${cond.cross_section || ''}"></td>
-                                <td><input type="text" class="table-input align-left" id="sub_mat_${cond.id}" value="${mat}"></td>
-                                <td><input type="text" inputmode="decimal" class="table-input" id="sub_r20_${cond.id}" value="${cond.r_20 || 0}"></td>
-                                <td><input type="text" inputmode="decimal" class="table-input" id="sub_diam_${cond.id}" value="${cond.outer_diameter || ''}"></td>
+                container.innerHTML = `
+                <div class="table-container-fixed">
+                    <table id="projectCableTable" class="project-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 24px; padding: 0;"></th> 
+                                <th style="width: 40px;">№</th>
+                                <th>НТД ГОСТ/ТУ</th>
+                                <th style="width: 80px; title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
+                                <th style="width: 220px;">тип изоляции</th>
+                                <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
+                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
+                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
+                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
+                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$<br>°С</th>
+                                <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\\text{н.гр}}$<br>К·см/Вт</th>
                             </tr>
-                        `;
-                    }).join('');
+                        </thead>
+                        <tbody id="cableTableBody"></tbody>
+                    </table>
+                </div>
+                `;
 
         }
 
