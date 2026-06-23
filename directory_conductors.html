@@ -136,7 +136,7 @@
         }        
 
         // Загрузка данных (имитация получения чистых реляционных строк)
-        async function loadConductorsData() {
+        async function fetchGostDataWithRetry() {
             const tableBody = document.getElementById('directoryTableBody');
          
             const maxAttempts = 3;     // Максимальное количество попыток
