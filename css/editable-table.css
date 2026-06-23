@@ -24,7 +24,7 @@
 #projectCableSubTable th {
     position: sticky;
     /* Читаем глобальную переменную из :root, которую обновляет ResizeObserver. 35px — резерв */
-    top: var(--main-header-height, 35px); 
+    top: calc(var(--main-header-height, 35px) - 1px); 
     z-index: 9; /* Меньше 10 (главная шапка), чтобы уходить под нее */
     background-color: #e2e8f0 !important; /* Делаем шапку подтаблицы чуть темнее для контраста */
     box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color);
