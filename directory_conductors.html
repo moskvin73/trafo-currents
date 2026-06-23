@@ -114,19 +114,19 @@
         async function initPage() {
         try {
             // 1. Сначала проверяем кэш браузера (как мы делали раньше)
-            const cachedData = localStorage.getItem('gost_table_cache');
+            /*const cachedData = localStorage.getItem('gost_table_cache');
             if (cachedData) {
                 console.log('Данные мгновенно взяты из кэша браузера!');
                 currentConductors = JSON.parse(cachedData);
                 renderTable();
                 return;
-            }
+            }*/
 
             // 2. Если кэша нет, запускаем наше чтение с 3 попытками
             const data = await fetchGostDataWithRetry();
             
             // 3. Сохраняем в кэш и отрисовываем
-            localStorage.setItem('gost_table_cache', JSON.stringify(data));
+            //localStorage.setItem('gost_table_cache', JSON.stringify(data));
             currentConductors = data;
             renderTable();
 
