@@ -430,7 +430,69 @@
                 MathJax.typesetPromise([twrapper]).catch((err) => console.error("MathJax error:", err));
             }
             
-            const tableBody = trDetails.querySelector('#cableSubTableBody');
+            const tableBody = twrapper.querySelector('#cableSubTableBody');
+
+            specs.forEach((spec, index) => {
+                // Создаем основную строку
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-id', spec.id);
+                
+                // Генерируем выпадающие списки для админа на основе загруженных справочников
+                /*let groupOptions = dbGroups.map(g => `<option value="${g.id}" ${g.voltage_kv === cable.voltage_kv ? 'selected' : ''}>${g.standard_name} (${g.voltage_kv}кВ, ${g.insulation_type_ru})</option>`).join('');
+                let condOptions = dbConductors.map(c => {
+                    let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
+                    return `<option value="${c.id}" ${c.cross_section === cable.cross_section && c.resistance === cable.r_20 ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
+                }).join('');*/
+
+                tr.innerHTML = `
+                    <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
+                        <span class="row-indicator"></span>
+                    </td>                
+                    <td>${index + 1}<span class="sub-text">id:${spec.id}</span></td>
+                    <td><input type="text" class="table-input align-left" id="standard_name_${spec.id}" value="${spec.standard_name}"></td>
+                    <td>
+                        <select class="table-select" style="text-align: left !important;" id="voltage_kv_${spec.id}">
+                            ${VOLTAGE_OPTIONS.map(kv => `
+                                    <option value="${kv}" ${spec.voltage_kv === kv ? 'selected' : ''}>
+                                        ${kv.toLocaleString()} кВ
+                                    </option>
+                                `).join('')}
+                        </select>
+                    </td>
+                    <td><input type="text" class="table-input align-left" id="insulation_type_ru_${spec.id}" value="${spec.insulation_type_ru}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_operating_temp_${spec.id}" value="${spec.max_operating_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_overload_temp_${spec.id}" value="${spec.max_overload_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_short_circuit_temp_${spec.id}" value="${spec.max_short_circuit_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_air_${spec.id}" value="${spec.ambient_temp_air || 25}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_ground_${spec.id}" value="${spec.ambient_temp_ground || 15}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_thermal_resistivity_${spec.id}" value="${spec.ground_thermal_resistivity || 120}"></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            new EditableTable('cableSubTableBody', {
+                // Cигнатуре: id, row, data, rollback, success
+                onSave: (id, row, data, rollback, success) => {
+                    console.log(`Отправляем строку ${id} на сервер...`);   
+                    setVisualStatus('cableSubTableBody', row, '🔄');
+                    success();
+                    setVisualStatus('cableSubTableBody', row, '➔');
+                },
+                onRowSelect: (id, row) => {
+                    console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
+                    setVisualStatus('cableSubTableBody', row, '➔');
+                },
+                onRowEdit: (id, row) => {
+                    console.log(`Редактирование строки ID: ${id}. `);
+                    setVisualStatus('cableSubTableBody', row, '✎');
+                },
+                onRowCancel: (id, row) => {
+                    console.log(`Отмена редактирования строкм ID: ${id}. `);
+                    setVisualStatus('cableSubTableBody', row, '➔');
+                },
+                onValidateRow: (id, row) => {
+                        return null; // Строка успешно прошла проверку, можно сохранять
+                    }            
+                });
 
         }
 
