@@ -379,7 +379,7 @@ class EditableTable {
             }
         }
 
-        if (!input.classList.contains('table-input') || input.style.textAlign === 'left') return;
+        if (!input.classList.contains('table-input') || input.getAttribute('inputmode') === 'decimal') return;
 
         const step = input.getAttribute('step');
         const isFloat = step && step.includes('.');
