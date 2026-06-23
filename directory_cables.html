@@ -216,14 +216,14 @@
                                 <th style="width: 24px; padding: 0;"></th> 
                                 <th style="width: 40px;">№</th>
                                 <th>НТД ГОСТ/ТУ</th>
-                                <th style="width: 80px; title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
-                                <th style="width: 220px;">тип изоляции</th>
-                                <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\\text{н.гр}}$<br>К·см/Вт</th>
+                                <th title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
+                                <th>тип изоляции</th>
+                                <th title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
+                                <th title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
+                                <th title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
+                                <th title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
+                                <th title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$<br>°С</th>
+                                <th title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\\text{н.гр}}$<br>К·см/Вт</th>
                             </tr>
                         </thead>
                         <tbody id="cableTableBody"></tbody>
@@ -407,17 +407,17 @@
                             <tr>
                                 <th style="width: 24px; padding: 0;"></th> 
                                 <th style="width: 40px;">№</th>
-                                <th>Обозначение кабеля</th>
-                                <th>Наличие брони</th>
-                                <th>Число жил ТПЖ</th>
+                                <th title="Обозначение кабеля АСБл, АВВГнг и т.д">Обозначение кабеля</th>
+                                <th title="Флаг наличия брони у кабеля">Наличие брони</th>
+                                <th title="Число основных жил ТПЖ (1,2,3)">Число жил ТПЖ</th>
                                 <th>Сечение</th>
-                                <th>Сечение N жилы</th>
-                                <th>$Х_{\\text {уд}}$<br>Ом/км</th>
-                                <th>$I_{\\text {дд.б.возд}}$<br>А</th>
-                                <th>$I_{\\text {дд.б.земл}}$<br>А</th>
-                                <th>$I_{\\text {кз.1с}}$<br>кА</th>
-                                <th>Вес<br>кг/км</th>
-                                <th>Диаметр<br>мм</th>
+                                <th title="Сечение нулевой нулевой жилы">Сечение N жилы</th>
+                                <th title="Удельное индуктивное сопротивление">$Х_{\\text {уд}}$<br>Ом/км</th>
+                                <th title="Длительно допусимый ток в воздухе">$I_{\\text {дд.б.возд}}$<br>А</th>
+                                <th title="Длительно допусимый ток в земле">$I_{\\text {дд.б.земл}}$<br>А</th>
+                                <th title="Допустимые токи односекундного короткого замыкания">$I_{\\text {кз.1с}}$<br>кА</th>
+                                <th title="Теоретический вес 1 километра">Вес<br>кг/км</th>
+                                <th title="Наружный диаметр кабеля">Диаметр<br>мм</th>
                             </tr>
                         </thead>
                         <tbody id="cableSubTableBody"></tbody>
@@ -472,6 +472,14 @@
                             value="${spec.neutral_cross_section !== null ? spec.neutral_cross_section : ''}" 
                             placeholder="-">
                     </td>
+                    <td><input type="text" inputmode="decimal" min="0" step="0.0001"
+                        class="table-input" id="inductive_resistance_${spec.id}" value="${spec.inductive_resistance || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0"
+                        class="table-input" id="current_capacity_air_${spec.id}" value="${spec.current_capacity_air || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0"
+                        class="table-input" id="current_capacity_ground_${spec.id}" value="${spec.current_capacity_ground || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0"
+                        class="table-input" id="short_circuit_current_1s_${spec.id}" value="${spec.short_circuit_current_1s || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" 
                         class="table-input" id="theoretical_weight_kg_km_${spec.id}" value="${spec.theoretical_weight_kg_km || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" 
