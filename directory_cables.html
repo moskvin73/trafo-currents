@@ -263,9 +263,9 @@
                         <span class="row-indicator"></span>
                     </td>                
                     <td>${index + 1}<span class="sub-text">id:${gr.id}</span></td>
-                    <td><input type="text" class="table-input align-left" id="type_${gr.id}" value="${gr.standard_name}"></td>
+                    <td><input type="text" class="table-input align-left" id="standard_name_${gr.id}" value="${gr.standard_name}"></td>
                     <td>
-                        <select class="table-select" style="text-align: left !important;" id="type_${gr.id}">
+                        <select class="table-select" style="text-align: left !important;" id="voltage_kv_${gr.id}">
                             ${VOLTAGE_OPTIONS.map(kv => `
                                     <option value="${kv}" ${gr.voltage_kv === kv ? 'selected' : ''}>
                                         ${kv.toLocaleString()} кВ
@@ -273,13 +273,13 @@
                                 `).join('')}
                         </select>
                     </td>
-                    <td><select type="text" class="table-input align-left" id="group_${gr.id}">${gr.insulation_type_ru}</select></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="cores_${gr.id}" value="${gr.max_operating_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="x_${gr.id}" value="${gr.max_overload_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="air_${gr.id}" value="${gr.max_short_circuit_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_${gr.id}" value="${gr.ambient_temp_air || 25}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="sc_${gr.id}" value="${gr.ambient_temp_ground || 15}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="sc_${gr.id}" value="${gr.ground_thermal_resistivity || 120}"></td>
+                    <td><select type="text" class="table-input align-left" id="insulation_type_ru_${gr.id}">${gr.insulation_type_ru}</select></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_operating_temp_${gr.id}" value="${gr.max_operating_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_overload_temp_${gr.id}" value="${gr.max_overload_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_short_circuit_temp_${gr.id}" value="${gr.max_short_circuit_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_air_${gr.id}" value="${gr.ambient_temp_air || 25}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_ground_${gr.id}" value="${gr.ambient_temp_ground || 15}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_thermal_resistivity_${gr.id}" value="${gr.ground_thermal_resistivity || 120}"></td>
                 `;
                 tableBody.appendChild(tr);
             });
