@@ -121,7 +121,7 @@
 }
 
 .table-input, 
-/*.table-select*/ {
+.table-select {
     display: block; /* Превращаем в блок, чтобы убрать микро-зазоры снизу инпута */
     width: 100% !important; /* Растягиваем на всю ширину колонки */
     height: 100% !important; /* Намертво растягиваем на всю доступную высоту ячейки td */
@@ -152,7 +152,7 @@
 
 /* Состояние фокуса (когда зашли в ячейку) */
 .table-input:focus,
-/*.table-select:focus*/ {
+.table-select:focus {
     border-color: #4a90e2 !important;
     background-color: #ffffff !important;
     box-shadow: inset 0 0 0 1px #4a90e2; 
