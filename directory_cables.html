@@ -447,6 +447,11 @@
                         </select>
                     </td>
                     <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="cores_count_${spec.id}" value="${spec.cores_count || 1}"></td>
+                    <td>
+                        <select class="table-select" style="text-align: left !important;" id="conductor_id_${spec.id}">
+                            ${condOptions}
+                        </select>
+                    </td>
 
                 `;
                 tableBody.appendChild(tr);
