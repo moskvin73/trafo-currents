@@ -215,12 +215,12 @@
                                 <th>НТД ГОСТ/ТУ</th>
                                 <th style="width: 80px; title="Номинальное напряжение">$U_{\\text{ном}}$, кВ</th>
                                 <th style="width: 220px;">тип изоляции</th>
-                                <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\theta_{\\text{н.max}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\theta_{\\text{н.max.пер}}$<br>°С</th>
-                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\theta_{\\text{н.max.КЗ}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\theta_{\\text{н.окр.в}}$<br>°С</th>
-                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\theta_{\\text{н.окр.з}}$</th>
-                                <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\rho_{\text{н.гр}}$<br>К·см/Вт</th>
+                                <th style="width: 70px;" title="Нормируемая максимальная рабочая температура ТПЖ">$\\theta_{\\text{н.max}}$<br>°С</th>
+                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при перегрузке">$\\theta_{\\text{н.max.пер}}$<br>°С</th>
+                                <th style="width: 80px;" title="Максимальная рабочая температура ТПЖ при КЗ">$\\theta_{\\text{н.max.КЗ}}$<br>°С</th>
+                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей на воздухе">$\\theta_{\\text{н.окр.в}}$<br>°С</th>
+                                <th style="width: 80px;" title="Нормируемая температура окружающей среды при прокладке кабелей в земле">$\\theta_{\\text{н.окр.з}}$</th>
+                                <th style="width: 80px;" title="Нормируемое удельное термическое сопротивление грунта">$\\rho_{\text{н.гр}}$<br>К·см/Вт</th>
                             </tr>
                         </thead>
                         <tbody id="cableTableBody"></tbody>
@@ -270,7 +270,7 @@
                                 `).join('')}
                         </select>
                     </td>
-                    <td><input type="text" class="table-input align-left" id="insulation_type_ru_${gr.id}">${gr.insulation_type_ru}</select></td>
+                    <td><input type="text" class="table-input align-left" id="insulation_type_ru_${gr.id}" value="${gr.insulation_type_ru}></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_operating_temp_${gr.id}" value="${gr.max_operating_temp || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_overload_temp_${gr.id}" value="${gr.max_overload_temp || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_short_circuit_temp_${gr.id}" value="${gr.max_short_circuit_temp || 0}"></td>
