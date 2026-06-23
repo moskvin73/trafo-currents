@@ -9,15 +9,26 @@
     /* Никаких scroll-padding и переменных тут больше нет */
 }
 
-/* Специальный контейнер для вложенной таблицы */
+/* Специальный контейнер для вложенной таблицы (убираем двойной скролл) */
 .table-container-nested {
-    max-height: none !important; /* Убираем ограничение по высоте */
-    overflow-y: visible !important; /* Отключаем внутреннюю вертикальную прокрутку */
-    overflow-x: visible !important; /* Отключаем горизонтальную прокрутку */
-    border: none; /* Убираем лишнюю двойную рамку вокруг вложенной таблицы */
-    border-top: 1px solid var(--border-color); /* Отделяем визуально шапку подтаблицы */
+    max-height: none !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+    border: none;
+    border-top: 1px solid var(--border-color);
     border-radius: 0; 
     margin-top: 5px;
+}
+
+/* Липкая шапка для подтаблицы (автоматически встает миллиметр-в-миллиметр под главную) */
+#projectCableSubTable th {
+    position: sticky;
+    /* Читаем глобальную переменную из :root, которую обновляет ResizeObserver. 35px — резерв */
+    top: var(--main-header-height, 35px); 
+    z-index: 9; /* Меньше 10 (главная шапка), чтобы уходить под нее */
+    background-color: #e2e8f0 !important; /* Делаем шапку подтаблицы чуть темнее для контраста */
+    box-shadow: inset 0 1px 0 var(--border-color), inset 0 -2px 0 var(--border-color);
+    transition: top 0.05s ease-out; /* Чтобы при быстром ресайзе шапка не дергалась */
 }
 
 .project-table {
