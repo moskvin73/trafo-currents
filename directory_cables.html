@@ -137,7 +137,7 @@
             .then(data => {
                 // Если сервер вернул массив
                 if (data.success && Array.isArray(data.data)) {
-                    dbGroups = data;
+                    dbGroups = data.data;
                     renderAdminEditableView();
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
@@ -159,7 +159,7 @@
             .then(data => {
                 // Если сервер вернул массив
                 if (data.success && Array.isArray(data.data)) {
-                    dbSpecProp = data;
+                    dbSpecProp = data.data;
                 } else {
                     renderTableError(data.error || 'Неверный формат данных');
                 }
