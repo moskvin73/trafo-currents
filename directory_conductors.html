@@ -7,16 +7,18 @@
 
     <link rel="stylesheet" href="./css/main-page.css">
     <link rel="stylesheet" href="./css/editable-table.css">
+   
+    <!-- Загрузка библиотеки Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Загрузка файла конфигурации Supabase -->
+    <script src="supabase-config.js"></script>
 
+    <!-- Старая конфигурация к googl таблицам -->
     <script src="./js/config.js"></script>
 
      <!-- Подключение MathJax для рендеринга формул -->
     <script src="./js/math-script.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-       
+   
     <style>
 
         /* Кнопки действий (💾 и 🗑️) */
@@ -94,15 +96,11 @@
 
     <script>
 
-const SUPABASE_URL = 'https://kyjylgqzybayehjsdbik.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_goynOzJba2lzpINvxbUbWw_mwIJo5WR';
-
-// Инициализируем клиент (объект 'supabase' берется из CDN-скрипта jsDelivr)
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 
         const userRole = localStorage.getItem('user_role') || 'guest';
         let currentConductors = []; // Храним загруженные данные в памяти
+        // Получаем клиента
+        const supabaseClient = window.getSupabaseClient();
 
         document.addEventListener("DOMContentLoaded", () => {
             if (userRole === 'admin') {
@@ -116,29 +114,23 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         async function loadConductorsData() {
             const tableBody = document.getElementById('directoryTableBody');
          
-  try {
-    console.log('Отправка запроса в Supabase...');
-    
-    const { data, error } = await supabaseClient
-      .from('gost_22483_conductors')
-      .select('*')
-      .order('id', { ascending: true }); // Сортируем записи по ID
+            try {
+                console.log('Отправка запроса в Supabase...');
+                
+                const { data, error } = await supabaseClient
+                .from('gost_22483_conductors')
+                .select('*')
+                .order('id', { ascending: true }); // Сортируем записи по ID
 
-    if (error) {
-      throw error;
-    }
+                if (error) throw error;
 
-    // Выводим полученный JSON-массив в консоль браузера
-    console.log('Успех! Данные ГОСТ получены в формате JSON:', data);
-    
-    // Здесь вы можете запустить вашу функцию, которая строит таблицы/списки на сайте
-    // например: renderTable(data);
-    currentConductors = data;
-    renderTable();
+                console.log('Успех! Данные ГОСТ получены в формате JSON:');
+                currentConductors = data;
+                renderTable();
 
-  } catch (err) {
-    console.error('Произошла ошибка при получении данных:', err.message);
-  }
+            } catch (err) {
+                console.error('Произошла ошибка при получении данных:', err.message);
+            }
             /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
             .then(response => {
                 if (!response.ok) throw new Error("Ошибка связи со справочником");
