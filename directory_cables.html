@@ -201,7 +201,9 @@
                     ⚠️ ${message}
                 </div>
             `;
-        }        
+        }
+
+        const VOLTAGE_OPTIONS = [0.4, 6, 10, 35];
 
         function renderAdminEditableView() {
             const container = document.getElementById('tableRootContainer');
@@ -264,9 +266,11 @@
                     <td><input type="text" class="table-input align-left" id="type_${gr.id}" value="${gr.standard_name}"></td>
                     <td>
                         <select class="table-select" style="text-align: left !important;" id="type_${gr.id}">
-                            <option value="0" ${gr.voltage_kv === 6 ? 'selected' : ''}6 кВ</option>
-                            <option value="1" ${gr.voltage_kv === 10 ? 'selected' : ''}>10 кВ</option>
-                            <option value="2" ${gr.voltage_kv === 3 ? 'selected' : ''}>35 кВ</option>
+                            ${VOLTAGE_OPTIONS.map(kv => `
+                                    <option value="${kv}" ${gr.voltage_kv === kv ? 'selected' : ''}>
+                                        ${kv} кВ
+                                    </option>
+                                `).join('')}
                         </select>
                     </td>
                     <td><select type="text" class="table-input align-left" id="group_${gr.id}">${gr.insulation_type_ru}</select></td>
