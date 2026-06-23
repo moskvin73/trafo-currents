@@ -281,51 +281,58 @@
                 tableBody.appendChild(tr);
             });
 
-        new EditableTable('cableTableBody', {
-             // Cигнатуре: id, row, data, rollback, success
-             onSave: (id, row, data, rollback, success) => {
-                console.log(`Отправляем строку ${id} на сервер...`);   
-                setVisualStatus('cableTableBody', row, '🔄');
-                //setTimeout(() => {
-                    //console.log('Прошло 0.5 секунды');
-                    success();
+            const indicatorCell = tr.querySelector('.cell-indicator');
+
+            indicatorCell.onclick = (event) => {
+                // Вызываем функцию разворачивания, передавая саму строку tr в качестве clickedRow
+                toggleAdminDetailsRow(gr.id, index, gr, tr);
+                };
+
+            new EditableTable('cableTableBody', {
+                // Cигнатуре: id, row, data, rollback, success
+                onSave: (id, row, data, rollback, success) => {
+                    console.log(`Отправляем строку ${id} на сервер...`);   
+                    setVisualStatus('cableTableBody', row, '🔄');
+                    //setTimeout(() => {
+                        //console.log('Прошло 0.5 секунды');
+                        success();
+                        setVisualStatus('cableTableBody', row, '➔');
+                        //rollback();
+                    //}, 500);
+                    // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
+                    /*
+                    fetch(`/api/cables/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    */
+                },
+                onRowSelect: (id, row) => {
+                    console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
                     setVisualStatus('cableTableBody', row, '➔');
-                    //rollback();
-                //}, 500);
-                // Сюда вы вставляете свой существующий ajax/fetch запрос. Например:
-                /*
-                fetch(`/api/cables/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                },
+                onRowEdit: (id, row) => {
+                    console.log(`Редактирование строки ID: ${id}. `);
+                    setVisualStatus('cableTableBody', row, '✎');
+                },
+                onRowCancel: (id, row) => {
+                    console.log(`Отмена редактирования строкм ID: ${id}. `);
+                    setVisualStatus('cableTableBody', row, '➔');
+                },
+                onValidateRow: (id, row) => {
+                        /*const cableType = row.querySelector(`[id^="type_"]`).value.toUpperCase();
+                        const selectCond = row.querySelector(`[id^="cond_"]`);
+                        const selectedText = selectCond.options[selectCond.selectedIndex].text;
+                        
+                        // Если марка начинается на А (АПвПг...), а в жиле выбрали Медь (Cu)
+                        if (cableType.startsWith('А') && selectedText.includes('Cu')) {
+                            return `Ошибка логики: Марка кабеля алюминиевая, а жила выбрана медная (Cu)!`;
+                        }*/
+                        
+                        return null; // Строка успешно прошла проверку, можно сохранять
+                    }            
                 });
-                */
-             },
-            onRowSelect: (id, row) => {
-                console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
-                setVisualStatus('cableTableBody', row, '➔');
-            },
-            onRowEdit: (id, row) => {
-                console.log(`Редактирование строки ID: ${id}. `);
-                setVisualStatus('cableTableBody', row, '✎');
-            },
-             onRowCancel: (id, row) => {
-                console.log(`Отмена редактирования строкм ID: ${id}. `);
-                setVisualStatus('cableTableBody', row, '➔');
-            },
-            onValidateRow: (id, row) => {
-                    /*const cableType = row.querySelector(`[id^="type_"]`).value.toUpperCase();
-                    const selectCond = row.querySelector(`[id^="cond_"]`);
-                    const selectedText = selectCond.options[selectCond.selectedIndex].text;
-                    
-                    // Если марка начинается на А (АПвПг...), а в жиле выбрали Медь (Cu)
-                    if (cableType.startsWith('А') && selectedText.includes('Cu')) {
-                        return `Ошибка логики: Марка кабеля алюминиевая, а жила выбрана медная (Cu)!`;
-                    }*/
-                    
-                    return null; // Строка успешно прошла проверку, можно сохранять
-                }            
-            });
         }
 
         function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
