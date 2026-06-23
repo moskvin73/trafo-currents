@@ -101,35 +101,77 @@
         let currentConductors = []; // Храним загруженные данные в памяти
         // Получаем клиента
         const supabaseClient = window.getSupabaseClient();
+        // Вспомогательная функция для создания паузы между попытками (в миллисекундах)
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         document.addEventListener("DOMContentLoaded", () => {
             if (userRole === 'admin') {
                 document.getElementById('adminAddRowBtn').style.display = 'inline-flex';
                 document.getElementById('thAdminAction').style.display = 'table-cell';
             }
-            loadConductorsData();
+            initPage();
         });
+
+        async function initPage() {
+        try {
+            // 1. Сначала проверяем кэш браузера (как мы делали раньше)
+            const cachedData = localStorage.getItem('gost_table_cache');
+            if (cachedData) {
+                console.log('Данные мгновенно взяты из кэша браузера!');
+                renderTable(JSON.parse(cachedData));
+                return;
+            }
+
+            // 2. Если кэша нет, запускаем наше чтение с 3 попытками
+            const data = await fetchGostDataWithRetry();
+            
+            // 3. Сохраняем в кэш и отрисовываем
+            localStorage.setItem('gost_table_cache', JSON.stringify(data));
+            renderTable(data);
+
+        } catch (err) {
+            console.error('Критическая ошибка:', err.message);
+            alert('Произошла ошибка при загрузке справочника. Пожалуйста, обновите страницу позже.');
+        }
+        }        
 
         // Загрузка данных (имитация получения чистых реляционных строк)
         async function loadConductorsData() {
             const tableBody = document.getElementById('directoryTableBody');
          
-            try {
-                console.log('Отправка запроса в Supabase...');
-                
-                const { data, error } = await supabaseClient
-                .from('gost_22483_conductors')
-                .select('*')
-                .order('id', { ascending: true }); // Сортируем записи по ID
+            const maxAttempts = 3;     // Максимальное количество попыток
+            let currentAttempt = 1;    // Текущая попытка
 
-                if (error) throw error;
+            while (currentAttempt <= maxAttempts) {
+                try {
+                    console.log(`Попытка чтения данных #${currentAttempt}...`);
+                    
+                    const { data, error } = await supabaseClient
+                        .from('gost_22483_conductors')
+                        .select('*')
+                        .order('id', { ascending: true });
 
-                console.log('Успех! Данные ГОСТ получены в формате JSON:');
-                currentConductors = data;
-                renderTable();
+                    // Если база вернула ошибку, бросаем её в блок catch
+                    if (error) throw error;
 
-            } catch (err) {
-                console.error('Произошла ошибка при получении данных:', err.message);
+                    // Если данные успешно получены, выходим из цикла и возвращаем их
+                    console.log(`Успех на попытке #${currentAttempt}! Данные ГОСТ получены.`);
+                    return data; 
+
+                    } catch (err) {
+                    console.warn(`Попытка #${currentAttempt} завершилась неудачей:`, err.message);
+                    
+                    // Если это была последняя попытка, то прекращаем и пробрасываем ошибку дальше
+                    if (currentAttempt === maxAttempts) {
+                        throw new Error(`Не удалось загрузить данные после ${maxAttempts} попыток. Сервер недоступен.`);
+                    }
+                    
+                    // Перед следующей попыткой делаем паузу 2 секунды (2000 мс), чтобы дать базе время проснуться
+                    console.log('Ожидание перед следующей попыткой...');
+                    await delay(2000); 
+                    
+                    currentAttempt++; // Переходим к следующей попытке
+                }
             }
             /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
             .then(response => {
