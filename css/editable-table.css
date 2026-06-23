@@ -9,6 +9,17 @@
     /* Никаких scroll-padding и переменных тут больше нет */
 }
 
+/* Специальный контейнер для вложенной таблицы */
+.table-container-nested {
+    max-height: none !important; /* Убираем ограничение по высоте */
+    overflow-y: visible !important; /* Отключаем внутреннюю вертикальную прокрутку */
+    overflow-x: visible !important; /* Отключаем горизонтальную прокрутку */
+    border: none; /* Убираем лишнюю двойную рамку вокруг вложенной таблицы */
+    border-top: 1px solid var(--border-color); /* Отделяем визуально шапку подтаблицы */
+    border-radius: 0; 
+    margin-top: 5px;
+}
+
 .project-table {
     border-collapse: separate; 
     border-spacing: 0; 
