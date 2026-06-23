@@ -335,8 +335,8 @@
         function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
             const nextRow = document.getElementById(`admin_details_${groupId}`);
             if (nextRow) {
-                    nextRow.remove();
-                    return;
+                nextRow.remove();
+                return;
             }
             
             document.querySelectorAll('.details-row').forEach(el => el.remove());
@@ -355,7 +355,11 @@
                  </div>   
             </td>
             `;
-            
+            // Вставляем 
+            document.getElementById('cableTableBody').children[index].after(trDetails);
+
+            trDetails.remove();
+
             trDetails.innerHTML = `
             <td colspan="${columnsCount}">
                 <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
