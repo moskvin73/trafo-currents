@@ -265,11 +265,12 @@
                     <td><input type="text" inputmode="decimal" min="6" max="10" class="table-input" id="cores_${gr.id}" value="${gr.voltage_kv}"></td>
                     <td><select type="text" class="table-input align-left" id="group_${gr.id}">${gr.insulation_type_ru}</select></td>
 
-                    <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="cores_${gr.id}" value="${gr.cores_count}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" step="0.0001" class="table-input" id="x_${gr.id}" value="${gr.x_line}"></td>
-                    <td><input type="text" inputmode="decimal" class="table-input" id="air_${gr.id}" value="${gr.current_capacity_air || 0}"></td>
-                    <td><input type="text" inputmode="decimal" class="table-input" id="ground_${gr.id}" value="${gr.current_capacity_ground || 0}"></td>
-                    <td><input type="text" inputmode="decimal" step="0.01" class="table-input" id="sc_${gr.id}" value="${gr.short_circuit_current_1s || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="cores_${gr.id}" value="${gr.max_operating_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="x_${gr.id}" value="${gr.max_overload_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="air_${gr.id}" value="${gr.max_short_circuit_temp || 0}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_${gr.id}" value="${gr.ambient_temp_air || 25}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="sc_${gr.id}" value="${gr.ambient_temp_ground || 15}"></td>
+                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="sc_${gr.id}" value="${gr.ground_thermal_resistivity || 120}"></td>
                 `;
                 tableBody.appendChild(tr);
             });
