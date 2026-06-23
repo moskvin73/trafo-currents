@@ -263,14 +263,6 @@
                 // Создаем основную строку
                 const tr = document.createElement('tr');
                 tr.setAttribute('data-id', gr.id);
-                
-                // Генерируем выпадающие списки для админа на основе загруженных справочников
-                /*let groupOptions = dbGroups.map(g => `<option value="${g.id}" ${g.voltage_kv === cable.voltage_kv ? 'selected' : ''}>${g.standard_name} (${g.voltage_kv}кВ, ${g.insulation_type_ru})</option>`).join('');
-                let condOptions = dbConductors.map(c => {
-                    let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
-                    return `<option value="${c.id}" ${c.cross_section === cable.cross_section && c.resistance === cable.r_20 ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
-                }).join('');*/
-
                 tr.innerHTML = `
                     <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
                         <span class="row-indicator"></span>
