@@ -421,7 +421,7 @@
                 MathJax.typesetPromise([wrapper]).catch((err) => console.error("MathJax error:", err));
             }
             
-            const tableBody = twrapper.querySelector('#cableSubTableBody');
+            const tableBody = wrapper.querySelector('#cableSubTableBody');
 
             specs.forEach((spec, index) => {
                 // Создаем основную строку
