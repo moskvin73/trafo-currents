@@ -246,7 +246,7 @@
                 dbGroups.forEach((gr, index) => {
                 // Создаем основную строку
                 const tr = document.createElement('tr');
-                tr.setAttribute('data-id', cable.id);
+                tr.setAttribute('data-id', gr.id);
                 
                 // Генерируем выпадающие списки для админа на основе загруженных справочников
                 /*let groupOptions = dbGroups.map(g => `<option value="${g.id}" ${g.voltage_kv === cable.voltage_kv ? 'selected' : ''}>${g.standard_name} (${g.voltage_kv}кВ, ${g.insulation_type_ru})</option>`).join('');
@@ -270,7 +270,7 @@
                                 `).join('')}
                         </select>
                     </td>
-                    <td><select type="text" class="table-input align-left" id="insulation_type_ru_${gr.id}">${gr.insulation_type_ru}</select></td>
+                    <td><input type="text" class="table-input align-left" id="insulation_type_ru_${gr.id}">${gr.insulation_type_ru}</select></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_operating_temp_${gr.id}" value="${gr.max_operating_temp || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_overload_temp_${gr.id}" value="${gr.max_overload_temp || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_short_circuit_temp_${gr.id}" value="${gr.max_short_circuit_temp || 0}"></td>
