@@ -405,7 +405,6 @@
                                 <th style="width: 40px;">№</th>
                                 <th>Обозначение кабеля</th>
                                 <th>Наличия брони</th>
-                                <th>Тип изоляции</th>
                                 <th>Число основных жил ТПЖ</th>
                                 <th>Сечение</th>
                                 <th>Sn</th>
@@ -447,14 +446,8 @@
                             <option value="false" ${!spec.is_armored ? 'selected' : ''}>Нет</option>
                         </select>
                     </td>
-                    
-                    <td><input type="text" class="table-input align-left" id="insulation_type_ru_${spec.id}" value="${spec.insulation_type_ru}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_operating_temp_${spec.id}" value="${spec.max_operating_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_overload_temp_${spec.id}" value="${spec.max_overload_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="max_short_circuit_temp_${spec.id}" value="${spec.max_short_circuit_temp || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_air_${spec.id}" value="${spec.ambient_temp_air || 25}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_ground_${spec.id}" value="${spec.ambient_temp_ground || 15}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_thermal_resistivity_${spec.id}" value="${spec.ground_thermal_resistivity || 120}"></td>
+                    <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="max_operating_temp_${spec.id}" value="${spec.cores_count || 1}"></td>
+
                 `;
                 tableBody.appendChild(tr);
             });
