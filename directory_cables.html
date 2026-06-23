@@ -334,7 +334,7 @@
                 });
         }
 
-        function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
+        async function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
             const nextRow = document.getElementById(`admin_details_${groupId}`);
             if (nextRow) {
                 nextRow.remove();
@@ -348,61 +348,73 @@
             trDetails.id = `admin_details_${groupId}`;
             trDetails.className = "details-row-"; 
 
+            // Создаем базовый каркас строки ОДИН раз
             trDetails.innerHTML = `
-            <td colspan="${columnsCount}">
-                <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
-                    <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
-                        📋 Подчиненный справочник: Сечения и жилы для группы ID ${groupId}. Загрузка...
-                    </span>
-                 </div>   
-            </td>
+                <td colspan="${columnsCount}">
+                    <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
+                        <!-- Сюда будем динамически вставлять контент -->
+                    </div>   
+                </td>
             `;
-            // Вставляем 
+
+            // Находим обертку, контент которой будем менять
+            const wrapper = trDetails.querySelector('.details-wrapper');
+            
+            // 1. Сразу вставляем лоадер в обертку
+            wrapper.innerHTML = `
+                <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
+                    ⏳ Подчиненный справочник: Сечения и жилы для группы ID ${groupId}. Загрузка...
+                </span>
+            `;
+            
+            // Добавляем строку в основную таблицу
             document.getElementById('cableTableBody').children[index].after(trDetails);
-            const dataload = loadCableSpecProp(groupId);
-            if (dataload.length === 0) {
-                return;
-            }
-            trDetails.remove();
 
-            trDetails.innerHTML = `
-            <td colspan="${columnsCount}">
-                <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
-                    <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
-                        📋 Подчиненный справочник: Сечения и жилы для группы ID ${groupId}
+            // 2. Ждем данные от сервера
+            const specs = await loadCableSpecProp(groupId);
+            
+            // 3. Если массив пустой — меняем текст в этой же обертке
+            if (!specs || specs.length === 0) {
+                wrapper.innerHTML = `
+                    <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #dc2626;">
+                        ❌ Данные для группы ID ${groupId} не найдены или произошла ошибка.
                     </span>
+                `;
+                return; 
+            }
 
-                    <div class="table-container-fixed">
-                        <table id="projectCableTable" class="project-table" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="width: 24px; padding: 0;"></th> 
-                                    <th style="width: 40px;">№</th>
-                                    <th>Обозначение кабеля</th>
-                                    <th>Наличия брони</th>
-                                    <th>тип изоляции</th>
-                                    <th>Число основных жил ТПЖ</th>
-                                    <th>Сечение</th>
-                                    <th>Sn</th>
-                                    <th>Вес</th>
-                                    <th>Деаметр</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cableSubTableBody"></tbody>
-                        </table>
-                    </div>
+            // 4. Если успех — заменяем содержимое обертки на таблицу
+            wrapper.innerHTML = `
+                <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
+                    📋 Подчиненный справочник: Сечения и жилы для группы ID ${groupId}
+                </span>
+
+                <div class="table-container-fixed">
+                    <table id="projectCableTable" class="project-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 24px; padding: 0;"></th> 
+                                <th style="width: 40px;">№</th>
+                                <th>Обозначение кабеля</th>
+                                <th>Наличия брони</th>
+                                <th>Тип изоляции</th>
+                                <th>Число основных жил ТПЖ</th>
+                                <th>Сечение</th>
+                                <th>Sn</th>
+                                <th>Вес</th>
+                                <th>Диаметр</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cableSubTableBody"></tbody>
+                    </table>
                 </div>
-            </td>
             `;
 
             if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-                MathJax.typesetPromise([trDetails]).catch((err) => console.error("MathJax error:", err));
+                MathJax.typesetPromise([twrapper]).catch((err) => console.error("MathJax error:", err));
             }
             
             const tableBody = trDetails.querySelector('#cableSubTableBody');
-                
-            // Вставляем строку детализации строго под текущей строкой в tbody
-            document.getElementById('cableTableBody').children[index].after(trDetails);
 
         }
 
