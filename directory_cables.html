@@ -478,11 +478,11 @@
                         class="table-input" id="current_capacity_air_${spec.id}" value="${spec.current_capacity_air || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0"
                         class="table-input" id="current_capacity_ground_${spec.id}" value="${spec.current_capacity_ground || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0"
+                    <td><input type="text" inputmode="decimal" min="0" step="0.01"
                         class="table-input" id="short_circuit_current_1s_${spec.id}" value="${spec.short_circuit_current_1s || 0}"></td>
                     <td><input type="text" inputmode="decimal" min="0" 
                         class="table-input" id="theoretical_weight_kg_km_${spec.id}" value="${spec.theoretical_weight_kg_km || 0}"></td>
-                    <td><input type="text" inputmode="decimal" min="0" 
+                    <td><input type="text" inputmode="decimal" min="0"  step="0.1"
                         class="table-input" id="outer_diameter_mm_${spec.id}" value="${spec.outer_diameter_mm || 0}"></td>
                 `;
 
