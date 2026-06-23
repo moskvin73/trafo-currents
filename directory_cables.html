@@ -268,7 +268,7 @@
                         <select class="table-select" style="text-align: left !important;" id="type_${gr.id}">
                             ${VOLTAGE_OPTIONS.map(kv => `
                                     <option value="${kv}" ${gr.voltage_kv === kv ? 'selected' : ''}>
-                                        ${kv} кВ
+                                        ${kv.toLocaleString()} кВ
                                     </option>
                                 `).join('')}
                         </select>
