@@ -329,6 +329,36 @@
             });
         }
 
+        function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
+            const nextRow = document.getElementById(`admin_details_${groupId}`);
+            if (nextRow) {
+                    nextRow.remove();
+                    return;
+                }
+                
+                document.querySelectorAll('.details-row').forEach(el => el.remove());
+
+                const columnsCount = clickedRow.cells.length;
+                const trDetails = document.createElement('tr');
+                trDetails.id = `admin_details_${groupId}`;
+                trDetails.className = "details-row-"; 
+                
+                // Генерируем строки подчиненной таблицы
+                    const subRowsHtml = conductors.map((cond, subIndex) => {
+                        let mat = cond.conductor_type === 0 ? "Cu голая" : (cond.conductor_type === 1 ? "Cu луж" : "Al");
+                        return `
+                            <tr data-sub-id="${cond.id}">
+                                <td style="width: 50px; font-size: 11px; color: #64748b;">${subIndex + 1}</td>
+                                <td><input type="text" class="table-input" id="sub_section_${cond.id}" value="${cond.cross_section || ''}"></td>
+                                <td><input type="text" class="table-input align-left" id="sub_mat_${cond.id}" value="${mat}"></td>
+                                <td><input type="text" inputmode="decimal" class="table-input" id="sub_r20_${cond.id}" value="${cond.r_20 || 0}"></td>
+                                <td><input type="text" inputmode="decimal" class="table-input" id="sub_diam_${cond.id}" value="${cond.outer_diameter || ''}"></td>
+                            </tr>
+                        `;
+                    }).join('');
+
+        }
+
         function renderGuestView() {
             const container = document.getElementById('tableRootContainer');
             // Создаем структуру ОДНОЙ таблицы
