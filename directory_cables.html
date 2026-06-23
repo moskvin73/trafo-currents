@@ -408,12 +408,16 @@
                                 <th style="width: 24px; padding: 0;"></th> 
                                 <th style="width: 40px;">№</th>
                                 <th>Обозначение кабеля</th>
-                                <th>Наличия брони</th>
-                                <th>Число основных жил ТПЖ</th>
+                                <th>Наличие брони</th>
+                                <th>Число жил ТПЖ</th>
                                 <th>Сечение</th>
-                                <th>Sn</th>
-                                <th>Вес</th>
-                                <th>Диаметр</th>
+                                <th>Сечение N жилы</th>
+                                <th>$Х_{\\text {уд}}$<br>Ом/км</th>
+                                <th>$I_{\\text {дд.б.возд}}$<br>А</th>
+                                <th>$I_{\\text {дд.б.земл}}$<br>А</th>
+                                <th>$I_{\\text {кз.1с}}$<br>кА</th>
+                                <th>Вес<br>кг/км</th>
+                                <th>Диаметр<br>мм</th>
                             </tr>
                         </thead>
                         <tbody id="cableSubTableBody"></tbody>
@@ -440,12 +444,6 @@
                 // Создаем основную строку
                 const tr = document.createElement('tr');
                 tr.setAttribute('data-id', spec.id);
-                
-                // Генерируем выпадающие списки для админа на основе загруженных справочников
-                /*let condOptions = dbConductors.map(c => {
-                    let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
-                    return `<option value="${c.id}" ${c.id === spec.conductor_id ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
-                }).join('');*/
 
                 tr.innerHTML = `
                     <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
