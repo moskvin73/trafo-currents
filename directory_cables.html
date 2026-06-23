@@ -440,16 +440,25 @@
             
             const tableBody = wrapper.querySelector('#cableSubTableBody');
 
+            let baseCondOptionsHtml = "";
+            if (typeof dbConductors !== 'undefined' && Array.isArray(dbConductors)) {
+                baseCondOptionsHtml = dbConductors.map(c => {
+                    let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
+                    // Никаких меток, просто чистый список опций
+                    return `<option value="${c.id}">${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
+                }).join('');
+            }            
+
             specs.forEach((spec, index) => {
                 // Создаем основную строку
                 const tr = document.createElement('tr');
                 tr.setAttribute('data-id', spec.id);
                 
                 // Генерируем выпадающие списки для админа на основе загруженных справочников
-                let condOptions = dbConductors.map(c => {
+                /*let condOptions = dbConductors.map(c => {
                     let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
                     return `<option value="${c.id}" ${c.id === spec.conductor_id ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
-                }).join('');
+                }).join('');*/
 
                 tr.innerHTML = `
                     <td class="cell-indicator" style="text-align: center; padding: 0; font-weight: bold;">
@@ -466,7 +475,7 @@
                     <td><input type="text" inputmode="decimal" min="1" max="3" class="table-input" id="cores_count_${spec.id}" value="${spec.cores_count || 1}"></td>
                     <td>
                         <select class="table-select" style="text-align: left !important;" id="conductor_id_${spec.id}">
-                            ${condOptions}
+                            ${baseCondOptionsHtml}
                         </select>
                     </td>
                     <td>
@@ -483,6 +492,12 @@
                     <td><input type="text" inputmode="decimal" min="0" 
                         class="table-input" id="outer_diameter_mm_${spec.id}" value="${spec.outer_diameter_mm || 0}"></td>
                 `;
+
+                // МАГИЯ СНИЖЕНИЯ НАГРУЗКИ: браузер ставит выбранный элемент мгновенно
+                const selectEl = tr.querySelector(`#conductor_id_${spec.id}`);
+                if (selectEl) {
+                    selectEl.value = spec.conductor_id; 
+                }                
                 tableBody.appendChild(tr);
             });
             new EditableTable('cableSubTableBody', {
