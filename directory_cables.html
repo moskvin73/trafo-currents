@@ -360,7 +360,7 @@
             // Вставляем 
             document.getElementById('cableTableBody').children[index].after(trDetails);
             const dataload = loadCableSpecProp(groupId);
-            if (specs.length === 0) {
+            if (dataload.length === 0) {
                 return;
             }
             trDetails.remove();
