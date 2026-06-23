@@ -88,10 +88,9 @@
         </div>
 
         <div id="tableRootContainer">
-            <div class="spinner-loader"></div>
-            <!-- Сюда JS монтирует таблицу с классом .table-container-fixed -->
-            <div style="text-align: center; color: var(--text-muted); padding: 20px;">
-                Синхронизация реляционных таблиц и проверка прав...
+            <div style="display: flex; align-items: center; gap: 10px; padding-left: 15px; font-size: 12px; font-weight: bold; color: #475569;">
+                <div class="spinner-loader"></div>
+                <div>Синхронизация реляционных таблиц и проверка прав...</div>
             </div>
         </div>
     </div>
@@ -361,7 +360,7 @@
             // Создаем базовый каркас строки ОДИН раз
             trDetails.innerHTML = `
                 <td colspan="${columnsCount}">
-                    <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
+                    <div class="details-wrapper" style="text-align: left; padding-top: 5px;">
                         <!-- Сюда будем динамически вставлять контент -->
                     </div>   
                 </td>
