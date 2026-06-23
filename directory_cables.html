@@ -315,14 +315,14 @@
             },
 
             onValidateRow: (id, row) => {
-                    const cableType = row.querySelector(`[id^="type_"]`).value.toUpperCase();
+                    /*const cableType = row.querySelector(`[id^="type_"]`).value.toUpperCase();
                     const selectCond = row.querySelector(`[id^="cond_"]`);
                     const selectedText = selectCond.options[selectCond.selectedIndex].text;
                     
                     // Если марка начинается на А (АПвПг...), а в жиле выбрали Медь (Cu)
                     if (cableType.startsWith('А') && selectedText.includes('Cu')) {
                         return `Ошибка логики: Марка кабеля алюминиевая, а жила выбрана медная (Cu)!`;
-                    }
+                    }*/
                     
                     return null; // Строка успешно прошла проверку, можно сохранять
                 }            
