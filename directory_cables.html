@@ -380,8 +380,11 @@
                 MathJax.typesetPromise([trDetails]).catch((err) => console.error("MathJax error:", err));
             }
             
-            const tableBody = container.querySelector('#cableSubTableBody');
+            const tableBody = trDetails.querySelector('#cableSubTableBody');
                 
+            // Вставляем строку детализации строго под текущей строкой в tbody
+            document.getElementById('cableTableBody').children[index].after(trDetails);
+
         }
 
         function renderGuestView() {
