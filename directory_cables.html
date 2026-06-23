@@ -265,9 +265,9 @@
                     <td><input type="text" inputmode="decimal" min="6" max="10" class="table-input" id="cores_${gr.id}" value="${gr.voltage_kv}"></td>
                     <td>
                         <select class="table-select" style="text-align: left !important;" id="type_${gr.id}">
-                            <option value="6">6</option>
-                            <option value="10">10</option>
-                            <option value="35">35</option>
+                            <option value="0" ${gr.voltage_kv === 6 ? 'selected' : ''}6 кВ</option>
+                            <option value="1" ${gr.voltage_kv === 10 ? 'selected' : ''}>10 кВ</option>
+                            <option value="2" ${gr.voltage_kv === 3 ? 'selected' : ''}>35 кВ</option>
                         </select>
                     </td>
                     <td><select type="text" class="table-input align-left" id="group_${gr.id}">${gr.insulation_type_ru}</select></td>
