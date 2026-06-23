@@ -337,7 +337,7 @@
             if (nextRow) {
                     nextRow.remove();
                     return;
-                }
+            }
             
             document.querySelectorAll('.details-row').forEach(el => el.remove());
 
@@ -345,6 +345,16 @@
             const trDetails = document.createElement('tr');
             trDetails.id = `admin_details_${groupId}`;
             trDetails.className = "details-row-"; 
+
+            trDetails.innerHTML = `
+            <td colspan="${columnsCount}">
+                <div class="details-wrapper" onclick="event.stopPropagation()" style="text-align: left; padding-top: 5px;">
+                    <span style="font-size: 12px; font-weight: bold; padding-left: 15px; color: #475569;">
+                        📋 Подчиненный справочник: Сечения и жилы для группы ID ${groupId}. Загрузка...
+                    </span>
+                 </div>   
+            </td>
+            `;
             
             trDetails.innerHTML = `
             <td colspan="${columnsCount}">
