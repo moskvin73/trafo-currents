@@ -243,7 +243,7 @@
             const tableBody = container.querySelector('#cableTableBody');
             tableBody.innerHTML = "";
 
-                dbGroups.forEach((gr, index) => {
+            dbGroups.forEach((gr, index) => {
                 // Создаем основную строку
                 const tr = document.createElement('tr');
                 tr.setAttribute('data-id', gr.id);
@@ -278,16 +278,13 @@
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ambient_temp_ground_${gr.id}" value="${gr.ambient_temp_ground || 15}"></td>
                     <td><input type="text" inputmode="decimal" min="0" class="table-input" id="ground_thermal_resistivity_${gr.id}" value="${gr.ground_thermal_resistivity || 120}"></td>
                 `;
+                const indicatorCell = tr.querySelector('.cell-indicator');
+                indicatorCell.onclick = (event) => {
+                    // Вызываем функцию разворачивания, передавая саму строку tr в качестве clickedRow
+                    toggleAdminDetailsRow(gr.id, index, gr, tr);
+                };
                 tableBody.appendChild(tr);
             });
-
-            const indicatorCell = tr.querySelector('.cell-indicator');
-
-            indicatorCell.onclick = (event) => {
-                // Вызываем функцию разворачивания, передавая саму строку tr в качестве clickedRow
-                toggleAdminDetailsRow(gr.id, index, gr, tr);
-            };
-
             new EditableTable('cableTableBody', {
                 // Cигнатуре: id, row, data, rollback, success
                 onSave: (id, row, data, rollback, success) => {
