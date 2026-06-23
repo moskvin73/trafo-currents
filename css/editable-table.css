@@ -82,38 +82,6 @@
     --main-header-height: 35px;
 }
 
-/* Стилизация выпадающего списка (селекта) */
-.table-select {
-    width: 100%;
-    height: 100%; /* Жестко держит высоту строки, не давая ей скакать */
-    box-sizing: border-box;
-    font-size: 13px;
-    border: 1px solid transparent;
-    background-color: transparent;
-    cursor: pointer;
-    vertical-align: middle;
-    
-    /* Отступы: зажимаем сверху/снизу, но даем ОГРОМНЫЙ отступ справа (24px) под иконку */
-    padding: 2px 24px 2px 6px !important; 
-    
-    /* Принудительно прячем системные стрелочки всех браузеров */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    
-    /* Вставляем кастомную легкую SVG-иконку стрелочки */
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-    background-repeat: no-repeat;
-    background-position: right 6px center; /* Четко фиксируем её справа по центру ячейки */
-
-    /* Борьба с мешаниной: обрезаем длинный текст красивым троеточием до того, как он дойдет до стрелочки */
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-/* Полная блокировка прыжков высоты при фокусе и клике */
-.table-select:focus,
 .table-select:active {
     outline: none !important; /* Убираем черную/синюю рамку браузера, расширяющую строку */
     border: 1px solid #3b82f6; /* Аккуратная тонкая рамка, которая не деформирует ячейку */
