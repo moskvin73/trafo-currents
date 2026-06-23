@@ -339,20 +339,22 @@
                     }            
                 });
 
-                document.addEventListener('DOMContentLoaded', () => {
-                    const mainHeaderTh = tableBody.parentElement?.querySelector('thead th');
-                    if (mainHeaderTh) {
-                        const globalObserver = new ResizeObserver(entries => {
-                            if (entries[0]) {
-                                const currentHeight = entries[0].target.offsetHeight;
-                                // Записываем точную высоту в глобальные стили всего документа (:root)
-                                document.documentElement.style.setProperty('--main-header-height', `${currentHeight}px`);
-                            }
-                        });
-                        // Начинаем следить за главной шапкой
-                        globalObserver.observe(mainHeaderTh);
-                    }                    
-                });
+                const mainHeaderTh = tableBody.parentElement?.querySelector('thead th');
+
+                if (mainHeaderTh) {
+                    const globalObserver = new ResizeObserver(entries => {
+                        if (entries && entries[0]) {
+                            const currentHeight = entries[0].target.offsetHeight;
+                            // Записываем высоту в :root
+                            document.documentElement.style.setProperty('--main-header-height', `${currentHeight}px`);
+                        }
+                    });
+                    
+                    // Включаем слежку
+                    globalObserver.observe(mainHeaderTh);
+                } else {
+                    console.warn("Предупреждение: Шапка главной таблицы не найдена для ResizeObserver!");
+                }
         }
 
         async function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
