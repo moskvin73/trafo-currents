@@ -338,6 +338,21 @@
                         return null; // Строка успешно прошла проверку, можно сохранять
                     }            
                 });
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const mainHeaderTh = tableBody.parentElement?.querySelector('thead th');
+                    if (mainHeaderTh) {
+                        const globalObserver = new ResizeObserver(entries => {
+                            if (entries[0]) {
+                                const currentHeight = entries[0].target.offsetHeight;
+                                // Записываем точную высоту в глобальные стили всего документа (:root)
+                                document.documentElement.style.setProperty('--main-header-height', `${currentHeight}px`);
+                            }
+                        });
+                        // Начинаем следить за главной шапкой
+                        globalObserver.observe(mainHeaderTh);
+                    }                    
+                });
         }
 
         async function toggleAdminDetailsRow(groupId, index, data, clickedRow) {
@@ -398,7 +413,7 @@
                 </span>
 
                 <div class="table-container-nested">
-                    <table id="projectCableTable" class="project-table" style="width: 100%;">
+                    <table id="projectCableSubTable" class="project-table" style="width: 100%;">
                         <thead> 
                             <tr>
                                 <th style="width: 24px; padding: 0;"></th> 
