@@ -431,7 +431,7 @@
                 // Генерируем выпадающие списки для админа на основе загруженных справочников
                 let condOptions = dbConductors.map(c => {
                     let mat = c.conductor_type === 0 ? "Cu голая" : (c.conductor_type === 1 ? "Cu луж" : "Al");
-                    return `<option value="${c.id}" ${c.cross_section === cable.cross_section && c.resistance === cable.r_20 ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
+                    return `<option value="${c.id}" ${c.cross_section === specs.conductor_id ? 'selected' : ''}>${mat} | ${c.cross_section}мм² | Кл.${c.class}</option>`;
                 }).join('');
 
                 tr.innerHTML = `
