@@ -83,7 +83,7 @@
             <tbody id="directoryTableBody">
                 <tr>
                     <td colspan="6" style="text-align: center; color: var(--text-muted);">
-                        <div style="display: flex; align-items: center; gap: 10px; padding-left: 15px; font-size: 12px; font-weight: bold; color: #475569;">
+                        <div style="display: flex; align-items: center; gap: 10px; padding-left: 15px; font-size: 14px; font-weight: bold; color: #475569;">
                             <div class="spinner-loader"></div>
                             <div>Загрузка данных из облака Google...</div>
                         </div>
@@ -117,7 +117,7 @@
             const cachedData = localStorage.getItem('gost_table_cache');
             if (cachedData) {
                 console.log('Данные мгновенно взяты из кэша браузера!');
-                urrentConductors = JSON.parse(cachedData);
+                currentConductors = JSON.parse(cachedData);
                 renderTable();
                 return;
             }
@@ -127,7 +127,7 @@
             
             // 3. Сохраняем в кэш и отрисовываем
             localStorage.setItem('gost_table_cache', JSON.stringify(data));
-            urrentConductors = data;
+            currentConductors = data;
             renderTable();
 
         } catch (err) {
