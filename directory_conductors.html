@@ -96,7 +96,8 @@
 
     <script>
 
-        const userRole = localStorage.getItem('user_role') || 'guest';
+        //const userRole = localStorage.getItem('user_role') || 'guest';
+        const userRole = await window.getCurrentUserRole();
         let currentConductors = []; // Храним загруженные данные в памяти
         // Получаем клиента
         const supabaseClient = window.getSupabaseClient();
