@@ -148,194 +148,127 @@
             document.getElementById('fabContainer').classList.toggle('open');
         }
 
-function initAuthTracker() {
-    supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        const topStatus = document.getElementById('topStatus');
-        const guestBlock = document.getElementById('guestBlock');
-        const engineerBlock = document.getElementById('engineerBlock');
-        
-        const authFormFields = document.getElementById('authFormFields');
-        const saveProjectBtn = document.getElementById('saveProjectBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
 
-        const isLocalGuest = localStorage.getItem('user_is_guest') === 'true';
+        function prepareEmail(input) {
+            const cleanInput = input.trim().toLowerCase();
+            // Если пользователь ввел полноценный email (есть собачка) — возвращаем его как есть
+            if (cleanInput.includes('@')) {
+                return cleanInput;
+            }
+            // Если введена просто фамилия/логин — делаем безопасный внутренний email
+            return `${cleanInput}.calc@gmail.com`;
+        }
 
-        if (session && session.user) {
+        async function handleLogin() {
+            const loginInput = document.getElementById('loginInput').value.trim();
+            const passInput = document.getElementById('passInput').value.trim();
+            
+            if (!loginInput || !passInput) return alert('Заполните поля!');
+
+            updateNetStatus("📡 Авторизация...");
+            
+            const finalEmail = prepareEmail(loginInput);
+
             try {
-                localStorage.removeItem('user_is_guest');
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: finalEmail,
+                    password: passInput
+                });
 
-                const { data: profile, error } = await supabaseClient
+                if (error) throw error;
+
+                const { data: profile, error: profileError } = await supabaseClient
                     .from('user_profiles')
-                    .select('role, username, is_active')
-                    .eq('id', session.user.id)
+                    .select('role, is_active')
+                    .eq('id', data.user.id)
                     .single();
 
-                if (error || !profile || !profile.is_active) {
-                    if (profile && !profile.is_active) alert('Ваш аккаунт деактивирован администратором.');
+                if (profileError) throw profileError;
+
+                if (!profile.is_active) {
+                    updateNetStatus("❌ Ошибка авторизации");
+                    alert("Ошибка входа: Ваш аккаунт деактивирован администратором.");
                     await supabaseClient.auth.signOut();
                     return;
                 }
 
-                // Интерфейс авторизованного инженера
-                topStatus.innerText = `💻 Инженер: ${profile.username}`;
-                updateNetStatus(`💻 Инженер: ${profile.username} (${profile.role})`);
-                
-                guestBlock.style.display = 'none';
-                engineerBlock.style.display = 'block';
-                
-                authFormFields.style.display = 'none';
-                saveProjectBtn.style.display = 'flex';
-                logoutBtn.style.display = 'flex';
-                
-                // Загружаем проекты из базы данных
-                loadUserProjects();
+                // СТЫКОВКА С ВАШИМ СТАРЫМ КОДОМ
+                localStorage.setItem('user_login', loginInput);
+                localStorage.setItem('user_role', profile.role);
 
-            } catch (err) {
-                console.error('Ошибка сессии:', err.message);
+                document.getElementById('loginInput').value = '';
+                document.getElementById('passInput').value = '';
+
+                updateNetStatus("📡 Доступ разрешен");
+                
+                checkCurrentAuth(); 
+                toggleFabMenu(); 
+
+            } catch (error) {
+                console.error("Ошибка входа:", error);
+                updateNetStatus("❌ Ошибка авторизации");
+                alert("Ошибка входа: Неверный логин/Email или пароль.");
             }
-        } else if (isLocalGuest) {
-            // Гостевой режим
-            topStatus.innerText = `👤 Режим: Гость`;
-            updateNetStatus("📡 Сеть: Гость (Без сохранения)");
-            guestBlock.style.display = 'block';
-            engineerBlock.style.display = 'none';
-            authFormFields.style.display = 'block';
-            saveProjectBtn.style.display = 'none';
-            logoutBtn.style.display = 'none';
-        } else {
-            // Не авторизован
-            topStatus.innerText = `👤 Статус: Не авторизован`;
-            updateNetStatus("📡 Сеть: Ожидание авторизации");
-            guestBlock.style.display = 'block';
-            engineerBlock.style.display = 'none';
-            authFormFields.style.display = 'block';
-            saveProjectBtn.style.display = 'none';
-            logoutBtn.style.display = 'none';
-        }
-    });
-}        
-
-function prepareEmail(input) {
-    const cleanInput = input.trim().toLowerCase();
-    // Если пользователь ввел полноценный email (есть собачка) — возвращаем его как есть
-    if (cleanInput.includes('@')) {
-        return cleanInput;
-    }
-    // Если введена просто фамилия/логин — делаем безопасный внутренний email
-    return `${cleanInput}.calc@gmail.com`;
-}
-
-async function handleLogin() {
-    const loginInput = document.getElementById('loginInput').value.trim();
-    const passInput = document.getElementById('passInput').value.trim();
-    
-    if (!loginInput || !passInput) return alert('Заполните поля!');
-
-    updateNetStatus("📡 Авторизация...");
-    
-    const finalEmail = prepareEmail(loginInput);
-
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: finalEmail,
-            password: passInput
-        });
-
-        if (error) throw error;
-
-        const { data: profile, error: profileError } = await supabaseClient
-            .from('user_profiles')
-            .select('role, is_active')
-            .eq('id', data.user.id)
-            .single();
-
-        if (profileError) throw profileError;
-
-        if (!profile.is_active) {
-            updateNetStatus("❌ Ошибка авторизации");
-            alert("Ошибка входа: Ваш аккаунт деактивирован администратором.");
-            await supabaseClient.auth.signOut();
-            return;
         }
 
-        // СТЫКОВКА С ВАШИМ СТАРЫМ КОДОМ
-        localStorage.setItem('user_login', loginInput);
-        localStorage.setItem('user_role', profile.role);
+        async function handleRegister() {
+            const loginInput = document.getElementById('loginInput').value.trim();
+            const passInput = document.getElementById('passInput').value.trim();
+            
+            if (!loginInput || !passInput) return alert('Введите логин (или Email) и пароль для регистрации!');
+            if (passInput.length < 6) return alert('Пароль должен быть не менее 6 символов!');
 
-        document.getElementById('loginInput').value = '';
-        document.getElementById('passInput').value = '';
+            if (!confirm(`Зарегистрировать нового инженера с логином "${loginInput}"?`)) return;
 
-        updateNetStatus("📡 Доступ разрешен");
-        
-        checkCurrentAuth(); 
-        toggleFabMenu(); 
+            updateNetStatus("📡 Регистрация...");
+            
+            // Автоматически определяем формат
+            const finalEmail = prepareEmail(loginInput);
 
-    } catch (error) {
-        console.error("Ошибка входа:", error);
-        updateNetStatus("❌ Ошибка авторизации");
-        alert("Ошибка входа: Неверный логин/Email или пароль.");
-    }
-}
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: finalEmail,
+                    password: passInput
+                });
 
-async function handleRegister() {
-    const loginInput = document.getElementById('loginInput').value.trim();
-    const passInput = document.getElementById('passInput').value.trim();
-    
-    if (!loginInput || !passInput) return alert('Введите логин (или Email) и пароль для регистрации!');
-    if (passInput.length < 6) return alert('Пароль должен быть не менее 6 символов!');
+                if (error) throw error;
 
-    if (!confirm(`Зарегистрировать нового инженера с логином "${loginInput}"?`)) return;
+                if (data.user && data.user.identities && data.user.identities.length === 0) {
+                    throw new Error("Этот логин или Email уже занят другим сотрудником.");
+                }
 
-    updateNetStatus("📡 Регистрация...");
-    
-    // Автоматически определяем формат
-    const finalEmail = prepareEmail(loginInput);
+                updateNetStatus("📡 Регистрация завершена");
+                alert(`Пользователь "${loginInput}" успешно зарегистрирован!\n\nТеперь введите ваши данные в форму и нажмите кнопку "Войти".`);
+                
+                document.getElementById('loginInput').value = '';
+                document.getElementById('passInput').value = '';
 
-    try {
-        const { data, error } = await supabaseClient.auth.signUp({
-            email: finalEmail,
-            password: passInput
-        });
-
-        if (error) throw error;
-
-        if (data.user && data.user.identities && data.user.identities.length === 0) {
-            throw new Error("Этот логин или Email уже занят другим сотрудником.");
+            } catch (error) {
+                console.error("Ошибка регистрации:", error);
+                updateNetStatus("❌ Ошибка регистрации");
+                alert("Ошибка регистрации: " + error.message);
+            }
         }
 
-        updateNetStatus("📡 Регистрация завершена");
-        alert(`Пользователь "${loginInput}" успешно зарегистрирован!\n\nТеперь введите ваши данные в форму и нажмите кнопку "Войти".`);
-        
-        document.getElementById('loginInput').value = '';
-        document.getElementById('passInput').value = '';
+        async function handleLogout() {
+            updateNetStatus("📡 Завершение сессии...");
+            try {
+                localStorage.removeItem('user_is_guest');
+                localStorage.removeItem('user_login');
+                localStorage.removeItem('user_role');
+                await supabaseClient.auth.signOut();
+                checkCurrentAuth();
+                updateNetStatus("📡 Сессия завершена");
+                location.reload(); 
+            } catch (error) {
+                location.reload();
+            }
+        }
 
-    } catch (error) {
-        console.error("Ошибка регистрации:", error);
-        updateNetStatus("❌ Ошибка регистрации");
-        alert("Ошибка регистрации: " + error.message);
-    }
-}
-
-async function handleLogout() {
-    updateNetStatus("📡 Завершение сессии...");
-    try {
-        localStorage.removeItem('user_is_guest');
-        localStorage.removeItem('user_login');
-        localStorage.removeItem('user_role');
-        await supabaseClient.auth.signOut();
-        checkCurrentAuth();
-        updateNetStatus("📡 Сессия завершена");
-        location.reload(); 
-    } catch (error) {
-        location.reload();
-    }
-}
-
-function startGuestSession() {
-    localStorage.setItem('user_is_guest', 'true');
-    supabaseClient.auth.signOut(); 
-}
-
+        function startGuestSession() {
+            localStorage.setItem('user_is_guest', 'true');
+            supabaseClient.auth.signOut(); 
+        }
 
         function checkCurrentAuth() {
             const currentLogin = localStorage.getItem('user_login');
@@ -511,21 +444,21 @@ function startGuestSession() {
             }, 400);
         }
 
-/**
- * Функция переключения видимости пароля (👁️)
- */
-function togglePasswordVisibility() {
-    const passInput = document.getElementById('passInput');
-    const toggleBtn = document.getElementById('togglePasswordBtn');
-    
-    if (passInput.type === 'password') {
-        passInput.type = 'text';
-        toggleBtn.innerText = '🔒'; // Меняем иконку на закрытый замочек или перечеркнутый глаз
-    } else {
-        passInput.type = 'password';
-        toggleBtn.innerText = '👁️';
-    }
-}        
+        /**
+         * Функция переключения видимости пароля (👁️)
+         */
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('passInput');
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                toggleBtn.innerText = '🔒'; // Меняем иконку на закрытый замочек или перечеркнутый глаз
+            } else {
+                passInput.type = 'password';
+                toggleBtn.innerText = '👁️';
+            }
+        }        
     </script>
 </body>
 </html>
