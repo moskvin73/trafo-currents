@@ -116,8 +116,11 @@
                     <input type="text" id="loginInput" autocomplete="username" placeholder="Иванов">
                     
                     <label>Пароль:</label>
-                    <input type="password" id="passInput" autocomplete="current-password" placeholder="******">
-                    
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <input type="password" id="passInput" autocomplete="current-password" placeholder="******" style="width: 100%; padding-right: 30px;">
+                        <button type="button" id="togglePasswordBtn" onclick="togglePasswordVisibility()" style="position: absolute; right: 5px; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 14px; padding: 0; line-height: 1;">👁️</button>
+                    </div>                    
+
                     <div style="display: flex; gap: 6px;">
                         <button type="button" class="btn" style="flex:1; padding:5px; font-size:11px;" onclick="handleLogin()">Войти</button>
                         <button type="button" class="btn btn-ghost" style="flex:1; padding:5px; font-size:11px; background:#475569; color:#fff; border:none;" onclick="handleRegister()">Рег.</button>
@@ -212,27 +215,34 @@ function initAuthTracker() {
     });
 }        
 
+function prepareEmail(input) {
+    const cleanInput = input.trim().toLowerCase();
+    // Если пользователь ввел полноценный email (есть собачка) — возвращаем его как есть
+    if (cleanInput.includes('@')) {
+        return cleanInput;
+    }
+    // Если введена просто фамилия/логин — делаем безопасный внутренний email
+    return `${cleanInput}.calc@gmail.com`;
+}
+
 async function handleLogin() {
-    const login = document.getElementById('loginInput').value.trim();
-    const pass = document.getElementById('passInput').value.trim();
+    const loginInput = document.getElementById('loginInput').value.trim();
+    const passInput = document.getElementById('passInput').value.trim();
     
-    if (!login || !pass) return alert('Заполните поля!');
+    if (!loginInput || !passInput) return alert('Заполните поля!');
 
     updateNetStatus("📡 Авторизация...");
     
-    // Превращаем фамилию в виртуальный email для базы данных
-    const virtualEmail = `${login.toLowerCase()}@work.ru`;
+    const finalEmail = prepareEmail(loginInput);
 
     try {
-        // 1. Проверяем логин и пароль в Supabase
         const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: virtualEmail,
-            password: pass
+            email: finalEmail,
+            password: passInput
         });
 
         if (error) throw error;
 
-        // 2. Получаем роль сотрудника из таблицы профилей
         const { data: profile, error: profileError } = await supabaseClient
             .from('user_profiles')
             .select('role, is_active')
@@ -241,7 +251,6 @@ async function handleLogin() {
 
         if (profileError) throw profileError;
 
-        // 3. Проверяем, не заблокирован ли пользователь админом
         if (!profile.is_active) {
             updateNetStatus("❌ Ошибка авторизации");
             alert("Ошибка входа: Ваш аккаунт деактивирован администратором.");
@@ -249,63 +258,59 @@ async function handleLogin() {
             return;
         }
 
-        // 🌟 ВОТ ОНА — СТЫКОВКА С ВАШИМ СТАРЫМ КОДОМ:
-        // Записываем данные в localStorage точно так же, как это делал ваш скрипт Google Web App!
-        localStorage.setItem('user_login', login);
+        // СТЫКОВКА С ВАШИМ СТАРЫМ КОДОМ
+        localStorage.setItem('user_login', loginInput);
         localStorage.setItem('user_role', profile.role);
 
-        // Очищаем текстовые поля формы
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
 
         updateNetStatus("📡 Доступ разрешен");
         
-        // Вызываем ВАШУ родную неизмененную функцию проверки авторизации
         checkCurrentAuth(); 
-        
-        toggleFabMenu(); // Закрываем FAB меню
+        toggleFabMenu(); 
 
     } catch (error) {
-        console.error("Supabase Auth Error:", error);
+        console.error("Ошибка входа:", error);
         updateNetStatus("❌ Ошибка авторизации");
-        alert("Ошибка входа: Неверный логин или пароль.");
+        alert("Ошибка входа: Неверный логин/Email или пароль.");
     }
 }
 
 async function handleRegister() {
-    const login = document.getElementById('loginInput').value.trim();
-    const pass = document.getElementById('passInput').value.trim();
+    const loginInput = document.getElementById('loginInput').value.trim();
+    const passInput = document.getElementById('passInput').value.trim();
     
-    if (!login || !pass) return alert('Введите логин и пароль для регистрации!');
-    if (pass.length < 6) return alert('Пароль должен быть не менее 6 символов!');
+    if (!loginInput || !passInput) return alert('Введите логин (или Email) и пароль для регистрации!');
+    if (passInput.length < 6) return alert('Пароль должен быть не менее 6 символов!');
 
-    if (!confirm(`Зарегистрировать нового инженера с логином "${login}"?`)) return;
+    if (!confirm(`Зарегистрировать нового инженера с логином "${loginInput}"?`)) return;
 
     updateNetStatus("📡 Регистрация...");
-    const virtualEmail = `${login.toLowerCase()}@work.ru`;
+    
+    // Автоматически определяем формат
+    const finalEmail = prepareEmail(loginInput);
 
     try {
         const { data, error } = await supabaseClient.auth.signUp({
-            email: virtualEmail,
-            password: pass
+            email: finalEmail,
+            password: passInput
         });
 
         if (error) throw error;
 
-        // Проверяем на дубликат логина
         if (data.user && data.user.identities && data.user.identities.length === 0) {
-            throw new Error("Этот логин уже занят другим сотрудником.");
+            throw new Error("Этот логин или Email уже занят другим сотрудником.");
         }
 
         updateNetStatus("📡 Регистрация завершена");
-        alert(`Пользователь "${login}" успешно зарегистрирован! Теперь введите данные в форму и нажмите "Войти".`);
+        alert(`Пользователь "${loginInput}" успешно зарегистрирован!\n\nТеперь введите ваши данные в форму и нажмите кнопку "Войти".`);
         
-        // Очищаем форму, чтобы пользователь мог сразу ввести данные для входа
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
 
     } catch (error) {
-        console.error("Supabase Register Error:", error);
+        console.error("Ошибка регистрации:", error);
         updateNetStatus("❌ Ошибка регистрации");
         alert("Ошибка регистрации: " + error.message);
     }
@@ -503,6 +508,22 @@ function startGuestSession() {
                 `;
             }, 400);
         }
+
+/**
+ * Функция переключения видимости пароля (👁️)
+ */
+function togglePasswordVisibility() {
+    const passInput = document.getElementById('passInput');
+    const toggleBtn = document.getElementById('togglePasswordBtn');
+    
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        toggleBtn.innerText = '🔒'; // Меняем иконку на закрытый замочек или перечеркнутый глаз
+    } else {
+        passInput.type = 'password';
+        toggleBtn.innerText = '👁️';
+    }
+}        
     </script>
 </body>
 </html>
