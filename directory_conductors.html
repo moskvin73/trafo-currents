@@ -97,7 +97,16 @@
     <script>
 
         //const userRole = localStorage.getItem('user_role') || 'guest';
-        const userRole = await window.getCurrentUserRole();
+        let userRole = 'guest'; 
+        // 2. Запускаем скрытый фоновый запрос к Supabase
+        window.getCurrentUserRole().then(role => {
+            userRole = role; // Когда ответ придет, переменная обновится
+            
+            // Сюда можно перенести вызов отрисовки вашей страницы, 
+            // чтобы формы переключились ровно в тот момент, когда роль получена:
+            console.log("Роль успешно получена из базы:", userRole);
+        });
+
         let currentConductors = []; // Храним загруженные данные в памяти
         // Получаем клиента
         const supabaseClient = window.getSupabaseClient();
