@@ -320,9 +320,11 @@ async function handleLogout() {
     updateNetStatus("📡 Завершение сессии...");
     try {
         localStorage.removeItem('user_is_guest');
+        localStorage.removeItem('user_login');
+        localStorage.removeItem('user_role');
         await supabaseClient.auth.signOut();
+        checkCurrentAuth();
         updateNetStatus("📡 Сессия завершена");
-        toggleFabMenu();
         location.reload(); 
     } catch (error) {
         location.reload();
