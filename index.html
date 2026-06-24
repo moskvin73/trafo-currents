@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="./css/main-page.css">
     <link rel="stylesheet" href="./css/floating-menu.css">
     
+    <!-- Загрузка библиотеки Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Загрузка файла конфигурации Supabase -->
+    <script src="./js/supabase-config.js"></script>
+
+
      <script src="./js/config.js"></script>
 
     <!-- Подключение MathJax для рендеринга формул -->
@@ -126,8 +132,12 @@
     </div>
 
     <script>
+        // Получаем настроенного клиента
+        const supabaseClient = window.getSupabaseClient();
+
        document.addEventListener("DOMContentLoaded", () => {
-            checkCurrentAuth();
+            initAuthTracker();
+            //checkCurrentAuth();
         });
 
         // Открытие/закрытие FAB контейнера добавлением класса .open (как в вашем CSS)
@@ -135,7 +145,149 @@
             document.getElementById('fabContainer').classList.toggle('open');
         }
 
-        function checkCurrentAuth() {
+function initAuthTracker() {
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        const topStatus = document.getElementById('topStatus');
+        const guestBlock = document.getElementById('guestBlock');
+        const engineerBlock = document.getElementById('engineerBlock');
+        
+        const authFormFields = document.getElementById('authFormFields');
+        const saveProjectBtn = document.getElementById('saveProjectBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        const isLocalGuest = localStorage.getItem('user_is_guest') === 'true';
+
+        if (session && session.user) {
+            try {
+                localStorage.removeItem('user_is_guest');
+
+                const { data: profile, error } = await supabaseClient
+                    .from('user_profiles')
+                    .select('role, username, is_active')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (error || !profile || !profile.is_active) {
+                    if (profile && !profile.is_active) alert('Ваш аккаунт деактивирован администратором.');
+                    await supabaseClient.auth.signOut();
+                    return;
+                }
+
+                // Интерфейс авторизованного инженера
+                topStatus.innerText = `💻 Инженер: ${profile.username}`;
+                updateNetStatus(`💻 Инженер: ${profile.username} (${profile.role})`);
+                
+                guestBlock.style.display = 'none';
+                engineerBlock.style.display = 'block';
+                
+                authFormFields.style.display = 'none';
+                saveProjectBtn.style.display = 'flex';
+                logoutBtn.style.display = 'flex';
+                
+                // Загружаем проекты из базы данных
+                loadUserProjects();
+
+            } catch (err) {
+                console.error('Ошибка сессии:', err.message);
+            }
+        } else if (isLocalGuest) {
+            // Гостевой режим
+            topStatus.innerText = `👤 Режим: Гость`;
+            updateNetStatus("📡 Сеть: Гость (Без сохранения)");
+            guestBlock.style.display = 'block';
+            engineerBlock.style.display = 'none';
+            authFormFields.style.display = 'block';
+            saveProjectBtn.style.display = 'none';
+            logoutBtn.style.display = 'none';
+        } else {
+            // Не авторизован
+            topStatus.innerText = `👤 Статус: Не авторизован`;
+            updateNetStatus("📡 Сеть: Ожидание авторизации");
+            guestBlock.style.display = 'block';
+            engineerBlock.style.display = 'none';
+            authFormFields.style.display = 'block';
+            saveProjectBtn.style.display = 'none';
+            logoutBtn.style.display = 'none';
+        }
+    });
+}        
+
+async function handleLogin() {
+    const login = document.getElementById('loginInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+    if (!login || !pass) return alert('Заполните поля!');
+
+    updateNetStatus("📡 Авторизация...");
+    const virtualEmail = `${login.toLowerCase()}@work.local`;
+
+    try {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+            email: virtualEmail,
+            password: pass
+        });
+        if (error) throw error;
+
+        document.getElementById('loginInput').value = '';
+        document.getElementById('passInput').value = '';
+        updateNetStatus("📡 Доступ разрешен");
+        toggleFabMenu(); 
+    } catch (error) {
+        updateNetStatus("❌ Ошибка авторизации");
+        alert("Ошибка входа: Неверный логин или пароль.");
+    }
+}
+
+async function handleRegister() {
+    const login = document.getElementById('loginInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+    if (!login || !pass) return alert('Введите логин и пароль для регистрации!');
+    if (pass.length < 6) return alert('Пароль должен быть не менее 6 символов!');
+
+    if (!confirm(`Зарегистрировать нового инженера с логином "${login}"?`)) return;
+
+    updateNetStatus("📡 Регистрация...");
+    const virtualEmail = `${login.toLowerCase()}@work.local`;
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: virtualEmail,
+            password: pass
+        });
+        if (error) throw error;
+
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+            throw new Error("Этот логин уже занят другим сотрудником.");
+        }
+
+        updateNetStatus("📡 Регистрация завершена");
+        alert(`Пользователь "${login}" зарегистрирован! Теперь введите данные для входа.`);
+        document.getElementById('loginInput').value = '';
+        document.getElementById('passInput').value = '';
+    } catch (error) {
+        updateNetStatus("❌ Ошибка регистрации");
+        alert("Ошибка регистрации: " + error.message);
+    }
+}
+
+async function handleLogout() {
+    updateNetStatus("📡 Завершение сессии...");
+    try {
+        localStorage.removeItem('user_is_guest');
+        await supabaseClient.auth.signOut();
+        updateNetStatus("📡 Сессия завершена");
+        toggleFabMenu();
+        location.reload(); 
+    } catch (error) {
+        location.reload();
+    }
+}
+
+function startGuestSession() {
+    localStorage.setItem('user_is_guest', 'true');
+    supabaseClient.auth.signOut(); 
+}
+
+       /* function checkCurrentAuth() {
             const currentLogin = localStorage.getItem('user_login');
             const currentRole = localStorage.getItem('user_role');
 
@@ -282,7 +434,7 @@
             checkCurrentAuth();
             updateNetStatus("📡 Сессия завершена");
             location.reload();
-        }
+        }*/
 
         function triggerManualSave() {
             updateNetStatus("💾 Синхронизация...");
