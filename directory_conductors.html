@@ -114,6 +114,7 @@
         const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         document.addEventListener("DOMContentLoaded", () => {
+            console.log("Роль успешно получена из базы:", userRole);
             if (userRole === 'admin') {
                 document.getElementById('adminAddRowBtn').style.display = 'inline-flex';
                 document.getElementById('thAdminAction').style.display = 'table-cell';
