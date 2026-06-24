@@ -246,7 +246,7 @@ async function handleRegister() {
     if (!confirm(`Зарегистрировать нового инженера с логином "${login}"?`)) return;
 
     updateNetStatus("📡 Регистрация...");
-    const virtualEmail = `${login.toLowerCase()}@work.local`;
+    const virtualEmail = `${login.toLowerCase()}@work.ru`;
 
     try {
         const { data, error } = await supabaseClient.auth.signUp({
