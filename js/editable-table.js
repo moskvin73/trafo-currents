@@ -670,7 +670,7 @@ class EditableTable {
         const rowId = row.getAttribute('data-id');
         const currentDataJson = this.collectRowData(row);
 
-        if (this.initialRowDataJson === currentDataJson) return;
+        if (rowId !== 'null' && this.initialRowDataJson === currentDataJson) return;
         
         this.isSaving = true;
         const backupValues = [...this.initialFieldsValues];
