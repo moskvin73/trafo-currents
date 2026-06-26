@@ -352,7 +352,7 @@ class EditableTable {
             return;
         }
 
-        if (input.value.trim() === '' || input.value === '-') {
+        /*if (input.value.trim() === '' || input.value === '-') {
             if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
                 input.value = this.initialFieldsValues[this.currentFieldIndex];
                 input.classList.remove('input-error');
@@ -388,8 +388,74 @@ class EditableTable {
                     input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
             }
-        }
+        }*/
+    const isDecimal = input.getAttribute('inputmode') === 'decimal';
+    const valTrimed = input.value.trim();
 
+    // ИСПРАВЛЕНО: Проверка на '-' выполняется ТОЛЬКО для decimal полей
+    const isEmptyOrDash = valTrimed === '' || (isDecimal && valTrimed === '-');
+
+    if (isEmptyOrDash) {
+        if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
+            input.value = this.initialFieldsValues[this.currentFieldIndex];
+            input.classList.remove('input-error');
+        }
+    } 
+    else if (isDecimal) {
+        // Логика обработки числовых decimal-полей
+        const standardValue = input.value.replace(this.localeSeparator, '.');
+        const parsedNum = parseFloat(standardValue);
+        
+        if (!isNaN(parsedNum)) {
+            const min = input.getAttribute('min');
+            const max = input.getAttribute('max');
+            let customError = null;
+
+            // 1. Сначала СТАНДАРТНЫЕ проверки диапазонов min / max
+            if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max))) {
+                let msg = (min !== null && max !== null) ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`);
+                this.showValidationError(input, msg);
+                return; // Выходим сразу, если стандартная проверка провалена
+            }
+
+            // 2. И только ПОТОМ вызываем кастомный data-validator (если он есть)
+            const validatorName = input.getAttribute('data-validator');
+            if (validatorName && typeof window[validatorName] === 'function') {
+                customError = window[validatorName](parsedNum, currentRow);
+                if (customError) {
+                    this.showValidationError(input, customError);
+                    return;
+                }
+            }
+
+            // Если все проверки пройдены — очищаем ошибки
+            input.classList.remove('input-error');
+            input.setCustomValidity(''); 
+
+            // Форматирование по step
+            const step = input.getAttribute('step');
+            if (step && step.includes('.')) {
+                const stepParts = step.split('.');
+                const decimalsCount = stepParts[1] ? stepParts[1].length : 0;
+                input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
+            }
+        }
+    }
+    else {
+        // ИСПРАВЛЕНО: Логика для НЕ-decimal полей (обычный текст). Валидатор вызывается БЕЗУСЛОВНО
+        const validatorName = input.getAttribute('data-validator');
+        if (validatorName && typeof window[validatorName] === 'function') {
+            const customError = window[validatorName](input.value, currentRow);
+            if (customError) {
+                this.showValidationError(input, customError);
+                return;
+            }
+        }
+        input.classList.remove('input-error');
+        input.setCustomValidity(''); 
+    }
+
+    // Триггер сохранения при выходе из строки
         if (!nextRow || nextRow !== currentRow) {
             if (currentRow && currentRow.querySelector('.input-error')) return;
             if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
