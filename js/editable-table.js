@@ -723,6 +723,10 @@ class EditableTable {
                     row.setAttribute('data-id', newId); 
                     this.activeRowId = newId;
                 }
+                else if (rowId === 'null' && newId === null) {
+                    console.warn("Откат строки success вернул null");
+                    rollback();
+                }
                 this.initialRowDataJson = this.collectRowData(row);
             };
 
