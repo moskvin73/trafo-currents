@@ -11,7 +11,8 @@ class EditableTable {
         this.onRowSelect = callbacks.onRowSelect;
         this.onRowEdit = callbacks.onRowEdit;
         this.onRowCancel = callbacks.onRowCancel;
-        this.onValidateRow = callbacks.onValidateRow; 
+        this.onValidateRow = callbacks.onValidateRow;
+        this.onInitNewRow = callbacks.onInitNewRow;
         
         this.localeSeparator = (1.1).toLocaleString().substring(1, 2); 
         this.forbiddenSeparator = this.localeSeparator === ',' ? '.' : ',';
@@ -183,6 +184,7 @@ class EditableTable {
         const lastRow = this.tbody.querySelector('tr:last-child');
         if (!lastRow) return;
 
+        // Здесь должны вызывать метод создания новой строки
         const tr = lastRow.cloneNode(true);
         tr.dataset.id = 'null'; 
 
