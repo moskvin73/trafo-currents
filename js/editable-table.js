@@ -66,7 +66,9 @@ class EditableTable {
         container.style.scrollPaddingTop = `${realHeight}px`;
 
         this.headerHeight = realHeight;
-    }   
+    }
+
+    // Отеняет текущие редактирование строки
 
     resetRowChanges(row) {
         const rowId = row.getAttribute('data-id');
