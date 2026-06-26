@@ -229,27 +229,6 @@ class EditableTable {
             if (currentRow && !this.validateCurrentRow(currentRow)) return;
         }
         
-        /*const lastRow = this.tbody.querySelector('tr:last-child');
-        if (!lastRow) return;
-
-        // Здесь должны вызывать метод создания новой строки
-        const tr = lastRow.cloneNode(true);
-        tr.dataset.id = 'null';
-
-        // ИСПРАВЛЕНО: Чистим только ваши оригинальные классы полей без лишних чекбоксов
-        const fields = tr.querySelectorAll('.table-input, .table-select');
-        fields.forEach(field => {
-            field.classList.remove('input-error');
-            if (typeof field.setCustomValidity === 'function') field.setCustomValidity('');
-
-            if (field.getAttribute('inputmode') === 'decimal') {
-                field.value = '0'; // База для форматирования нуля
-            } else {
-                field.value = ''; 
-            }
-            field.removeAttribute('disabled');
-        });*/
-
         this.tbody.appendChild(tr);
 
         // Применяем ваше родное форматирование к новой строке
