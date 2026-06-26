@@ -12,7 +12,7 @@ class EditableTable {
         this.onRowEdit = callbacks.onRowEdit;
         this.onRowCancel = callbacks.onRowCancel;
         this.onValidateRow = callbacks.onValidateRow;
-        this.onInitNewRow = callbacks.onInitNewRow;
+        this.InitNewRow = callbacks.InitNewRow;
         
         this.localeSeparator = (1.1).toLocaleString().substring(1, 2); 
         this.forbiddenSeparator = this.localeSeparator === ',' ? '.' : ',';
@@ -186,7 +186,15 @@ class EditableTable {
 
         // Здесь должны вызывать метод создания новой строки
         const tr = lastRow.cloneNode(true);
-        tr.dataset.id = 'null'; 
+        tr.dataset.id = 'null';
+
+        if (typeof this.InitNewRow === 'function') {
+            InitNewRow(tr);
+        }
+        else {
+            console.warn("Неопределина функция инецелизации новй строки");
+            return;
+        }
 
         // ИСПРАВЛЕНО: Чистим только ваши оригинальные классы полей без лишних чекбоксов
         const fields = tr.querySelectorAll('.table-input, .table-select');
