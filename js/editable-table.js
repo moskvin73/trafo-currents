@@ -231,7 +231,7 @@ class EditableTable {
         
         this.tbody.appendChild(tr);
 
-        // Применяем ваше родное форматирование к новой строке
+        // Применяем родное форматирование к новой строке
         const originalTbody = this.tbody;
         this.tbody = tr; 
         this.formatTableOnLoad(); 
