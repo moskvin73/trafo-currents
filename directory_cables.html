@@ -282,7 +282,7 @@
             new EditableTable('cableTableBody', {
                 // Cигнатуре: id, row, data, rollback, success
                 onSave: (id, row, data, rollback, success) => {
-                    if (id === null || id === 'null') {
+                    if (id === null) {
                         console.log(`Вставляем новую строк ${data} на сервер...`);
                         success(1000);
                         return;
