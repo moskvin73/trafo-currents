@@ -300,6 +300,11 @@
                     */
                 },
                 onRowSelect: (id, row) => {
+                    if (id === 'null') {
+                        console.log("Кликнули на абсолютно новую строку.");
+                        setVisualStatus('cableTableBody', row, '➕');
+                        return;
+                    }
                     console.log(`Кликнули на строку ID: ${id}. Загружаем связанные кабели...`);
                     setVisualStatus('cableTableBody', row, '➔');
                 },
