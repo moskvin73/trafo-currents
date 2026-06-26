@@ -305,7 +305,7 @@
                     */
                 },
                 onRowSelect: (id, row) => {
-                    if (id === null || id === 'null') {
+                    if (id === null ) {
                         console.log("Кликнули на абсолютно новую строку.");
                         setVisualStatus('cableTableBody', row, '➕');
                         return;
@@ -322,6 +322,9 @@
                     setVisualStatus('cableTableBody', row, '➔');
                 },
                 onValidateRow: (id, row) => {
+                        if (id === null ) {
+                            console.log("Валидация новой строки.");
+                        }
                         /*const cableType = row.querySelector(`[id^="type_"]`).value.toUpperCase();
                         const selectCond = row.querySelector(`[id^="cond_"]`);
                         const selectedText = selectCond.options[selectCond.selectedIndex].text;
