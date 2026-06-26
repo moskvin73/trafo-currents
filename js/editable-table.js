@@ -175,53 +175,53 @@ class EditableTable {
             return; 
         } 
 
-    // Получаем текущее количество строк в таблице
-    const rowCount = this.tbody.querySelectorAll('tr').length;
-    const lastRow = this.tbody.querySelector('tr:last-child');
-    let tr = null;
+        // Получаем текущее количество строк в таблице
+        const rowCount = this.tbody.querySelectorAll('tr').length;
+        const lastRow = this.tbody.querySelector('tr:last-child');
+        let tr = null;
 
-    // 1. Вызываем внешний метод и передаем ТОЛЬКО число строк
-    if (typeof this.InitNewRow === 'function') {
-        tr = this.InitNewRow(rowCount);
-        
-        if (!tr || !(tr instanceof HTMLElement)) {
-            console.error("Метод InitNewRow должен возвращать валидный HTML-элемент TR.");
+        // 1. Вызываем внешний метод и передаем ТОЛЬКО число строк
+        if (typeof this.InitNewRow === 'function') {
+            tr = this.InitNewRow(rowCount);
+            
+            if (!tr || !(tr instanceof HTMLElement)) {
+                console.error("Метод InitNewRow должен возвращать валидный HTML-элемент TR.");
+                return;
+            }
+        } else {
+            console.warn("Не определена функция инициализации новой строки (InitNewRow).");
             return;
         }
-    } else {
-        console.warn("Не определена функция инициализации новой строки (InitNewRow).");
-        return;
-    }
 
-    // 2. Внутреннее сравнение новой строки с предыдущей на идентичность
-    if (lastRow) {
-        const prevFields = lastRow.querySelectorAll('.table-input, .table-select');
-        const newFields = tr.querySelectorAll('.table-input, .table-select');
+        // 2. Внутреннее сравнение новой строки с предыдущей на идентичность
+        if (lastRow) {
+            const prevFields = lastRow.querySelectorAll('.table-input, .table-select');
+            const newFields = tr.querySelectorAll('.table-input, .table-select');
 
-        // Проверяем равенство количества полей и ячеек
-        if (prevFields.length !== newFields.length || lastRow.cells.length !== tr.cells.length) {
-            console.error(`Ошибка: Структура новой строки не совпадает с существующей таблицей!`);
-            return; 
-        }
-
-        // Проверяем типы полей, их инлайн-стили и важные атрибуты
-        let isIdentical = true;
-        for (let i = 0; i < prevFields.length; i++) {
-            const prevF = prevFields[i];
-            const newF = newFields[i];
-
-            if (prevF.tagName !== newF.tagName || 
-                prevF.getAttribute('inputmode') !== newF.getAttribute('inputmode') ||
-                prevF.style.cssText !== newF.style.cssText) {
-                
-                console.error(`Ошибка: Поле на позиции ${i} структурно или визуально отличается от оригинала.`);
-                isIdentical = false;
-                break;
+            // Проверяем равенство количества полей и ячеек
+            if (prevFields.length !== newFields.length || lastRow.cells.length !== tr.cells.length) {
+                console.error(`Ошибка: Структура новой строки не совпадает с существующей таблицей!`);
+                return; 
             }
-        }
 
-        if (!isIdentical) return; // Отменяем добавление, если нашли нестыковки
-    }
+            // Проверяем типы полей, их инлайн-стили и важные атрибуты
+            let isIdentical = true;
+            for (let i = 0; i < prevFields.length; i++) {
+                const prevF = prevFields[i];
+                const newF = newFields[i];
+
+                if (prevF.tagName !== newF.tagName || 
+                    prevF.getAttribute('inputmode') !== newF.getAttribute('inputmode') ||
+                    prevF.style.cssText !== newF.style.cssText) {
+                    
+                    console.error(`Ошибка: Поле на позиции ${i} структурно или визуально отличается от оригинала.`);
+                    isIdentical = false;
+                    break;
+                }
+            }
+
+            if (!isIdentical) return; // Отменяем добавление, если нашли нестыковки
+        }
 
         // Валидация текущей строки перед созданием новой
         if (document.activeElement && this.tbody.contains(document.activeElement)) {
