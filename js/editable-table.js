@@ -184,8 +184,8 @@ class EditableTable {
         if (typeof this.InitNewRow === 'function') {
             tr = this.InitNewRow(rowCount);
             
-            if (!tr || !(tr instanceof HTMLElement)) {
-                console.error("Метод InitNewRow должен возвращать валидный HTML-элемент TR.");
+            if (!tr || !(tr instanceof HTMLTableRowElement)) {
+                console.error("Метод InitNewRow должен возвращать валидный HTML-элемент TR (строку таблицы).");
                 return;
             }
         } else {
