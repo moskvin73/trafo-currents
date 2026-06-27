@@ -72,6 +72,8 @@
 
 .project-table .cell-indicator {
     background-color: var(--th-bg, #f1f5f9) !important;
+    cursor: default !important;
+    user-select: none !important; /* Запрещает выделение символа */    
 }
 
 /* ==========================================
