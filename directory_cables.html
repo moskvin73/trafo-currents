@@ -208,24 +208,6 @@
 
         const VOLTAGE_OPTIONS = [0.4, 6, 10, 35];
 
-        window.validateCableName = function(cleanValue, currentRow) {
-            if (cleanValue === "") return null; // Если поле пустое, пропускаем (для этого есть обязательность)
-
-            // 1. Проверка на цифры: регулярное выражение \d ищет любую цифру от 0 до 9
-            const hasDigits = /\d/.test(cleanValue);
-            if (hasDigits) {
-                return "Наименование марки не должно содержать цифр (только буквы, например: ВВГ, ПВС)";
-            }
-
-            // 2. Проверка на внутренние пробелы (так как корректор уже убрал внешние)
-            const hasSpaces = /\s/.test(cleanValue);
-            if (hasSpaces) {
-                return "В маркировке кабеля не должно быть пробелов (пишите ВВГ, а не ВВ г)";
-            }
-
-            return null; // Проверки пройдены успешно
-        };
-
         function renderAdminEditableView() {
             const container = document.getElementById('tableRootContainer');
             // Создаем структуру ОДНОЙ таблицы
@@ -280,7 +262,7 @@
                         <input type="text" 
                         class="table-input align-left" 
                         data-corrector="cleanExtraSpaces toUpperCase"
-                        data-validator="validateCableName"
+                        data-validator="validateAnyStandard"
                         id="standard_name_${gr.id}" 
                         value="${gr.standard_name}"></td>
                     <td>
