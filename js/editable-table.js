@@ -487,7 +487,6 @@ class EditableTable {
         // Если все проверки пройдены успешно (и не было сетевых запросов)
         input.classList.remove('input-error');
         input.setCustomValidity(''); 
-    }
 
         }
 
