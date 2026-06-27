@@ -169,8 +169,25 @@
             });*/
         }
 
-        function loadCableSpecProp(targetId) {
-            const url = new URL(AppConfig.GOOGLE_WEB_APP_URL);
+        async function loadCableSpecProp(targetId) {
+
+    try {
+        // Если targetId передан, делаем фильтрацию (аналог WHERE Id = targetId)
+        if (targetId !== undefined && targetId !== null) {
+            // Менеджер возьмет таблицу 'cable_spec_prop' (вызовет action=get_cable_spec_prop)
+            // и вернет только те строки, у которых поле Id совпадает с targetId
+            return await db.select('cable_spec_prop', { Id: targetId });
+        }
+        
+        // Если targetId не передан, возвращаем всю таблицу
+        return await db.getTable('cable_spec_prop');
+        
+    } catch (err) {
+        console.error('Ошибка при чтении свойств кабеля:', err.message);
+        return []; // Возвращаем пустой массив в случае ошибки, как в вашем примере
+    }            
+
+           /* const url = new URL(AppConfig.GOOGLE_WEB_APP_URL);
             url.searchParams.set('action', 'get_cable_spec_prop');
 
             // Добавляем Id ТОЛЬКО если targetId передан (не null и не undefined)
@@ -189,7 +206,7 @@
             }).catch(err => {
                 //renderTableError('Ошибка сети при чтении каталога.');
                 return [];
-            });
+            });*/
         }
 
         function loadCablesCatalog() {
