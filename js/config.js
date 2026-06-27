@@ -24,7 +24,6 @@ class LocalDBManager {
      * @private
      */
     async _fetchTableFromServer(tableName) {
-        // Если запрос для этой таблицы уже выполняется, возвращаем текущий Promise
         if (this.pendingRequests.has(tableName)) {
             return this.pendingRequests.get(tableName);
         }
@@ -36,27 +35,30 @@ class LocalDBManager {
                 if (!response.ok) throw new Error(`Ошибка сети при получении таблицы ${tableName}`);
                 return response.json();
             })
-            .then(data => {
-                // Проверка на ошибку, переданную самим Google Apps Script
-                if (data && data.error) {
-                    throw new Error(`Ошибка сервера Google: ${data.error}`);
+            .then(result => {
+                // Если сервер явно передал success: false или error
+                if (result && result.success === false) {
+                    throw new Error(result.error || 'Ошибка сервера без описания');
                 }
-                // Проверяем, что сервер вернул массив строк (таблицу)
-                if (!Array.isArray(data)) {
+
+                // Определяем, где лежат данные: в result.data или в самом result (для совместимости)
+                const actualData = (result && result.data !== undefined) ? result.data : result;
+
+                // Проверяем, что это массив строк (таблицу)
+                if (!Array.isArray(actualData)) {
                     throw new Error(`Формат данных для таблицы ${tableName} должен быть массивом`);
                 }
 
-                // Сохраняем полученные данные в localStorage
-                localStorage.setItem(tableName, JSON.stringify(data));
+                // Сохраняем в localStorage только чистый массив данных!
+                localStorage.setItem(tableName, JSON.stringify(actualData));
                 this.pendingRequests.delete(tableName);
-                return data;
+                return actualData;
             })
             .catch(error => {
                 this.pendingRequests.delete(tableName);
                 throw error;
             });
 
-        // Регистрируем текущий запрос в Map
         this.pendingRequests.set(tableName, requestPromise);
         return requestPromise;
     }
