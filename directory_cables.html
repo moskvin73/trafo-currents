@@ -277,7 +277,7 @@
                     <td>
                         <input type="text" 
                         class="table-input align-left" 
-                        data-corrector="cleanAndUpper"
+                        data-corrector="cleanExtraSpaces toUpperCase"
                         data-validator="validateCableName"
                         id="standard_name_${gr.id}" 
                         value="${gr.standard_name}"></td>
@@ -292,7 +292,7 @@
                     </td>
                     <td><input type="text" 
                          class="table-input align-left"
-                         data-corrector="cleanExtraSpaces"
+                         data-corrector="capitalize cleanExtraSpaces"
                          id="insulation_type_ru_${gr.id}" 
                          value="${gr.insulation_type_ru}">
                     </td>
