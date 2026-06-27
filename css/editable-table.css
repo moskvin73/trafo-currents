@@ -199,3 +199,32 @@ select.table-select.align-left option {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Эффект бегущей линии на нижней рамке инпута */
+.table-input.input-loading {
+    background-color: rgba(0, 86, 179, 0.04) !important; /* Едва заметный синий оттенок фона */
+    color: #6c757d !important;
+    cursor: wait !important;
+    pointer-events: none; /* Защита от ввода во время сети */
+    
+    /* Делаем нижнюю рамку анимированной */
+    border-bottom: 2px solid #0056b3 !important;
+    
+    /* Создаем градиент для эффекта бегущей дорожки */
+    background-image: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 86, 179, 0.3) 50%, 
+        transparent 100%) !important;
+    background-size: 200% 2px !important; /* Линия высотой всего 2px в самом низу */
+    background-repeat: no-repeat !important;
+    background-position: bottom left !important;
+    
+    /* Запускаем бесконечную анимацию движения линии */
+    animation: border-loading-slide 1s linear infinite !important;
+}
+
+/* Ключевые кадры для плавной анимации линии слева направо */
+@keyframes border-loading-slide {
+    0% { background-position: -100% bottom; }
+    100% { background-position: 100% bottom; }
+}
