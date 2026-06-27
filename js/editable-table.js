@@ -422,7 +422,7 @@ class EditableTable {
                 });
             }
             // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Конвейер проверок)
-            /*const validatorAttr = input.getAttribute('data-validator');
+            const validatorAttr = input.getAttribute('data-validator');
             if (validatorAttr && window.TableValidators) {
                 // Разбиваем строку атрибута на массив имён валидаторов
                 const validatorKeys = validatorAttr.split(/[\s,]+/);
@@ -438,9 +438,9 @@ class EditableTable {
                         }
                     }
                 }
-            }*/
+            }
        // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Синхронная и Асинхронная сеть)
-        const validatorAttr = input.getAttribute('data-validator');
+       /* const validatorAttr = input.getAttribute('data-validator');
         if (validatorAttr && window.TableValidators) {
             const validatorKeys = validatorAttr.split(/[\s,]+/);
 
@@ -482,7 +482,7 @@ class EditableTable {
                     }
                 }
             }
-        }
+        }*/
 
         // Если все проверки пройдены успешно (и не было сетевых запросов)
         input.classList.remove('input-error');
