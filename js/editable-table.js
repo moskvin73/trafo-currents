@@ -459,17 +459,24 @@ class EditableTable {
                 }
             });
         }
-        // Валидатор вызывается БЕЗУСЛОВНО
-        const validatorName = input.getAttribute('data-validator');
-        if (validatorName && typeof window[validatorName] === 'function') {
-            const customError = window[validatorName](input.value, currentRow);
-            if (customError) {
-                this.showValidationError(input, customError);
-                return;
+       // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Конвейер проверок)
+        const validatorAttr = input.getAttribute('data-validator');
+        if (validatorAttr && window.TableValidators) {
+            // Разбиваем строку атрибута на массив имён валидаторов
+            const validatorKeys = validatorAttr.split(/[\s,]+/);
+            let customError = null;
+
+            // Перебираем валидаторы. Если хоть один вернет ошибку — останавливаемся
+            for (let key of validatorKeys) {
+                if (typeof window.TableValidators[key] === 'function') {
+                    customError = window.TableValidators[key](input.value, currentRow);
+                    if (customError) {
+                        this.showValidationError(input, customError);
+                        return; // Прерываем выполнение метода и блокируем сохранение
+                    }
+                }
             }
         }
-        input.classList.remove('input-error');
-        input.setCustomValidity(''); 
     }
 
     // Триггер сохранения при выходе из строки
