@@ -447,12 +447,19 @@ class EditableTable {
     else {
 
         // 1. КОРРЕКЦИЯ ДАННЫХ (Произвольная внешняя логика модификации текста)
-        const correctorName = input.getAttribute('data-corrector');
-        if (correctorKey && window.TableCorrectors && typeof window.TableCorrectors[correctorKey] === 'function') {
-            // Передаем значение в выбранный корректор и обновляем инпут
-            input.value = window.TableCorrectors[correctorKey](input.value, currentRow);
-        }                
-        // ИСПРАВЛЕНО: Логика для НЕ-decimal полей (обычный текст). Валидатор вызывается БЕЗУСЛОВНО
+       const correctorAttr = input.getAttribute('data-corrector');
+        if (correctorAttr && window.TableCorrectors) {
+            // Разбиваем строку атрибута по пробелам или запятым на массив имен
+            const correctorKeys = correctorAttr.split(/[\s,]+/);
+            
+            // Последовательно пропускаем текст через каждый найденный корректор
+            correctorKeys.forEach(key => {
+                if (typeof window.TableCorrectors[key] === 'function') {
+                    input.value = window.TableCorrectors[key](input.value, currentRow);
+                }
+            });
+        }
+        // Валидатор вызывается БЕЗУСЛОВНО
         const validatorName = input.getAttribute('data-validator');
         if (validatorName && typeof window[validatorName] === 'function') {
             const customError = window[validatorName](input.value, currentRow);
