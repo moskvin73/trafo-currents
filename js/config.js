@@ -131,7 +131,29 @@ class LocalDBManager {
      * @returns {Promise<Array>} - Отфильтрованный массив строк
      */
     async select(tableName, whereClause) {
+
         const data = await this.getTable(tableName);
+
+        // Если фильтр не передан, возвращаем всю таблицу
+        if (!whereClause) return data;
+
+        // Если передана функция фильтрации (например: row => row.price > 100)
+        if (typeof whereClause === 'function') {
+            return data.filter(whereClause);
+        }
+
+        // Если передан объект (например: { Id: 1 })
+        return data.filter(row => {
+            return Object.entries(whereClause).every(([key, value]) => {
+                // Если у строки нет такого поля, сразу мимо
+                if (row[key] === undefined) return false;
+
+                // Приводим оба значения к строке, чтобы избежать багов с типами ( "1" == 1 )
+                return String(row[key]).trim() === String(value).trim();
+            });
+        });
+
+        /*const data = await this.getTable(tableName);
 
         // Если фильтр не передан, возвращаем всю таблицу
         if (!whereClause) return data;
@@ -144,7 +166,7 @@ class LocalDBManager {
         // Если передан объект (например: { type: 'ВВГ', size: 2.5 })
         return data.filter(row => {
             return Object.entries(whereClause).every(([key, value]) => row[key] === value);
-        });
+        });*/
     }
 
     /**
