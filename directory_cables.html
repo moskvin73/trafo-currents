@@ -131,30 +131,30 @@
             }
         });
 
-        function fetchConductors() {
-    // Автоматически вызовет action=get_conductors, если в localStorage пусто
-    return db.getTable('conductors')
-        .then(data => {
-            dbConductors = data;
-        })
-        .catch(err => {
-            console.error('Ошибка проводников:', err.message);
-        });            
-            /*return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
-                .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });*/
+        async function fetchConductors() {
+            // Автоматически вызовет action=get_conductors, если в localStorage пусто
+            return db.select('conductors')
+                .then(data => {
+                    dbConductors = data;
+                })
+                .catch(err => {
+                    console.error('Ошибка проводников:', err.message);
+                });            
+                    /*return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
+                        .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });*/
         }
 
         function fetchGroups() {
-    // Автоматически вызовет action=get_group_catalog, если в localStorage пусто
-    db.getTable('group_catalog')
-        .then(data => {
-            dbGroups = data;
-            renderAdminEditableView(); // Рендерим интерфейс админа
-        })
-        .catch(err => {
-            // Менеджер сам пробросит ошибку из catch
-            renderTableError(err.message || 'Ошибка сети при чтении каталога групп.');
-        });            
+            // Автоматически вызовет action=get_group_catalog, если в localStorage пусто
+            db.select('group_catalog')
+                .then(data => {
+                    dbGroups = data;
+                    renderAdminEditableView(); // Рендерим интерфейс админа
+                })
+                .catch(err => {
+                    // Менеджер сам пробросит ошибку из catch
+                    renderTableError(err.message || 'Ошибка сети при чтении каталога групп.');
+                });            
             /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
@@ -210,7 +210,7 @@
         }
 
         function loadCablesCatalog() {
-            db.getTable('cable_catalog')
+            db.select('cable_catalog')
                 .then(data => {
                     cablesCatalog = data;
                     renderGuestView();
