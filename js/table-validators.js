@@ -61,5 +61,42 @@ window.TableValidators = {
     validateNoDigits: function(value) {
         if (!value) return null;
         return /\d/.test(value) ? "Цифры в данном поле запрещены" : null;
-    }
+    },
+
+    // Асинхронная проверка статуса ГОСТа через открытые реестры
+    checkGostStatusOnline: function(value, currentRow) {
+        if (!value) return null;
+
+        // ИСПРАВЛЕНО: Извлекаем только чистые цифры номера ГОСТ (например, из "ГОСТ 31565-2012" заберем "31565")
+        const matches = value.match(/\d+/);
+        if (!matches) return null;
+        const gostNumber = matches[0]; // Берем первый найденный элемент массива совпадений
+
+        // Используем бесплатный CORS-прокси allorigins для отправки запроса из браузера
+        return fetch(`https://allorigins.win{encodeURIComponent('https://etr-torgi.ru' + gostNumber)}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка сети");
+                return response.json();
+            })
+            .then(data => {
+                // allorigins возвращает HTML-код страницы в свойстве data.contents
+                const htmlString = data.contents ? data.contents.toLowerCase() : "";
+                
+                if (htmlString.includes('отменен') || htmlString.includes('заменен')) {
+                    return "Внимание: Этот ГОСТ отменен или заменен в реестре!";
+                }
+                
+                if (!htmlString.includes('действует') && !htmlString.includes('действующий')) {
+                    return "Стандарт не найден в базе данных актуальных документов.";
+                }
+                
+                return null; // Документ найден и он действует, ошибок нет
+            })
+            .catch((err) => {
+                // Если сторонний сайт упал или прокси недоступен, мягко пропускаем проверку
+                console.warn("Не удалось проверить статус ГОСТа онлайн:", err.message);
+                return null; 
+            });
+    },
+    
 };
