@@ -385,7 +385,12 @@
                             <span class="row-indicator"></span>
                         </td>                
                         <td>${displayIndex}<span class="sub-text">id:</span></td>
-                        <td><input type="text" class="table-input align-left" value=""></td>
+                        <td><input type="text" 
+                            class="table-input align-left" 
+                            data-corrector="cleanExtraSpaces toUpperCase"
+                            data-validator="validateCableName"
+                            value="">
+                        </td>
                         <td>
                             <select class="table-select" style="text-align: left !important;">
                                 ${VOLTAGE_OPTIONS.map(kv => `
@@ -395,7 +400,11 @@
                                 `).join('')}
                             </select>
                         </td>
-                        <td><input type="text" class="table-input align-left" value=""></td>
+                        <td><input type="text" 
+                            class="table-input align-left" 
+                            data-corrector="capitalize cleanExtraSpaces"
+                            value="">
+                        </td>
                         <td><input type="text" inputmode="decimal" min="0" class="table-input" value="0"></td>
                         <td><input type="text" inputmode="decimal" min="0" class="table-input" value="0"></td>
                         <td><input type="text" inputmode="decimal" min="0" class="table-input" value="0"></td>
