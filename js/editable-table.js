@@ -345,11 +345,14 @@ class EditableTable {
         const nextElement = event.relatedTarget;
         const nextRow = nextElement ? nextElement.closest('tr') : null;
 
+        // Если фокус потерял элемент, не являющийся текстовым полем ввода класса .table-input
         if (!input.classList.contains('table-input')) {
+            // Проверяем: если это список (.table-select) или другой элемент, 
+            // и мы вышли за пределы текущей строки, просто запускаем сохранение
             if (!nextRow || nextRow !== currentRow) {
                 if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
             }
-            return;
+            return; // Атрибуты коррекции и валидации для списков игнорируются здесь
         }
 
         /*if (input.value.trim() === '' || input.value === '-') {
