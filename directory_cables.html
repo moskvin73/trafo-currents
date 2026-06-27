@@ -175,7 +175,15 @@
         }
 
         function loadCablesCatalog() {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`).then(r => r.json())
+            db.getTable('cable_catalog')
+                .then(data => {
+                    cablesCatalog = data;
+                    renderGuestView();
+                })
+                .catch(err => {
+                    renderTableError(err.message || 'Ошибка сети при чтении каталога.');
+                });
+            /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (Array.isArray(data)) {
@@ -186,7 +194,7 @@
                 }
             }).catch(err => {
                 renderTableError('Ошибка сети при чтении каталога.');
-            });
+            });*/
         }
 
         function renderTableError(message) {
