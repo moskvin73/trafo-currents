@@ -132,12 +132,30 @@
         });
 
         function fetchConductors() {
-            return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
-                .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });
+    // Автоматически вызовет action=get_conductors, если в localStorage пусто
+    return db.getTable('conductors')
+        .then(data => {
+            dbConductors = data;
+        })
+        .catch(err => {
+            console.error('Ошибка проводников:', err.message);
+        });            
+            /*return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
+                .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });*/
         }
 
         function fetchGroups() {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
+    // Автоматически вызовет action=get_group_catalog, если в localStorage пусто
+    db.getTable('group_catalog')
+        .then(data => {
+            dbGroups = data;
+            renderAdminEditableView(); // Рендерим интерфейс админа
+        })
+        .catch(err => {
+            // Менеджер сам пробросит ошибку из catch
+            renderTableError(err.message || 'Ошибка сети при чтении каталога групп.');
+        });            
+            /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
             .then(data => {
                 // Если сервер вернул массив
                 if (data.success && Array.isArray(data.data)) {
@@ -148,7 +166,7 @@
                 }
             }).catch(err => {
                 renderTableError('Ошибка сети при чтении каталога.');
-            });
+            });*/
         }
 
         function loadCableSpecProp(targetId) {
