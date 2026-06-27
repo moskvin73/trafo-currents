@@ -105,7 +105,27 @@
 
         // Загрузка данных
         function fetchGostDataWithRetry() {
-            fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
+            // Автоматически проверит localStorage или скачает справочник с сервера
+            db.select('conductors')
+                .then(data => {
+                    // Менеджер гарантирует, что сюда придет только чистый валидный массив
+                    currentConductors = data;
+                    renderTable();
+                })
+                .catch(error => {
+                    // Сюда автоматически прилетят: ошибки сети, text.error от Google 
+                    // или ошибка формата данных, если сервер вернул не массив
+                    console.error("Catalog Loading Error:", error);
+                    
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="color:#dc2626;">
+                                ⚠️ ${error.message || "Не удалось загрузить данные ГОСТ. Проверьте сеть."}
+                            </td>
+                        </tr>
+                    `;
+                });           
+           /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
             .then(response => {
                 if (!response.ok) throw new Error("Ошибка связи со справочником");
                 return response.json();
@@ -121,7 +141,7 @@
             .catch(error => {
                 console.error("Catalog Loading Error:", error);
                 tableBody.innerHTML = `<tr><td colspan="6" style="color:#dc2626;">Не удалось загрузить данные ГОСТ. Проверьте сеть.</td></tr>`;
-            });
+            });*/
         }
 
         // Отрисовка таблицы в зависимости от роли
