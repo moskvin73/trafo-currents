@@ -24,7 +24,46 @@ class LocalDBManager {
      * @private
      */
     async _fetchTableFromServer(tableName) {
+
         if (this.pendingRequests.has(tableName)) {
+            return this.pendingRequests.get(tableName);
+        }
+
+        // Формируем URL. Если имя таблицы уже содержит нужный экшен (например, 'cable_spec_prop'),
+        // мы запрашиваем 'get_cable_spec_prop'. Если в будущем понадобятся другие экшены, логику можно расширить.
+        const actionName = tableName.startsWith('get_') ? tableName : `get_${tableName}`;
+        const url = `${this.webAppUrl}?action=${actionName}`;
+        
+        const requestPromise = fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error(`Ошибка сети при получении таблицы ${tableName}`);
+                return response.json();
+            })
+            .then(result => {
+                if (result && result.success === false) {
+                    throw new Error(result.error || 'Ошибка сервера');
+                }
+
+                // Извлекаем массив данных
+                const actualData = (result && result.data !== undefined) ? result.data : result;
+
+                if (!Array.isArray(actualData)) {
+                    throw new Error(`Формат данных для таблицы ${tableName} должен быть массивом`);
+                }
+
+                // Сохраняем ВСЮ таблицу целиком в localStorage
+                localStorage.setItem(tableName, JSON.stringify(actualData));
+                this.pendingRequests.delete(tableName);
+                return actualData;
+            })
+            .catch(error => {
+                this.pendingRequests.delete(tableName);
+                throw error;
+            });
+
+        this.pendingRequests.set(tableName, requestPromise);
+        return requestPromise;        
+       /* if (this.pendingRequests.has(tableName)) {
             return this.pendingRequests.get(tableName);
         }
 
@@ -60,7 +99,7 @@ class LocalDBManager {
             });
 
         this.pendingRequests.set(tableName, requestPromise);
-        return requestPromise;
+        return requestPromise;*/
     }
 
     /**
