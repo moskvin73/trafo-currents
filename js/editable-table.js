@@ -257,7 +257,7 @@ class EditableTable {
         return Array.from(fields).map(field => field.value).join('|');
     }
 
-     scrollToRow(row, targetInput = null) {
+    scrollToRow(row, targetInput = null) {
      if (!row) return;
         const container = row.closest('.table-container-fixed');
         if (!container) return;
@@ -354,36 +354,50 @@ class EditableTable {
             }
             return; // Атрибуты коррекции и валидации для списков игнорируются здесь
         }
+        const isDecimal = input.getAttribute('inputmode') === 'decimal';
+        const valTrimed = input.value.trim();
 
-        /*if (input.value.trim() === '' || input.value === '-') {
+        // ИСПРАВЛЕНО: Проверка на '-' выполняется ТОЛЬКО для decimal полей
+        const isEmptyOrDash = valTrimed === '' || (isDecimal && valTrimed === '-');
+
+        if (isEmptyOrDash) {
             if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
                 input.value = this.initialFieldsValues[this.currentFieldIndex];
                 input.classList.remove('input-error');
             }
         }
-        else if (input.getAttribute('inputmode') === 'decimal') {
+        else if (isDecimal) {
+            // Логика обработки числовых decimal-полей
             const standardValue = input.value.replace(this.localeSeparator, '.');
             const parsedNum = parseFloat(standardValue);
             
             if (!isNaN(parsedNum)) {
                 const min = input.getAttribute('min');
                 const max = input.getAttribute('max');
-                const validatorName = input.getAttribute('data-validator');
                 let customError = null;
-                
+
+                // 1. Сначала СТАНДАРТНЫЕ проверки диапазонов min / max
+                if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max))) {
+                    let msg = (min !== null && max !== null) ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`);
+                    this.showValidationError(input, msg);
+                    return; // Выходим сразу, если стандартная проверка провалена
+                }
+
+                // 2. И только ПОТОМ вызываем кастомный data-validator (если он есть)
+                const validatorName = input.getAttribute('data-validator');
                 if (validatorName && typeof window[validatorName] === 'function') {
                     customError = window[validatorName](parsedNum, currentRow);
+                    if (customError) {
+                        this.showValidationError(input, customError);
+                        return;
+                    }
                 }
 
-                if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max)) || customError) {
-                    let msg = customError || (min !== null && max !== null ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`));
-                    this.showValidationError(input, msg);
-                    return;
-                }
-
+                // Если все проверки пройдены — очищаем ошибки
                 input.classList.remove('input-error');
                 input.setCustomValidity(''); 
 
+                // Форматирование по step
                 const step = input.getAttribute('step');
                 if (step && step.includes('.')) {
                     const stepParts = step.split('.');
@@ -391,95 +405,93 @@ class EditableTable {
                     input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
                 }
             }
-        }*/
-    const isDecimal = input.getAttribute('inputmode') === 'decimal';
-    const valTrimed = input.value.trim();
-
-    // ИСПРАВЛЕНО: Проверка на '-' выполняется ТОЛЬКО для decimal полей
-    const isEmptyOrDash = valTrimed === '' || (isDecimal && valTrimed === '-');
-
-    if (isEmptyOrDash) {
-        if (this.currentFieldIndex !== null && this.initialFieldsValues[this.currentFieldIndex] !== undefined) {
-            input.value = this.initialFieldsValues[this.currentFieldIndex];
-            input.classList.remove('input-error');
         }
-    }
-    else if (isDecimal) {
-        // Логика обработки числовых decimal-полей
-        const standardValue = input.value.replace(this.localeSeparator, '.');
-        const parsedNum = parseFloat(standardValue);
-        
-        if (!isNaN(parsedNum)) {
-            const min = input.getAttribute('min');
-            const max = input.getAttribute('max');
-            let customError = null;
+        else {
 
-            // 1. Сначала СТАНДАРТНЫЕ проверки диапазонов min / max
-            if ((min !== null && parsedNum < parseFloat(min)) || (max !== null && parsedNum > parseFloat(max))) {
-                let msg = (min !== null && max !== null) ? `От ${min} до ${max}` : (min !== null ? `Не меньше ${min}` : `Не больше ${max}`);
-                this.showValidationError(input, msg);
-                return; // Выходим сразу, если стандартная проверка провалена
+            // 1. КОРРЕКЦИЯ ДАННЫХ (Произвольная внешняя логика модификации текста)
+        const correctorAttr = input.getAttribute('data-corrector');
+            if (correctorAttr && window.TableCorrectors) {
+                // Разбиваем строку атрибута по пробелам или запятым на массив имен
+                const correctorKeys = correctorAttr.split(/[\s,]+/);
+                
+                // Последовательно пропускаем текст через каждый найденный корректор
+                correctorKeys.forEach(key => {
+                    if (typeof window.TableCorrectors[key] === 'function') {
+                        input.value = window.TableCorrectors[key](input.value, currentRow);
+                    }
+                });
             }
+            // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Конвейер проверок)
+            /*const validatorAttr = input.getAttribute('data-validator');
+            if (validatorAttr && window.TableValidators) {
+                // Разбиваем строку атрибута на массив имён валидаторов
+                const validatorKeys = validatorAttr.split(/[\s,]+/);
+                let customError = null;
 
-            // 2. И только ПОТОМ вызываем кастомный data-validator (если он есть)
-            const validatorName = input.getAttribute('data-validator');
-            if (validatorName && typeof window[validatorName] === 'function') {
-                customError = window[validatorName](parsedNum, currentRow);
-                if (customError) {
-                    this.showValidationError(input, customError);
-                    return;
+                // Перебираем валидаторы. Если хоть один вернет ошибку — останавливаемся
+                for (let key of validatorKeys) {
+                    if (typeof window.TableValidators[key] === 'function') {
+                        customError = window.TableValidators[key](input.value, currentRow);
+                        if (customError) {
+                            this.showValidationError(input, customError);
+                            return; // Прерываем выполнение метода и блокируем сохранение
+                        }
+                    }
                 }
-            }
-
-            // Если все проверки пройдены — очищаем ошибки
-            input.classList.remove('input-error');
-            input.setCustomValidity(''); 
-
-            // Форматирование по step
-            const step = input.getAttribute('step');
-            if (step && step.includes('.')) {
-                const stepParts = step.split('.');
-                const decimalsCount = stepParts[1] ? stepParts[1].length : 0;
-                input.value = parsedNum.toFixed(decimalsCount).replace('.', this.localeSeparator);
-            }
-        }
-    }
-    else {
-
-        // 1. КОРРЕКЦИЯ ДАННЫХ (Произвольная внешняя логика модификации текста)
-       const correctorAttr = input.getAttribute('data-corrector');
-        if (correctorAttr && window.TableCorrectors) {
-            // Разбиваем строку атрибута по пробелам или запятым на массив имен
-            const correctorKeys = correctorAttr.split(/[\s,]+/);
-            
-            // Последовательно пропускаем текст через каждый найденный корректор
-            correctorKeys.forEach(key => {
-                if (typeof window.TableCorrectors[key] === 'function') {
-                    input.value = window.TableCorrectors[key](input.value, currentRow);
-                }
-            });
-        }
-       // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Конвейер проверок)
+            }*/
+       // 2. КОМБИНИРОВАННАЯ ВАЛИДАЦИЯ (Синхронная и Асинхронная сеть)
         const validatorAttr = input.getAttribute('data-validator');
         if (validatorAttr && window.TableValidators) {
-            // Разбиваем строку атрибута на массив имён валидаторов
             const validatorKeys = validatorAttr.split(/[\s,]+/);
-            let customError = null;
 
-            // Перебираем валидаторы. Если хоть один вернет ошибку — останавливаемся
             for (let key of validatorKeys) {
                 if (typeof window.TableValidators[key] === 'function') {
-                    customError = window.TableValidators[key](input.value, currentRow);
-                    if (customError) {
-                        this.showValidationError(input, customError);
-                        return; // Прерываем выполнение метода и блокируем сохранение
+                    
+                    // Вызываем валидатор
+                    const result = window.TableValidators[key](input.value, currentRow);
+
+                    // Проверяем: если валидатор вернул Promise (сетевой запрос)
+                    if (result instanceof Promise) {
+                        input.classList.add('input-loading'); // Добавьте этот класс в CSS для анимации (например, иконка часиков)
+                        
+                        result.then(customError => {
+                            input.classList.remove('input-loading');
+                            
+                            if (customError) {
+                                this.showValidationError(input, customError);
+                            } else {
+                                input.classList.remove('input-error');
+                                input.setCustomValidity('');
+                                
+                                // Если пользователь вышел за пределы строки и ошибок нет — сохраняем
+                                if (!nextRow || nextRow !== currentRow) {
+                                    this.triggerSave(currentRow);
+                                }
+                            }
+                        }).catch(() => {
+                            input.classList.remove('input-loading');
+                            console.warn("Сетевой валидатор завершился с ошибкой. Проверка пропущена.");
+                        });
+                        
+                        return; // Прерываем синхронный поток handleFocusOut, ждем ответа сети!
+                    } 
+                    // Если вернулась обычная строка ошибки (синхронный валидатор)
+                    else if (result) {
+                        this.showValidationError(input, result);
+                        return; // Прерываем выполнение, сохранение блокируется
                     }
                 }
             }
         }
+
+        // Если все проверки пройдены успешно (и не было сетевых запросов)
+        input.classList.remove('input-error');
+        input.setCustomValidity(''); 
     }
 
-    // Триггер сохранения при выходе из строки
+        }
+
+        // Триггер сохранения при выходе из строки
         if (!nextRow || nextRow !== currentRow) {
             if (currentRow && currentRow.querySelector('.input-error')) return;
             if (this.validateCurrentRow(currentRow)) this.triggerSave(currentRow);
