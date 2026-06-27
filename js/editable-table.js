@@ -448,11 +448,10 @@ class EditableTable {
 
         // 1. КОРРЕКЦИЯ ДАННЫХ (Произвольная внешняя логика модификации текста)
         const correctorName = input.getAttribute('data-corrector');
-        if (correctorName && typeof window[correctorName] === 'function') {
-            // Передаем текущее значение и строку, перезаписываем инпут результатом функции
-            input.value = window[correctorName](input.value, currentRow);
-        }
-                
+        if (correctorKey && window.TableCorrectors && typeof window.TableCorrectors[correctorKey] === 'function') {
+            // Передаем значение в выбранный корректор и обновляем инпут
+            input.value = window.TableCorrectors[correctorKey](input.value, currentRow);
+        }                
         // ИСПРАВЛЕНО: Логика для НЕ-decimal полей (обычный текст). Валидатор вызывается БЕЗУСЛОВНО
         const validatorName = input.getAttribute('data-validator');
         if (validatorName && typeof window[validatorName] === 'function') {
