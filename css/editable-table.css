@@ -48,6 +48,9 @@
     height: 1px; /* Сверхсекретный CSS-хак: заставляет td сжиматься до минимально возможной высоты контента */
     vertical-align: middle !important; /* Выравнивание статического текста строго по середине высоты */
     text-align: center; /* Выравнивание статического контента по центру по умолчанию */
+
+    cursor: default; 
+    user-select: none;     
 }
 
 /* Стилизация липкой шапки */
@@ -72,7 +75,7 @@
 
 .project-table .cell-indicator {
     background-color: var(--th-bg, #f1f5f9) !important;
-    cursor: default !important;
+    cursor: pointer !important;
     user-select: none !important; /* Запрещает выделение символа */    
 }
 
