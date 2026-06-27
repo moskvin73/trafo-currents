@@ -140,8 +140,6 @@
                 .catch(err => {
                     console.error('Ошибка проводников:', err.message);
                 });            
-                    /*return fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_conductors`)
-                        .then(r => r.json()).then(res => { if(res.success) dbConductors = res.data; });*/
         }
 
         function fetchGroups() {
@@ -155,58 +153,25 @@
                     // Менеджер сам пробросит ошибку из catch
                     renderTableError(err.message || 'Ошибка сети при чтении каталога групп.');
                 });            
-            /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_group_catalog`).then(r => r.json())
-            .then(data => {
-                // Если сервер вернул массив
-                if (data.success && Array.isArray(data.data)) {
-                    dbGroups = data.data;
-                    renderAdminEditableView();
-                } else {
-                    renderTableError(data.error || 'Неверный формат данных');
-                }
-            }).catch(err => {
-                renderTableError('Ошибка сети при чтении каталога.');
-            });*/
         }
 
         async function loadCableSpecProp(targetId) {
 
-    try {
-        // Если targetId передан, делаем фильтрацию (аналог WHERE Id = targetId)
-        if (targetId !== undefined && targetId !== null) {
-            // Менеджер возьмет таблицу 'cable_spec_prop' (вызовет action=get_cable_spec_prop)
-            // и вернет только те строки, у которых поле Id совпадает с targetId
-            return await db.select('cable_spec_prop', { Id: targetId });
-        }
-        
-        // Если targetId не передан, возвращаем всю таблицу
-        return await db.getTable('cable_spec_prop');
-        
-    } catch (err) {
-        console.error('Ошибка при чтении свойств кабеля:', err.message);
-        return []; // Возвращаем пустой массив в случае ошибки, как в вашем примере
-    }            
-
-           /* const url = new URL(AppConfig.GOOGLE_WEB_APP_URL);
-            url.searchParams.set('action', 'get_cable_spec_prop');
-
-            // Добавляем Id ТОЛЬКО если targetId передан (не null и не undefined)
-            if (targetId !== undefined && targetId !== null) {
-                url.searchParams.set('Id', targetId);
-            }            
-            return fetch(url.toString()).then(r => r.json())
-            .then(data => {
-                // Если сервер вернул массив
-                if (data.success && Array.isArray(data.data)) {
-                   return data.data;
-                } else {
-                    //renderTableError(data.error || 'Неверный формат данных');
-                    return [];
+            try {
+                // Если targetId передан, делаем фильтрацию (аналог WHERE Id = targetId)
+                if (targetId !== undefined && targetId !== null) {
+                    // Менеджер возьмет таблицу 'cable_spec_prop' (вызовет action=get_cable_spec_prop)
+                    // и вернет только те строки, у которых поле Id совпадает с targetId
+                    return await db.select('cable_spec_prop', { Id: targetId });
                 }
-            }).catch(err => {
-                //renderTableError('Ошибка сети при чтении каталога.');
-                return [];
-            });*/
+                
+                // Если targetId не передан, возвращаем всю таблицу
+                return await db.getTable('cable_spec_prop');
+                
+            } catch (err) {
+                console.error('Ошибка при чтении свойств кабеля:', err.message);
+                return []; // Возвращаем пустой массив в случае ошибки, как в вашем примере
+            }            
         }
 
         function loadCablesCatalog() {
@@ -218,18 +183,6 @@
                 .catch(err => {
                     renderTableError(err.message || 'Ошибка сети при чтении каталога.');
                 });
-            /*fetch(`${AppConfig.GOOGLE_WEB_APP_URL}?action=get_cable_catalog`).then(r => r.json())
-            .then(data => {
-                // Если сервер вернул массив
-                if (Array.isArray(data)) {
-                    cablesCatalog = data;
-                    renderGuestView();
-                } else {
-                    renderTableError(data.error || 'Неверный формат данных');
-                }
-            }).catch(err => {
-                renderTableError('Ошибка сети при чтении каталога.');
-            });*/
         }
 
         function renderTableError(message) {
