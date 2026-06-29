@@ -1,7 +1,7 @@
 // Глобальные конфигурационные параметры инженерного комплекса ТКЗ
 const AppConfig = {
     // Единая точка доступа к серверу Google Apps Script Web App
-    GOOGLE_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbxlLzTe1RnRLlhjpDuofIRtYx4t0LR1-12WlGXuz21E-mucmebm-ZB59-a94ccKjn6H9A/exec"
+    GOOGLE_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbzBFpD-SdkpGqfIJr7SN4Ho5S4IUUyE17gSGQlDnIVJOoeQOpM0k5D3PjLer5zHhfqR3w/exec"
 };
 
 // Замораживаем объект, чтобы исключить случайное изменение адреса из других скриптов
