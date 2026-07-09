@@ -28,18 +28,18 @@ export default class ASTNode {
 /**
  * Узел комплексного числа (Терминальный узел / Лист дерева)
  */
-export class ComplexNode extends ASTNode {
-  constructor(complexValue, loc) {
+export class NumberNode extends ASTNode {
+  constructor(mathTypeValue, loc) {
     super(loc);
-    this.value = complexValue; // Объект класса ComplexNumber
+    this.value = mathTypeValue; // Здесь может лежать и RealNumber, и ComplexNumber
   }
 
   evaluate(context) {
-    return this.value;
+    return this.value; // Просто возвращает математический объект
   }
 
   toTeX() {
-    return this.value.toRawTeX();
+    return this.value.toRawTeX(); // Каждый тип сам знает, как себя нарисовать!
   }
 }
 
