@@ -136,6 +136,23 @@
 
     <script>
 
+       import ComplexNumber from './math/ComplexNumber.js';
+
+try {
+  const c = new ComplexNumber(3, -4);
+
+  console.log(c.toString());               // "3 - 4i"
+  console.log(c.toTeX('inline'));          // "$3 - 4i$"
+  console.log(c.toTeX('block'));           // "$$3 - 4i$$"
+  console.log(c.toMathML(true));           // "<math display="block"><mn>3</mn><mo>-</mo><mn>4</mn><mi>i</mi></math>"
+
+  // Проверка перехвата ошибок класса
+  c.real = "строка"; 
+} catch (error) {
+  console.error(error.message); // [ComplexNumber]: Аргумент в "set real" должен быть валидным числом.
+}
+
+
        document.addEventListener("DOMContentLoaded", () => {
             checkCurrentAuth();
         });
