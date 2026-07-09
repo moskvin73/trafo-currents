@@ -140,12 +140,19 @@ class MathLexer {
         continue;
       }
 
+      if (char === '*' && chars[i + 1] === '*') {
+        tokens.push({ type: 'OPERATOR', value: '^', loc: startLocation }); // превращаем ** в ^ для парсера
+        advance(2);
+        continue;
+      }
+      
       // 6. Математические операторы
       if (['+', '-', '*', '/', '^'].includes(char)) {
         tokens.push({ type: 'OPERATOR', value: char, loc: startLocation });
         advance();
         continue;
       }
+      
 
       if (char === '(') {
         tokens.push({ type: 'LPAREN', value: '(', loc: startLocation });
