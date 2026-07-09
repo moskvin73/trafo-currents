@@ -116,6 +116,28 @@ h2 {
     text-align: center;
 }
 
+/* Этот код сработает ТОЛЬКО там, где вы вручную дописали класс book-layout */
+.graphic-side.book-layout {
+    float: right;
+    width: 380px; 
+    margin-left: 25px;
+    margin-bottom: 20px;
+    
+    /* Свойства декора остаются безопасными */
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px dashed #cbd5e1;
+    text-align: center;
+}
+
+/* Безопасный сброс потока, чтобы текст из следующих блоков не пострадал */
+.derivation-step::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 .table-container {
     width: 100%;
     overflow-x: auto;
