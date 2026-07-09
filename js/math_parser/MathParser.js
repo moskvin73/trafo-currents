@@ -7,7 +7,7 @@ import ASTNode, {
 
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
-import { CompilerError } from './MathLexer/MathLexer.js';
+import { CompilerError } from './MathLexer.js';
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends ASTNode {
