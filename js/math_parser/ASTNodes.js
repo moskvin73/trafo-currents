@@ -279,7 +279,6 @@ export class PrintNode extends ASTNode {
 
     for (const element of this.elements) {
       if (element.type === 'TEXT_BLOCK') {
-        // Безопасное экранирование HTML тегов (защита от XSS)
         const safeText = element.value
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
@@ -288,13 +287,17 @@ export class PrintNode extends ASTNode {
         resultStrings.push(safeText);
         texStrings.push(`\\text{${safeText}}`);
       } else {
+        // 1. Вычисляем математический объект (RealNumber или ComplexNumber)
         const val = element.evaluate(context);
+        
+        // 2. В текстовый вывод пишем обычную строку
         resultStrings.push(val.toString());
-        texStrings.push(element.toTeX());
+        
+        // 3. ИСПРАВЛЕНИЕ: В TeX-вывод пишем TeX-код самого ВЫЧИСЛЕННОГО ЗНАЧЕНИЯ!
+        texStrings.push(val.toRawTeX()); 
       }
     }
 
-    // Возвращаем строку: текстовое превью для логов + чистый TeX для MathJax
     return {
       plain: resultStrings.join(" "),
       tex: texStrings.join(" ")
