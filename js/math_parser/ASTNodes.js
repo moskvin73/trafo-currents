@@ -246,3 +246,92 @@ export class VariableNode extends ASTNode {
     return this.name; // В LaTeX переменные выводятся своим именем
   }
 }
+
+// Дополнительные узлы для поддержки переменных, которые мы спроектировали
+export class AssignNode extends ASTNode {
+  constructor(name, expression, loc) {
+    super(loc);
+    this.name = name;
+    this.expression = expression;
+  }
+  evaluate(context) {
+    const value = this.expression.evaluate(context);
+    context[this.name] = value;
+    return value;
+  }
+  toTeX() {
+    return `${this.name} = ${this.expression.toTeX()}`;
+  }
+}
+
+export class VariableNode extends ASTNode {
+  constructor(name, loc) {
+    super(loc);
+    this.name = name;
+  }
+  evaluate(context) {
+    if (this.name in context) {
+      return context[this.name];
+    }
+    throw new Error(`Переменная "${this.name}" не определена в текущем контексте.`);
+  }
+  toTeX() {
+    return this.name;
+  }
+}
+
+/**
+ * Узел для всей программы (блокнота/интерфейса вычислений)
+ */
+export class ProgramNode {
+  constructor() {
+    this.statements = [];
+  }
+
+  evaluate(context = {}) {
+    let outputHTML = "";
+    for (const stmt of this.statements) {
+      // Каждую строчку вычисляем и оборачиваем в div для вывода
+      outputHTML += `<div>${stmt.evaluate(context)}</div>`;
+    }
+    return outputHTML;
+  }
+}
+
+/**
+ * Узел для команды print(...)
+ */
+export class PrintNode extends ASTNode {
+  constructor(elements, loc) {
+    super(loc);
+    this.elements = elements;
+  }
+
+  evaluate(context) {
+    let resultStrings = [];
+    let texStrings = [];
+
+    for (const element of this.elements) {
+      if (element.type === 'TEXT_BLOCK') {
+        // Безопасное экранирование HTML тегов (защита от XSS)
+        const safeText = element.value
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        
+        resultStrings.push(safeText);
+        texStrings.push(`\\text{${safeText}}`);
+      } else {
+        const val = element.evaluate(context);
+        resultStrings.push(val.toString());
+        texStrings.push(element.toTeX());
+      }
+    }
+
+    // Возвращаем строку: текстовое превью для логов + чистый TeX для MathJax
+    return {
+      plain: resultStrings.join(" "),
+      tex: texStrings.join(" ")
+    };
+  }
+}
