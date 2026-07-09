@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инженерный калькулятор</title>
+
+    <!-- Подключение конфигурации и автозагрузки MathJax из репозитория -->
+    <script src="./js/math-script.js"></script>
+
+    <link rel="stylesheet" href="./css/main.css">
+	
+	<style>
+
+		/* Контейнер калькулятора */
+		.command-line-calculator {
+			margin-top: 40px;
+			background: #ffffff;
+		}
+
+		/* Каждая архивная карточка в ленте */
+		.calc-card {
+			position: relative;
+			background: #f8fafc;
+			border: 1px solid #cbd5e1;
+			border-radius: 6px;
+			padding: 15px;
+			margin-bottom: 20px;
+			animation: fadeIn 0.3s ease;
+		}
+
+		/* Эхо-вывод того кода, который ввёл пользователь */
+		.calc-card-echo {
+			font-family: 'Fira Code', 'Courier New', monospace;
+			font-size: 14px;
+			color: #475569;
+			background: #f1f5f9;
+			padding: 6px 12px;
+			border-radius: 4px;
+			display: inline-block;
+			margin-bottom: 10px;
+			border-left: 3px solid #0f2d59; /* Ваш фирменный глубокий синий */
+		}
+
+		/* Кнопка удаления конкретной карточки [×] */
+		.calc-card-delete {
+			position: absolute;
+			top: 10px;
+			right: 12px;
+			background: transparent;
+			border: none;
+			color: #94a3b8;
+			font-size: 18px;
+			cursor: pointer;
+			font-weight: bold;
+			transition: color 0.2s;
+			padding: 2px 6px;
+		}
+		.calc-card-delete:hover {
+			color: #dc3545; /* Красный при наведении */
+		}
+
+		/* Контейнер активной строки ввода */
+		.input-row-container {
+			display: flex;
+			gap: 12px;
+			align-items: stretch;
+			margin-top: 8px;
+		}
+
+		/* Поле ввода активного терминала */
+		#calc-terminal-input {
+			flex: 1;
+			border: 1px solid #cbd5e1;
+			border-radius: 6px;
+			padding: 12px;
+			font-family: 'Fira Code', 'Courier New', monospace;
+			font-size: 15px;
+			line-height: 1.5;
+			outline: none;
+			resize: vertical;
+			transition: border-color 0.2s;
+		}
+		#calc-terminal-input:focus {
+			border-color: #0f2d59; /* Подсветка вашим синим цветом при фокусе */
+			box-shadow: 0 0 0 3px rgba(15, 45, 89, 0.1);
+		}
+
+		/* Кнопка Enter в вашей синей палитре */
+		#calc-submit-btn {
+			background: #0f2d59;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 0 25px;
+			font-size: 14px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.1s;
+		}
+		#calc-submit-btn:hover {
+			background: #1e3a6d;
+		}
+		#calc-submit-btn:active {
+			transform: scale(0.97);
+		}
+
+		/* Адаптивность для телефонов */
+		@media (max-width: 768px) {
+			.input-row-container {
+				flex-direction: column; /* На смартфонах кнопка встает ПОД поле ввода */
+			}
+			#calc-submit-btn {
+				padding: 12px;
+				text-align: center;
+			}
+		}
+	
+	</style>
+</head>
+
+<body class="tex2jax_process">
+
+    <div class="wrapper">
+		<!-- Контейнер интерактивной командной ленты калькулятора -->
+		<div class="command-line-calculator">
+			
+			<!-- Зона истории: сюда JS будет динамически добавлять выполненные карточки -->
+			<div id="calc-history-stream"></div>
+
+			<!-- Активный блок ввода (всегда зафиксирован в самом внизу ленты) -->
+			<div class="active-input-block">
+				<div class="step-heading">Новое математическое выражение или команда print():</div>
+				
+				<div class="input-row-container">
+					<!-- Поле ввода. На смартфонах textarea удобнее, так как поддерживает перенос длинных строк -->
+					<textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
+					
+					<!-- Кнопка отправки команды на выполнение -->
+					<button id="calc-submit-btn" type="button">Enter</button>
+				</div>
+			</div>
+		</div>	
+	</div>
+	
+	<script>
+	
+	</script>
+</body>
+</html>
