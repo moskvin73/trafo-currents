@@ -241,21 +241,6 @@ export class AssignNode extends ASTNode {
   }
 }
 
-export class VariableNode extends ASTNode {
-  constructor(name, loc) {
-    super(loc);
-    this.name = name;
-  }
-  evaluate(context) {
-    if (this.name in context) {
-      return context[this.name];
-    }
-    throw new Error(`Переменная "${this.name}" не определена в текущем контексте.`);
-  }
-  toTeX() {
-    return this.name;
-  }
-}
 
 /**
  * Узел для всей программы (блокнота/интерфейса вычислений)
