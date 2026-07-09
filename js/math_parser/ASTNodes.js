@@ -149,14 +149,18 @@ export class BinaryOpNode extends ASTNode {
     // Семантическое выравнивание типов перед вычислением
     const { l, r } = this.#promoteTypes(rawLeft, rawRight);
 
-    // Вызываем скрытый метод операции, теперь типы ГАРАНТИРОВАННО одинаковые
-    const internalMethod = `_${this.operator === '+' ? 'add' : 
-                             this.operator === '-' ? 'subtract' : 
-                             this.operator === '*' ? 'multiply' : 
-                             this.operator === '/' ? 'divide' : 'pow'}`;
+    const methodMap = {
+      '+': 'add',
+      '-': 'subtract',
+      '*': 'multiply',
+      '/': 'divide',
+      '^': 'pow'
+    };
+    
+    const opName = methodMap[this.operator];
 
-    if (typeof l[internalMethod] === 'function') {
-      return l[internalMethod](r);
+    if (typeof l[opName] === 'function') {
+      return l[opName](r);
     }
 
     throw new Error(`[AST]: Операция "${this.operator}" не поддерживается типами на ${this.loc}`);

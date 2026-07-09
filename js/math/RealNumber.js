@@ -34,7 +34,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод сложения двух вещественных чисел
    */
-  _add(other) {
+  add(other) {
     if (!(other instanceof RealNumber)) {
       throw new TypeError(`[RealNumber]: Операция сложения невозможна с типом ${other.constructor.name}. Требуется семантическое приведение типов.`);
     }
@@ -44,7 +44,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод вычитания двух вещественных чисел
    */
-  _subtract(other) {
+  subtract(other) {
     if (!(other instanceof RealNumber)) {
       throw new TypeError(`[RealNumber]: Операция вычитания невозможна с типом ${other.constructor.name}.`);
     }
@@ -54,7 +54,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод умножения двух вещественных чисел
    */
-  _multiply(other) {
+  multiply(other) {
     if (!(other instanceof RealNumber)) {
       throw new TypeError(`[RealNumber]: Операция умножения невозможна с типом ${other.constructor.name}.`);
     }
@@ -64,7 +64,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод деления двух вещественных чисел
    */
-  _divide(other) {
+  divide(other) {
     if (!(other instanceof RealNumber)) {
       throw new TypeError(`[RealNumber]: Операция деления невозможна с типом ${other.constructor.name}.`);
     }
@@ -77,7 +77,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод возведения в степень
    */
-  _pow(other) {
+  pow(other) {
     if (!(other instanceof RealNumber)) {
       throw new TypeError(`[RealNumber]: Операция возведения в степень невозможна с типом ${other.constructor.name}.`);
     }
