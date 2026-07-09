@@ -148,7 +148,7 @@ class MathLexer {
       }
       
       // 6. Математические операторы
-      if (['+', '-', '*', '/', '^'].includes(char)) {
+      if (['+', '-', '*', '/', '^', '='].includes(char)) {
         tokens.push({ type: 'OPERATOR', value: char, loc: startLocation });
         advance();
         continue;

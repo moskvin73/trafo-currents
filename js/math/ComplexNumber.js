@@ -15,6 +15,7 @@ export default class ComplexNumber extends MathType {
    * @param {number} imaginary - Мнимая часть (Im)
    */
   constructor(real = 0, imaginary = 0) {
+    super();
     this.#validateNumber(real, 'constructor (real)');
     this.#validateNumber(imaginary, 'constructor (imaginary)');
     this.#real = real;

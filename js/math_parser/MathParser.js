@@ -139,16 +139,20 @@ export class MathParser {
     const program = new ProgramNode();
 
     while (!this.#isAtEnd()) {
-      try {
-        if (this.#match('COMMENT')) continue;
+        try {
+            if (this.#match('COMMENT')) continue;
+            const stmt = this.#parseStatement();
+            if (stmt) program.statements.push(stmt);
+        } catch (error) {
+            // Исправленная безопасная логика координат:
+            const currentToken = this.#peek();
+            // Если токен существует, берем его координаты. 
+            // Если мы упёрлись в конец файла, берём координаты самого последнего известного токена.
+            const errorLoc = currentToken?.loc || this.tokens[this.tokens.length - 1]?.loc || null;
 
-        const stmt = this.#parseStatement();
-        if (stmt) program.statements.push(stmt);
-      } catch (error) {
-        // Error Recovery: фиксируем синтаксическую ошибку и мягко шагаем дальше
-        this.errors.push(new CompilerError(error.message, this.#peek()?.loc || null));
-        this.#synchronize();
-      }
+            this.errors.push(new CompilerError(error.message, errorLoc));
+            this.#synchronize();
+        }
     }
 
     return { program, errors: this.errors };
