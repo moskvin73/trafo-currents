@@ -96,6 +96,11 @@ export class BinaryOpNode extends ASTNode {
    * Приводит аргументы к единому типу на основе иерархии перед вычислением.
    */
   #promoteTypes(leftVal, rightVal) {
+   // 1. Автоматическая обертка сырых чисел JS в RealNumber
+    if (typeof leftVal === 'number') leftVal = new RealNumber(leftVal);
+    if (typeof rightVal === 'number') rightVal = new RealNumber(rightVal);
+
+
     // 1. Определение рангов типов
     const getRank = (obj) => {
       if (obj instanceof RealNumber) return 1;
