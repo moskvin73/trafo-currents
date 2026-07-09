@@ -265,4 +265,96 @@ export default class ComplexNumber {
   static equals(left, right) {
     return ComplexNumber.#from(left).equals(right);
   }
+ 
+ // ==========================================
+  // ЭКСПАНСИЯ: СТЕПЕНИ, КОРНИ, ЛОГАРИФМЫ (Instance)
+  // ==========================================
+
+  /**
+   * Экспонента комплексного числа: e^(a + bi) = e^a * (cos(b) + i*sin(b))
+   * @returns {ComplexNumber}
+   */
+  exp() {
+    try {
+      const expReal = Math.exp(this.#real);
+      return new ComplexNumber(
+        expReal * Math.cos(this.#imaginary),
+        expReal * Math.sin(this.#imaginary)
+      );
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .exp(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Натуральный логарифм: ln(z) = ln(|z|) + i * arg(z)
+   * @returns {ComplexNumber}
+   */
+  log() {
+    try {
+      if (this.#real === 0 && this.#imaginary === 0) {
+        throw new RangeError("Логарифм нуля не определен.");
+      }
+      return new ComplexNumber(Math.log(this.magnitude), this.phase);
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .log(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Квадратный корень комплексного числа (главное значение)
+   * @returns {ComplexNumber}
+   */
+  sqrt() {
+    try {
+      const r = this.magnitude;
+      // Используем стабильные формулы для исключения потери точности
+      const realPart = Math.sqrt((r + this.#real) / 2);
+      const imagPart = Math.sign(this.#imaginary || 1) * Math.sqrt((r - this.#real) / 2);
+      return new ComplexNumber(realPart, imagPart);
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .sqrt(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Возведение комплексного числа в степень другого числа (комплексного или вещественного)
+   * Формула: z^w = exp(w * log(z))
+   * @param {ComplexNumber|number} power - Степень
+   * @returns {ComplexNumber}
+   */
+  pow(power) {
+    try {
+      if (this.#real === 0 && this.#imaginary === 0) {
+        if (power === 0) return new ComplexNumber(1, 0); // 0^0 принято считать 1
+        return new ComplexNumber(0, 0);
+      }
+      
+      const p = ComplexNumber.#from(power);
+      // z^w = exp(w * log(z))
+      return this.log().multiply(p).exp();
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .pow(). ${e.message}`);
+    }
+  }
+
+  // ==========================================
+  // СТАТИЧЕСКИЕ АНАЛОГИ (Static)
+  // ==========================================
+
+  static exp(value) {
+    return ComplexNumber.#from(value).exp();
+  }
+
+  static log(value) {
+    return ComplexNumber.#from(value).log();
+  }
+
+  static sqrt(value) {
+    return ComplexNumber.#from(value).sqrt();
+  }
+
+  static pow(base, power) {
+    return ComplexNumber.#from(base).pow(power);
+  }  
 }

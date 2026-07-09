@@ -138,27 +138,15 @@
      import ComplexNumber from './js/math/ComplexNumber.js';
     
     try {
-        const c1 = new ComplexNumber(1, 2);
-        const c2 = new ComplexNumber(3, 4);
+ // Возведем мнимую единицу i (0 + 1i) в квадрат
+const i = new ComplexNumber(0, 1);
+const iSquared = i.pow(2); 
 
-        // 1. Работа цепочкой вызовов (Instance)
-        const res1 = c1.add(c2).multiply(2); 
-        console.log(res1.toString()); // "8 + 12i"
+console.log(iSquared.toString()); // Должно вывести "-1", так как i^2 = -1 (возможна минимальная погрешность JS вроде -1 + 1.22e-16i)
 
-        // 2. Использование статических методов
-        const res2 = ComplexNumber.divide(c1, c2); 
-        console.log(res2.toString()); // "0.44 + 0.08i"
-
-        // 3. Сравнение
-        console.log(c1.equals(new ComplexNumber(1, 2))); // true
-        console.log(c1.equals(5));                       // false
-
-        // 4. Проверка деления на ноль
-        try {
-            c1.divide(0);
-        } catch(e) {
-            console.error(e.message); 
-        }
+// Квадратный корень из -4
+const sqrtNegative = ComplexNumber.sqrt(-4);
+console.log(sqrtNegative.toString()); // Выведет: "2i" (или "0 + 2i")
 
     } catch (globalError) {
         // ЭТОТ БЛОК БЫЛ ПРОПУЩЕН
