@@ -1,8 +1,10 @@
+import MathType from './MathType.js';
+
 /**
  * Класс для работы с комплексными числами (a + bi).
  * Ориентирован на стандарты C++ и C#. Поддерживается всеми современными браузерами.
  */
-export default class ComplexNumber {
+export default class ComplexNumber extends MathType {
   // Приватные поля для инкапсуляции (защита от прямого изменения)
   #real;
   #imaginary;
@@ -84,6 +86,20 @@ export default class ComplexNumber {
     // 1e-15 — это стандартный порог точности для double precision
     return Math.abs(value) < 1e-15 ? 0 : value;
   }
+
+  /**
+   * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
+   */
+  toRawTeX() {
+    const r = this.#cleanRound(this.#real);
+    const i = this.#cleanRound(this.#imaginary);
+
+    if (i === 0) return `${r}`;
+    if (r === 0) return `${i}i`;
+    
+    const sign = i > 0 ? '+' : '-';
+    return `${r} ${sign} ${Math.abs(i)}i`;
+  }  
 
   /**
    * Стандартный вывод в формате строки "a + bi" с очисткой от погрешностей
