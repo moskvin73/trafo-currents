@@ -214,6 +214,7 @@ export class MathParser {
     return this.#parseAddition();
   }
 
+  #parseAddition() {
   // Сложение и вычитание (Низший приоритет)
     let expr = this.#parseMultiplication();
 
@@ -276,7 +277,7 @@ export class MathParser {
       const right = this.#parsePower(); 
       expr = new BinaryOpNode(expr, operator, right, loc);
     }
-    return expr;
+    return expr; 
   }
 
   // Базовые терминалы (Высший приоритет)
