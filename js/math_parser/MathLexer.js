@@ -105,7 +105,7 @@ class MathLexer {
         continue;
       }
 
-      // 4. Числа
+     // 4. Числа (Вещественные и Комплексные)
       if (/[0-9]/.test(char) || (char === '.' && /[0-9]/.test(chars[i + 1]))) {
         let numStr = '';
         while (i < chars.length && /[0-9.]/.test(chars[i])) {
@@ -115,11 +115,21 @@ class MathLexer {
         
         if ((numStr.match(/\./g) || []).length > 1) {
           errors.push(new CompilerError(`Неверный формат числа "${numStr}" (слишком много точек)`, startLocation));
-          // Записываем «битый» токен, чтобы парсер мог попытаться обработать его как число 0
           tokens.push({ type: 'NUMBER', value: parseFloat(numStr) || 0, loc: startLocation });
           continue;
         }
-        tokens.push({ type: 'NUMBER', value: parseFloat(numStr), loc: startLocation });
+
+        const parsedValue = parseFloat(numStr);
+
+        // КРИТИЧЕСКИЙ ШАГ: Проверяем, идет ли сразу за числом мнимая единица 'i'
+        if (i < chars.length && chars[i] === 'i') {
+          advance(); // Поглощаем символ 'i' прямо здесь, в лексере!
+          // Генерируем единый готовый токен комплексного числа
+          tokens.push({ type: 'COMPLEX_NUMBER', value: parsedValue, loc: startLocation });
+        } else {
+          // Иначе это обычное вещественное число
+          tokens.push({ type: 'NUMBER', value: parsedValue, loc: startLocation });
+        }
         continue;
       }
 

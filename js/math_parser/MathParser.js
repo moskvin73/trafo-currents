@@ -264,25 +264,19 @@ export class MathParser {
 
   // Базовые терминалы (Высший приоритет)
   #parsePrimary() {
-    const token = this.#peek();
+     const token = this.#peek();
 
+    // Вещественное число
     if (this.#match('NUMBER')) {
-      const numToken = this.tokens[this.current - 1];
-      
-      // Если сразу за числом идет мнимая единица, склеиваем в комплексное число
-      if (this.#check('IMAGINARY')) {
-        this.#advance(); 
-        return new NumberNode(new ComplexNumber(0, numToken.value), numToken.loc);
-      }
-      
-      // БЕЗУПРЕЧНАЯ ЧИСТОТА: Обычные числа создаются как RealNumber! Погрешность исключена.
-      return new NumberNode(new RealNumber(numToken.value), numToken.loc);
+      return new ComplexNode(new RealNumber(this.tokens[this.current - 1].value), token.loc);
     }
 
-    if (this.#match('IMAGINARY')) {
-      return new NumberNode(new ComplexNumber(0, 1), token.loc); // одинокая 'i' -> 0 + 1i
+    // Комплексное число (например, 1i или 4i)
+    if (this.#match('COMPLEX_NUMBER')) {
+      return new ComplexNode(new ComplexNumber(0, this.tokens[this.current - 1].value), token.loc);
     }
 
+    // Инженерные функции
     if (this.#match('FUNCTION')) {
       const funcName = this.tokens[this.current - 1].value;
       if (!this.#match('LPAREN')) throw new Error(`Ожидалась открывающая скобка '(' после функции ${funcName}`);
@@ -291,12 +285,14 @@ export class MathParser {
       return new FunctionNode(funcName, arg, token.loc);
     }
 
+    // Скобки
     if (this.#match('LPAREN')) {
       const expr = this.#parseExpression();
       if (!this.#match('RPAREN')) throw new Error("Ожидалась закрывающая скобка ')'");
       return expr;
     }
 
+    // Переменные (сюда же автоматически и абсолютно законно попадёт одинокая буква i)
     if (this.#match('VARIABLE')) {
       return new VariableNode(token.value, token.loc);
     }
