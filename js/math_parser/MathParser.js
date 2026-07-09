@@ -177,7 +177,7 @@ export class MathParser {
   }
 
   #parsePrintStatement() {
-    const printToken = this.#advance(); // сожрали 'print'
+     const printToken = this.#advance(); // забрали 'print'
     
     if (!this.#match('LPAREN')) {
       throw new Error("Ожидалась открывающая скобка '(' после команды print");
@@ -189,7 +189,13 @@ export class MathParser {
       if (this.#check('TEXT_BLOCK')) {
         elements.push({ type: 'TEXT_BLOCK', value: this.#advance().value });
       } else {
+        // Если это не текст в кавычках, принудительно парсим как математическое выражение (переменную или число)
         elements.push(this.#parseExpression());
+      }
+      
+      // На всякий случай: если пользователь поставит запятую между аргументами, мягко пропускаем её
+      if (this.#check('OPERATOR') && this.#peek().value === ',') {
+        this.#advance();
       }
     }
 
