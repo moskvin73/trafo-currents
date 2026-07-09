@@ -77,60 +77,79 @@ export default class ComplexNumber {
   // ==========================================
 
   /**
-   * Стандартный вывод в формате строки "a + bi"
-   * @returns {string}
+   * Внутренний метод для фильтрации микро-ошибок округления JS.
+   * Если число безумно близко к нулю (меньше 1e-15), возвращает чистый 0.
    */
-  toString() {
-    if (this.#imaginary === 0) return `${this.#real}`;
-    if (this.#real === 0) return `${this.#imaginary}i`;
-    const sign = this.#imaginary > 0 ? '+' : '-';
-    return `${this.#real} ${sign} ${Math.abs(this.#imaginary)}i`;
+  #cleanRound(value) {
+    // 1e-15 — это стандартный порог точности для double precision
+    return Math.abs(value) < 1e-15 ? 0 : value;
   }
 
   /**
-   * Вывод формулы в формате LaTeX
+   * Стандартный вывод в формате строки "a + bi" с очисткой от погрешностей
+   * @returns {string}
+   */
+  toString() {
+    const r = this.#cleanRound(this.#real);
+    const i = this.#cleanRound(this.#imaginary);
+
+    if (i === 0) return `${r}`;
+    if (r === 0) return `${i}i`;
+    
+    const sign = i > 0 ? '+' : '-';
+    return `${r} ${sign} ${Math.abs(i)}i`;
+  }
+
+  /**
+   * Вывод формулы в формате LaTeX с фильтрацией микро-ошибок
    * @param {string} displayMode - Режим отображения: 'inline' ($...$) или 'block' ($$...$$)
    * @returns {string}
    */
   toTeX(displayMode = 'inline') {
     if (displayMode !== 'inline' && displayMode !== 'block') {
-      throw new IllegalArgumentError('[ComplexNumber]: Метод toTeX принимает только "inline" или "block".');
+      throw new Error('[ComplexNumber]: Метод toTeX принимает только "inline" или "block".');
     }
     
+    const r = this.#cleanRound(this.#real);
+    const i = this.#cleanRound(this.#imaginary);
+
     let tex = '';
-    if (this.#imaginary === 0) {
-      tex = `${this.#real}`;
-    } else if (this.#real === 0) {
-      tex = `${this.#imaginary}i`;
+    if (i === 0) {
+      tex = `${r}`;
+    } else if (r === 0) {
+      tex = `${i}i`;
     } else {
-      const sign = this.#imaginary > 0 ? '+' : '-';
-      tex = `${this.#real} ${sign} ${Math.abs(this.#imaginary)}i`;
+      const sign = i > 0 ? '+' : '-';
+      tex = `${r} ${sign} ${Math.abs(i)}i`;
     }
 
     return displayMode === 'block' ? `$$${tex}$$` : `$${tex}$`;
   }
 
   /**
-   * Вывод формулы в стандарте MathML для отображения в браузерах
+   * Вывод формулы в стандарте MathML с фильтрацией микро-ошибок
    * @param {boolean} isBlock - Обернуть ли в блочный контейнер (display="block")
    * @returns {string}
    */
   toMathML(isBlock = false) {
     const displayAttr = isBlock ? ' display="block"' : '';
+    const r = this.#cleanRound(this.#real);
+    const i = this.#cleanRound(this.#imaginary);
+    
     let content = '';
 
-    if (this.#imaginary === 0) {
-      content = `<mn>${this.#real}</mn>`;
-    } else if (this.#real === 0) {
-      content = `<mn>${this.#imaginary}</mn><mi>i</mi>`;
+    if (i === 0) {
+      content = `<mn>${r}</mn>`;
+    } else if (r === 0) {
+      content = `<mn>${i}</mn><mi>i</mi>`;
     } else {
-      const sign = this.#imaginary > 0 ? '+' : '-';
+      const sign = i > 0 ? '+' : '-';
       content = `
-        <mn>${this.#real}</mn>
+        <mn>${r}</mn>
         <mo>${sign}</mo>
-        <mn>${Math.abs(this.#imaginary)}</mn>
+        <mn>${Math.abs(i)}</mn>
         <mi>i</mi>
-      `.replace(/\s+/g, ' ').trim(); // очистка лишних пробелов для красоты
+      `.replace(/\s+/g, ' ').trim();
     }
 
     return `<math${displayAttr}>${content}</math>`;
