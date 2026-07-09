@@ -135,19 +135,29 @@
     </div>
 
  <script type="module">
-    import ComplexNumber from './js/math/ComplexNumber.js'; 
+    import ComplexNumber from './js/math/ComplexNumber.js';
+    
     try {
-    const c = new ComplexNumber(3, -4);
+    const c1 = new ComplexNumber(1, 2);
+    const c2 = new ComplexNumber(3, 4);
 
-    console.log(c.toString());               // "3 - 4i"
-    console.log(c.toTeX('inline'));          // "$3 - 4i$"
-    console.log(c.toTeX('block'));           // "$$3 - 4i$$"
-    console.log(c.toMathML(true));           // "<math display="block"><mn>3</mn><mo>-</mo><mn>4</mn><mi>i</mi></math>"
+    // 1. Работа цепочкой вызовов (Instance)
+    const res1 = c1.add(c2).multiply(2); // (1+2i + 3+4i) * (2+0i) = (4+6i)*2 = 8+12i
+    console.log(res1.toString()); // "8 + 12i"
 
-    // Проверка перехвата ошибок класса
-    c.real = "строка"; 
-    } catch (error) {
-    console.error(error.message); // [ComplexNumber]: Аргумент в "set real" должен быть валидным числом.
+    // 2. Использование статических методов (а-ля библиотеки C#)
+    const res2 = ComplexNumber.divide(c1, c2); 
+    console.log(res2.toString()); // "0.44 + 0.08i"
+
+    // 3. Сравнение
+    console.log(c1.equals(new ComplexNumber(1, 2))); // true
+    console.log(c1.equals(5));                       // false
+
+    // 4. Проверка деления на ноль
+    try {
+    c1.divide(0);
+    } catch(e) {
+    console.error(e.message); // [ComplexNumber]: Ошибка в методе .divide(). Деление на ноль...
     }
 </script>
 

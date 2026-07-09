@@ -136,8 +136,133 @@ export default class ComplexNumber {
     return `<math${displayAttr}>${content}</math>`;
   }
 
+ // ==========================================
+  // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
-  // МЕСТО ДЛЯ БУДУЩИХ МЕТОДОВ (Алгебра, Тригонометрия)
+
+  /**
+   * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
+   * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
+   * @param {ComplexNumber|number} value 
+   * @returns {ComplexNumber}
+   */
+  static #from(value) {
+    if (value instanceof ComplexNumber) return value;
+    if (typeof value === 'number' && !Number.isNaN(value)) {
+      return new ComplexNumber(value, 0);
+    }
+    throw new TypeError(`[ComplexNumber]: Невозможно привести аргумент к комплексному числу.`);
+  }
+
   // ==========================================
-  // Сюда мы будем последовательно внедрять add, sub, mul, div, pow, exp, sin, cos, sinh и т.д.
+  // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
+  // ==========================================
+
+  /**
+   * Сложение: (a + bi) + (c + di) = (a + c) + (b + d)i
+   * @param {ComplexNumber|number} other 
+   * @returns {ComplexNumber} Новый экземпляр
+   */
+  add(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      return new ComplexNumber(this.#real + o.real, this.#imaginary + o.imaginary);
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .add(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Вычитание: (a + bi) - (c + di) = (a - c) + (b - d)i
+   * @param {ComplexNumber|number} other 
+   * @returns {ComplexNumber} Новый экземпляр
+   */
+  subtract(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      return new ComplexNumber(this.#real - o.real, this.#imaginary - o.imaginary);
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .subtract(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Умножение: (a + bi) * (c + di) = (ac - bd) + (bc + ad)i
+   * @param {ComplexNumber|number} other 
+   * @returns {ComplexNumber} Новый экземпляр
+   */
+  multiply(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      const r = this.#real * o.real - this.#imaginary * o.imaginary;
+      const i = this.#imaginary * o.real + this.#real * o.imaginary;
+      return new ComplexNumber(r, i);
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .multiply(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Деление: (a + bi) / (c + di)
+   * @param {ComplexNumber|number} other 
+   * @returns {ComplexNumber} Новый экземпляр
+   */
+  divide(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      const denominator = o.real * o.real + o.imaginary * o.imaginary;
+      
+      if (denominator === 0) {
+        throw new RangeError("Деление на ноль (модуль делителя равен 0).");
+      }
+
+      const r = (this.#real * o.real + this.#imaginary * o.imaginary) / denominator;
+      const i = (this.#imaginary * o.real - this.#real * o.imaginary) / denominator;
+      return new ComplexNumber(r, i);
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .divide(). ${e.message}`);
+    }
+  }
+
+  // ==========================================
+  // МЕТОДЫ СРАВНЕНИЯ (Equality)
+  // ==========================================
+
+  /**
+   * Строгое математическое равенство действительных и мнимых частей
+   * @param {ComplexNumber|number} other 
+   * @returns {boolean}
+   */
+  equals(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      return this.#real === o.real && this.#imaginary === o.imaginary;
+    } catch {
+      return false; // Если тип не приводимый, числа заведомо не равны
+    }
+  }
+
+  // ==========================================
+  // СТАТИЧЕСКИЕ МЕТОДЫ (Static Methods как в C#)
+  // ==========================================
+
+  static add(left, right) {
+    return ComplexNumber.#from(left).add(right);
+  }
+
+  static subtract(left, right) {
+    return ComplexNumber.#from(left).subtract(right);
+  }
+
+  static multiply(left, right) {
+    return ComplexNumber.#from(left).multiply(right);
+  }
+
+  static divide(left, right) {
+    return ComplexNumber.#from(left).divide(right);
+  }
+
+  static equals(left, right) {
+    return ComplexNumber.#from(left).equals(right);
+  }
 }
