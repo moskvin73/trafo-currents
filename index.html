@@ -135,24 +135,28 @@
     </div>
 
  <script type="module">
-     import ComplexNumber from './js/math/ComplexNumber.js';
+     import { MathLexer } from './js/math_parser/MathLexer/MathLexer.js';
     
     try {
-   // Тест тригонометрии: sin(π/2) должен быть равен 1
-  const halfPi = new ComplexNumber(Math.PI / 2, 0);
-  console.log("sin(π/2) =", halfPi.sin().toString()); // "1"
+  
+        // Заведомо «битый» код с тремя ошибками в разных местах
+        const brokenCode = `3.14.15 + 4i ❌ "Текст без конца`;
+        
+        // Запускаем токенизацию
+        const result = MathLexer.tokenize(brokenCode);
 
-  // Тест векторных операций
-  // v1 = 3 + 0i (вектор по оси X длиной 3)
-  // v2 = 0 + 4i (вектор по оси Y длиной 4)
-  const v1 = new ComplexNumber(3, 0);
-  const v2 = new ComplexNumber(0, 4);
+        console.log(`[Тест Лексера]: Успешно выделено токенов: ${result.tokens.length}`);
 
-  // Скалярное произведение перпендикулярных векторов должно быть 0
-  console.log("Скалярное произведение (v1 . v2) =", v1.dot(v2)); // 0
-
-  // Векторное произведение (площадь прямоугольника 3х4) должно быть 12
-  console.log("Векторное произведение [v1 x v2] =", v1.cross(v2)); // 12
+        // Проверяем наличие ошибок в отчете
+        if (result.errors.length > 0) {
+            console.warn("--- ОБНАРУЖЕНЫ ОШИБКИ ЛЕКСИЧЕСКОГО АНАЛИЗА ---");
+            result.errors.forEach(err => {
+                // Выводим каждую ошибку через специальный метод toString(), который мы написали
+                console.error(err.toString());
+            });
+        } else {
+            console.log("Ошибок не обнаружено, код чистый!");
+        }       
 
     } catch (globalError) {
         // ЭТОТ БЛОК БЫЛ ПРОПУЩЕН
