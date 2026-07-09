@@ -268,12 +268,12 @@ export class MathParser {
 
     // Вещественное число
     if (this.#match('NUMBER')) {
-      return new ComplexNode(new RealNumber(this.tokens[this.current - 1].value), token.loc);
+      return new NumberNode(new RealNumber(this.tokens[this.current - 1].value), token.loc);
     }
 
     // Комплексное число (например, 1i или 4i)
     if (this.#match('COMPLEX_NUMBER')) {
-      return new ComplexNode(new ComplexNumber(0, this.tokens[this.current - 1].value), token.loc);
+      return new NumberNode(new ComplexNumber(0, this.tokens[this.current - 1].value), token.loc);
     }
 
     // Инженерные функции
