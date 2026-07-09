@@ -215,23 +215,29 @@ export class MathParser {
   }
 
   // Сложение и вычитание (Низший приоритет)
-  #parseAddition() {
     let expr = this.#parseMultiplication();
 
-    while (this.#match('OPERATOR') && (this.tokens[this.current - 1].value === '+' || this.tokens[this.current - 1].value === '-')) {
-      const operator = this.tokens[this.current - 1].value;
+    // Сначала проверяем, что перед нами оператор и его значение равняется '+' или '-'
+    while (this.#check('OPERATOR') && (this.#peek().value === '+' || this.#peek().value === '-')) {
+      // Только после успешной проверки мы явно забираем этот токен и двигаем указатель
+      const opToken = this.#advance(); 
+      const operator = opToken.value;
+      
       const right = this.#parseMultiplication();
       expr = new BinaryOpNode(expr, operator, right, expr.loc);
     }
     return expr;
   }
 
-  // Умножение и деление
+  // Умножение и деление в MathParser.js
   #parseMultiplication() {
     let expr = this.#parseUnary();
 
-    while (this.#match('OPERATOR') && (this.tokens[this.current - 1].value === '*' || this.tokens[this.current - 1].value === '/')) {
-      const operator = this.tokens[this.current - 1].value;
+    // Аналогично: проверяем тип и значение БЕЗ сдвига указателя
+    while (this.#check('OPERATOR') && (this.#peek().value === '*' || this.#peek().value === '/')) {
+      const opToken = this.#advance();
+      const operator = opToken.value;
+      
       const right = this.#parseUnary();
       expr = new BinaryOpNode(expr, operator, right, expr.loc);
     }
@@ -240,22 +246,33 @@ export class MathParser {
 
   // Унарные операции (-x, +5)
   #parseUnary() {
-    if (this.#match('OPERATOR') && (this.tokens[this.current - 1].value === '-' || this.tokens[this.current - 1].value === '+')) {
-      const operator = this.tokens[this.current - 1].value;
+   // 1. Безопасно проверяем, что перед нами OPERATOR и это именно знак '+' или '-' БЕЗ сдвига указателя
+    if (this.#check('OPERATOR') && (this.#peek().value === '-' || this.#peek().value === '+')) {
+      // 2. Только теперь, когда мы уверены, что это унарный знак, забираем его и двигаем указатель
+      const opToken = this.#advance(); 
+      const operator = opToken.value;
+      
+      // Рекурсивно вызываем для цепочек вроде --5
       const right = this.#parseUnary(); 
-      return new UnaryOpNode(operator, right, this.tokens[this.current - 1].loc);
+      return new UnaryOpNode(operator, right, opToken.loc);
     }
-    return this.#parsePower(); // Идем к степеням
+    
+    // Если это не унарный плюс/минус, спокойно идем к степеням, не потеряв ни одного токена!
+    return this.#parsePower(); 
   }
 
   // Степени (Правая ассоциативность: вычисляется Справа Налево)
   #parsePower() {
-    let expr = this.#parsePrimary();
+     let expr = this.#parsePrimary();
 
-    if (this.#match('OPERATOR') && this.tokens[this.current - 1].value === '^') {
-      const operator = this.tokens[this.current - 1].value;
-      const loc = this.tokens[this.current - 1].loc;
-      // Рекурсивный вызов самого себя создает правильное дерево для правой ассоциации
+    // Безопасно проверяем, что текущий токен — это оператор '^'
+    if (this.#check('OPERATOR') && this.#peek().value === '^') {
+      // Только теперь, когда мы на 100% уверены, забираем токен и двигаем указатель
+      const opToken = this.#advance(); 
+      const operator = opToken.value;
+      const loc = opToken.loc;
+      
+      // Рекурсивный вызов самого себя для обеспечения правой ассоциации (2^3^2)
       const right = this.#parsePower(); 
       expr = new BinaryOpNode(expr, operator, right, loc);
     }
