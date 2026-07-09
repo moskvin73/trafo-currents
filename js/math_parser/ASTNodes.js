@@ -201,29 +201,6 @@ export class FunctionNode extends ASTNode {
   }
 }
 
-/**
- * Узел присваивания переменной: x = выражение
- */
-export class AssignNode extends ASTNode {
-  constructor(name, expression, loc) {
-    super(loc);
-    this.name = name;         // Имя переменной (строка, например 'x')
-    this.expression = expression; // Узел ASTNode
-  }
-
-  evaluate(context) {
-    // Вычисляем значение правой части
-    const value = this.expression.evaluate(context);
-    // Сохраняем в переданный локальный контекст вызова!
-    context[this.name] = value;
-    // Возвращаем результат присваивания, чтобы можно было выводить строки вида x = y = 5
-    return value;
-  }
-
-  toTeX() {
-    return `${this.name} = ${this.expression.toTeX()}`;
-  }
-}
 
 /**
  * Узел чтения переменной (например, использование 'x' в выражении)
