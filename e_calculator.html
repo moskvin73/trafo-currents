@@ -144,8 +144,132 @@
 		</div>	
 	</div>
 	
-	<script>
+	<script type="module">
 	
+        import { MathLexer } from './MathLexer.js';
+        import { MathParser } from './MathParser.js';
+
+        // Единая изолированная область памяти (контекст сессии калькулятора)
+        // Переменные живут здесь, пока пользователь не обновит страницу
+        const globalScope = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const inputArea = document.getElementById("calc-terminal-input");
+            const submitBtn = document.getElementById("calc-submit-btn");
+            const historyStream = document.getElementById("calc-history-stream");
+
+            if (!inputArea || !submitBtn || !historyStream) {
+                console.error("[Calculator UI]: Не удалось найти критические элементы интерфейса на странице.");
+                return;
+            }
+
+            // Главная функция обработки введенной команды
+            function executeCurrentCommand() {
+                const rawCode = inputArea.value.trim();
+                if (!rawCode) return; // Игнорируем пустой ввод
+
+                // 1. Создаем контейнер для новой карточки в ленте истории
+                const card = document.createElement("div");
+                card.className = "calc-card";
+
+                // 2. Добавляем кнопку удаления этой карточки [×]
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "calc-card-delete";
+                deleteBtn.innerHTML = "&times;";
+                deleteBtn.title = "Удалить этот расчет";
+                deleteBtn.onclick = () => card.remove();
+                card.appendChild(deleteBtn);
+
+                // 3. Выводим «эхо» — исходный код, который написал пользователь
+                const echoBlock = document.createElement("div");
+                echoBlock.className = "calc-card-echo";
+                echoBlock.textContent = rawCode;
+                card.appendChild(echoBlock);
+
+                // 4. Создаем блок для вывода результата
+                const resultBlock = document.createElement("div");
+                resultBlock.className = "graphic-side"; // Используем ваш родной адаптивный класс оформления
+                card.appendChild(resultBlock);
+
+                try {
+                    // Запускаем наш потоковый LL(1) компилятор
+                    const lexer = new MathLexer(rawCode);
+                    const parser = new MathParser(lexer);
+                    const parseResult = parser.parse();
+
+                    // Проверяем наличие ошибок лексики или синтаксиса
+                    if (parseResult.errors.length > 0) {
+                        card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
+                        
+                        let errorHTML = "<strong>Ошибка разбора выражения:</strong><br>";
+                        parseResult.errors.forEach(err => {
+                            errorHTML += `${err.toString()}<br>`;
+                        });
+                        resultBlock.innerHTML = errorHTML;
+                    } else {
+                        // Если ошибок нет — выполняем дерево выражений в единой памяти сессии
+                        let finalContentHTML = "";
+
+                        parseResult.program.statements.forEach((stmt) => {
+                            const evaluation = stmt.evaluate(globalScope);
+
+                            // Если строка закончилась на знак '$' (вычисление молча) — ничего не выводим
+                            // В нашем LL(1) парсере токен конца строки (или сам узел) помнит, какой разделитель использовался.
+                            // Если это была команда print, она возвращает объект { plain, tex }
+                            if (evaluation && evaluation.tex) {
+                                // Оборачиваем в инлайновый $, так как print содержит в себе текст
+                                finalContentHTML += `<div>${evaluation.plain} &rArr; $${evaluation.tex}$</div>`;
+                            } else if (evaluation) {
+                                // Если это обычная математика (завершилась на ';'), выводим красивую формулу по центру
+                                // В TeX-представление BinaryOpNode / NumberNode возвращает чистый TeX, оборачиваем в $$
+                                finalContentHTML += `$$${stmt.toTeX()} = ${evaluation.toRawTeX()}$$`;
+                            }
+                        });
+
+                        // Если все команды были скрытыми (завершились на $) и выводить нечего
+                        if (!finalContentHTML.trim()) {
+                            finalContentHTML = "<span style='color: #6c757d; font-style: italic;'>Вычислено (сохранено в памяти)</span>";
+                        }
+
+                        resultBlock.innerHTML = finalContentHTML;
+                    }
+
+                } catch (runtimeError) {
+                    // Перехватываем математические ошибки (например, деление на ноль или отсутствие переменной)
+                    card.classList.add("error-row");
+                    resultBlock.innerHTML = `<strong>Критическая ошибка вычисления:</strong><br>${runtimeError.message}`;
+                    console.error(runtimeError);
+                }
+
+                // 5. Вставляем готовую карточку в ленту истории
+                historyStream.appendChild(card);
+
+                // 6. Очищаем поле ввода и возвращаем на него фокус для следующей команды
+                inputArea.value = "";
+                inputArea.focus();
+
+                // 7. Скроллим ленту вниз, чтобы активная строка ввода всегда оставалась на экране
+                card.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                // 8. Даем команду MathJax мгновенно отрисовать формулы внутри созданной карточки
+                if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                    window.MathJax.typesetPromise([resultBlock]).catch((mjErr) => {
+                        console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
+                    });
+                }
+            }
+
+            // Слушатель клика по кнопке Enter
+            submitBtn.addEventListener("click", executeCurrentCommand);
+
+            // Слушатель горячих клавиш: Ctrl+Enter или Cmd+Enter для удобства работы на компьютерах
+            inputArea.addEventListener("keydown", (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                    event.preventDefault(); // Предотвращаем стандартный перенос строки в textarea
+                    executeCurrentCommand();
+                }
+            });
+        });   
 	</script>
 </body>
 </html>
