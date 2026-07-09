@@ -58,24 +58,15 @@ export class MathParser {
   }
 
   #parseStatement() {
-    // Множество FIRST для операции присваивания или команды: начинается с VARIABLE
-    if (this.lookahead.type === TokenType.VARIABLE) {
-      if (this.lookahead.value === 'print') {
-        return this.#parsePrintStatement();
-      }
-      
-      // Заглядываем в следующий символ лексера через проверку (LL(2) элемент для знака равенства)
-      // Чтобы не усложнять, мы можем проверить: если за переменной идет ASSIGN (=)
-      if (this.lexer.chars[this.lookahead.loc.index + this.lookahead.value.length] === '=') {
-        const varToken = this.#match(TokenType.VARIABLE, "Ожидалось имя переменной");
-        this.#match(TokenType.ASSIGN, "Ожидался знак равенства '='");
-        const expr = this.#parseExpression();
-        return new AssignNode(varToken.value, expr, varToken.loc);
-      }
+    // Единственное исключение — это команда print, так как она не является математическим выражением
+    if (this.lookahead.type === TokenType.VARIABLE && this.lookahead.value === 'print') {
+      return this.#parsePrintStatement();
     }
-
+    
+    // Во всех остальных случаях мы безглядно и смело уходим в разбор выражения!
+    // Сюда абсолютно законно пойдут и "z = 3 + 4i", и "z + 5", и "sin(z)"
     return this.#parseExpression();
-  }
+    }
 
   #parsePrintStatement() {
     const printToken = this.#match(TokenType.VARIABLE, "Ожидалась команда print");
@@ -102,7 +93,35 @@ export class MathParser {
   // =======================================================
 
   #parseExpression() {
-    return this.#parseAddition();
+    return this.#parseAssignment();
+  }
+
+  /**
+   * Присваивание (Самый низкий приоритет).
+   * Правая ассоциативность: x = y = 5 означает x = (y = 5)
+   */
+  #parseAssignment() {
+    // Сначала парсим левую часть как обычное сложение/вычитание
+    let expr = this.#parseAddition();
+
+    // Если следующим токеном идёт знак равенства '='
+    if (this.lookahead.type === TokenType.ASSIGN) {
+      const opToken = this.lookahead;
+      this.#consume(); // сожрали '='
+
+      // КРИТИЧЕСКАЯ СЕМАНТИЧЕСКАЯ ПРОВЕРКА: слева ОБЯЗАНА быть переменная!
+      if (!(expr instanceof VariableNode)) {
+        throw new Error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`);
+      }
+
+      // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
+      const right = this.#parseAssignment();
+      
+      // Возвращаем узел присваивания, забирая имя из VariableNode
+      return new AssignNode(expr.name, right, opToken.loc);
+    }
+
+    return expr;
   }
 
   // Множество FIRST для знаков сложения/вычитания
