@@ -138,15 +138,21 @@
      import ComplexNumber from './js/math/ComplexNumber.js';
     
     try {
- // Возведем мнимую единицу i (0 + 1i) в квадрат
-const i = new ComplexNumber(0, 1);
-const iSquared = i.pow(2); 
+   // Тест тригонометрии: sin(π/2) должен быть равен 1
+  const halfPi = new ComplexNumber(Math.PI / 2, 0);
+  console.log("sin(π/2) =", halfPi.sin().toString()); // "1"
 
-console.log(iSquared.toString()); // Должно вывести "-1", так как i^2 = -1 (возможна минимальная погрешность JS вроде -1 + 1.22e-16i)
+  // Тест векторных операций
+  // v1 = 3 + 0i (вектор по оси X длиной 3)
+  // v2 = 0 + 4i (вектор по оси Y длиной 4)
+  const v1 = new ComplexNumber(3, 0);
+  const v2 = new ComplexNumber(0, 4);
 
-// Квадратный корень из -4
-const sqrtNegative = ComplexNumber.sqrt(-4);
-console.log(sqrtNegative.toString()); // Выведет: "2i" (или "0 + 2i")
+  // Скалярное произведение перпендикулярных векторов должно быть 0
+  console.log("Скалярное произведение (v1 . v2) =", v1.dot(v2)); // 0
+
+  // Векторное произведение (площадь прямоугольника 3х4) должно быть 12
+  console.log("Векторное произведение [v1 x v2] =", v1.cross(v2)); // 12
 
     } catch (globalError) {
         // ЭТОТ БЛОК БЫЛ ПРОПУЩЕН

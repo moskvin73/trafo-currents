@@ -375,5 +375,155 @@ export default class ComplexNumber {
 
   static pow(base, power) {
     return ComplexNumber.#from(base).pow(power);
-  }  
+  }
+
+  // ==========================================
+  // ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ (Instance)
+  // ==========================================
+
+  /**
+   * Синус комплексного числа: sin(z) = sin(a)*cosh(b) + i * cos(a)*sinh(b)
+   * @returns {ComplexNumber}
+   */
+  sin() {
+    try {
+      const a = this.#real;
+      const b = this.#imaginary;
+      return new ComplexNumber(
+        Math.sin(a) * Math.cosh(b),
+        Math.cos(a) * Math.sinh(b)
+      );
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .sin(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Косинус комплексного числа: cos(z) = cos(a)*cosh(b) - i * sin(a)*sinh(b)
+   * @returns {ComplexNumber}
+   */
+  cos() {
+    try {
+      const a = this.#real;
+      const b = this.#imaginary;
+      return new ComplexNumber(
+        Math.cos(a) * Math.cosh(b),
+        -Math.sin(a) * Math.sinh(b)
+      );
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .cos(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Тангенс комплексного числа: tan(z) = sin(z) / cos(z)
+   * @returns {ComplexNumber}
+   */
+  tan() {
+    try {
+      return this.sin().divide(this.cos());
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .tan(). ${e.message}`);
+    }
+  }
+
+  // ==========================================
+  // ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ (Instance)
+  // ==========================================
+
+  /**
+   * Гиперболический синус: sinh(z) = sinh(a)*cos(b) + i * cosh(a)*sin(b)
+   * @returns {ComplexNumber}
+   */
+  sinh() {
+    try {
+      const a = this.#real;
+      const b = this.#imaginary;
+      return new ComplexNumber(
+        Math.sinh(a) * Math.cos(b),
+        Math.cosh(a) * Math.sin(b)
+      );
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .sinh(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Гиперболический косинус: cosh(z) = cosh(a)*cos(b) + i * sinh(a)*sin(b)
+   * @returns {ComplexNumber}
+   */
+  cosh() {
+    try {
+      const a = this.#real;
+      const b = this.#imaginary;
+      return new ComplexNumber(
+        Math.cosh(a) * Math.cos(b),
+        Math.sinh(a) * Math.sin(b)
+      );
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .cosh(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Гиперболический тангенс: tanh(z) = sinh(z) / cosh(z)
+   * @returns {ComplexNumber}
+   */
+  tanh() {
+    try {
+      return this.sinh().divide(this.cosh());
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .tanh(). ${e.message}`);
+    }
+  }
+
+  // ==========================================
+  // ВЕКТОРНАЯ ГЕОМЕТРИЯ (Скалярное и Векторное произведение)
+  // ==========================================
+
+  /**
+   * Скалярное произведение двух чисел (векторов): (a*c + b*d)
+   * Определяет сонаправленность векторов и проекцию.
+   * @param {ComplexNumber|number} other 
+   * @returns {number} Возвращает скаляр (вещественное число)
+   */
+  dot(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      return this.#real * o.real + this.#imaginary * o.imaginary;
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .dot(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Модуль косого (векторного) произведения на плоскости: (a*d - b*c)
+   * Равен площади параллелограмма, построенного на этих двух векторах.
+   * Знак определяет направление поворота (ориентацию).
+   * @param {ComplexNumber|number} other 
+   * @returns {number} Возвращает скаляр (вещественное число)
+   */
+  cross(other) {
+    try {
+      const o = ComplexNumber.#from(other);
+      return this.#real * o.imaginary - this.#imaginary * o.real;
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .cross(). ${e.message}`);
+    }
+  }
+
+  // ==========================================
+  // СТАТИЧЕСКИЕ АНАЛОГИ (Static)
+  // ==========================================
+
+  static sin(value) { return ComplexNumber.#from(value).sin(); }
+  static cos(value) { return ComplexNumber.#from(value).cos(); }
+  static tan(value) { return ComplexNumber.#from(value).tan(); }
+  
+  static sinh(value) { return ComplexNumber.#from(value).sinh(); }
+  static cosh(value) { return ComplexNumber.#from(value).cosh(); }
+  static tanh(value) { return ComplexNumber.#from(value).tanh(); }
+
+  static dot(left, right) { return ComplexNumber.#from(left).dot(right); }
+  static cross(left, right) { return ComplexNumber.#from(left).cross(right); }  
 }
