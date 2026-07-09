@@ -1,25 +1,93 @@
-class ASTNode {
+// Импортируем наш базовый математический тип, чтобы использовать в проверках, 
+// если потребуется расширение, или для явного понимания типов
+import MathType from '../math/MathType.js';
+import ComplexNumber from '../math/ComplexNumber.js';
+
+/**
+ * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
+ */
+export default class ASTNode {
+  /**
+   * @param {SourceLocation} loc - Координаты токена в исходном коде
+   */
   constructor(loc) {
-    this.loc = loc; // Объект SourceLocation для вывода ошибок
+    this.loc = loc;
   }
 
-  /** Вычисляет значение узла. Должен быть переопределен в наследниках. */
+  /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context = {}) {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
 
-  /** Генерирует LaTeX код для узла. Должен быть переопределен. */
+  /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX() {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
   }
 }
 
-class BinaryOpNode extends ASTNode {
+/**
+ * Узел комплексного числа (Терминальный узел / Лист дерева)
+ */
+export class ComplexNode extends ASTNode {
+  constructor(complexValue, loc) {
+    super(loc);
+    this.value = complexValue; // Объект класса ComplexNumber
+  }
+
+  evaluate(context) {
+    return this.value;
+  }
+
+  toTeX() {
+    return this.value.toRawTeX();
+  }
+}
+
+/**
+ * Узел унарной операции (например: -x, +sin(i))
+ */
+export class UnaryOpNode extends ASTNode {
+  /**
+   * @param {string} operator - '+' или '-'
+   * @param {ASTNode} argument - Узел, к которому применяется операция
+   * @param {SourceLocation} loc 
+   */
+  constructor(operator, argument, loc) {
+    super(loc);
+    this.operator = operator;
+    this.argument = argument;
+  }
+
+  evaluate(context) {
+    const argVal = this.argument.evaluate(context);
+
+    if (this.operator === '+') {
+      return argVal; // Плюс ничего не меняет
+    }
+    if (this.operator === '-') {
+      // Унарный минус — это умножение комплексного числа на -1
+      return argVal.multiply(-1);
+    }
+    throw new Error(`[AST]: Неподдерживаемый унарный оператор "${this.operator}" на ${this.loc}`);
+  }
+
+  toTeX() {
+    const argTex = this.argument.toTeX();
+    // Если аргумент — это бинарная операция со знаком (например, - (a + b)),
+    // в LaTeX могут понадобиться скобки. Но для простых узлов выводим как есть.
+    return `${this.operator}${argTex}`;
+  }
+}
+
+/**
+ * Узел бинарной операции (+, -, *, /, ^)
+ */
+export class BinaryOpNode extends ASTNode {
   constructor(left, operator, right, loc) {
     super(loc);
-    this.left = left;       // Узел ASTNode (левая часть)
-    this.operator = operator; // Строка: '+', '-', '*', '/', '^'
-    this.right = right;     // Узел ASTNode (правая часть)
+    this.left = left;         // Левый узел ASTNode
+    this.operator = operator;   // Строка оператора
+    this.right = right;       // Правый узел ASTNode
   }
 
   evaluate(context) {
@@ -33,7 +101,7 @@ class BinaryOpNode extends ASTNode {
       case '/': return leftVal.divide(rightVal);
       case '^': return leftVal.pow(rightVal);
       default:
-        throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
+        throw new Error(`[AST]: Неизвестный бинарный оператор "${this.operator}" на ${this.loc}`);
     }
   }
 
@@ -44,50 +112,35 @@ class BinaryOpNode extends ASTNode {
     switch (this.operator) {
       case '+': return `${l} + ${r}`;
       case '-': return `${l} - ${r}`;
-      case '*': return `${l} \\cdot ${r}`; // В LaTeX умножение — это красивая точка \cdot
-      case '/': return `\\frac{${l}}{${r}}`; // Деление становится вертикальной дробью
-      case '^': return `{${l}}^{${r}}`;     // Степень оформляется через фигурные скобки
+      case '*': return `${l} \\cdot ${r}`;
+      case '/': return `\\frac{${l}}{${r}}`;
+      case '^': return `{${l}}^{${r}}`;
     }
   }
 }
 
-class FunctionNode extends ASTNode {
+/**
+ * Узел вызова встроенной математической функции (sin, cos, log...)
+ */
+export class FunctionNode extends ASTNode {
   constructor(name, argument, loc) {
     super(loc);
-    this.name = name;         // Имя функции (например, 'sin')
-    this.argument = argument; // Узел ASTNode внутри скобок
+    this.name = name;
+    this.argument = argument;
   }
 
   evaluate(context) {
     const argVal = this.argument.evaluate(context);
     
-    // Вызываем метод динамически у класса ComplexNumber
     if (typeof argVal[this.name] === 'function') {
       return argVal[this.name]();
     }
-    throw new Error(`[AST]: Функция "${this.name}" не поддерживается типом данных.`);
+    throw new Error(`[AST]: Функция "${this.name}" не поддерживается данным типом на ${this.loc}`);
   }
 
   toTeX() {
     const argTex = this.argument.toTeX();
-    // В LaTeX стандартные функции экранируются: \sin, \cos, \ln и т.д.
     const texName = this.name === 'log' ? '\\ln' : `\\${this.name}`;
-    return `${texName}\\left(${argTex}\\right)`; // \left( и \right) автоматически растягивают скобки по высоте дробей
-  }
-}
-
-class ComplexNode extends ASTNode {
-  constructor(complexValue, loc) {
-    super(loc);
-    this.value = complexValue; // Наш объект ComplexNumber
-  }
-
-  evaluate(context) {
-    return this.value;
-  }
-
-  toTeX() {
-    // Просто вызываем стандартизированный метод!
-    return this.value.toRawTeX(); 
+    return `${texName}\\left(${argTex}\\right)`;
   }
 }
