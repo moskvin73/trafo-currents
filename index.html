@@ -139,55 +139,35 @@
     import { MathParser } from './js/math_parser/MathParser.js';
 
     try {
-  
-        // Мощный многострочный скрипт для комплексной проверки
         const engineerScript = `
-            // 1. Тест вещественной точности (чистый вещественный ноль без грязи!)
             v1 = sin(3.141592653589793)
-            
-            // 2. Тест правой ассоциации степеней: 2^3^2 должно быть 2^9 = 512, а не 8^2 = 64
             p1 = 2 ^ 3 ^ 2
-            
-            // 3. Создание комплексной переменной
-            z = 3 + 4i
-            
-            // 4. Смешанное вычисление (вещественное + комплексное)
+            z = 3 + 4i 
             result = p1 + z
-            
-            // 5. Тест вывода
             print("Расчет завершен. Значение p1 =" p1 "А значение result =" result)
-            
-            // 6. Намеренная синтаксическая ошибка для проверки отчета (нет закрывающей скобки)
             broken = sin(1 + 2i
         `;
 
-        console.log("=== ЗАПУСК КОМПИЛЯТОРА ===");
+        console.log("=== ЗАПУСК ПОТОКОВОГО LL(1) КОМПИЛЯТОРА ===");
 
-        // Шаг 1: Лексический анализ
-        const lexResult = MathLexer.tokenize(engineerScript);
-        console.log(`[Лексер]: Токенов собрано: ${lexResult.tokens.length}, Ошибок: ${lexResult.errors.length}`);
-
-        // Шаг 2: Синтаксический анализ
-        const parser = new MathParser(lexResult.tokens);
+        // Инициализируем потоковый лексер текстом скрипта
+        const streamLexer = new MathLexer(engineerScript);
+        
+        // Передаем лексер напрямую в парсер
+        const parser = new MathParser(streamLexer);
         const parseResult = parser.parse();
 
-        // Объединяем лексические и синтаксические ошибки в один отчет
-        const allErrors = [...lexResult.errors, ...parseResult.errors];
-
-        if (allErrors.length > 0) {
+        // Все ошибки лексики и синтаксиса уже собраны вместе!
+        if (parseResult.errors.length > 0) {
             console.warn("--- ОБНАРУЖЕНЫ ОШИБКИ ПРИ РАЗБОРЕ ---");
-            allErrors.forEach(err => console.error(err.toString()));
+            parseResult.errors.forEach(err => console.error(err.toString()));
         }
 
-        // Шаг 3: Исполнение дерева в изолированном контексте (Scope)
         console.log("--- ВЫПОЛНЕНИЕ КОДА ---");
-        const localScope = {}; // Изолированная память калькулятора
+        const localScope = {};
         
-        // Вычисляем только валидные инструкции
         parseResult.program.statements.forEach((stmt) => {
             const evaluation = stmt.evaluate(localScope);
-            
-            // Если это была команда print, она возвращает объект с plain и tex строками
             if (evaluation && evaluation.plain) {
                 console.log(`[PRINT OUTPUT]: ${evaluation.plain}`);
                 console.log(`[MATHJAX TEX]: $${evaluation.tex}$`);
@@ -199,9 +179,8 @@
         console.log("Переменная p1 (должна быть 512):", localScope.p1?.toString());
         console.log("Переменная result (должна быть 515 + 4i):", localScope.result?.toString());
 
-    } catch (globalError) {
-        // ЭТОТ БЛОК БЫЛ ПРОПУЩЕН
-        console.error("[ComplexNumber Тест] КРИТИЧЕСКАЯ ОШИБКА:", globalError.message);
+    } catch (gErr) {
+        console.error("Критический сбой компилятора:", gErr);
     }
 </script>
 
