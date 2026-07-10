@@ -167,6 +167,27 @@ export default class RealNumber extends MathType {
     return new RealNumber(Math.log10(this.#value));
   }
 
+  /**
+   * Логарифм по произвольному основанию -> log(value, base)
+   * @param {RealNumber|number} baseNode - основание логарифма
+   */
+  logBase(baseNode) {
+    // Извлекаем числовое значение, независимо от того, пришел объект RealNumber или примитив number
+    const base = baseNode instanceof RealNumber ? baseNode.value : baseNode;
+
+    // Валидация аргументов по математическим правилам
+    if (this.#value <= 0) {
+      throw new RangeError("[RealNumber Error]: Логарифм нуля или отрицательного числа не существует в вещественном поле.");
+    }
+    if (base <= 0 || base === 1) {
+      throw new RangeError("[RealNumber Error]: Основание логарифма должно быть строго больше 0 и не равно 1.");
+    }
+
+    // Формула перехода к новому основанию: ln(value) / ln(base)
+    const result = Math.log(this.#value) / Math.log(base);
+    return new RealNumber(result);
+  }  
+
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
   // ==========================================
