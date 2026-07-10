@@ -13,5 +13,7 @@ export const TokenType = Object.freeze({
   FUNCTION: 11,      // sin, cos, log...
   VARIABLE: 12,      // Переменные
   TEXT_BLOCK: 13,    // "строка"
-  COMMENT: 14        // // комментарий
+  COMMENT: 14,        // // комментарий
+  SEMICOLON: 15, // ;
+  SILENT: 16     // $ 
 });

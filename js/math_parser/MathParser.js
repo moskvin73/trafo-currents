@@ -5,6 +5,29 @@ import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
 /**
+ * Единый узел для любой инструкции в коде
+ */
+export class StatementNode {
+  constructor(node, isSilent) {
+    this.node = node;
+    this.isSilent = isSilent;
+  }
+
+  evaluate(context) {
+    const result = this.node.evaluate(context);
+    return {
+      value: result,
+      isSilent: this.isSilent,
+      isPrintCommand: this.node instanceof PrintNode
+    };
+  }
+
+  toTeX() {
+    return this.node.toTeX();
+  }
+}
+
+/**
  * Финальный отказоустойчивый Парсер (Рекурсивный спуск)
  */
 export class MathParser {
@@ -58,14 +81,32 @@ export class MathParser {
   }
 
   #parseStatement() {
-    // Единственное исключение — это команда print, так как она не является математическим выражением
+    let exprNode = null;
+
+    // 1. Парсим узел (это либо print, либо любое математическое выражение/присваивание)
     if (this.lookahead.type === TokenType.VARIABLE && this.lookahead.value === 'print') {
-      return this.#parsePrintStatement();
+      exprNode = this.#parsePrintStatement();
+    } else {
+      exprNode = this.#parseExpression();
     }
     
-    // Во всех остальных случаях мы безглядно и смело уходим в разбор выражения!
-    // Сюда абсолютно законно пойдут и "z = 3 + 4i", и "z + 5", и "sin(z)"
-    return this.#parseExpression();
+    // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
+    let isSilent = false;
+    
+    if (this.lookahead.type === TokenType.SEMICOLON) {
+      this.#consume(); // успешно поглотили ';'
+    } else if (this.lookahead.type === TokenType.SILENT) {
+      isSilent = !(exprNode instanceof AssignNode || exprNode instanceof PrintNode);
+      this.#consume(); // успешно поглотили '$'
+    } else if (this.lookahead.type === TokenType.EOF) {
+      // Исключение только для самой последней конструкции в конце файла
+      isSilent = false; 
+    } else {
+      // Если знака нет между командами — это синтаксическая ошибка для ВСЕХ
+      throw new Error(`Ожидался разделитель ';' или '$' после инструкции "${this.lookahead.value}"`);
+    }
+
+    return new StatementNode(exprNode, isSilent);
     }
 
   #parsePrintStatement() {

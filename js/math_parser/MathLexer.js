@@ -87,6 +87,8 @@ export class MathLexer {
       if (char === '=') { this.#advanceChar(); return new Token(TokenType.ASSIGN, '=', startLoc); }
       if (char === '(') { this.#advanceChar(); return new Token(TokenType.LPAREN, '(', startLoc); }
       if (char === ')') { this.#advanceChar(); return new Token(TokenType.RPAREN, ')', startLoc); }
+      if (char === ';') { this.#advanceChar(); return new Token(TokenType.SEMICOLON, ';', startLoc); }
+      if (char === '$') { this.#advanceChar(); return new Token(TokenType.SILENT, '$', startLoc); }
 
       // Степень (поддержка ^ и **)
       if (char === '^') { this.#advanceChar(); return new Token(TokenType.POW, '^', startLoc); }

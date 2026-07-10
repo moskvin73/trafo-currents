@@ -211,18 +211,28 @@
                         let finalContentHTML = "";
 
                         parseResult.program.statements.forEach((stmt) => {
-                            const evaluation = stmt.evaluate(globalScope);
+                            // Вычисляем инструкцию в текущем контексте памяти
+                            const response = stmt.evaluate(globalScope);
 
-                            // Если строка закончилась на знак '$' (вычисление молча) — ничего не выводим
-                            // В нашем LL(1) парсере токен конца строки (или сам узел) помнит, какой разделитель использовался.
-                            // Если это была команда print, она возвращает объект { plain, tex }
-                            if (evaluation && evaluation.tex) {
-                                // Оборачиваем в инлайновый $, так как print содержит в себе текст
-                                finalContentHTML += `<div>${evaluation.plain} &rArr; $${evaluation.tex}$</div>`;
-                            } else if (evaluation) {
-                                // Если это обычная математика (завершилась на ';'), выводим красивую формулу по центру
-                                // В TeX-представление BinaryOpNode / NumberNode возвращает чистый TeX, оборачиваем в $$
-                                finalContentHTML += `$$${stmt.toTeX()} = ${evaluation.toRawTeX()}$$`;
+                            // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
+                            if (response.isPrintCommand) {
+                                // Мы НЕ пишем весь результат в $$. Текст — это обычный HTML, 
+                                // а вычисленные формулы внутри него MathJax найдёт по знакам одиночных баксов $
+                                const printRow = document.createElement("div");
+                                printRow.className = "output-row print-row"; // Использует ваши нативные зелёные тона
+                                printRow.innerHTML = `${response.value.plain} &rArr; $${response.value.tex}$`;
+                                resultBlock.appendChild(printRow);
+                            } 
+                            // 2. ЕСЛИ ЭТО МАТЕМАТИКА (И ОНА НЕ СКРЫТА ФЛАГОМ $)
+                            else if (!response.isSilent) {
+                                const mathRow = document.createElement("div");
+                                mathRow.className = "output-row"; // Стандартная карточка вывода
+                                
+                                // stmt.toTeX() нарисует левую часть (например, "result = p1 + z")
+                                // response.value.toRawTeX() нарисует итоговое вычисленное значение (например, "515 + 4i")
+                                // Оборачиваем в двойные $$, чтобы формула встала по центру экрана как красивое уравнение
+                                mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
+                                resultBlock.appendChild(mathRow);
                             }
                         });
 
