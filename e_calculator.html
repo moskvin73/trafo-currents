@@ -254,9 +254,12 @@
                 inputArea.value = "";
                 inputArea.focus();
 
-                // 7. Скроллим ленту вниз, чтобы активная строка ввода всегда оставалась на экране
-                card.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
+                // Альтернативный, самый надёжный вариант для мобильных:
+                const activeBlock = document.querySelector(".active-input-block");
+                if (activeBlock) {
+                    activeBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+                
                 // 8. Даем команду MathJax мгновенно отрисовать формулы внутри созданной карточки
                 if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
                     window.MathJax.typesetPromise([resultBlock]).catch((mjErr) => {
