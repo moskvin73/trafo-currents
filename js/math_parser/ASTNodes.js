@@ -149,21 +149,16 @@ export class BinaryOpNode extends ASTNode {
     // Семантическое выравнивание типов перед вычислением
     const { l, r } = this.#promoteTypes(rawLeft, rawRight);
 
-    const methodMap = {
-      '+': 'add',
-      '-': 'subtract',
-      '*': 'multiply',
-      '/': 'divide',
-      '^': 'pow'
-    };
-    
-    const opName = methodMap[this.operator];
-
-    if (typeof l[opName] === 'function') {
-      return l[opName](r);
-    }
-
-    throw new Error(`[AST]: Операция "${this.operator}" не поддерживается типами на ${this.loc}`);
+    // 2. Просто вызываем метод по имени оператора напрямую у левого объекта!
+    switch (this.operator) {
+      case '+': return l.add(r);
+      case '-': return l.subtract(r);
+      case '*': return l.multiply(r);
+      case '/': return l.divide(r);
+      case '^': return l.pow(r);
+      default:
+        throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
+    }   
   }
 
   toTeX() {

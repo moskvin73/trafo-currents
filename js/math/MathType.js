@@ -30,6 +30,30 @@ export default class MathType {
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }
 
+   // ==========================================
+  // АБСТРАКТНАЯ БАЗОВАЯ АРИФМЕТИКА
+  // ==========================================
+
+  add(other) {
+    throw new Error(`[MathType]: Метод add() не реализован в классе ${this.constructor.name}`);
+  }
+
+  subtract(other) {
+    throw new Error(`[MathType]: Метод subtract() не реализован в классе ${this.constructor.name}`);
+  }
+
+  multiply(other) {
+    throw new Error(`[MathType]: Метод multiply() не реализован в классе ${this.constructor.name}`);
+  }
+
+  divide(other) {
+    throw new Error(`[MathType]: Метод divide() не реализован в классе ${this.constructor.name}`);
+  }
+
+  pow(other) {
+    throw new Error(`[MathType]: Метод pow() не реализован в классе ${this.constructor.name}`);
+  }
+   
    /**
    * Возвращает новый математический объект с инвертированным знаком.
    * @returns {MathType}
