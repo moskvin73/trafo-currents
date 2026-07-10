@@ -135,56 +135,6 @@
         </div>
     </div>
 
- <script type="module">
-    import { MathLexer } from './js/math_parser/MathLexer.js';
-    import { MathParser } from './js/math_parser/MathParser.js';
-
-    try {
-        const engineerScript = `
-            v1 = sin(3.141592653589793)
-            p1 = 2 ^ 3 ^ 2
-            z = 3 + 4i 
-            result = p1 + z
-            print("Расчет завершен. Значение p1 =" p1 "А значение result =" result)
-            broken = sin(1 + 2i
-        `;
-
-        console.log("=== ЗАПУСК ПОТОКОВОГО LL(1) КОМПИЛЯТОРА ===");
-
-        // Инициализируем потоковый лексер текстом скрипта
-        const streamLexer = new MathLexer(engineerScript);
-        
-        // Передаем лексер напрямую в парсер
-        const parser = new MathParser(streamLexer);
-        const parseResult = parser.parse();
-
-        // Все ошибки лексики и синтаксиса уже собраны вместе!
-        if (parseResult.errors.length > 0) {
-            console.warn("--- ОБНАРУЖЕНЫ ОШИБКИ ПРИ РАЗБОРЕ ---");
-            parseResult.errors.forEach(err => console.error(err.toString()));
-        }
-
-        console.log("--- ВЫПОЛНЕНИЕ КОДА ---");
-        const localScope = {};
-        
-        parseResult.program.statements.forEach((stmt) => {
-            const evaluation = stmt.evaluate(localScope);
-            if (evaluation && evaluation.plain) {
-                console.log(`[PRINT OUTPUT]: ${evaluation.plain}`);
-                console.log(`[MATHJAX TEX]: $${evaluation.tex}$`);
-            }
-        });
-
-        console.log("--- СОСТОЯНИЕ ЛОКАЛЬНОЙ ПАМЯТИ ---");
-        console.log("Переменная v1 (должна быть 0):", localScope.v1?.toString());
-        console.log("Переменная p1 (должна быть 512):", localScope.p1?.toString());
-        console.log("Переменная result (должна быть 515 + 4i):", localScope.result?.toString());
-
-    } catch (gErr) {
-        console.error("Критический сбой компилятора:", gErr);
-    }
-</script>
-
     <script>
 
        document.addEventListener("DOMContentLoaded", () => {
