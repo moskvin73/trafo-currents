@@ -156,7 +156,7 @@ export class BinaryOpNode extends ASTNode {
       case '-': return l.subtract(r);
       case '*': return l.multiply(r);
       case '/': return l.divide(r);
-      case '^': return l.pow(r);
+      case '^': return l.accuratePow(r);
       default:
         throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
     }   
