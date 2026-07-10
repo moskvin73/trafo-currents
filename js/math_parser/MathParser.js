@@ -243,6 +243,28 @@ export class MathParser {
   #parsePrimary() {
      const token = this.lookahead;
 
+    switch (token.type) {
+        case TokenType.MATH_PI:
+            this.#consume();
+            return new NumberNode(new RealNumber(Math.PI), '\\pi', token.loc);
+            
+        case TokenType.MATH_E:
+            this.#consume();
+            return new NumberNode(new RealNumber(Math.E), 'e', token.loc);
+            
+        case TokenType.MATH_PHI:
+            this.#consume();
+            return new NumberNode(new RealNumber((1 + Math.sqrt(5)) / 2), '\\phi', token.loc);
+            
+        case TokenType.MATH_INF:
+            this.#consume();
+            return new NumberNode(new RealNumber(Infinity), '\\infty', token.loc);
+            
+        case TokenType.MATH_NAN:
+            this.#consume();
+            return new NumberNode(new RealNumber(NaN), '\\text{NaN}', token.loc);
+    }
+
     if (this.lookahead.type === TokenType.NUMBER) {
       this.#consume();
       return new NumberNode(new RealNumber(token.value), token.loc);

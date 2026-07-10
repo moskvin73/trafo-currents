@@ -15,5 +15,10 @@ export const TokenType = Object.freeze({
   COMMENT: 13,        // // комментарий
   SEMICOLON: 14, // ;
   SILENT: 15,     // $ 
-  COMMA: 16,        // ,         
+  COMMA: 16,        // , 
+  MATH_PI: 17,   // %pi
+  MATH_E: 18,     // %e
+  MATH_PHI: 19, // %phi
+  MATH_INF: 20, // %inf
+  MATH_NAN: 21,  // %nan  
 });

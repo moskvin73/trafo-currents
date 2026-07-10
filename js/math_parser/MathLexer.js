@@ -80,6 +80,38 @@ export class MathLexer {
         return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
       }
 
+      if (char === '%') {
+        this.#advanceChar(); // Поглощаем символ '%'
+        let constName = '%';
+
+        // Считываем все идущие подряд латинские буквы (идентификатор константы)
+        while (this.i < this.chars.length && /[a-zA-Z]/.test(this.chars[this.i])) {
+          constName += this.#advanceChar();
+        }
+
+        // Карта быстрого сопоставления с типами токенов
+        const constantMap = {
+          '%pi':   TokenType.MATH_PI,
+          '%e':    TokenType.MATH_E,
+          '%phi':  TokenType.MATH_PHI,
+          '%inf':  TokenType.MATH_INF,
+          '%nan':  TokenType.MATH_NAN
+        };
+
+        const matchedType = constantMap[constName];
+
+        if (matchedType) {
+          return {
+            type: matchedType,
+            value: constName,
+            loc: startLoc // Использует ваш метод генерации координат
+          };
+        }
+
+        // Если после % идет неизвестное имя или пустота, фиксируем ошибку компиляции
+        this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, startLoc));
+      }
+
       // 4. Математические операторы фиксированной длины
       if (char === '+') { this.#advanceChar(); return new Token(TokenType.PLUS, '+', startLoc); }
       if (char === '-') { this.#advanceChar(); return new Token(TokenType.MINUS, '-', startLoc); }
