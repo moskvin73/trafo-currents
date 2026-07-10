@@ -96,7 +96,7 @@ export class MathParser {
     if (this.lookahead.type === TokenType.SEMICOLON) {
       this.#consume(); // успешно поглотили ';'
     } else if (this.lookahead.type === TokenType.SILENT) {
-      isSilent = !(exprNode instanceof AssignNode || exprNode instanceof PrintNode);
+      isSilent = exprNode instanceof AssignNode;
       this.#consume(); // успешно поглотили '$'
     } else if (this.lookahead.type === TokenType.EOF) {
       // Исключение только для самой последней конструкции в конце файла
