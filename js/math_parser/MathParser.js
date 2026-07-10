@@ -110,6 +110,7 @@ export class MathParser {
     }
 
   #parsePrintStatement() {
+    const printToken = this.lookahead;
     this.#consume();
     this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print");
 
