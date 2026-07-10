@@ -5,6 +5,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import { MathRegistry } from './MathRegistry.js';
 import SemanticDispatcher from './SemanticDispatcher.js';
+import { TokenType } from './TokenTypes.js';
 
 /**
  * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
