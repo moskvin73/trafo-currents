@@ -389,7 +389,7 @@ export class ConstantNode extends ASTNode {
 
   constructor(tokenType, loc) {
     super(loc);
-    this.tokenType = tokenType; // Здесь может лежать и RealNumber, и ComplexNumber
+    this.#tokenType = tokenType; // Здесь может лежать и RealNumber, и ComplexNumber
   }
 
   evaluate(context) {
