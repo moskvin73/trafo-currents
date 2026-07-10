@@ -99,6 +99,57 @@ export default class RealNumber extends MathType {
     return new RealNumber(Math.pow(this.#value, other.value));
   }
 
+  // Вспомогательный метод: раскладывает десятичное число в точную дробь p/q
+  static #toRational(val, tolerance = 1e-15) {
+    let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+    let b = val;
+    do {
+      let a = Math.floor(b);
+      let aux = h1; h1 = a * h1 + h2; h2 = aux;
+      aux = k1; k1 = a * k1 + k2; k2 = aux;
+      b = 1 / (b - a);
+    } while (Math.abs(val - h1 / k1) > val * tolerance);
+
+    return { num: h1, den: k1 }; // num - числитель (p), den - знаменатель (q)
+  }
+
+  accuratePow(other) {
+    if (!(other instanceof RealNumber)) {
+      throw new TypeError(`[RealNumber]: Операция возведения в степень невозможна с типом ${other.constructor.name}.`);
+    }
+
+      const b = this.#value;
+      const e = other.value;
+
+      if (b > 0) return new RealNumber(Math.pow(b, e));
+      if (b === 0) return e === 0 ? new RealNumber(1) : new RealNumber(0);
+      if (Number.isInteger(e)) return new RealNumber(Math.pow(b, e));
+
+      // --- ИНТЕЛЛЕКТУАЛЬНЫЙ АНАЛИЗ ДЛЯ ОТРИЦАТЕЛЬНЫХ ОСНОВАНИЙ (b < 0) ---
+      // Шаг 1: Пытаемся восстановить точную дробь из степени e
+      const rational = this.#toRational(Math.abs(e));
+      
+      // Шаг 2: Проверяем, является ли знаменатель (q) НЕЧЕТНЫМ
+      if (rational.den % 2 !== 0) {
+        // Математически существует строго вещественный корень!
+        // Вычисляем корень из модуля числа, а затем восстанавливаем знак
+        const magnitudeResult = Math.pow(Math.abs(b), e);
+        
+        // Знаменатель нечетный, знак зависит от числителя:
+        // Если числитель четный (например, 2/3), минус исчезает: (-1)^(2/3) = 1
+        // Если числитель нечетный (например, 1/3), минус сохраняется: (-1)^(1/3) = -1
+        const sign = (rational.num % 2 === 0) ? 1 : -1;
+        
+        return new RealNumber(sign * magnitudeResult);
+      }
+
+      // Если знаменатель четный (например, 1/2, то есть sqrt(-1)), вещественного корня нет.
+      // Вот теперь со спокойной совестью уходим в комплексную плоскость на главный лист.
+      const complexBase = new ComplexNumber(b, 0);
+      const complexExp = new ComplexNumber(e, 0);
+      return ComplexNumber.accuratePow(complexBase, complexExp);
+  }
+
   // ==========================================
   // ВЕЩЕСТВЕННЫЕ МАТЕМАТИЧЕСКИЕ ФУНКЦИИ
   // ==========================================
