@@ -287,7 +287,7 @@ export class PrintNode extends ASTNode {
           // Допустим, мы сохраняем $$ для красивого центрирования
           resultHtml += "$";
           inDisplayMath = !inDisplayMath;
-          i += 1;
+          i += 2;
           continue;
         }
 
