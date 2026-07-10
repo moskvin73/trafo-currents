@@ -356,33 +356,51 @@ export default class ComplexNumber extends MathType {
     const base = ComplexNumber.#from(other);
     const EPSILON = 1e-15;
 
-    // Переводим оба числа в комплексные натуральные логарифмы
     const lnValue = this.log();
     const lnBase = base.log();
 
-    // Если основание логарифма равно 1 (1 + 0i), то ln(1) = 0. Деление на 0 дает сингулярность.
+    // Защита от деления на ln(1) = 0
     if (Math.abs(lnBase.real) < EPSILON && Math.abs(lnBase.imaginary) < EPSILON) {
       throw new RangeError("[ComplexNumber Error]: Основание комплексного логарифма не может быть равно 1.");
     }
 
-    // Комплексное деление: lnValue / lnBase
-    // Формула: (a + bi) / (c + di) = ((ac + bd) / (c^2 + d^2)) + i * ((bc - ad) / (c^2 + d^2))
     const a = lnValue.real;
     const b = lnValue.imaginary;
     const c = lnBase.real;
     const d = lnBase.imaginary;
 
     const denominator = c * c + d * d;
-
-    // Защита от деления на бесконечность (если основание логарифма было 0)
+    
+    // Если само основание устремилось в бесконечность
     if (!isFinite(denominator)) {
       return new ComplexNumber(0, 0);
     }
 
-    const realPart = (a * c + b * d) / denominator;
-    const imagPart = (b * c - a * d) / denominator;
+    // --- ВЫЧИСЛЕНИЕ ЧИСЛИТЕЛЕЙ С ЗАЩИТОЙ ОТ ИНЖЕНЕРНЫХ НЕОПРЕДЕЛЕННОСТЕЙ ---
+    
+    // Формула вещественного числителя: a * c + b * d
+    let realNumerator = a * c + b * d;
+    if (isNaN(realNumerator)) {
+      // Если получили NaN, значит сработало правило (0 * Infinity). 
+      // Заменяем неопределенные компоненты на строгие математические нули.
+      const part1 = (a === 0 || c === 0) ? 0 : a * c;
+      const part2 = (b === 0 || d === 0) ? 0 : b * d;
+      realNumerator = part1 + part2;
+    }
 
-    // Фильтруем микро-погрешности плавающей точки для осей конечного результата
+    // Формула мнимого числителя: b * c - a * d
+    let imagNumerator = b * c - a * d;
+    if (isNaN(imagNumerator)) {
+      const part1 = (b === 0 || c === 0) ? 0 : b * c;
+      const part2 = (a === 0 || d === 0) ? 0 : a * d;
+      imagNumerator = part1 - part2;
+    }
+
+    // Финальный расчет комплексных компонент
+    const realPart = realNumerator / denominator;
+    const imagPart = imagNumerator / denominator;
+
+    // Фильтруем микро-погрешности плавающей точки для идеальной посадки на оси
     const finalReal = Math.abs(realPart) < EPSILON ? 0 : realPart;
     const finalImag = Math.abs(imagPart) < EPSILON ? 0 : imagPart;
 
