@@ -401,7 +401,8 @@ export class ConstantNode extends ASTNode {
   }
 
   toTeX() {
-    return this.value.toRawTeX(); // Каждый тип сам знает, как себя нарисовать!
+    const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
+    return config ? config.tex : `\\text{unknown}`;
   }
 }
 
