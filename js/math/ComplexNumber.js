@@ -92,7 +92,7 @@ export default class ComplexNumber extends MathType {
    * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
    */
   toRawTeX() {
-    const r = this.#cleanRound(this.#real);
+    /*const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
 
     if (i === 0) return `${r}`;
@@ -114,7 +114,25 @@ export default class ComplexNumber extends MathType {
     const sign = i > 0 ? '+' : '-';
     if (Math.abs(i) === 1)
       return `${r} ${sign} j`;  
-    return `${r} ${sign} j\\cdot${Math.abs(i)}`;
+    return `${r} ${sign} j\\cdot${Math.abs(i)}`;*/
+
+      const r = this.#cleanRound(this.#real);
+      const i = this.#cleanRound(this.#imaginary);
+
+      if (i === 0) return `${r}`;
+
+      // Вычисляем знак и абсолютное значение мнимой части один раз
+      const sign = i > 0 ? '+' : '-';
+      const absI = Math.abs(i);
+      const jPart = absI === 1 ? 'j' : `j\\cdot${absI}`;
+
+      // Если действительная часть 0, выводим только мнимую
+      if (r === 0) {
+        return i > 0 ? jPart : `-${jPart}`;
+      }
+
+      // Полное комплексное число
+      return `${r} ${sign} ${jPart}`;    
   }  
 
   /**
