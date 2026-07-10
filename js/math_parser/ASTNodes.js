@@ -350,6 +350,78 @@ export class PrintNode extends ASTNode {
   }    
 }
 
+const TEX_FUNCTIONS_REGISTRY = new Map([
+  // === 1. ОСНОВНЫЕ АЛГЕБРАИЧЕСКИЕ И СТЕПЕННЫЕ ФУНКЦИИ ===
+  ['pow', {
+    render: ([base, exp]) => `\\text{pow}\\left(${base}, ${exponent}\\right)`
+  }],
+  ['sqrt', {
+    render: ([val, n]) => n ? `\\sqrt[${n}]{${val}}` : `\\sqrt{${val}}` // Поддержка \sqrt{x} и \sqrt[n]{x}
+  }],
+  ['exp',    { tex: '\\exp' }],
+  ['abs',    { render: ([val]) => `\\left|${val}\\right|` }], // Модуль |x|
+  ['sign',   { tex: '\\operatorname{sgn}' }], // Функция знака sgn(x)
+
+  // === 2. ЛОГАРИФМЫ ===
+  ['ln',     { tex: '\\ln' }],
+  ['lg',     { tex: '\\lg' }],
+  //['log',    { tex: '\\log' }], // Стандартный \log(x)
+  ['Log', {
+    render: ([val, base]) => base ? `\\log_{${base}}\\left(${val}\\right)` : `\\log\\left(${val}\\right)`
+  }],
+
+  // === 3. ПРЯМАЯ ТРИГОНОМЕТРИЯ ===
+  ['sin',    { tex: '\\sin' }],
+  ['cos',    { tex: '\\cos' }],
+  ['tan',    { tex: '\\tan' }],
+  ['tg',     { tex: '\\tan' }], // Синоним для русскоязычной нотации
+  ['cot',    { tex: '\\cot' }],
+  ['ctg',    { tex: '\\cot' }], // Синоним для русскоязычной нотации
+  ['sec',    { tex: '\\sec' }],
+  ['csc',    { tex: '\\csc' }],
+
+  // === 4. ОБРАТНАЯ ТРИГОНОМЕТРИЯ ===
+  ['arcsin', { tex: '\\arcsin' }],
+  ['arccos', { tex: '\\arccos' }],
+  ['arctan', { tex: '\\arctan' }],
+  ['arctg',  { tex: '\\text{arctg}' }], // Русскоязычный арктангенс
+  ['arccot', { tex: '\\text{arccot}' }],
+  ['arcctg', { tex: '\\text{arcctg}' }],
+
+  // === 5. ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ ===
+  ['sinh',   { tex: '\\sinh' }],
+  ['cosh',   { tex: '\\cosh' }],
+  ['tanh',   { tex: '\\tanh' }],
+  ['th',     { tex: '\\text{th}' }], // Русскоязычный гиперболический тангенс
+  ['coth',   { tex: '\\coth' }],
+  ['cth',    { tex: '\\text{cth}' }],
+
+  // === 6. ОБРАТНАЯ ГИПЕРБОЛИЧЕСКАЯ ТРИГОНОМЕТРИЯ ===
+  ['asinh',  { tex: '\\operatorname{arsinh}' }],
+  ['acosh',  { tex: '\\operatorname{arcosh}' }],
+  ['atanh',  { tex: '\\operatorname{artanh}' }],
+
+  // === 7. ОКРУГЛЕНИЯ И ЧИСЛОВЫЕ МЕТОДЫ ===
+  ['floor',  { render: ([val]) => `\\left\\lfloor ${val} \\right\\rfloor` }], // Округление вниз ⌊x⌋
+  ['ceil',   { render: ([val]) => `\\left\\lceil ${val} \\right\\rceil` }],   // Округление вверх ⌈x⌉
+  ['round',  { tex: '\\operatorname{round}' }],
+  ['trunc',  { tex: '\\operatorname{trunc}' }],
+  ['mod',    { render: ([a, b]) => `${a} \\pmod{${b}}` }], // Остаток от деления a (mod b)
+
+  // === 8. ВЫСШАЯ МАТЕМАТИКА И КОМБИНАТОРИКА ===
+  ['min',    { tex: '\\min' }],
+  ['max',    { tex: '\\max' }],
+  ['gcd',    { tex: '\\gcd' }], // Наибольший общий делитель
+  ['lcm',    { tex: '\\operatorname{lcm}' }], // Наименьшее общее кратное
+  ['fact',   { render: ([val]) => `${val}!` }], // Факториал x!
+  
+  // ЛИНЕЙНАЯ АЛГЕБРА И АНАЛИЗ (Задел на будущее)
+  ['det',    { tex: '\\det' }], // Определитель матрицы
+  ['tr',     { tex: '\\operatorname{tr}' }], // След матрицы
+  ['lim',    { tex: '\\lim' }],
+  ['arg',    { tex: '\\arg' }]  // Аргумент комплексного числа
+]);
+
 export class CallNode extends ASTNode {
   constructor(name, args, loc) {
     super(loc);
@@ -366,7 +438,27 @@ export class CallNode extends ASTNode {
   }
 
   toTeX() {
-    const argsTex = this.args.map(arg => arg.toTeX()).join(', ');
+    // Рендерим аргументы узла в LaTeX-строки
+    const argsTexArray = this.args.map(arg => arg.toTeX());
+    const config = TEX_FUNCTIONS_REGISTRY.get(this.name);
+
+    // 1. Если задано сложное кастомное отображение (шаблон вроде pow, sqrt, floor, abs)
+    if (config?.render) {
+      return config.render(argsTexArray);
+    }
+
+    // 2. Если задано простое имя макроса (\sin, \ln, \gcd)
+    if (config?.tex) {
+      const joinedArgs = argsTexArray.join(', ');
+      return `${config.tex}\\left(${joinedArgs}\\right)`;
+    }
+
+    // 3. Резервный фолбэк для будущих кастомных функций, которых еще нет в таблице.
+    // Обертка \operatorname позволяет рендерить "myFunc(x)" правильным математическим шрифтом, а не курсивом переменных.
+    const joinedArgs = argsTexArray.join(', ');
+    return `\\operatorname{${this.name}}\\left(${joinedArgs}\\right)`;
+    
+    /*const argsTex = this.args.map(arg => arg.toTeX()).join(', ');
     // Если функция стандартная, добавим обратный слеш для LaTeX (\sin, \cos, \ln)
     if (this.name === 'pow')
     {
@@ -375,6 +467,6 @@ export class CallNode extends ASTNode {
     const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'sqrt'].includes(this.name);
     const texName = this.name === 'log' ? '\\ln' : (isStandard ? `\\${this.name}` : this.name);
     
-    return `${texName}\\left(${argsTex}\\right)`;
+    return `${texName}\\left(${argsTex}\\right)`;*/
   }
 }
