@@ -1,6 +1,6 @@
 import { TokenType } from './TokenTypes.js';
 import { CompilerError } from './CompilerErrors.js';
-import ASTNode, { NumberNode, UnaryOpNode, BinaryOpNode, FunctionNode, AssignNode, VariableNode, PrintNode, ProgramNode } from './ASTNodes.js';
+import ASTNode, { NumberNode, UnaryOpNode, BinaryOpNode, CallNode, AssignNode, VariableNode, PrintNode, ProgramNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
@@ -225,12 +225,12 @@ export class MathParser {
 
     if (this.lookahead.type === TokenType.NUMBER) {
       this.#consume();
-      return new ComplexNode(new RealNumber(token.value), token.loc);
+      return new NumberNode(new RealNumber(token.value), token.loc);
     }
 
     if (this.lookahead.type === TokenType.COMPLEX_NUMBER) {
       this.#consume();
-      return new ComplexNode(new ComplexNumber(0, token.value), token.loc);
+      return new NumberNode(new ComplexNumber(0, token.value), token.loc);
     }
 
     if (this.lookahead.type === TokenType.LPAREN) {
