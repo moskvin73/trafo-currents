@@ -53,9 +53,9 @@ export const MathRegistry = {
       const { l, r } = dispatcher.promoteTypes(arg1, arg2);
       switch (name) {
         case 'pow':
-          l.accuratePow(r);
+          return l.accuratePow(r);
         case 'log':
-          l.logBase(r);
+          return l.logBase(r);
         default:
           throw new Error(`[Semantic Error]: Функция "${name}" с двумя аргументами не поддерживается на ${loc}`);
       }
