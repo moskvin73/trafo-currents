@@ -269,7 +269,8 @@ export class PrintNode extends ASTNode {
         }
         
         // --- Поддержка экранирования: если видим \[ или \] как обычный текст ---
-        if (rawText[i] === '\\' && (rawText[i + 1] === '[' || rawText[i + 1] === ']')) {
+        if (rawText[i] === '\\' && i + 1 < rawText.length && 
+                (rawText[i + 1] === '[' || rawText[i + 1] === ']' || rawText[i + 1] === '(' || rawText[i + 1] === ')')) {
           resultHtml += `<span class="tex2jax_ignore">${rawText[i + 1]}</span>`;
           i += 2;
           continue;
@@ -304,11 +305,11 @@ export class PrintNode extends ASTNode {
         }
 
         // --- Стандартные альтернативные LaTeX-разделители ---
-        if (rawText.startsWith("\\[", i) || rawText.startsWith("\\]", i)) {
+        /*if (rawText.startsWith("\\[", i) || rawText.startsWith("\\]", i)) {
           throw new Error(
-            "Используйте стандартные разделители '$$' вместо '\\[' и '\\Text'."
+            "Используйте стандартные разделители '$$' вместо '\\[' и '\\]'."
           );
-        }
+        }*/
 
         // Экранируем стандартные HTML-символы, чтобы не сломать DOM
         let char = rawText[i];
