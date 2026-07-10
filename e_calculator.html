@@ -207,8 +207,8 @@
                         });
                         resultBlock.innerHTML = errorHTML;
                     } else {
-                        // Если ошибок нет — выполняем дерево выражений в единой памяти сессии
-                        let finalContentHTML = "";
+                        // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
+                        resultBlock.innerHTML = "";
 
                         parseResult.program.statements.forEach((stmt) => {
                             // Вычисляем инструкцию в текущем контексте памяти
@@ -216,8 +216,6 @@
 
                             // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
                             if (response.isPrintCommand) {
-                                // Мы НЕ пишем весь результат в $$. Текст — это обычный HTML, 
-                                // а вычисленные формулы внутри него MathJax найдёт по знакам одиночных баксов $
                                 const printRow = document.createElement("div");
                                 printRow.className = "output-row print-row"; // Использует ваши нативные зелёные тона
                                 printRow.innerHTML = `${response.value.plain} &rArr; $${response.value.tex}$`;
@@ -227,21 +225,19 @@
                             else if (!response.isSilent) {
                                 const mathRow = document.createElement("div");
                                 mathRow.className = "output-row"; // Стандартная карточка вывода
-                                
-                                // stmt.toTeX() нарисует левую часть (например, "result = p1 + z")
-                                // response.value.toRawTeX() нарисует итоговое вычисленное значение (например, "515 + 4i")
-                                // Оборачиваем в двойные $$, чтобы формула встала по центру экрана как красивое уравнение
                                 mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
                                 resultBlock.appendChild(mathRow);
                             }
                         });
 
-                        // Если все команды были скрытыми (завершились на $) и выводить нечего
-                        if (!finalContentHTML.trim()) {
-                            finalContentHTML = "<span style='color: #6c757d; font-style: italic;'>Вычислено (сохранено в памяти)</span>";
+                        // Если цикл прошёл, но в resultBlock ничего не добавилось (все строки были скрыты через $)
+                        if (resultBlock.children.length === 0) {
+                            const silentRow = document.createElement("div");
+                            silentRow.style.color = "#6c757d";
+                            silentRow.style.fontStyle = "italic";
+                            silentRow.textContent = "Вычислено (сохранено в памяти $)";
+                            resultBlock.appendChild(silentRow);
                         }
-
-                        resultBlock.innerHTML = finalContentHTML;
                     }
 
                 } catch (runtimeError) {
