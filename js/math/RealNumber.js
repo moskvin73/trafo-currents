@@ -147,7 +147,7 @@ export default class RealNumber extends MathType {
       // Вот теперь со спокойной совестью уходим в комплексную плоскость на главный лист.
       const complexBase = new ComplexNumber(b, 0);
       const complexExp = new ComplexNumber(e, 0);
-      return ComplexNumber.accuratePow(complexBase, complexExp);
+      return complexBase.accuratePow(complexExp);
   }
 
   // ==========================================

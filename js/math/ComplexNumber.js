@@ -340,6 +340,69 @@ export default class ComplexNumber extends MathType {
     }
   }
 
+  accuratePow(other) {
+    const p = ComplexNumber.#from(power);
+
+    const EPSILON = 1e-15; 
+
+    // Проверяем компоненты на "квази-вещественность" и "квази-целостность"
+    const isBaseQuasiReal = Math.abs(this.#imaginary) < EPSILON;
+    const isExpQuasiReal = Math.abs(other.imaginary) < EPSILON;
+    const isExpQuasiInteger = Math.abs(other.imaginary) < EPSILON && Math.abs(other.real - Math.round(other.real)) < EPSILON;
+
+    // --- СЛУЧАЙ 1: ОСНОВАНИЕ НА ВЕЩЕСТВЕННОЙ ОСИ (Обсудили на прошлом шаге) ---
+    if (isBaseQuasiReal && isExpQuasiReal) {
+      const b = this.real;
+      const e = other.real;
+
+      if (b < 0 && !Number.isInteger(e)) {
+        const rational = this.#toRational(Math.abs(e), EPSILON);
+        if (rational.den % 2 !== 0) {
+          const magnitudeResult = Math.pow(Math.abs(b), e);
+          const sign = (rational.num % 2 === 0) ? 1 : -1;
+          return new ComplexNumber(sign * magnitudeResult, 0);
+        }
+      }
+      
+      if (b > 0 || Number.isInteger(e)) {
+        return new ComplexNumber(Math.pow(b, e), 0);
+      }
+    }
+
+    // --- СЛУЧАЙ 2: ЧИСТО МНИМОЕ ОСНОВАНИЕ И ЦЕЛАЯ СТЕПЕНЬ (Наш новый случай) ---
+    const isBaseQuasiImag = Math.abs(this.real) < EPSILON;
+    
+    if (isBaseQuasiImag && isExpQuasiInteger) {
+      const y = this.imag;          // Получаем чистую мнимую часть (например, 2 из 2i)
+      const n = Math.round(other.real); // Округляем до ближайшего честного целого
+
+      // Находим чистый модуль возведения в степень
+      const magnitude = Math.pow(Math.abs(y), n);
+      
+      // Определяем знак, если исходная мнимая часть была отрицательной (например, -2i)
+      const signY = (y < 0 && n % 2 !== 0) ? -1 : 1;
+      const finalMagnitude = magnitude * signY;
+
+      // Анализируем остаток от деления степени на 4 для точного позиционирования на осях
+      const mod = ((n % 4) + 4) % 4; // Корректная обработка отрицательных степеней
+
+      switch (mod) {
+        case 0: // i^0 = 1 -> Результат строго на вещественной оси
+          return new ComplexNumber(finalMagnitude, 0);
+        case 1: // i^1 = i -> Результат строго на мнимой оси
+          return new ComplexNumber(0, finalMagnitude);
+        case 2: // i^2 = -1 -> Результат строго на вещественной оси
+          return new ComplexNumber(-finalMagnitude, 0);
+        case 3: // i^3 = -i -> Результат строго на мнимой оси
+          return new ComplexNumber(0, -finalMagnitude);
+      }
+    }
+
+    // --- ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ КОМПЛЕКСНЫХ ЧИСЕЛ ---
+    // Если число лежит вне осей (например, 2 + 3i), считаем через канонический логарифм
+    return this.log().multiply(other).exp();    
+  }
+
   // ==========================================
   // СТАТИЧЕСКИЕ АНАЛОГИ (Static)
   // ==========================================
