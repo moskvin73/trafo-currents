@@ -160,6 +160,13 @@ export default class RealNumber extends MathType {
     return new RealNumber(Math.log(this.#value));
   }
 
+  log10() {
+    if (this.#value <= 0) {
+      throw new RangeError("[RealNumber]: Натуральный логарифм нуля или отрицательного числа не существует в вещественном поле.");
+    }
+    return new RealNumber(Math.log10(this.#value));
+  }
+
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
   // ==========================================
