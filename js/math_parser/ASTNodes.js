@@ -139,7 +139,7 @@ export class BinaryOpNode extends ASTNode {
     // Задел на будущее: Вещественное/Комплексное число -> в Матрицу 1х1
     // if (TargetClass === Matrix) { return new Matrix([[obj]]); }
 
-    throw new TypeError(`[Semantic Error]: Невозможно автоматически привести тип ${obj.constructor.name} к ${TargetClass.name} на ${this.loc}`);
+    throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${obj.constructor.name} к ${TargetClass.name} на ${this.loc}`);
   }
 
   evaluate(context) {
@@ -263,10 +263,9 @@ export class PrintNode extends ASTNode {
       // Если после нормализации в тексте остался хотя бы один живой знак '$' — это ошибка!
       // Инженер должен передавать формулы как отдельные аргументы калькулятора.
       if (rawText.includes('$')) {
-        throw new MathRuntimeError(
-          "Синтаксическая ошибка: Символ '$' запрещен внутри текста. " +
-          "Передавайте математические выражения как отдельные аргументы через запятую: print('Текст, ', переменная)", 
-          this.loc
+        throw new Error(`[AST]: Синтаксическая ошибка: Символ '$' запрещен внутри текста.
+          Передавайте математические выражения как отдельные аргументы через запятую: print('Текст, ', переменная), 
+          на ${this.loc}`
         );
       }
 
