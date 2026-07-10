@@ -14,5 +14,6 @@ export const TokenType = Object.freeze({
   TEXT_BLOCK: 12,    // "строка"
   COMMENT: 13,        // // комментарий
   SEMICOLON: 14, // ;
-  SILENT: 15     // $ 
+  SILENT: 15,     // $ 
+  COMMA: 16,        // ,         
 });
