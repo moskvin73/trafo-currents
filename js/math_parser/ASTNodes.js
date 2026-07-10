@@ -253,7 +253,7 @@ export class PrintNode extends ASTNode {
       }
       
       // Вычисление математических выражений (MathType: RealNumber или ComplexNumber)
-      const evaluatedValue = element.evaluate(env);
+      const evaluatedValue = element.evaluate(context);
       
       // Генерируем валидный LaTeX, который MathJax.typesetPromise() превратит в формулу
       const latex = evaluatedValue.toLaTeX(); 
