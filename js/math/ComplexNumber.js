@@ -91,48 +91,29 @@ export default class ComplexNumber extends MathType {
   /**
    * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
    */
-  toRawTeX() {
-    /*const r = this.#cleanRound(this.#real);
+  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+    const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
 
-    if (i === 0) return `${r}`;
-    
-    if (r === 0)
-    {
-      if (i > 0)
-      {
-        if (i === 1) return "j";
-        return `j\\cdot${i}`;
-      }
-      else
-      {
-        if (i === -1) return "-j";
-        return `-j\\cdot${-i}`;
-      }
-    }
+    // Сокращенный хелпер для форматирования частей числа через локаль
+    const f = (num) => this.formatNumberToTeX(num, locale);
+
+    // Если мнимой части нет, выводим только действительную
+    if (i === 0) return f(r);
 
     const sign = i > 0 ? '+' : '-';
-    if (Math.abs(i) === 1)
-      return `${r} ${sign} j`;  
-    return `${r} ${sign} j\\cdot${Math.abs(i)}`;*/
+    const absI = Math.abs(i);
+    
+    // Формируем мнимую часть: просто "j" или "j\cdotФОРМАТ_ЧИСЛА"
+    const jPart = absI === 1 ? 'j' : `j\\cdot${f(absI)}`;
 
-      const r = this.#cleanRound(this.#real);
-      const i = this.#cleanRound(this.#imaginary);
+    // Если действительная часть равна 0, знак "+" опускается, а "-" выводится перед "j"
+    if (r === 0) {
+      return i > 0 ? jPart : `-${jPart}`;
+    }
 
-      if (i === 0) return `${r}`;
-
-      // Вычисляем знак и абсолютное значение мнимой части один раз
-      const sign = i > 0 ? '+' : '-';
-      const absI = Math.abs(i);
-      const jPart = absI === 1 ? 'j' : `j\\cdot${absI}`;
-
-      // Если действительная часть 0, выводим только мнимую
-      if (r === 0) {
-        return i > 0 ? jPart : `-${jPart}`;
-      }
-
-      // Полное комплексное число
-      return `${r} ${sign} ${jPart}`;    
+    // Полная форма: "действительная [знак] мнимая"
+    return `${f(r)} ${sign} ${jPart}`;
   }  
 
   /**
@@ -150,62 +131,7 @@ export default class ComplexNumber extends MathType {
     return `${r} ${sign} ${Math.abs(i)}i`;
   }
 
-  /**
-   * Вывод формулы в формате LaTeX с фильтрацией микро-ошибок
-   * @param {string} displayMode - Режим отображения: 'inline' ($...$) или 'block' ($$...$$)
-   * @returns {string}
-   */
-  toTeX(displayMode = 'inline') {
-    if (displayMode !== 'inline' && displayMode !== 'block') {
-      throw new Error('[ComplexNumber]: Метод toTeX принимает только "inline" или "block".');
-    }
-    
-    const r = this.#cleanRound(this.#real);
-    const i = this.#cleanRound(this.#imaginary);
-
-    let tex = '';
-    if (i === 0) {
-      tex = `${r}`;
-    } else if (r === 0) {
-      tex = `${i}i`;
-    } else {
-      const sign = i > 0 ? '+' : '-';
-      tex = `${r} ${sign} ${Math.abs(i)}i`;
-    }
-
-    return displayMode === 'block' ? `$$${tex}$$` : `$${tex}$`;
-  }
-
-  /**
-   * Вывод формулы в стандарте MathML с фильтрацией микро-ошибок
-   * @param {boolean} isBlock - Обернуть ли в блочный контейнер (display="block")
-   * @returns {string}
-   */
-  toMathML(isBlock = false) {
-    const displayAttr = isBlock ? ' display="block"' : '';
-    const r = this.#cleanRound(this.#real);
-    const i = this.#cleanRound(this.#imaginary);
-    
-    let content = '';
-
-    if (i === 0) {
-      content = `<mn>${r}</mn>`;
-    } else if (r === 0) {
-      content = `<mn>${i}</mn><mi>i</mi>`;
-    } else {
-      const sign = i > 0 ? '+' : '-';
-      content = `
-        <mn>${r}</mn>
-        <mo>${sign}</mo>
-        <mn>${Math.abs(i)}</mn>
-        <mi>i</mi>
-      `.replace(/\s+/g, ' ').trim();
-    }
-
-    return `<math${displayAttr}>${content}</math>`;
-  }
-
- // ==========================================
+  // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
 

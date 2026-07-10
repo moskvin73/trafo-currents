@@ -8,7 +8,7 @@ export default class MathType {
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
    * @returns {string}
    */
-  toRawTeX() {
+  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
     throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
   }
 
@@ -25,7 +25,7 @@ export default class MathType {
    * @param {string} displayMode - 'inline' ($...$) или 'block' ($$...$$)
    * @returns {string}
    */
-  toTeX(displayMode = 'inline') {
+  toTeX(displayMode = 'inline', locale = new Intl.NumberFormat().resolvedOptions().locale) {
     const raw = this.toRawTeX();
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }

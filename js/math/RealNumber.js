@@ -129,8 +129,8 @@ export default class RealNumber extends MathType {
   /**
    * Возвращает чистую строку TeX
    */
-  toRawTeX() {
-    return `${Math.abs(this.#value) < 1e-15 ? 0 : this.#value}`;
+  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+    return `${Math.abs(this.#value) < 1e-15 ? 0 : this.formatNumberToTeX(this.#value, locale)}`;
   }
 
   /**
