@@ -96,10 +96,10 @@ export default class ComplexNumber extends MathType {
     const i = this.#cleanRound(this.#imaginary);
 
     if (i === 0) return `${r}`;
-    if (r === 0) return `j\cdot ${i}`;
+    if (r === 0) return `j\\cdot${i}`;
     
     const sign = i > 0 ? '+' : '-';
-    return `${r} ${sign} j \cdot ${Math.abs(i)}`;
+    return `${r} ${sign} j\\cdot${Math.abs(i)}`;
   }  
 
   /**
