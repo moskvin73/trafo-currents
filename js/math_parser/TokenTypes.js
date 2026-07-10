@@ -10,10 +10,9 @@ export const TokenType = Object.freeze({
   ASSIGN: 8,         // =
   LPAREN: 9,         // (
   RPAREN: 10,        // )
-  FUNCTION: 11,      // sin, cos, log...
-  VARIABLE: 12,      // Переменные
-  TEXT_BLOCK: 13,    // "строка"
-  COMMENT: 14,        // // комментарий
-  SEMICOLON: 15, // ;
-  SILENT: 16     // $ 
+  VARIABLE: 11,      // Переменные
+  TEXT_BLOCK: 12,    // "строка"
+  COMMENT: 13,        // // комментарий
+  SEMICOLON: 14, // ;
+  SILENT: 15     // $ 
 });

@@ -3,6 +3,7 @@
 import MathType from '../math/MathType.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
+import { MathRegistry } from './MathRegistry.js';
 
 /**
  * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
@@ -297,5 +298,30 @@ export class PrintNode extends ASTNode {
       plain: resultStrings.join(" "),
       tex: texStrings.join(" ")
     };
+  }
+}
+
+export class CallNode extends ASTNode {
+  constructor(name, args, loc) {
+    super(loc);
+    this.name = name; // Имя функции (строка)
+    this.args = args; // Массив дочерних узлов ASTNode
+  }
+
+  evaluate(context) {
+    // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
+    const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
+
+    // 2. Передаем имя и вычисленные объекты в глобальный семантический реестр функций
+    return MathRegistry.execute(this.name, evaluatedArgs, this.loc);
+  }
+
+  toTeX() {
+    const argsTex = this.args.map(arg => arg.toTeX()).join(', ');
+    // Если функция стандартная, добавим обратный слеш для LaTeX (\sin, \cos, \ln)
+    const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'log', 'sqrt', 'pow'].includes(this.name);
+    const texName = this.name === 'log' ? '\\ln' : (isStandard ? `\\${this.name}` : this.name);
+    
+    return `${texName}\\left(${argsTex}\\right)`;
   }
 }

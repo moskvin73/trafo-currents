@@ -123,10 +123,6 @@ export class MathLexer {
         while (this.i < this.chars.length && /[\p{L}\p{N}_]/u.test(this.chars[this.i])) {
           idStr += this.#advanceChar();
         }
-
-        if (['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'log', 'sqrt', 'pow'].includes(idStr)) {
-          return new Token(TokenType.FUNCTION, idStr, startLoc);
-        }
         return new Token(TokenType.VARIABLE, idStr, startLoc);
       }
 

@@ -221,25 +221,16 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-    const token = this.lookahead;
+     const token = this.lookahead;
 
     if (this.lookahead.type === TokenType.NUMBER) {
       this.#consume();
-      return new NumberNode(new RealNumber(token.value), token.loc);
+      return new ComplexNode(new RealNumber(token.value), token.loc);
     }
 
     if (this.lookahead.type === TokenType.COMPLEX_NUMBER) {
       this.#consume();
-      return new NumberNode(new ComplexNumber(0, token.value), token.loc);
-    }
-
-    if (this.lookahead.type === TokenType.FUNCTION) {
-      const funcName = token.value;
-      this.#consume();
-      this.#match(TokenType.LPAREN, `Ожидалась '(' после функции ${funcName}`);
-      const arg = this.#parseExpression();
-      this.#match(TokenType.RPAREN, `Ожидалась ')' после аргумента функции ${funcName}`);
-      return new FunctionNode(funcName, arg, token.loc);
+      return new ComplexNode(new ComplexNumber(0, token.value), token.loc);
     }
 
     if (this.lookahead.type === TokenType.LPAREN) {
@@ -249,9 +240,34 @@ export class MathParser {
       return expr;
     }
 
+    // СЮДА ПОПАДАЮТ ВСЕ ИДЕНТИФИКАТОРЫ
     if (this.lookahead.type === TokenType.VARIABLE) {
+      const idToken = this.lookahead;
       this.#consume();
-      return new VariableNode(token.value, token.loc);
+
+      // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
+      if (this.lookahead.type === TokenType.LPAREN) {
+        this.#consume(); // сожрали '('
+
+        const args = [];
+        // Читаем список аргументов через запятую (например: pow(x, 3) или sin(x))
+        if (this.lookahead.type !== TokenType.RPAREN) {
+          args.push(this.#parseExpression());
+          
+          while (this.lookahead.type === TokenType.COMMA) {
+            this.#consume(); // сожрали ','
+            args.push(this.#parseExpression());
+          }
+        }
+
+        this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${idToken.value}"`);
+        
+        // Возвращаем универсальный узел вызова
+        return new CallNode(idToken.value, args, idToken.loc);
+      }
+
+      // Если скобки нет — это обычное чтение переменной из памяти
+      return new VariableNode(idToken.value, idToken.loc);
     }
 
     throw new Error(`Неожиданный математический символ "${token.value}"`);
