@@ -280,7 +280,7 @@ export class PrintNode extends ASTNode {
         if (rawText.startsWith("$$", i)) {
           if (inInlineMath) {
             throw new Error(
-              "Ошибка синтаксиса разметки: Попытка открыть выключную формулу '$$' внутри инлайн-формулы '$'."
+              `Ошибка синтаксиса разметки: Попытка открыть выключную формулу '<span class="tex2jax_ignore">$$</span>' внутри инлайн-формулы '<span class="tex2jax_ignore">$</span>'.`
             );
           }
           
@@ -296,7 +296,7 @@ export class PrintNode extends ASTNode {
         if (rawText[i] === '$') {
           if (inDisplayMath) {
             throw new Error(
-              "Ошибка синтаксиса разметки: Попытка использовать одиночный '$' внутри выключной формулы '$$'. Используйте чистый LaTeX.");
+              `Ошибка синтаксиса разметки: Попытка использовать одиночный '<span class="tex2jax_ignore">$</span>' внутри выключной формулы '<span class="tex2jax_ignore">$$</span>'. Используйте чистый LaTeX.`);
           }
           resultHtml += "$";
           inInlineMath = !inInlineMath;
@@ -323,10 +323,10 @@ export class PrintNode extends ASTNode {
 
       // Финальная проверка: если строка закончилась, а формула не закрыта
       if (inInlineMath) {
-        throw new Error("Ошибка синтаксиса разметки: Ожидался закрывающий символ '$' в конце текстовой строки.");
+        throw new Error(`Ошибка синтаксиса разметки: Ожидался закрывающий символ '<span class="tex2jax_ignore">$</span>' в конце текстовой строки.`);
       }
       if (inDisplayMath) {
-        throw new Error("Ошибка синтаксиса разметки: Ожидался закрывающий символ '$$' в конце текстовой строки.");
+        throw new Error(`Ошибка синтаксиса разметки: Ожидался закрывающий символ '<span class="tex2jax_ignore">$$</span>' в конце текстовой строки.`);
       }
 
       return resultHtml;
