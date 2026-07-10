@@ -99,19 +99,6 @@ export default class RealNumber extends MathType {
     return new RealNumber(Math.pow(this.#value, other.value));
   }
 
-  // Вспомогательный метод: раскладывает десятичное число в точную дробь p/q
-  static #toRational(val, tolerance = 1e-15) {
-    let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
-    let b = val;
-    do {
-      let a = Math.floor(b);
-      let aux = h1; h1 = a * h1 + h2; h2 = aux;
-      aux = k1; k1 = a * k1 + k2; k2 = aux;
-      b = 1 / (b - a);
-    } while (Math.abs(val - h1 / k1) > val * tolerance);
-
-    return { num: h1, den: k1 }; // num - числитель (p), den - знаменатель (q)
-  }
 
   accuratePow(other) {
     if (!(other instanceof RealNumber)) {
@@ -127,7 +114,7 @@ export default class RealNumber extends MathType {
 
       // --- ИНТЕЛЛЕКТУАЛЬНЫЙ АНАЛИЗ ДЛЯ ОТРИЦАТЕЛЬНЫХ ОСНОВАНИЙ (b < 0) ---
       // Шаг 1: Пытаемся восстановить точную дробь из степени e
-      const rational = this.#toRational(Math.abs(e));
+      const rational = MathType.toRational(Math.abs(e));
       
       // Шаг 2: Проверяем, является ли знаменатель (q) НЕЧЕТНЫМ
       if (rational.den % 2 !== 0) {

@@ -356,7 +356,7 @@ export default class ComplexNumber extends MathType {
       const e = other.real;
 
       if (b < 0 && !Number.isInteger(e)) {
-        const rational = this.#toRational(Math.abs(e), EPSILON);
+        const rational = MathType.toRational(Math.abs(e), EPSILON);
         if (rational.den % 2 !== 0) {
           const magnitudeResult = Math.pow(Math.abs(b), e);
           const sign = (rational.num % 2 === 0) ? 1 : -1;
