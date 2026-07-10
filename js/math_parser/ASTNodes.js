@@ -380,7 +380,7 @@ export const CONSTANTS_AST_REGISTRY = new Map([
   }],
   [TokenType.MATH_NAN, {
     instance: PRECOMPUTED_CONSTANTS.NAN,
-    tex: '\\text{NaN}'
+    tex: '\\color{red}\\text{NaN}'
   }]
 ])
 
