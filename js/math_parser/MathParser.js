@@ -233,7 +233,7 @@ export class MathParser {
       const opToken = this.lookahead;
       this.#consume();
       
-      const right = this.#parsePower(); // Правая рекурсия
+      const right = this.#parseUnary(); // Правая рекурсия
       expr = new BinaryOpNode(expr, opToken.value, right, opToken.loc);
     }
     return expr;
