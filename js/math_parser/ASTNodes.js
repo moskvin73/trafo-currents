@@ -146,8 +146,6 @@ export class BinaryOpNode extends ASTNode {
   }
 
   evaluate(context) {
-
-    const dispatcher = new SemanticDispatcher(TYPE_REGISTRY);
     const { l, r } = dispatcher.promoteTypes(this.left, this.right);
     switch (this.operator) {
       case '+': return l.add(r);
