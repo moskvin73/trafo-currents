@@ -1,5 +1,8 @@
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
+import SemanticDispatcher from './SemanticDispatcher.js';
+
+const dispatcher = new SemanticDispatcher();
 
 export const MathRegistry = {
   /**
