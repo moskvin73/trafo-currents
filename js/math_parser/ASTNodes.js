@@ -366,7 +366,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
   ['ln',     { tex: '\\ln' }],
   ['lg',     { tex: '\\lg' }],
   //['log',    { tex: '\\log' }], // Стандартный \log(x)
-  ['Log', {
+  ['log', {
     render: ([val, base]) => base ? `\\log_{${base}}\\left(${val}\\right)` : `\\log\\left(${val}\\right)`
   }],
 
