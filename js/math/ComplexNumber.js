@@ -96,7 +96,7 @@ export default class ComplexNumber extends MathType {
     const i = this.#cleanRound(this.#imaginary);
 
     // Сокращенный хелпер для форматирования частей числа через локаль
-    const f = (num) => this.formatNumberToTeX(num, locale);
+    const f = (num) => MathType.formatNumberToTeX(num, locale);
 
     // Если мнимой части нет, выводим только действительную
     if (i === 0) return f(r);
