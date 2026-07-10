@@ -250,19 +250,19 @@ export class MathParser {
             
         case TokenType.MATH_E:
             this.#consume();
-            return new NumberNode(TokenType.MATH_E, token.loc);
+            return new ConstantNode(TokenType.MATH_E, token.loc);
             
         case TokenType.MATH_PHI:
             this.#consume();
-            return new NumberNode(TokenType.MATH_PHI, token.loc);
+            return new ConstantNode(TokenType.MATH_PHI, token.loc);
             
         case TokenType.MATH_INF:
             this.#consume();
-            return new NumberNode(TokenType.MATH_INF, token.loc);
+            return new ConstantNode(TokenType.MATH_INF, token.loc);
             
         case TokenType.MATH_NAN:
             this.#consume();
-            return new NumberNode(TokenType.MATH_NAN, token.loc);
+            return new ConstantNode(TokenType.MATH_NAN, token.loc);
     }
 
     if (this.lookahead.type === TokenType.NUMBER) {
