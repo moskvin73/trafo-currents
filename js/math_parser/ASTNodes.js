@@ -244,23 +244,39 @@ export class PrintNode extends ASTNode {
 
   evaluate(context) {
     return this.elements.map(element => {
-      // Защищенная обработка текстовых блоков
-      if (element.type === 'TEXT_BLOCK') {
-        return element.value
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
+      // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ (Переменные, функции, операции)
+      if (element.type !== 'TEXT_BLOCK') {
+        const evaluatedValue = element.evaluate(context);
+        // Математика всегда гарантированно возвращает чистый инлайн-островок
+        return `$${evaluatedValue.toRawTeX()}$`;
       }
-      
-      // Вычисление математических выражений (MathType: RealNumber или ComplexNumber)
-      const evaluatedValue = element.evaluate(context);
-      
-      // Генерируем валидный LaTeX, который MathJax.typesetPromise() превратит в формулу
-      const latex = evaluatedValue.toRawTeX(); 
-      
-      return `$${latex}$`;
-    }).join(''); // Сшиваем в единую строку для вывода в CalculatorController
-  }
+
+      // 2. ЖЕСТКАЯ ВАЛИДАЦИЯ ТЕКСТОВЫХ ПОДСТРОК
+      let rawText = element.value;
+
+      // Принудительно нормализуем любые попытки ввести выключные разделители
+      rawText = rawText
+        .replace(/\$\$/g, "$")
+        .replace(/\\\[/g, "$")
+        .replace(/\\\]/g, "$");
+
+      // Если после нормализации в тексте остался хотя бы один живой знак '$' — это ошибка!
+      // Инженер должен передавать формулы как отдельные аргументы калькулятора.
+      if (rawText.includes('$')) {
+        throw new MathRuntimeError(
+          "Синтаксическая ошибка: Символ '$' запрещен внутри текста. " +
+          "Передавайте математические выражения как отдельные аргументы через запятую: print('Текст, ', переменная)", 
+          this.loc
+        );
+      }
+
+      // Безопасное экранирование стандартных HTML-символов для вашего интерфейса
+      return rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }).join(''); // Бесшовно склеиваем строки вида: "Текст " + "$формула$" + " текст"
+  }    
 }
 
 export class CallNode extends ASTNode {
