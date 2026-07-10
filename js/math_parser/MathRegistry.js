@@ -50,7 +50,7 @@ export const MathRegistry = {
     if (args.length === 2) {
       const [arg1, arg2] = args;
 
-      const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+      const { l, r } = dispatcher.promoteTypes(arg1, arg2);
       switch (name) {
         case 'pow':
           l.accuratePow(r);
