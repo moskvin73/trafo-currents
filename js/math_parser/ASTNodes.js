@@ -353,7 +353,7 @@ export class PrintNode extends ASTNode {
 const TEX_FUNCTIONS_REGISTRY = new Map([
   // === 1. ОСНОВНЫЕ АЛГЕБРАИЧЕСКИЕ И СТЕПЕННЫЕ ФУНКЦИИ ===
   ['pow', {
-    render: ([base, exp]) => `\\text{pow}\\left(${base}, ${exponent}\\right)`
+    render: ([base, exp]) => `\\text{pow}\\left(${base}, ${exp}\\right)`
   }],
   ['sqrt', {
     render: ([val, n]) => n ? `\\sqrt[${n}]{${val}}` : `\\sqrt{${val}}` // Поддержка \sqrt{x} и \sqrt[n]{x}
