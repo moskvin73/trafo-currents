@@ -96,55 +96,6 @@ export class BinaryOpNode extends ASTNode {
     this.right = right;
   }
 
-  /**
-   * СЕМАНТИЧЕСКИЙ ДИСПЕТЧЕР ТИПОВ
-   * Приводит аргументы к единому типу на основе иерархии перед вычислением.
-   */
-  #promoteTypes(leftVal, rightVal) {
-   // 1. Автоматическая обертка сырых чисел JS в RealNumber
-    if (typeof leftVal === 'number') leftVal = new RealNumber(leftVal);
-    if (typeof rightVal === 'number') rightVal = new RealNumber(rightVal);
-
-
-    // 1. Определение рангов типов
-    const getRank = (obj) => {
-      if (obj instanceof RealNumber) return 1;
-      if (obj instanceof ComplexNumber) return 2;
-      // Задел на будущее: if (obj instanceof Matrix) return 3;
-      return 0;
-    };
-
-    let l = leftVal;
-    let r = rightVal;
-    const leftRank = getRank(l);
-    const rightRank = getRank(r);
-
-    // 2. Если типы разные, семантически повышаем младший до старшего через конструкторы
-    if (leftRank < rightRank) {
-      l = this.#cast(l, r.constructor);
-    } else if (rightRank < leftRank) {
-      r = this.#cast(r, l.constructor);
-    }
-
-    return { l, r };
-  }
-
-  /**
-   * Чистая логика преобразования одного типа в другой с помощью стандартных конструкторов
-   */
-  #cast(obj, TargetClass) {
-    if (obj instanceof TargetClass) return obj;
-
-    // Вещественное число -> в Комплексное число
-    if (obj instanceof RealNumber && TargetClass === ComplexNumber) {
-      return new ComplexNumber(obj.value, 0);
-    }
-    
-    // Задел на будущее: Вещественное/Комплексное число -> в Матрицу 1х1
-    // if (TargetClass === Matrix) { return new Matrix([[obj]]); }
-
-    throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${obj.constructor.name} к ${TargetClass.name} на ${this.loc}`);
-  }
 
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
@@ -157,24 +108,6 @@ export class BinaryOpNode extends ASTNode {
       default:
         throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
     }   
-
-    /*// Вычисляем ветви дерева (получаем чистые MathType объекты)
-    const rawLeft = this.left.evaluate(context);
-    const rawRight = this.right.evaluate(context);
-
-    // Семантическое выравнивание типов перед вычислением
-    const { l, r } = this.#promoteTypes(rawLeft, rawRight);
-
-    // 2. Просто вызываем метод по имени оператора напрямую у левого объекта!
-    switch (this.operator) {
-      case '+': return l.add(r);
-      case '-': return l.subtract(r);
-      case '*': return l.multiply(r);
-      case '/': return l.divide(r);
-      case '^': return l.accuratePow(r);
-      default:
-        throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
-    }*/ 
   }
 
   toTeX() {

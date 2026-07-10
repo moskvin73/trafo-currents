@@ -103,7 +103,7 @@ export class MathParser {
       isSilent = false; 
     } else {
       // Если знака нет между командами — это синтаксическая ошибка для ВСЕХ
-      throw new Error(`Ожидался разделитель ';' или '$' после инструкции "${this.lookahead.value}"`);
+      throw new Error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`);
     }
 
     return new StatementNode(exprNode, isSilent);
