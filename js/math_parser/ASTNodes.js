@@ -354,7 +354,11 @@ export class CallNode extends ASTNode {
   toTeX() {
     const argsTex = this.args.map(arg => arg.toTeX()).join(', ');
     // Если функция стандартная, добавим обратный слеш для LaTeX (\sin, \cos, \ln)
-    const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'log', 'sqrt', 'pow'].includes(this.name);
+    if (this.name === 'pow')
+    {
+      return `\text{${texName}}\\left(${argsTex}\\right)`;
+    }
+    const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'sqrt'].includes(this.name);
     const texName = this.name === 'log' ? '\\ln' : (isStandard ? `\\${this.name}` : this.name);
     
     return `${texName}\\left(${argsTex}\\right)`;
