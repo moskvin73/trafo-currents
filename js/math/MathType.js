@@ -60,5 +60,32 @@ export default class MathType {
    */
   negate() {
     throw new Error(`[MathType]: Метод negate() не реализован в классе ${this.constructor.name}`);
-  } 
+  }
+
+  static formatNumberToTeX(num, locale = new Intl.NumberFormat().resolvedOptions().locale) {
+    // 1. Получаем разделитель для текущей локали системы
+    const formatter = new Intl.NumberFormat(locale);
+    const parts = formatter.formatToParts(1.1);
+    const separator = parts.find(part => part.type === 'decimal')?.value || '.';
+
+    // 2. Преобразуем число в строку
+    const str = num.toString();
+    const eIndex = str.indexOf('e');
+    const localize = (val) => val.replace('.', separator);
+
+    // 3. Форматируем обычное число
+    if (eIndex === -1) {
+      return localize(str);
+    }
+
+    // 4. Форматируем научную нотацию
+    const mantissa = str.slice(0, eIndex);
+    let exponent = str.slice(eIndex + 1);
+
+    if (exponent.startsWith('+')) {
+      exponent = exponent.slice(1);
+    }
+
+    return `${localize(mantissa)}\\cdot10^{${exponent}}`;
+  }
 }
