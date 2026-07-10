@@ -217,8 +217,8 @@
                             // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
                             if (response.isPrintCommand) {
                                 const printRow = document.createElement("div");
-                                printRow.className = "output-row print-row"; // Использует ваши нативные зелёные тона
-                                printRow.innerHTML = `${response.value.plain} &rArr; $${response.value.tex}$`;
+                                printRow.className = "output-row print-row"; 
+                                printRow.innerHTML = response.value; 
                                 resultBlock.appendChild(printRow);
                             } 
                             // 2. ЕСЛИ ЭТО МАТЕМАТИКА (И ОНА НЕ СКРЫТА ФЛАГОМ $)
@@ -259,7 +259,7 @@
                 if (activeBlock) {
                     activeBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }
-                
+
                 // 8. Даем команду MathJax мгновенно отрисовать формулы внутри созданной карточки
                 if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
                     window.MathJax.typesetPromise([resultBlock]).catch((mjErr) => {
