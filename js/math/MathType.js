@@ -64,27 +64,41 @@ export default class MathType {
 
   /**
    * Преобразует число в формат TeX с учетом системной локали и научной нотации.
+   * Обрабатывает особые случаи: NaN и бесконечности.
+   * Если мантисса равна 1 или -1, опускает её, оставляя только 10^p или -10^p.
    * @param {number} num - Исходное число для форматирования.
    * @param {string} [locale] - Код локали (по умолчанию определяется автоматически).
-   * @returns {string} Строка в формате TeX (например, "1,25" или "3,4\cdot10^{5}").
-   */  
+   * @returns {string} Строка в формате TeX.
+   */
   static formatNumberToTeX(num, locale = new Intl.NumberFormat().resolvedOptions().locale) {
-    // 1. Получаем разделитель для текущей локали системы
+    // 1. Обработка NaN (Not a Number) с подсветкой красным цветом
+    if (Number.isNaN(num)) {
+      return '\\color{red}{\\text{NaN}}';
+    }
+
+    // 2. Обработка бесконечностей (Infinity / -Infinity)
+    if (num === Infinity) {
+      return '\\infty';
+    }
+    if (num === -Infinity) {
+      return '-\\infty';
+    }
+
+    // 3. Определение системного десятичного разделителя
     const formatter = new Intl.NumberFormat(locale);
     const parts = formatter.formatToParts(1.1);
     const separator = parts.find(part => part.type === 'decimal')?.value || '.';
 
-    // 2. Преобразуем число в строку
     const str = num.toString();
     const eIndex = str.indexOf('e');
     const localize = (val) => val.replace('.', separator);
 
-    // 3. Форматируем обычное число
+    // 4. Обычное число (включая 0, -0, целые и простые дроби)
     if (eIndex === -1) {
       return localize(str);
     }
 
-    // 4. Форматируем научную нотацию
+    // 5. Разбираем научную нотацию (например, 1e+5 или -2.5e-4)
     const mantissa = str.slice(0, eIndex);
     let exponent = str.slice(eIndex + 1);
 
@@ -92,6 +106,15 @@ export default class MathType {
       exponent = exponent.slice(1);
     }
 
+    // Сокращаем запись, если мантисса равна 1 или -1
+    if (mantissa === '1') {
+      return `10^{${exponent}}`;
+    }
+    if (mantissa === '-1') {
+      return `-10^{${exponent}}`;
+    }
+
+    // Стандартный вывод для остальных мантисс
     return `${localize(mantissa)}\\cdot10^{${exponent}}`;
   }
 
