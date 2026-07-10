@@ -153,40 +153,79 @@ export default class RealNumber extends MathType {
     return new RealNumber(Math.sqrt(this.#value));
   }
   
+  /**
+   * Интеллектуальный натуральный логарифм ln(x)
+   */
   log() {
-    if (this.#value <= 0) {
-      throw new RangeError("[RealNumber]: Натуральный логарифм нуля или отрицательного числа не существует в вещественном поле.");
+    // 1. Для строго положительных чисел считаем стандартно
+    if (this.#value > 0) {
+      return new RealNumber(Math.log(this.#value));
     }
-    return new RealNumber(Math.log(this.#value));
-  }
 
-  log10() {
-    if (this.#value <= 0) {
-      throw new RangeError("[RealNumber]: Натуральный логарифм нуля или отрицательного числа не существует в вещественном поле.");
+    // 2. ИСПРАВЛЕНО: Для нуля возвращаем объект со значением -Infinity
+    if (this.#value === 0) {
+      return new RealNumber(-Infinity);
     }
-    return new RealNumber(Math.log10(this.#value));
+
+    // 3. Для отрицательных уходим в комплексную плоскость: ln(|x|) + i * pi
+    const realPart = Math.log(Math.abs(this.#value));
+    const imagPart = Math.PI;
+    
+    return new ComplexNumber(realPart, imagPart);
   }
 
   /**
-   * Логарифм по произвольному основанию -> log(value, base)
-   * @param {RealNumber|number} baseNode - основание логарифма
+   * Интеллектуальный десятичный логарифм lg(x)
    */
-  logBase(baseNode) {
-    // Извлекаем числовое значение, независимо от того, пришел объект RealNumber или примитив number
-    const base = baseNode instanceof RealNumber ? baseNode.value : baseNode;
-
-    // Валидация аргументов по математическим правилам
-    if (this.#value <= 0) {
-      throw new RangeError("[RealNumber Error]: Логарифм нуля или отрицательного числа не существует в вещественном поле.");
-    }
-    if (base <= 0 || base === 1) {
-      throw new RangeError("[RealNumber Error]: Основание логарифма должно быть строго больше 0 и не равно 1.");
+  log10() {
+    if (this.#value > 0) {
+      return new RealNumber(Math.log10(this.#value));
     }
 
-    // Формула перехода к новому основанию: ln(value) / ln(base)
-    const result = Math.log(this.#value) / Math.log(base);
+    // 2. ИСПРАВЛЕНО: lg(0) = -Infinity
+    if (this.#value === 0) {
+      return new RealNumber(-Infinity);
+    }
+
+    // 3. Для отрицательных переходим через комплексный натуральный логарифм: ln(x) / ln(10)
+    const complexLn = this.log(); // Получаем ComplexNumber
+    const ln10 = Math.log(10);
+    
+    return new ComplexNumber(complexLn.real / ln10, complexLn.imag / ln10);
+  }
+
+  /**
+   * Интеллектуальный логарифм по произвольному основанию Log(value, base)
+   */
+  logBase(other) {
+    const baseVal = other instanceof RealNumber ? other.value : other;
+
+    // 1. Если само значение равно 0, результат в любом хорошем основании равен -Infinity
+    if (this.#value === 0) {
+      if (baseVal > 1) return new RealNumber(-Infinity);
+      if (baseVal > 0 && baseVal < 1) return new RealNumber(Infinity); // log_{0.5}(0) = +Infinity
+    }
+
+    // 2. Проверка сингулярностей основания логарифма
+    if (baseVal <= 0 || baseVal === 1) {
+      // Если основание проблемное, полностью делегируем вычисления в комплексное поле
+      const complexBase = new ComplexNumber(baseVal, 0);
+      const complexValue = new ComplexNumber(this.#value, 0);
+      return complexValue.logBase(complexBase);
+    }
+
+    // 3. Если основание корректно (base > 0, base != 1), а значение отрицательное
+    if (this.#value < 0) {
+      const complexLnValue = this.log(); // Наш комплексный ln(x)
+      const lnBase = Math.log(baseVal);
+      
+      return new ComplexNumber(complexLnValue.real / lnBase, complexLnValue.imag / lnBase);
+    }
+
+    // 4. Идеальный стандартный случай
+    const result = Math.log(this.#value) / Math.log(baseVal);
     return new RealNumber(result);
-  }  
+  }
 
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
