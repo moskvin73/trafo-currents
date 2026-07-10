@@ -1,6 +1,6 @@
 import { TokenType } from './TokenTypes.js';
 import { CompilerError } from './CompilerErrors.js';
-import ASTNode, { NumberNode, UnaryOpNode, BinaryOpNode, CallNode, AssignNode, VariableNode, PrintNode, ProgramNode } from './ASTNodes.js';
+import ASTNode, { NumberNode, UnaryOpNode, BinaryOpNode, CallNode, AssignNode, VariableNode, PrintNode, ProgramNode, ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
@@ -246,23 +246,23 @@ export class MathParser {
     switch (token.type) {
         case TokenType.MATH_PI:
             this.#consume();
-            return new NumberNode(new RealNumber(Math.PI), '\\pi', token.loc);
+            return new ConstantNode(TokenType.MATH_PI, token.loc);
             
         case TokenType.MATH_E:
             this.#consume();
-            return new NumberNode(new RealNumber(Math.E), 'e', token.loc);
+            return new NumberNode(TokenType.MATH_E, token.loc);
             
         case TokenType.MATH_PHI:
             this.#consume();
-            return new NumberNode(new RealNumber((1 + Math.sqrt(5)) / 2), '\\phi', token.loc);
+            return new NumberNode(TokenType.MATH_PHI, token.loc);
             
         case TokenType.MATH_INF:
             this.#consume();
-            return new NumberNode(new RealNumber(Infinity), '\\infty', token.loc);
+            return new NumberNode(TokenType.MATH_INF, token.loc);
             
         case TokenType.MATH_NAN:
             this.#consume();
-            return new NumberNode(new RealNumber(NaN), '\\text{NaN}', token.loc);
+            return new NumberNode(TokenType.MATH_NAN, token.loc);
     }
 
     if (this.lookahead.type === TokenType.NUMBER) {
