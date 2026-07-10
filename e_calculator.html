@@ -254,17 +254,33 @@
                 inputArea.value = "";
                 inputArea.focus();
 
-                // 8. Даем команду MathJax мгновенно отрисовать формулы внутри созданной карточки
-                if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-                    window.MathJax.typesetPromise([resultBlock]).catch((mjErr) => {
-                        console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
-                    });
-                }
+                // Внутренняя функция для идеального скролла
+                const performSmartScroll = () => {
+                    const activeBlock = document.querySelector(".active-input-block") || inputArea;
+                    if (activeBlock) {
+                        activeBlock.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'end' 
+                        });
+                    }
+                };
 
-                // Альтернативный, самый надёжный вариант для мобильных:
-                const activeBlock = document.querySelector(".active-input-block");
-                if (activeBlock) {
-                    activeBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                // 8. Запускаем рендеринг MathJax и строго ПОСЛЕ его завершения крутим экран
+                if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                    window.MathJax.typesetPromise([resultBlock])
+                        .then(() => {
+                            // Формулы отрисованы, высота карточки финальная. 
+                            // Делаем микро-задержку, чтобы мобильная клавиатура успела занять свое место
+                            setTimeout(performSmartScroll, 80);
+                        })
+                        .catch((mjErr) => {
+                            console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
+                            // Даже если MathJax упал, все равно скроллим
+                            setTimeout(performSmartScroll, 30);
+                        });
+                } else {
+                    // Если MathJax не загружен, скроллим с минимальной задержкой
+                    setTimeout(performSmartScroll, 50);
                 }
             }
 
