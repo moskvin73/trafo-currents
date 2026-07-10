@@ -356,7 +356,7 @@ export class CallNode extends ASTNode {
     // Если функция стандартная, добавим обратный слеш для LaTeX (\sin, \cos, \ln)
     if (this.name === 'pow')
     {
-      return `\text{${texName}}\\left(${argsTex}\\right)`;
+      return `\text{${this.name}}\\left(${argsTex}\\right)`;
     }
     const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'sqrt'].includes(this.name);
     const texName = this.name === 'log' ? '\\ln' : (isStandard ? `\\${this.name}` : this.name);
