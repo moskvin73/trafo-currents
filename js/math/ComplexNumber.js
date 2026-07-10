@@ -341,7 +341,7 @@ export default class ComplexNumber extends MathType {
   }
 
   accuratePow(other) {
-    const p = ComplexNumber.#from(power);
+    const p = ComplexNumber.#from(other);
 
     const EPSILON = 1e-15; 
 
