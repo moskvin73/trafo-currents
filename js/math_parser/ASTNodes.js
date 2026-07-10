@@ -271,7 +271,7 @@ export class PrintNode extends ASTNode {
         // --- Поддержка экранирования: если видим \[ или \] как обычный текст ---
         if (rawText[i] === '\\' && i + 1 < rawText.length && 
                 (rawText[i + 1] === '[' || rawText[i + 1] === ']' || rawText[i + 1] === '(' || rawText[i + 1] === ')')) {
-          resultHtml += `<span class="tex2jax_ignore">${rawText[i + 1]}</span>`;
+          resultHtml += `<span class="tex2jax_ignore">${rawText[i]}${rawText[i + 1]}</span>`;
           i += 2;
           continue;
         }
