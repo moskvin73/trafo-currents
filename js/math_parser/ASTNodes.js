@@ -256,7 +256,7 @@ export class PrintNode extends ASTNode {
       const evaluatedValue = element.evaluate(context);
       
       // Генерируем валидный LaTeX, который MathJax.typesetPromise() превратит в формулу
-      const latex = evaluatedValue.toLaTeX(); 
+      const latex = evaluatedValue.toRawTeX(); 
       
       return `$${latex}$`;
     }).join(''); // Сшиваем в единую строку для вывода в CalculatorController
