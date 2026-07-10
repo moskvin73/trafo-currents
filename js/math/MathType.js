@@ -29,4 +29,12 @@ export default class MathType {
     const raw = this.toRawTeX();
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }
+
+   /**
+   * Возвращает новый математический объект с инвертированным знаком.
+   * @returns {MathType}
+   */
+  negate() {
+    throw new Error(`[MathType]: Метод negate() не реализован в классе ${this.constructor.name}`);
+  } 
 }

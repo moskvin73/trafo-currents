@@ -195,6 +195,13 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   /**
+   * Реализация унарного минуса для комплексного числа
+   */
+  negate() {
+    return new ComplexNumber(-this.real, -this.imaginary);
+  } 
+
+  /**
    * Сложение: (a + bi) + (c + di) = (a + c) + (b + d)i
    * @param {ComplexNumber|number} other 
    * @returns {ComplexNumber} Новый экземпляр

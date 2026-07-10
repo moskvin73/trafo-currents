@@ -67,7 +67,7 @@ export class UnaryOpNode extends ASTNode {
     }
     if (this.operator === '-') {
       // Унарный минус — это умножение комплексного числа на -1
-      return argVal.multiply(-1);
+      return argVal.negate();
     }
     throw new Error(`[AST]: Неподдерживаемый унарный оператор "${this.operator}" на ${this.loc}`);
   }

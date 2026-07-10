@@ -32,6 +32,13 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   /**
+   * Реализация унарного минуса для вещественного числа
+   */
+  negate() {
+    return new RealNumber(-this.value);
+  }
+
+  /**
    * Внутренний метод сложения двух вещественных чисел
    */
   add(other) {
