@@ -62,6 +62,12 @@ export default class MathType {
     throw new Error(`[MathType]: Метод negate() не реализован в классе ${this.constructor.name}`);
   }
 
+  /**
+   * Преобразует число в формат TeX с учетом системной локали и научной нотации.
+   * @param {number} num - Исходное число для форматирования.
+   * @param {string} [locale] - Код локали (по умолчанию определяется автоматически).
+   * @returns {string} Строка в формате TeX (например, "1,25" или "3,4\cdot10^{5}").
+   */  
   static formatNumberToTeX(num, locale = new Intl.NumberFormat().resolvedOptions().locale) {
     // 1. Получаем разделитель для текущей локали системы
     const formatter = new Intl.NumberFormat(locale);
