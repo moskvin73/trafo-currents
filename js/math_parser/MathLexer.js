@@ -9,6 +9,16 @@ export class Token {
   }
 }
 
+// Карта быстрого сопоставления с типами токенов
+const constantMap = {
+  '%pi':   TokenType.MATH_PI,
+  '%e':    TokenType.MATH_E,
+  '%phi':  TokenType.MATH_PHI,
+  '%inf':  TokenType.MATH_INF,
+  '%nan':  TokenType.MATH_NAN
+};
+
+
 export class MathLexer {
   constructor(input, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
@@ -90,13 +100,13 @@ export class MathLexer {
         }
 
         // Карта быстрого сопоставления с типами токенов
-        const constantMap = {
+        /*const constantMap = {
           '%pi':   TokenType.MATH_PI,
           '%e':    TokenType.MATH_E,
           '%phi':  TokenType.MATH_PHI,
           '%inf':  TokenType.MATH_INF,
           '%nan':  TokenType.MATH_NAN
-        };
+        };*/
 
         const matchedType = constantMap[constName];
 
