@@ -176,33 +176,6 @@ export class BinaryOpNode extends ASTNode {
 }
 
 /**
- * Узел вызова встроенной математической функции (sin, cos, log...)
- */
-export class FunctionNode extends ASTNode {
-  constructor(name, argument, loc) {
-    super(loc);
-    this.name = name;
-    this.argument = argument;
-  }
-
-  evaluate(context) {
-    const argVal = this.argument.evaluate(context);
-    
-    if (typeof argVal[this.name] === 'function') {
-      return argVal[this.name]();
-    }
-    throw new Error(`[AST]: Функция "${this.name}" не поддерживается данным типом на ${this.loc}`);
-  }
-
-  toTeX() {
-    const argTex = this.argument.toTeX();
-    const texName = this.name === 'log' ? '\\ln' : `\\${this.name}`;
-    return `${texName}\\left(${argTex}\\right)`;
-  }
-}
-
-
-/**
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends ASTNode {
@@ -270,34 +243,23 @@ export class PrintNode extends ASTNode {
   }
 
   evaluate(context) {
-    let resultStrings = [];
-    let texStrings = [];
-
-    for (const element of this.elements) {
+    return this.elements.map(element => {
+      // Защищенная обработка текстовых блоков
       if (element.type === 'TEXT_BLOCK') {
-        const safeText = element.value
+        return element.value
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
-        
-        resultStrings.push(safeText);
-        texStrings.push(`\\text{${safeText}}`);
-      } else {
-        // 1. Вычисляем математический объект (RealNumber или ComplexNumber)
-        const val = element.evaluate(context);
-        
-        // 2. В текстовый вывод пишем обычную строку
-        resultStrings.push(val.toString());
-        
-        // 3. ИСПРАВЛЕНИЕ: В TeX-вывод пишем TeX-код самого ВЫЧИСЛЕННОГО ЗНАЧЕНИЯ!
-        texStrings.push(val.toRawTeX()); 
       }
-    }
-
-    return {
-      plain: resultStrings.join(" "),
-      tex: texStrings.join(" ")
-    };
+      
+      // Вычисление математических выражений (MathType: RealNumber или ComplexNumber)
+      const evaluatedValue = element.evaluate(env);
+      
+      // Генерируем валидный LaTeX, который MathJax.typesetPromise() превратит в формулу
+      const latex = evaluatedValue.toLaTeX(); 
+      
+      return `$${latex}$`;
+    }).join(''); // Сшиваем в единую строку для вывода в CalculatorController
   }
 }
 
