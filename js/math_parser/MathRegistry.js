@@ -35,10 +35,10 @@ export const MathRegistry = {
           }
           return arg.sqrt();
 
-        case 'log':
-          if (arg instanceof RealNumber && arg.value <= 0) {
-            return new ComplexNumber(arg.value, 0).log();
-          }
+        case 'lg':
+          return arg.log10();
+
+        case 'ln':
           return arg.log();
 
         default:
@@ -50,24 +50,12 @@ export const MathRegistry = {
     if (args.length === 2) {
       const [arg1, arg2] = args;
 
+      const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
       switch (name) {
         case 'pow':
-          // Логика функции pow(base, power)
-          // Если base отрицательный, а power дробный — продвигаем base до комплексного
-          /*if (arg1 instanceof RealNumber && arg1.value < 0 && (arg2 instanceof RealNumber && !Number.isInteger(arg2.value))) {
-            return new ComplexNumber(arg1.value, 0).pow(arg2);
-          }
-          return arg1.pow(arg2);*/
-          if (arg1 instanceof RealNumber && arg2 instanceof RealNumber) {
-            return arg1.accuratePow(arg2);
-          }
-          else if (arg1 instanceof RealNumber && arg2 instanceof ComplexNumber) {
-            return new ComplexNumber(arg1.value, 0).accuratePow(arg2);
-          }
-          else if (arg1 instanceof ComplexNumber && (arg2 instanceof RealNumber || arg2 instanceof ComplexNumber)) {
-            return arg1.accuratePow(arg2);
-          }
-
+          l.accuratePow(r);
+        case 'log':
+          l.logBase(r);
         default:
           throw new Error(`[Semantic Error]: Функция "${name}" с двумя аргументами не поддерживается на ${loc}`);
       }
