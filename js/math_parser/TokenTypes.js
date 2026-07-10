@@ -19,6 +19,6 @@ export const TokenType = Object.freeze({
   MATH_PI: 17,   // %pi
   MATH_E: 18,     // %e
   MATH_PHI: 19, // %phi
-  MATH_INF: 20, // %inf
+  MATH_INF: 20, // %inf 
   MATH_NAN: 21,  // %nan  
 });
