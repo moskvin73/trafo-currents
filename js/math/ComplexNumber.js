@@ -346,7 +346,7 @@ export default class ComplexNumber extends MathType {
     const complexLn = this.log();
     const ln10 = Math.log(10);
 
-    return new ComplexNumber(complexLn.real / ln10, complexLn.imag / ln10);
+    return new ComplexNumber(complexLn.real / ln10, complexLn.imaginary / ln10);
   }
 
   /**
@@ -361,16 +361,16 @@ export default class ComplexNumber extends MathType {
     const lnBase = base.log();
 
     // Если основание логарифма равно 1 (1 + 0i), то ln(1) = 0. Деление на 0 дает сингулярность.
-    if (Math.abs(lnBase.real) < EPSILON && Math.abs(lnBase.imag) < EPSILON) {
+    if (Math.abs(lnBase.real) < EPSILON && Math.abs(lnBase.imaginary) < EPSILON) {
       throw new RangeError("[ComplexNumber Error]: Основание комплексного логарифма не может быть равно 1.");
     }
 
     // Комплексное деление: lnValue / lnBase
     // Формула: (a + bi) / (c + di) = ((ac + bd) / (c^2 + d^2)) + i * ((bc - ad) / (c^2 + d^2))
     const a = lnValue.real;
-    const b = lnValue.imag;
+    const b = lnValue.imaginary;
     const c = lnBase.real;
-    const d = lnBase.imag;
+    const d = lnBase.imaginary;
 
     const denominator = c * c + d * d;
 

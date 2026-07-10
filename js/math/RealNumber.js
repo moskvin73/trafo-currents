@@ -191,7 +191,7 @@ export default class RealNumber extends MathType {
     const complexLn = this.log(); // Получаем ComplexNumber
     const ln10 = Math.log(10);
     
-    return new ComplexNumber(complexLn.real / ln10, complexLn.imag / ln10);
+    return new ComplexNumber(complexLn.real / ln10, complexLn.imaginary / ln10);
   }
 
   /**
@@ -219,7 +219,7 @@ export default class RealNumber extends MathType {
       const complexLnValue = this.log(); // Наш комплексный ln(x)
       const lnBase = Math.log(baseVal);
       
-      return new ComplexNumber(complexLnValue.real / lnBase, complexLnValue.imag / lnBase);
+      return new ComplexNumber(complexLnValue.real / lnBase, complexLnValue.imaginary / lnBase);
     }
 
     // 4. Идеальный стандартный случай
