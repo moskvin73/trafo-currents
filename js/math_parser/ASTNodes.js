@@ -385,13 +385,19 @@ export const CONSTANTS_AST_REGISTRY = new Map([
 ])
 
 export class ConstantNode extends ASTNode {
-  constructor(mathTypeValue, loc) {
+  #tokenType;
+
+  constructor(tokenType, loc) {
     super(loc);
-    this.value = mathTypeValue; // Здесь может лежать и RealNumber, и ComplexNumber
+    this.tokenType = tokenType; // Здесь может лежать и RealNumber, и ComplexNumber
   }
 
   evaluate(context) {
-    return this.value; // Просто возвращает математический объект
+    const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
+    if (!config) {
+      throw new Error(`[AST Error]: Неизвестный тип константы (Token ID: ${this.#tokenType}) на ${this.loc}`);
+    }
+    return config.instance;    
   }
 
   toTeX() {
