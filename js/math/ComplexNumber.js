@@ -1,4 +1,5 @@
 import MathType from './MathType.js';
+import RealNumber from './RealNumber.js';
 
 /**
  * Класс для работы с комплексными числами (a + bi).
@@ -138,13 +139,16 @@ export default class ComplexNumber extends MathType {
   /**
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
-   * @param {ComplexNumber|number} value 
+   * @param {ComplexNumber|number|RealNumber} value 
    * @returns {ComplexNumber}
    */
   static #from(value) {
     if (value instanceof ComplexNumber) return value;
     if (typeof value === 'number' && !Number.isNaN(value)) {
       return new ComplexNumber(value, 0);
+    }
+    if (value instanceof RealNumber && !Number.isNaN(value.value)) {
+      return new ComplexNumber(value.value, 0);
     }
     throw new TypeError(`[ComplexNumber]: Невозможно привести аргумент к комплексному числу.`);
   }
