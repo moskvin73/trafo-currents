@@ -200,6 +200,11 @@ export default class RealNumber extends MathType {
   logBase(other) {
     const baseVal = other instanceof RealNumber ? other.value : other;
 
+        // Точка неопределенности: log0(0) = NaN
+    if (this.#value === 0 && baseVal === 0) {
+      return new RealNumber(NaN);
+    }
+    
     // 1. Если само значение равно 0, результат в любом хорошем основании равен -Infinity
     if (this.#value === 0) {
       if (baseVal > 1) return new RealNumber(-Infinity);
