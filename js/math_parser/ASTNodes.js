@@ -350,6 +350,39 @@ export class PrintNode extends ASTNode {
   }    
 }
 
+// 1. Инициализируем объекты в кэше один раз при старте
+const PRECOMPUTED_CONSTANTS = {
+  PI:  new RealNumber(Math.PI),
+  E:   new RealNumber(Math.E),
+  PHI: new RealNumber((1 + Math.sqrt(5)) / 2),
+  INF: new RealNumber(Infinity),
+  NAN: new RealNumber(NaN)
+};
+
+// 2. Декларативная таблица, использующая TokenType напрямую в роли ключей
+export const CONSTANTS_AST_REGISTRY = new Map([
+  [TokenType.MATH_PI, {
+    instance: PRECOMPUTED_CONSTANTS.PI,
+    tex: '\\pi'
+  }],
+  [TokenType.MATH_E, {
+    instance: PRECOMPUTED_CONSTANTS.E,
+    tex: 'e'
+  }],
+  [TokenType.MATH_PHI, {
+    instance: PRECOMPUTED_CONSTANTS.PHI,
+    tex: '\\phi'
+  }],
+  [TokenType.MATH_INF, {
+    instance: PRECOMPUTED_CONSTANTS.INF,
+    tex: '\\infty'
+  }],
+  [TokenType.MATH_NAN, {
+    instance: PRECOMPUTED_CONSTANTS.NAN,
+    tex: '\\text{NaN}'
+  }]
+])
+
 const TEX_FUNCTIONS_REGISTRY = new Map([
   // === 1. ОСНОВНЫЕ АЛГЕБРАИЧЕСКИЕ И СТЕПЕННЫЕ ФУНКЦИИ ===
   ['pow', {
