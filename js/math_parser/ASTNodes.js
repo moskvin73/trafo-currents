@@ -384,6 +384,22 @@ export const CONSTANTS_AST_REGISTRY = new Map([
   }]
 ])
 
+export class ConstantNode extends ASTNode {
+  constructor(mathTypeValue, loc) {
+    super(loc);
+    this.value = mathTypeValue; // Здесь может лежать и RealNumber, и ComplexNumber
+  }
+
+  evaluate(context) {
+    return this.value; // Просто возвращает математический объект
+  }
+
+  toTeX() {
+    return this.value.toRawTeX(); // Каждый тип сам знает, как себя нарисовать!
+  }
+}
+
+
 const TEX_FUNCTIONS_REGISTRY = new Map([
   // === 1. ОСНОВНЫЕ АЛГЕБРАИЧЕСКИЕ И СТЕПЕННЫЕ ФУНКЦИИ ===
   ['pow', {
