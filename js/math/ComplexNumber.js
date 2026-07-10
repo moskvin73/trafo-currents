@@ -293,18 +293,100 @@ export default class ComplexNumber extends MathType {
   }
 
   /**
-   * Натуральный логарифм: ln(z) = ln(|z|) + i * arg(z)
-   * @returns {ComplexNumber}
+   * ИНТЕЛЛЕКТУАЛЬНЫЙ НАТУРАЛЬНЫЙ ЛОГАРИФМ Комплексного Числа
    */
   log() {
-    try {
-      if (this.#real === 0 && this.#imaginary === 0) {
-        throw new RangeError("Логарифм нуля не определен.");
-      }
-      return new ComplexNumber(Math.log(this.magnitude), this.phase);
-    } catch (e) {
-      throw new Error(`[ComplexNumber]: Ошибка в методе .log(). ${e.message}`);
+    const EPSILON = 1e-15;
+
+    // 1. Проверяем положение числа на осях координат
+    const isQuasiReal = Math.abs(this.#imaginary) < EPSILON;
+    const isQuasiImag = Math.abs(this.#real) < EPSILON;
+
+    const x = isQuasiImag ? 0 : this.#real;
+    const y = isQuasiReal ? 0 : this.#imaginary;
+
+    // 2. Обработка сингулярности нуля: ln(0) = -Infinity + 0i
+    if (x === 0 && y === 0) {
+      return new ComplexNumber(-Infinity, 0);
     }
+
+    // 3. Вычисляем модуль |z| и аргумент arg(z)
+    // Используем hypot для защиты от переполнения при возведении в квадрат больших чисел
+    const r = Math.hypot(x, y); 
+    const angle = Math.atan2(y, x);
+
+    let realPart = Math.log(r);
+    let imagPart = angle;
+
+    // 4. Симметрия и фильтрация погрешностей (как в accuratePow)
+    // Если число квази-вещественное и ПОЛОЖИТЕЛЬНОЕ (например, 5 + 1e-16i) -> arg(z) должен быть строго 0
+    if (isQuasiReal && x > 0) imagPart = 0;
+    
+    // Если число квази-вещественное и ОТРИЦАТЕЛЬНОЕ (например, -5 + 1e-16i) -> arg(z) строго PI
+    if (isQuasiReal && x < 0) imagPart = Math.PI;
+
+    // Если число чисто мнимое ПОЛОЖИТЕЛЬНОЕ (0 + 2i) -> arg(z) строго PI/2
+    if (isQuasiImag && y > 0) imagPart = Math.PI / 2;
+
+    // Если число чисто мнимое ОТРИЦАТЕЛЬНОЕ (0 - 2i) -> arg(z) строго -PI/2
+    if (isQuasiImag && y < 0) imagPart = -Math.PI / 2;
+
+    // Если модуль равен единице (|z| = 1), то вещественная часть ln(1) = 0
+    if (Math.abs(r - 1) < EPSILON) realPart = 0;
+
+    return new ComplexNumber(realPart, imagPart);
+  }
+
+  /**
+   * ДЕСЯТИЧНЫЙ ЛОГАРИФМ Комплексного Числа
+   */
+  log10() {
+    // Формула: lg(z) = ln(z) / ln(10)
+    // Операция деления комплексного числа на вещественную константу ln(10)
+    const complexLn = this.log();
+    const ln10 = Math.log(10);
+
+    return new ComplexNumber(complexLn.real / ln10, complexLn.imag / ln10);
+  }
+
+  /**
+   * ЛОГАРИФМ ПО ПРОИЗВОЛЬНОМУ КОМПЛЕКСНОМУ ОСНОВАНИЮ Log(value, base)
+   */
+  logBase(other) {
+    const base = ComplexNumber.#from(other);
+    const EPSILON = 1e-15;
+
+    // Переводим оба числа в комплексные натуральные логарифмы
+    const lnValue = this.log();
+    const lnBase = base.log();
+
+    // Если основание логарифма равно 1 (1 + 0i), то ln(1) = 0. Деление на 0 дает сингулярность.
+    if (Math.abs(lnBase.real) < EPSILON && Math.abs(lnBase.imag) < EPSILON) {
+      throw new RangeError("[ComplexNumber Error]: Основание комплексного логарифма не может быть равно 1.");
+    }
+
+    // Комплексное деление: lnValue / lnBase
+    // Формула: (a + bi) / (c + di) = ((ac + bd) / (c^2 + d^2)) + i * ((bc - ad) / (c^2 + d^2))
+    const a = lnValue.real;
+    const b = lnValue.imag;
+    const c = lnBase.real;
+    const d = lnBase.imag;
+
+    const denominator = c * c + d * d;
+
+    // Защита от деления на бесконечность (если основание логарифма было 0)
+    if (!isFinite(denominator)) {
+      return new ComplexNumber(0, 0);
+    }
+
+    const realPart = (a * c + b * d) / denominator;
+    const imagPart = (b * c - a * d) / denominator;
+
+    // Фильтруем микро-погрешности плавающей точки для осей конечного результата
+    const finalReal = Math.abs(realPart) < EPSILON ? 0 : realPart;
+    const finalImag = Math.abs(imagPart) < EPSILON ? 0 : imagPart;
+
+    return new ComplexNumber(finalReal, finalImag);
   }
 
   /**
