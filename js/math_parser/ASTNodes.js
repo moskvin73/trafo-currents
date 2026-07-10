@@ -4,6 +4,7 @@ import MathType from '../math/MathType.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import { MathRegistry } from './MathRegistry.js';
+import SemanticDispatcher from './SemanticDispatcher.js';
 
 /**
  * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
@@ -81,6 +82,8 @@ export class UnaryOpNode extends ASTNode {
   }
 }
 
+const dispatcher = new SemanticDispatcher();
+
 /**
  * Узел бинарной операции (+, -, *, /, ^)
  */
@@ -143,7 +146,20 @@ export class BinaryOpNode extends ASTNode {
   }
 
   evaluate(context) {
-    // Вычисляем ветви дерева (получаем чистые MathType объекты)
+
+    const dispatcher = new SemanticDispatcher(TYPE_REGISTRY);
+    const { l, r } = dispatcher.promoteTypes(this.left, this.right);
+    switch (this.operator) {
+      case '+': return l.add(r);
+      case '-': return l.subtract(r);
+      case '*': return l.multiply(r);
+      case '/': return l.divide(r);
+      case '^': return l.accuratePow(r);
+      default:
+        throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
+    }   
+
+    /*// Вычисляем ветви дерева (получаем чистые MathType объекты)
     const rawLeft = this.left.evaluate(context);
     const rawRight = this.right.evaluate(context);
 
@@ -159,7 +175,7 @@ export class BinaryOpNode extends ASTNode {
       case '^': return l.accuratePow(r);
       default:
         throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
-    }   
+    }*/ 
   }
 
   toTeX() {
