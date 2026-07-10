@@ -254,17 +254,17 @@
                 inputArea.value = "";
                 inputArea.focus();
 
-                // Альтернативный, самый надёжный вариант для мобильных:
-                const activeBlock = document.querySelector(".active-input-block");
-                if (activeBlock) {
-                    activeBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-
                 // 8. Даем команду MathJax мгновенно отрисовать формулы внутри созданной карточки
                 if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
                     window.MathJax.typesetPromise([resultBlock]).catch((mjErr) => {
                         console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
                     });
+                }
+
+                // Альтернативный, самый надёжный вариант для мобильных:
+                const activeBlock = document.querySelector(".active-input-block");
+                if (activeBlock) {
+                    activeBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }
             }
 
