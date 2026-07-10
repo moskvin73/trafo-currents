@@ -14,7 +14,7 @@ export default class RealNumber extends MathType {
    */
   constructor(value) {
     super();
-    if (typeof value !== 'number' || Number.isNaN(value)) {
+    if (typeof value !== 'number') {// || Number.isNaN(value)) {
       throw new TypeError('[RealNumber]: Значение аргумента должно быть валидным числом.');
     }
     this.#value = value;
@@ -204,7 +204,7 @@ export default class RealNumber extends MathType {
     if (this.#value === 0 && baseVal === 0) {
       return new RealNumber(NaN);
     }
-    
+
     // 1. Если само значение равно 0, результат в любом хорошем основании равен -Infinity
     if (this.#value === 0) {
       if (baseVal > 1) return new RealNumber(-Infinity);
