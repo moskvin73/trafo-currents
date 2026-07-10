@@ -244,37 +244,95 @@ export class PrintNode extends ASTNode {
 
   evaluate(context) {
     return this.elements.map(element => {
-      // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ (Переменные, функции, операции)
+      // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ
       if (element.type !== 'TEXT_BLOCK') {
         const evaluatedValue = element.evaluate(context);
-        // Математика всегда гарантированно возвращает чистый инлайн-островок
+        // Математика всегда возвращается как инлайн-формула
         return `$${evaluatedValue.toRawTeX()}$`;
       }
 
-      // 2. ЖЕСТКАЯ ВАЛИДАЦИЯ ТЕКСТОВЫХ ПОДСТРОК
-      let rawText = element.value;
+      // 2. ОБРАБОТКА ТЕКСТОВЫХ БЛОКОВ С ВАЛИДАЦИЕЙ И ЭКРАНИРОВАНИЕМ
+      const rawText = element.value;
+      let resultHtml = "";
+      
+      let i = 0;
+      let inInlineMath = false;
+      let inDisplayMath = false;
 
-      // Принудительно нормализуем любые попытки ввести выключные разделители
-      rawText = rawText
-        .replace(/\$\$/g, "$")
-        .replace(/\\\[/g, "$")
-        .replace(/\\\]/g, "$");
+      while (i < rawText.length) {
+        // --- Поддержка экранирования: если видим \$ ---
+        if (rawText[i] === '\\' && rawText[i + 1] === '$') {
+          // Оборачиваем сырой знак доллара в тег, который MathJax гарантированно проигнорирует
+          resultHtml += '<span class="tex2jax_ignore">$</span>';
+          i += 2;
+          continue;
+        }
+        
+        // --- Поддержка экранирования: если видим \[ или \] как обычный текст ---
+        if (rawText[i] === '\\' && (rawText[i + 1] === '[' || rawText[i + 1] === ']')) {
+          resultHtml += `<span class="tex2jax_ignore">${rawText[i + 1]}</span>`;
+          i += 2;
+          continue;
+        }
 
-      // Если после нормализации в тексте остался хотя бы один живой знак '$' — это ошибка!
-      // Инженер должен передавать формулы как отдельные аргументы калькулятора.
-      if (rawText.includes('$')) {
-        throw new Error(`[AST]: Синтаксическая ошибка: Символ '$' запрещен внутри текста.
-          Передавайте математические выражения как отдельные аргументы через запятую: print('Текст, ', переменная), 
-          на ${this.loc}`
-        );
+        // --- Обработка выключных формул $$ ---
+        if (rawText.startsWith("$$", i)) {
+          if (inInlineMath) {
+            throw new Error(
+              "Ошибка синтаксиса разметки: Попытка открыть выключную формулу '$$' внутри инлайн-формулы '$'.", 
+              this.loc
+            );
+          }
+          
+          // Нормализуем: если это разрешенный дизайн, оставляем $$, иначе заменяем на $
+          // Допустим, мы сохраняем $$ для красивого центрирования
+          resultHtml += "$$";
+          inDisplayMath = !inDisplayMath;
+          i += 2;
+          continue;
+        }
+
+        // --- Обработка инлайн формул $ ---
+        if (rawText[i] === '$') {
+          if (inDisplayMath) {
+            throw new Error(
+              "Ошибка синтаксиса разметки: Попытка использовать одиночный '$' внутри выключной формулы '$$'. Используйте чистый LaTeX.");
+          }
+          resultHtml += "$";
+          inInlineMath = !inInlineMath;
+          i++;
+          continue;
+        }
+
+        // --- Стандартные альтернативные LaTeX-разделители ---
+        if (rawText.startsWith("\\[", i) || rawText.startsWith("\\]", i)) {
+          throw new Error(
+            "Используйте стандартные разделители '$$' вместо '\\[' и '\\Text'."
+          );
+        }
+
+        // Экранируем стандартные HTML-символы, чтобы не сломать DOM
+        let char = rawText[i];
+        if (char === '&') char = '&amp;';
+        else if (char === '<') char = '&lt;';
+        else if (char === '>') char = '&gt;';
+
+        resultHtml += char;
+        i++;
       }
 
-      // Безопасное экранирование стандартных HTML-символов для вашего интерфейса
-      return rawText
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }).join(''); // Бесшовно склеиваем строки вида: "Текст " + "$формула$" + " текст"
+      // Финальная проверка: если строка закончилась, а формула не закрыта
+      if (inInlineMath) {
+        throw new Error("Ошибка синтаксиса разметки: Ожидался закрывающий символ '$' в конце текстовой строки.");
+      }
+      if (inDisplayMath) {
+        throw new Error("Ошибка синтаксиса разметки: Ожидался закрывающий символ '$$' в конце текстовой строки.");
+      }
+
+      return resultHtml;
+    }).join('');
+
+
   }    
 }
 
