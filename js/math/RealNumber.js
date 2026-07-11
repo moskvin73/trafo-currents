@@ -287,6 +287,11 @@ export default class RealNumber extends MathType {
   // ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ (Instance)
   // ==========================================
 
+  sinh() { return new RealNumber(Math.sinh(this.#value)); }
+
+  cosh() { return new RealNumber(Math.cosh(this.#value)); }
+
+  tanh() { return new RealNumber(Math.tanh(this.#value)); }
 
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
