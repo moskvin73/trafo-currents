@@ -777,6 +777,58 @@ export default class ComplexNumber extends MathType {
     );
   }
 
+  /**
+   * Комплексный Арккосинус (Главное значение)
+   */
+  arccos() {
+    // 1. Вычисляем 1 - z^2
+    const zSquare = this.multiply(this);
+    const oneMinusZSquare = new ComplexNumber(1 - zSquare.real, -zSquare.imaginary);
+
+    // 2. Вычисляем sqrt(1 - z^2) с учетом EPSILON
+    const sqrtPart = oneMinusZSquare.sqrt();
+
+    // 3. Умножаем корень на i: i * (R + Ii) = -I + Ri
+    const iTimesSqrt = new ComplexNumber(-sqrtPart.imaginary, sqrtPart.real);
+
+    // 4. Складываем: z + i * sqrt(1 - z^2)
+    const sumPart = new ComplexNumber(this.real + iTimesSqrt.real, this.imaginary + iTimesSqrt.imaginary);
+
+    // 5. Берем комплексный натуральный логарифм
+    const lnResult = sumPart.log();
+
+    // 6. Умножаем финальный результат на -i: -i * (R + Ii) = I - Ri
+    const finalReal = lnResult.imaginary;
+    const finalImag = -lnResult.real;
+
+    return new ComplexNumber(
+      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
+      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
+    );
+  }
+
+  /**
+   * Комплексный Арекосинус (Главное значение)
+   */
+  arccosh() {
+    // Формула: ln(z + sqrt(z - 1) * sqrt(z + 1))
+    // Раздельное извлечение корней гарантирует правильный выбор листов Римановой поверхности
+    const zMinusOne = new ComplexNumber(this.real - 1, this.imaginary);
+    const zPlusOne = new ComplexNumber(this.real + 1, this.imaginary);
+
+    const sqrt1 = zMinusOne.sqrt();
+    const sqrt2 = zPlusOne.sqrt();
+
+    // Перемножаем корни
+    const sqrtProduct = sqrt1.multiply(sqrt2);
+
+    // Складываем с исходным комплексным числом z
+    const sumPart = new ComplexNumber(this.real + sqrtProduct.real, this.imaginary + sqrtProduct.imaginary);
+
+    // Возвращаем логарифм от полученной суммы
+    return sumPart.log();
+  }  
+
   // #endregion
 
   // ==========================================

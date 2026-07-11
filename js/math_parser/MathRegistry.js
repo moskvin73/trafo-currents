@@ -26,13 +26,10 @@ export const MathRegistry = {
         case 'cos':  return arg.cos();
         case 'tan':  return arg.tan();
         case 'exp':  return arg.exp();
+        case 'arccos':  return arg.arccos();
+        case 'arccos':  return arg.arccos();
         
         case 'sqrt':
-          // Если на вход пришло отрицательное вещественное число — 
-          // переводим расчет в комплексное поле, используя стандартный конструктор
-          if (arg instanceof RealNumber && arg.value < 0) {
-            return new ComplexNumber(arg.value, 0).sqrt();
-          }
           return arg.sqrt();
 
         case 'lg':
