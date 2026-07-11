@@ -731,6 +731,52 @@ export default class ComplexNumber extends MathType {
   // ОБРАТНЫЕ ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ (Instance)
   // ==========================================
 
+  /**
+   * Комплексный Ареасинус (Главное значение)
+   */
+  arcsinh() {
+    // Формула: ln(z + sqrt(z^2 + 1))
+    
+    // 1. z^2
+    const zSquare = this.multiply(this);
+    
+    // 2. z^2 + 1
+    const zSquarePlusOne = new ComplexNumber(zSquare.real + 1, zSquare.imaginary);
+    
+    // 3. sqrt(z^2 + 1) — вызываем наш точный метод с фильтрацией осей
+    const sqrtPart = zSquarePlusOne.sqrt();
+    
+    // 4. z + sqrt(z^2 + 1)
+    const sumPart = new ComplexNumber(this.real + sqrtPart.real, this.imaginary + sqrtPart.imaginary);
+    
+    // 5. ln(...) — вызываем наш точный комплексный логарифм
+    return sumPart.log();
+  }
+
+  /**
+   * Комплексный Арксинус (Главное значение)
+   */
+  arcsin() {
+    // Формула: arcsin(z) = -i * arcsinh(i * z)
+    
+    // 1. Умножаем исходное число на мнимую единицу 'i': i * (x + iy) = -y + ix
+    const iTimesZ = new ComplexNumber(-this.imaginary, this.real);
+    
+    // 2. Вычисляем arcsinh(i * z)
+    const arcsinhResult = iTimesZ.arcsinh();
+    
+    // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
+    // Вещественной частью становится мнимая часть, а мнимой — минус вещественная
+    const finalReal = arcsinhResult.imaginary;
+    const finalImag = -arcsinhResult.real;
+
+    // Дополнительная фильтрация микро-погрешностей для идеальной посадки на оси
+    return new ComplexNumber(
+      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
+      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
+    );
+  }
+  
   // #endregion
 
   // ==========================================
