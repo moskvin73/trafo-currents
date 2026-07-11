@@ -279,15 +279,51 @@ export default class ComplexNumber extends MathType {
   divide(other) {
     try {
       const o = ComplexNumber.#from(other);
-      const denominator = o.real * o.real + o.imaginary * o.imaginary;
       
-      if (denominator === 0) {
-        throw new RangeError("Деление на ноль (модуль делителя равен 0).");
+      const x1 = this.#real;
+      const y1 = this.#imaginary;
+      const x2 = o.real;
+      const y2 = o.imaginary;
+
+      // 1. Обработка деления на чистый ноль (модуль делителя = 0)
+      if (x2 === 0 && y2 === 0) {
+        // Если делимое тоже 0, то результат NaN, иначе Infinity со знаками
+        if (x1 === 0 && y1 === 0) {
+          return new ComplexNumber(NaN, NaN);
+        }
+        // Математически возвращаем бесконечность. Знак зависит от делимого.
+        const signX = Math.sign(x1) || 1;
+        const signY = Math.sign(y1) || 1;
+        return new ComplexNumber(x1 !== 0 ? signX * Infinity : 0, y1 !== 0 ? signY * Infinity : 0);
       }
 
-      const r = (this.#real * o.real + this.#imaginary * o.imaginary) / denominator;
-      const i = (this.#imaginary * o.real - this.#real * o.imaginary) / denominator;
-      return new ComplexNumber(r, i);
+      // 2. Обработка бесконечностей в делителе (IEEE 754)
+      if (!isFinite(x2) || !isFinite(y2)) {
+        // Если делимое ТОЖЕ бесконечность, то результат неопределен (NaN)
+        if (!isFinite(x1) || !isFinite(y1)) {
+          return new ComplexNumber(NaN, NaN);
+        }
+        // Конечные числа, деленные на бесконечность, всегда дают комплексный ноль
+        return new ComplexNumber(0, -0);
+      }
+
+      // 3. Безопасный алгоритм Смита для обычных чисел (защита от ложного переполнения)
+      if (Math.abs(x2) >= Math.abs(y2)) {
+        const ratio = y2 / x2;
+        const denominator = x2 + y2 * ratio;
+        
+        const r = (x1 + y1 * ratio) / denominator;
+        const i = (y1 - x1 * ratio) / denominator;
+        return new ComplexNumber(r, i);
+      } else {
+        const ratio = x2 / y2;
+        const denominator = y2 + x2 * ratio;
+        
+        const r = (x1 * ratio + y1) / denominator;
+        const i = (y1 * ratio - x1) / denominator;
+        return new ComplexNumber(r, i);
+      }
+
     } catch (e) {
       throw new TypeError(`[ComplexNumber]: Ошибка в методе .divide(). ${e.message}`);
     }
