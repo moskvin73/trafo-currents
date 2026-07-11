@@ -776,7 +776,7 @@ export default class ComplexNumber extends MathType {
       Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
     );
   }
-  
+
   // #endregion
 
   // ==========================================

@@ -293,6 +293,61 @@ export default class RealNumber extends MathType {
 
   tanh() { return new RealNumber(Math.tanh(this.#value)); }
 
+  // #region ОБРАТНЫЕ ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ
+  // ==========================================
+  // ОБРАТНЫЕ ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ (Instance)
+  // ==========================================
+ 
+   /**
+   * Интеллектуальный Арккосинус с фазовым переходом (|x| > 1)
+   */
+  arccos() {
+    const x = this.#value;
+
+    // 1. Стандартный вещественный случай
+    if (Math.abs(x) <= 1) {
+      return new RealNumber(Math.acos(x));
+    }
+
+    // 2. Фазовый переход для x > 1 (вещественная часть становится строго 0)
+    if (x > 1) {
+      const imagPart = -Math.log(x + Math.sqrt(x * x - 1));
+      return new ComplexNumber(0, imagPart);
+    }
+
+    // 3. Фазовый переход для x < -1 (вещественная часть становится строго PI)
+    // Симметричный разрез плоскости
+    const imagPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+    return new ComplexNumber(Math.PI, imagPart);
+  }
+
+  /**
+   * Интеллектуальный Арекосинус (Гиперболический арккосинус)
+   * Область определения в вещественном поле: [1; +inf)
+   */
+  arccosh() {
+    const x = this.#value;
+
+    // 1. Стандартный вещественный случай
+    if (x >= 1) {
+      return new RealNumber(Math.acosh(x));
+    }
+
+    // 2. Фазовый переход на мнимую ось при 0 <= x < 1
+    // arccosh(0.5) переходит в i * acos(0.5)
+    if (x >= 0) {
+      const imagPart = Math.acos(x);
+      return new ComplexNumber(0, imagPart);
+    }
+
+    // 3. Фазовый переход для отрицательных чисел (x < 0)
+    // Мнимая часть фиксируется на высоте PI
+    const realPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+    return new ComplexNumber(realPart, Math.PI);
+  } 
+
+  // #endregion
+
   // ==========================================
   // ВЕКТОРНАЯ ГЕОМЕТРИЯ (Скалярное и Векторное произведение)
   // ==========================================
