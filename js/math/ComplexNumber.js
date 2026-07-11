@@ -1485,7 +1485,29 @@ export default class ComplexNumber extends MathType {
   dot(other) {
     try {
       const o = ComplexNumber.#from(other);
-      return this.#real * o.real + this.#imaginary * o.imaginary;
+      
+      const a = this.#real;
+      const b = this.#imaginary;
+      const c = o.real;
+      const d = o.imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем примитив NaN
+      if (Number.isNaN(a) || Number.isNaN(b) || Number.isNaN(c) || Number.isNaN(d)) {
+        return NaN;
+      }
+
+      // 1. Защита от неопределенности (0 * Infinity) при ортогональных бесконечностях
+      let part1 = a * c;
+      if (Number.isNaN(part1) && (a === 0 || c === 0)) {
+        part1 = 0; // Перекрестное зануление ортогональных осей
+      }
+
+      let part2 = b * d;
+      if (Number.isNaN(part2) && (b === 0 || d === 0)) {
+        part2 = 0;
+      }
+
+      return part1 + part2;
     } catch (e) {
       throw new TypeError(`[ComplexNumber]: Ошибка в методе .dot(). ${e.message}`);
     }
@@ -1501,7 +1523,29 @@ export default class ComplexNumber extends MathType {
   cross(other) {
     try {
       const o = ComplexNumber.#from(other);
-      return this.#real * o.imaginary - this.#imaginary * o.real;
+
+      const a = this.#real;
+      const b = this.#imaginary;
+      const c = o.real;
+      const d = o.imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(a) || Number.isNaN(b) || Number.isNaN(c) || Number.isNaN(d)) {
+        return NaN;
+      }
+
+      // 1. Защита от неопределенности (0 * Infinity)
+      let part1 = a * d;
+      if (Number.isNaN(part1) && (a === 0 || d === 0)) {
+        part1 = 0;
+      }
+
+      let part2 = b * c;
+      if (Number.isNaN(part2) && (b === 0 || c === 0)) {
+        part2 = 0;
+      }
+
+      return part1 - part2;
     } catch (e) {
       throw new TypeError(`[ComplexNumber]: Ошибка в методе .cross(). ${e.message}`);
     }
