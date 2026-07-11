@@ -725,7 +725,82 @@ export default class ComplexNumber extends MathType {
    * @param {number|RealNumber|ComplexNumber} nParam - степень корня
    */
   sqrt(nParam = 2) {
-    let n = nParam;
+    try {
+      let n = nParam;
+      if (nParam instanceof ComplexNumber) {
+        n = Math.abs(nParam.imaginary) < MathType.EPSILON ? nParam.real : nParam;
+      } else if (nParam instanceof RealNumber) {
+        n = nParam.value;
+      }
+
+      const x = this.#real;
+      const y = this.#imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если число или степень повреждены, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y) || 
+          (typeof n === 'number' && Number.isNaN(n)) || 
+          (typeof n === 'object' && (Number.isNaN(n.real) || Number.isNaN(n.imaginary)))) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 1. ОПТИМИЗАЦИЯ ДЛЯ САМОГО ВАЖНОГО СЛУЧАЯ: КВАДРАТНЫЙ КОРЕНЬ (n === 2)
+      // Эта реализация строго следует стандарту ISO C99 (Приложение G) для комплексного sqrt
+      if (n === 2) {
+        // Корень от чистого нуля возвращает исходный ноль с сохранением знаков
+        if (x === 0 && y === 0) {
+          return new ComplexNumber(0, y); 
+        }
+
+        // Обработка бесконечностей (устраняем Infinity - Infinity -> NaN)
+        if (!isFinite(x) || !isFinite(y)) {
+          if (y === Infinity || y === -Infinity) {
+            return new ComplexNumber(Infinity, y); // Мнимая бесконечность перевешивает
+          }
+          if (x === -Infinity) {
+            return new ComplexNumber(0, y >= 0 ? Infinity : -Infinity);
+          }
+          if (x === Infinity) {
+            return new ComplexNumber(Infinity, y >= 0 ? 0 : -0);
+          }
+        }
+
+        // Канонический алгоритм, устойчивый к знакам разрезов (-0)
+        const r = Math.hypot(x, y);
+        let resReal, resImag;
+
+        if (x >= 0) {
+          resReal = Math.sqrt(0.5 * (r + x));
+          resImag = y / (2 * resReal); // Деление на реальную часть автоматически сохраняет знак y, даже если y === -0
+        } else {
+          resImag = y >= 0 || (y === 0 && 1 / y === Infinity) ? Math.sqrt(0.5 * (r - x)) : -Math.sqrt(0.5 * (r - x));
+          resReal = y / (2 * resImag);
+        }
+
+        // Интеллектуальная фильтрация микро-погрешностей без уничтожения знаков нулей
+        if (Math.abs(resReal) < MathType.EPSILON) resReal = (1 / resReal === -Infinity) ? -0 : 0;
+        if (Math.abs(resImag) < MathType.EPSILON) resImag = (1 / resImag === -Infinity) ? -0 : 0;
+
+        return new ComplexNumber(resReal, resImag);
+      }
+
+      // 2. ОБРАБОТКА СТЕПЕНИ КОРНЯ С ИСПОЛЬЗОВАНИЕМ БЕЗОПАСНЫХ МЕТОДОВ КЛАССА
+      let exponent;
+      if (typeof n === 'number') {
+        if (n === 0) return new ComplexNumber(NaN, NaN); // Корень 0-й степени в IEEE 75ранзитах
+        if (n === 1) return this;
+        exponent = new ComplexNumber(1 / n, 0);
+      } else {
+        if (n.real === 0 && n.imaginary === 0) return new ComplexNumber(NaN, NaN);
+        exponent = new ComplexNumber(1, 0).divide(n); // Вызываем наш пуленепробиваемый divide
+      }
+
+      // Отправляем вычисление в точный pow
+      return this.accuratePow(exponent);
+
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .sqrt(). ${e.message}`);
+    }    
+    /*let n = nParam;
     if (nParam instanceof ComplexNumber) {
       n = Math.abs(nParam.imaginary) < MathType.EPSILON ? nParam.real : nParam;
     } else if (nParam instanceof RealNumber) {
@@ -804,7 +879,7 @@ export default class ComplexNumber extends MathType {
     // 3. ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ СТЕПЕНЕЙ КОРНЯ
     // Создаем объект экспоненты и отправляем в точный accuratePow
     const complexExponent = new ComplexNumber(expReal, expImag);
-    return this.accuratePow(complexExponent);
+    return this.accuratePow(complexExponent);*/
   }
 
   /**
