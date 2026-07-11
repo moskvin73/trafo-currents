@@ -66,8 +66,8 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   ['arcsec', [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.inverse().arccos() },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.inverse().arccos() }
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() }
   ]],
 
   ['csc', [
