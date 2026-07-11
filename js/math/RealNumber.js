@@ -181,7 +181,7 @@ export default class RealNumber extends MathType {
   sqrt(nParam = 2) {
 
     //const n = nParam instanceof RealNumber ? nParam.value : nParam;
-    const n = RealNumber.#from(other).#value;
+    const n = RealNumber.#from(nParam).#value;
 
     if (n === 0) {
       throw new RangeError("[RealNumber Error]: Корень 0-й степени математически не определен.");
