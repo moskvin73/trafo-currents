@@ -357,22 +357,22 @@ export default class RealNumber extends MathType {
    * Область определения в вещественном поле: [1; +inf)
    */
   arccosh() {
-    const x = this.#value;
+     const x = this.#value;
 
-    // 1. Стандартный вещественный случай
+    // 1. Стандартный вещественный случай (x >= 1)
     if (x >= 1) {
       return new RealNumber(Math.acosh(x));
     }
 
-    // 2. Фазовый переход на мнимую ось при 0 <= x < 1
-    // arccosh(0.5) переходит в i * acos(0.5)
-    if (x >= 0) {
-      const imagPart = Math.acos(x);
+    // 2. Фазовый переход на мнимую ось в интервале [-1; 1)
+    // Сюда идеально попадает ваш кейс x = -0.5
+    if (x > -1) {
+      const imagPart = Math.acos(x); // Для -0.5 это даст ровно 2.094395... (2*pi/3)
       return new ComplexNumber(0, imagPart);
     }
 
-    // 3. Фазовый переход для отрицательных чисел (x < 0)
-    // Мнимая часть фиксируется на высоте PI
+    // 3. Фазовый переход для чисел строго левее критической точки (x <= -1)
+    // Вот теперь под корнем гарантированно положительное число (например, для -2: 4 - 1 = 3)
     const realPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
     return new ComplexNumber(realPart, Math.PI);
   } 
