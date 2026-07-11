@@ -619,12 +619,14 @@ export default class ComplexNumber extends MathType {
    * ДЕСЯТИЧНЫЙ ЛОГАРИФМ Комплексного Числа
    */
   log10() {
-    // Формула: lg(z) = ln(z) / ln(10)
-    // Операция деления комплексного числа на вещественную константу ln(10)
+    // Вызываем наш защищенный интеллектуальный логарифм
     const complexLn = this.log();
-    const ln10 = Math.log(10);
 
-    return new ComplexNumber(complexLn.real / ln10, complexLn.imaginary / ln10);
+    // Math.LN10 — встроенная константа JavaScript, равная примерно 2.302585092994046
+    return new ComplexNumber(
+      complexLn.real / Math.LN10, 
+      complexLn.imaginary / Math.LN10
+    );
   }
 
   /**
