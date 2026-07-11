@@ -36,6 +36,8 @@ export const MathRegistry = {
 
         case 'arcsin':  return arg.arcsin();
         case 'arccos':  return arg.arccos();
+        case 'arctan':  return arg.arctan();
+        case 'arctanh':  return arg.arctanh();
         
         case 'arcsinh':  return arg.arcsinh();
         case 'arccosh':  return arg.arccosh();        
