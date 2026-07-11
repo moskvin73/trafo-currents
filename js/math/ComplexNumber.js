@@ -259,6 +259,7 @@ export default class ComplexNumber extends MathType {
 
   // #endregion
 
+  // #region МЕТОДЫ СРАВНЕНИЯ
   // ==========================================
   // МЕТОДЫ СРАВНЕНИЯ (Equality)
   // ==========================================
@@ -276,6 +277,7 @@ export default class ComplexNumber extends MathType {
       return false; // Если тип не приводимый, числа заведомо не равны
     }
   }
+  // #endregion
 
   // ==========================================
   // СТАТИЧЕСКИЕ МЕТОДЫ (Static Methods как в C#)
