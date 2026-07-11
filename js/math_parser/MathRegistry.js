@@ -64,10 +64,17 @@ export const COMPILER_REGISTRY = new Map([
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) }
   ]],
+
+  ['arcsec', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => (x.multiply(x) - 1).sqrt().arctan() },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => (x.multiply(x) - 1).sqrt().arctan() }
+  ]],
+
   ['csc', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) }
   ]],
+
   ['ctg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
