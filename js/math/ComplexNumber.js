@@ -827,6 +827,57 @@ export default class ComplexNumber extends MathType {
     return sumPart.log();
   }  
 
+   /**
+   * Комплексный Аретангенс (Главное значение)
+   */
+  arctanh() {
+    const EPSILON = MathType.EPSILON;
+    
+    // Сингулярности: деление на ноль
+    if (Math.abs(this.imaginary) < EPSILON && (Math.abs(this.real - 1) < EPSILON || Math.abs(this.real + 1) < EPSILON)) {
+      return new ComplexNumber(this.real > 0 ? Infinity : -Infinity, 0);
+    }
+
+    // 1. Вычисляем (1 + z) и (1 - z)
+    const num = new ComplexNumber(1 + this.real, this.imaginary);
+    const denom = new ComplexNumber(1 - this.real, -this.imaginary);
+
+    // 2. Комплексное деление: (1 + z) / (1 - z)
+    // Используем формулу: (ac + bd)/denom + i*(bc - ad)/denom
+    const dPrice = denom.real * denom.real + denom.imaginary * denom.imaginary;
+    const divResult = new ComplexNumber(
+      (num.real * denom.real + num.imaginary * denom.imaginary) / dPrice,
+      (num.imaginary * denom.real - num.real * denom.imaginary) / dPrice
+    );
+
+    // 3. Берем комплексный логарифм от результата деления
+    const lnResult = divResult.log();
+
+    // 4. Умножаем на 0.5 (просто делим компоненты пополам)
+    return new ComplexNumber(lnResult.real * 0.5, lnResult.imaginary * 0.5);
+  }
+
+  /**
+   * Комплексный Арктангенс (Главное значение)
+   */
+  arctan() {
+    // Формула: arctan(z) = -i * arctanh(i * z)
+    
+    // 1. Умножаем исходное число на 'i': i * (x + iy) = -y + ix
+    const iTimesZ = new ComplexNumber(-this.imaginary, this.real);
+    
+    // 2. Вычисляем комплексный аретангенс
+    const arctanhResult = iTimesZ.arctanh();
+    
+    // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
+    const finalReal = arctanhResult.imaginary;
+    const finalImag = -arctanhResult.real;
+
+    return new ComplexNumber(
+      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
+      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
+    );
+  } 
   // #endregion
 
   // ==========================================
