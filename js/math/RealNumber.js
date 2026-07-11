@@ -121,18 +121,25 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   /**
-   * Строгое математическое равенство
-   * @param {CRealNumber|number} other 
+   * Строгое математическое равенство (IEEE 754)
+   * Корректно различает +0 и -0 для точных фазовых переходов 
+   * и позволяет проверять идентичность NaN в юнит-тестах.
+   * @param {RealNumber|number} other 
    * @returns {boolean}
    */
   equals(other) {
     try {
+      // Используем ваш проверенный метод приведения типов RealNumber.#from
       const o = RealNumber.#from(other);
-      return this.#value === RealNumber.#from(other).#value;
+      
+      // Object.is — стандартный способ JS проверить абсолютную идентичность:
+      // 1. Object.is(NaN, NaN) -> true
+      // 2. Object.is(0, -0) -> false (сохраняет знак для комплексных разрезов)
+      return Object.is(this.#value, o.#value);
     } catch {
       return false; // Если тип не приводимый, числа заведомо не равны
     }
-  }  
+  }
 
   // ==========================================
   // ЭКСПАНСИЯ: СТЕПЕНИ, КОРНИ, ЛОГАРИФМЫ (Instance)
