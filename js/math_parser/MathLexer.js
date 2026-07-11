@@ -99,15 +99,6 @@ export class MathLexer {
           constName += this.#advanceChar();
         }
 
-        // Карта быстрого сопоставления с типами токенов
-        /*const constantMap = {
-          '%pi':   TokenType.MATH_PI,
-          '%e':    TokenType.MATH_E,
-          '%phi':  TokenType.MATH_PHI,
-          '%inf':  TokenType.MATH_INF,
-          '%nan':  TokenType.MATH_NAN
-        };*/
-
         const matchedType = constantMap[constName];
 
         if (matchedType) {
