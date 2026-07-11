@@ -2,7 +2,7 @@ import MathType from '../math/MathType.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 
-const TYPE_REGISTRY = new Map([
+export const TYPE_REGISTRY = new Map([
   // 1. Примитив JS число. 
   ['number', {
     rank: 1,

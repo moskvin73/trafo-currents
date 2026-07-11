@@ -7,7 +7,7 @@ export const TokenType = Object.freeze({
   MUL: 5,            // *
   DIV: 6,            // /
   POW: 7,            // ^ или **
-  ASSIGN: 8,         // =
+  ASSIGN: 8,         // = 
   LPAREN: 9,         // (
   RPAREN: 10,        // )
   VARIABLE: 11,      // Переменные
