@@ -519,12 +519,69 @@ export default class ComplexNumber extends MathType {
    * ИНТЕЛЛЕКТУАЛЬНЫЙ НАТУРАЛЬНЫЙ ЛОГАРИФМ Комплексного Числа
    */
   log() {
-    // 1. Проверяем положение числа на осях координат
+ 
+    try {
+      const x = this.#real;
+      const y = this.#imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // Хелпер для проверки отрицательного нуля (-0)
+      const isNegZero = (num) => num === 0 && (1 / num === -Infinity);
+      // Хелпер для получения знака (-1 или 1), включая -0
+      const getSign = (num) => (isNegZero(num) || num < 0 ? -1 : 1);
+
+      // 1. Обработка сингулярности чистого нуля (учитываем знаки для фазы)
+      if (x === 0 && y === 0) {
+        // ln(0) = -Infinity + i * atan2(y, x)
+        // Знак мнимой части нуля определяет угол (0, PI, -PI или PI/2)
+        return new ComplexNumber(-Infinity, Math.atan2(y, x));
+      }
+
+      // 2. Интеллектуальная фильтрация осей (с жестким сохранением знаков)
+      const isQuasiReal = Math.abs(y) < MathType.EPSILON;
+      const isQuasiImag = Math.abs(x) < MathType.EPSILON;
+
+      // Если число очень близко к вещественной оси, мы подтягиваем угол к 0 или ±PI,
+      // но ОБЯЗАТЕЛЬНО сохраняем знак исходной мнимой части!
+      let angle;
+      if (isQuasiReal) {
+        if (x > 0) {
+          // Угол близок к 0. Знак мнимой части определяет +0 или -0
+          angle = isNegZero(y) || y < 0 ? -0 : 0;
+        } else {
+          // Угол близок к PI. Если пришли снизу (y < 0), то угол -PI, иначе +PI
+          angle = isNegZero(y) || y < 0 ? -Math.PI : Math.PI;
+        }
+      } else if (isQuasiImag) {
+        // Чисто мнимая ось: строго ±PI/2
+        angle = y > 0 ? Math.PI / 2 : -Math.PI / 2;
+      } else {
+        // Обычное комплексное число
+        angle = Math.atan2(y, x);
+      }
+
+      // 3. Вычисление модуля |z| с защитой от переполнения
+      const r = Math.hypot(x, y);
+      
+      // Если модуль безумно близок к 1, вещественная часть ln(1) строго зануляется
+      let realPart = Math.abs(r - 1) < MathType.EPSILON ? 0 : Math.log(r);
+
+      return new ComplexNumber(realPart, angle);
+
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .log(). ${e.message}`);
+    }
+   
+    /*// 1. Проверяем положение числа на осях координат
     const isQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
     const isQuasiImag = Math.abs(this.#real) < MathType.EPSILON;
 
     const x = isQuasiImag ? 0 : this.#real;
-    const y = isQuasiReal ? 0 : this.#imaginary;
+    const y = isQuasiReal ? 0 : this.#imaginary; 
 
     // 2. Обработка сингулярности нуля: ln(0) = -Infinity + 0i
     if (x === 0 && y === 0) {
@@ -555,7 +612,7 @@ export default class ComplexNumber extends MathType {
     // Если модуль равен единице (|z| = 1), то вещественная часть ln(1) = 0
     if (Math.abs(r - 1) < MathType.EPSILON) realPart = 0;
 
-    return new ComplexNumber(realPart, imagPart);
+    return new ComplexNumber(realPart, imagPart);*/
   }
 
   /**
