@@ -1151,10 +1151,30 @@ export default class ComplexNumber extends MathType {
     try {
       const a = this.#real;
       const b = this.#imaginary;
-      return new ComplexNumber(
-        Math.sinh(a) * Math.cos(b),
-        Math.cosh(a) * Math.sin(b)
-      );
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      const sha = Math.sinh(a);
+      const cha = Math.cosh(a);
+      const cb = Math.cos(b);
+      const sb = Math.sin(b);
+
+      // 1. Защита от неопределенности (0 * Infinity) на вещественных бесконечностях
+      // Если cb или sb равны 0, а sha/cha равны Infinity, заменяем NaN на правильный нуль
+      let r = sha * cb;
+      if (Number.isNaN(r) && cb === 0 && !isFinite(sha)) {
+        r = (1 / cb === -Infinity) ? -0 : 0; 
+      }
+
+      let i = cha * sb;
+      if (Number.isNaN(i) && sb === 0 && !isFinite(cha)) {
+        i = (1 / sb === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(r, i);
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .sinh(). ${e.message}`);
     }
@@ -1168,10 +1188,29 @@ export default class ComplexNumber extends MathType {
     try {
       const a = this.#real;
       const b = this.#imaginary;
-      return new ComplexNumber(
-        Math.cosh(a) * Math.cos(b),
-        Math.sinh(a) * Math.sin(b)
-      );
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      const sha = Math.sinh(a);
+      const cha = Math.cosh(a);
+      const cb = Math.cos(b);
+      const sb = Math.sin(b);
+
+      // 1. Защита от неопределенности (0 * Infinity) на вещественных бесконечностях
+      let r = cha * cb;
+      if (Number.isNaN(r) && cb === 0 && !isFinite(cha)) {
+        r = (1 / cb === -Infinity) ? -0 : 0;
+      }
+
+      let i = sha * sb;
+      if (Number.isNaN(i) && sb === 0 && !isFinite(sha)) {
+        i = (1 / sb === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(r, i);
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .cosh(). ${e.message}`);
     }
@@ -1183,6 +1222,11 @@ export default class ComplexNumber extends MathType {
    */
   tanh() {
     try {
+      // ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+      // Полностью полагаемся на пуленепробиваемый .divide() класса
       return this.sinh().divide(this.cosh());
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .tanh(). ${e.message}`);
