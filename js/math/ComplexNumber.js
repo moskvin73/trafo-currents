@@ -413,14 +413,20 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   /**
-   * Строгое математическое равенство действительных и мнимых частей
+   * Строгое математическое равенство (IEEE 754 / ISO C99)
+   * Учитывает знаки нулей (-0) для правильного определения комплексных разрезов
+   * и корректно распознает идентичность NaN при юнит-тестировании.
    * @param {ComplexNumber|number} other 
    * @returns {boolean}
    */
   equals(other) {
     try {
       const o = ComplexNumber.#from(other);
-      return this.#real === o.real && this.#imaginary === o.imaginary;
+      
+      // Object.is идеально подходит для математических ядер:
+      // 1. Object.is(0, -0) -> false (критично для комплексных разрезов фазы)
+      // 2. Object.is(NaN, NaN) -> true (необходимо для стабильности юнит-тестов)
+      return Object.is(this.#real, o.real) && Object.is(this.#imaginary, o.imaginary);
     } catch {
       return false; // Если тип не приводимый, числа заведомо не равны
     }
