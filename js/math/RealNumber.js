@@ -49,7 +49,7 @@ export default class RealNumber extends MathType {
   static #from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
     if (value === null || value === undefined) {
-      throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
+      throw new TypeError(`[RealNumber]: Невозможно привести ${value} к комплексному числу.`);
     }
 
     // 2. Определяем имя типа (строку) для поиска в Map
@@ -60,7 +60,7 @@ export default class RealNumber extends MathType {
 
     // 4. Если типа нет в таблице — сразу выбрасываем ошибку
     if (!convert) {
-      throw new TypeError(`[ComplexNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
+      throw new TypeError(`[RealNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
     }
 
     // 5. Вызываем конвертер
@@ -89,10 +89,7 @@ export default class RealNumber extends MathType {
    * Внутренний метод сложения двух вещественных чисел
    */
   add(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция сложения невозможна с типом ${other.constructor.name}. Требуется семантическое приведение типов.`);
-    }
-    return new RealNumber(this.#value + other.value);
+    return new RealNumber(this.#value + RealNumber.#from(other).value);
   }
 
   /**
