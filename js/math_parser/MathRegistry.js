@@ -66,8 +66,8 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   ['arcsec', [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => (x.multiply(x) - 1).sqrt().arctan() },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => (x.multiply(x) - 1).sqrt().arctan() }
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(x).subtract(1).sqrt().arctan() },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(x).subtract(1).sqrt().arctan() }
   ]],
 
   ['csc', [
