@@ -89,31 +89,45 @@ export default class ComplexNumber extends MathType {
    * Если число безумно близко к нулю (меньше 1e-15), возвращает чистый 0.
    */
   #cleanRound(value) {
-    return Math.abs(value) < MathType.EPSILON ? 0 : value;
+    if (Number.isNaN(value) || !isFinite(value)) return value;
+    
+    if (Math.abs(value) < MathType.EPSILON) {
+      // Проверяем исходный знак числа, чтобы вернуть -0 или +0
+      return (1 / value === -Infinity) ? -0 : 0;
+    }
+    return value;
   }
 
   /**
    * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
    */
   toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+    // Если число полностью сломано, возвращаем строку NaN
+    if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) return 'NaN';
+
     const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
 
-    // Сокращенный хелпер для форматирования частей числа через локаль
+    // Хелпер для проверки, является ли число положительным/отрицательным нулем
+    const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
+
     const f = (num) => MathType.formatNumberToTeX(num, locale);
 
-    // Если мнимой части нет, выводим только действительную
-    if (i === 0) return f(r);
+    // Мнимой части нет вообще (и она не является -0, который важен для отображения)
+    if (i === 0 && !isNegativeZero(i)) return f(r);
 
-    const sign = i > 0 ? '+' : '-';
-    const absI = Math.abs(i);
+    // Определяем знак перед мнимой частью
+    // Если i < 0 или i является отрицательным нулем (-0), то знак минус
+    const isNeg = i < 0 || isNegativeZero(i);
+    const sign = isNeg ? '-' : '+';
+    const absI = Math.abs(i); // Math.abs(-0) дает 0
     
     // Формируем мнимую часть: просто "j" или "j\cdotФОРМАТ_ЧИСЛА"
     const jPart = absI === 1 ? 'j' : `j\\cdot${f(absI)}`;
 
-    // Если действительная часть равна 0, знак "+" опускается, а "-" выводится перед "j"
-    if (r === 0) {
-      return i > 0 ? jPart : `-${jPart}`;
+    // Если действительная часть равна 0 (и не -0), выводим только мнимую
+    if (r === 0 && !isNegativeZero(r)) {
+      return isNeg ? `-${jPart}` : jPart;
     }
 
     // Полная форма: "действительная [знак] мнимая"
