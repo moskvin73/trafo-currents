@@ -33,11 +33,22 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'accuratePow' }
   ]],
 
+  ['exp', [
+    { types: [RealNumber], callType: 'instance', method: 'exp' },
+    { types: [ComplexNumber], callType: 'instance', method: 'exp' }
+  ]],
+
   // === ТРИГОНОМЕТРИЯ И СИНОНИМЫ ===
   ['sin',  [{ types: [RealNumber], callType: 'instance', method: 'sin' }, { types: [ComplexNumber], callType: 'instance', method: 'sin' }]],
   ['cos',  [{ types: [RealNumber], callType: 'instance', method: 'cos' }, { types: [ComplexNumber], callType: 'instance', method: 'cos' }]],
   ['tan',  [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
   ['tg',   [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
+
+  // === ГИПЕРБОЛИЧЕСКИЕ ФУКЦИИ ===
+  ['sinh',  [{ types: [RealNumber], callType: 'instance', method: 'sin' }, { types: [ComplexNumber], callType: 'instance', method: 'sin' }]],
+  ['cosh',  [{ types: [RealNumber], callType: 'instance', method: 'cos' }, { types: [ComplexNumber], callType: 'instance', method: 'cos' }]],
+  ['tanh',  [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
+  ['tgh',   [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
 
   // === ОБРАТНЫЕ ФУНКЦИИ ===
   ['arcsin',  [{ types: [RealNumber], callType: 'instance', method: 'arcsin' },  { types: [ComplexNumber], callType: 'instance', method: 'arcsin' }]],
