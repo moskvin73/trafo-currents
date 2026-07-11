@@ -122,13 +122,16 @@ export default class RealNumber extends MathType {
 
   /**
    * Строгое математическое равенство
-   * @param {ComplexNumber|number} other 
+   * @param {CRealNumber|number} other 
    * @returns {boolean}
    */
   equals(other) {
-    if (!(other instanceof RealNumber)) return false;
-    if (typeof other === 'number') return this.#value === other;
-    return this.#value === other.value;
+    try {
+      const o = RealNumber.#from(other);
+      return this.#value === RealNumber.#from(other).#value;
+    } catch {
+      return false; // Если тип не приводимый, числа заведомо не равны
+    }
   }  
 
   // ==========================================
