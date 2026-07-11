@@ -103,23 +103,14 @@ export default class RealNumber extends MathType {
    * Внутренний метод умножения двух вещественных чисел
    */
   multiply(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция умножения невозможна с типом ${other.constructor.name}.`);
-    }
-    return new RealNumber(this.#value * other.value);
+    return new RealNumber(this.#value * RealNumber.#from(other).value);
   }
 
   /**
    * Внутренний метод деления двух вещественных чисел
    */
   divide(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция деления невозможна с типом ${other.constructor.name}.`);
-    }
-    if (other.value === 0) {
-      throw new RangeError("[RealNumber]: Деление на вещественный ноль.");
-    }
-    return new RealNumber(this.#value / other.value);
+    return new RealNumber(this.#value / RealNumber.#from(other).value);
   }
 
   // ==========================================
