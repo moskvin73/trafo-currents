@@ -28,6 +28,53 @@ export default class RealNumber extends MathType {
   }
 
   // ==========================================
+  // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
+  // ==========================================
+
+  // Универсальная таблица приведения по имени типа
+  static #converters = new Map([
+    ['number',        (val) => new RealNumber(val)],
+    ['RealNumber',    (val) => val]
+    // Перспектива: легко добавить новые типы прямо по их имени:
+    // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
+    // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
+  ]);
+
+  /** 
+   * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
+   * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
+   * @param {number|RealNumber} value 
+   * @returns {ComplexNumber}
+   */
+  static #from(value) {
+    // 1. Защита от null/undefined, чтобы безопасно читать свойства
+    if (value === null || value === undefined) {
+      throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
+    }
+
+    // 2. Определяем имя типа (строку) для поиска в Map
+    const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+
+    // 3. Ищем конвертер в таблице
+    const convert = this.#converters.get(typeKey);
+
+    // 4. Если типа нет в таблице — сразу выбрасываем ошибку
+    if (!convert) {
+      throw new TypeError(`[ComplexNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
+    }
+
+    // 5. Вызываем конвертер
+    const result = convert(value);
+
+    // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
+    if (result instanceof ComplexNumber && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
+      return result;
+    }
+
+    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
+  }  
+
+  // ==========================================
   // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
   // ==========================================
 
