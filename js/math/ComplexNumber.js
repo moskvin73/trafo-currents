@@ -886,20 +886,7 @@ export default class ComplexNumber extends MathType {
    * @param {ComplexNumber|number} power - Степень
    * @returns {ComplexNumber}
    */
-  pow(power) {
-    try {
-      if (this.#real === 0 && this.#imaginary === 0) {
-        if (power === 0) return new ComplexNumber(1, 0); // 0^0 принято считать 1
-        return new ComplexNumber(0, 0);
-      }
-      
-      const p = ComplexNumber.#from(power);
-      // z^w = exp(w * log(z))
-      return this.log().multiply(p).exp();
-    } catch (e) {
-      throw new Error(`[ComplexNumber]: Ошибка в методе .pow(). ${e.message}`);
-    }
-  }
+  pow(power) { return accuratePow(other); }
 
   accuratePow(other) { 
     try {
