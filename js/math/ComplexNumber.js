@@ -1397,52 +1397,78 @@ export default class ComplexNumber extends MathType {
    * Комплексный Аретангенс (Главное значение)
    */
   arctanh() {
-    const EPSILON = MathType.EPSILON;
-    
-    // Сингулярности: деление на ноль
-    if (Math.abs(this.imaginary) < EPSILON && (Math.abs(this.real - 1) < EPSILON || Math.abs(this.real + 1) < EPSILON)) {
-      return new ComplexNumber(this.real > 0 ? Infinity : -Infinity, 0);
+    try {
+      const x = this.#real;
+      const y = this.#imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 1. Пограничный случай ISO C99: Вещественные бесконечности (устраняем Infinity / Infinity -> NaN)
+      if (!isFinite(x) && isFinite(y)) {
+        // arctanh(±Infinity + i*y) = 0 + i * pi/2 (знак мнимой части совпадает со знаком y)
+        // Если y === 0, знак сохраняется (включая -0)
+        const signY = (y === 0 && 1 / y === -Infinity) || y < 0 ? -0 : 0;
+        const imagPart = signY < 0 || isNegativeZero(signY) ? -Math.PI / 2 : Math.PI / 2;
+        return new ComplexNumber(0, imagPart);
+      }
+      
+      const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
+
+      // 2. Вычисляем (1 + z) и (1 - z) через безопасные методы класса
+      const one = new ComplexNumber(1, 0);
+      const num = one.add(this);
+      const denom = one.subtract(this);
+
+      // 3. Комплексное деление через пуленепробиваемый метод Смита
+      // Если denom равен 0 (точки z = ±1), метод .divide() сам сгенерирует правильные направленные бесконечности
+      const divResult = num.divide(denom);
+
+      // 4. Берем комплексный натуральный логарифм от результата деления
+      const lnResult = divResult.log();
+
+      // 5. Умножаем на 0.5 (просто делим компоненты пополам)
+      return new ComplexNumber(lnResult.real * 0.5, lnResult.imaginary * 0.5);
+
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arctanh(). ${e.message}`);
     }
-
-    // 1. Вычисляем (1 + z) и (1 - z)
-    const num = new ComplexNumber(1 + this.real, this.imaginary);
-    const denom = new ComplexNumber(1 - this.real, -this.imaginary);
-
-    // 2. Комплексное деление: (1 + z) / (1 - z)
-    // Используем формулу: (ac + bd)/denom + i*(bc - ad)/denom
-    const dPrice = denom.real * denom.real + denom.imaginary * denom.imaginary;
-    const divResult = new ComplexNumber(
-      (num.real * denom.real + num.imaginary * denom.imaginary) / dPrice,
-      (num.imaginary * denom.real - num.real * denom.imaginary) / dPrice
-    );
-
-    // 3. Берем комплексный логарифм от результата деления
-    const lnResult = divResult.log();
-
-    // 4. Умножаем на 0.5 (просто делим компоненты пополам)
-    return new ComplexNumber(lnResult.real * 0.5, lnResult.imaginary * 0.5);
   }
 
   /**
    * Комплексный Арктангенс (Главное значение)
    */
   arctan() {
-    // Формула: arctan(z) = -i * arctanh(i * z)
-    
-    // 1. Умножаем исходное число на 'i': i * (x + iy) = -y + ix
-    const iTimesZ = new ComplexNumber(-this.imaginary, this.real);
-    
-    // 2. Вычисляем комплексный аретангенс
-    const arctanhResult = iTimesZ.arctanh();
-    
-    // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
-    const finalReal = arctanhResult.imaginary;
-    const finalImag = -arctanhResult.real;
+    try {
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) {
+        return new ComplexNumber(NaN, NaN);
+      }
 
-    return new ComplexNumber(
-      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
-      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
-    );
+      // 1. Умножаем исходное число на 'i': i * (x + iy) = -y + ix
+      const iTimesZ = new ComplexNumber(-this.#imaginary, this.#real);
+      
+      // 2. Вычисляем комплексный аретангенс
+      const arctanhResult = iTimesZ.arctanh();
+      
+      // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
+      let finalReal = arctanhResult.imaginary;
+      let finalImag = -arctanhResult.real;
+
+      // 4. Интеллектуальная посадка на оси с жестким сохранением знаков нулей (-0)
+      if (Math.abs(finalReal) < MathType.EPSILON) {
+        finalReal = (1 / finalReal === -Infinity) ? -0 : 0;
+      }
+      if (Math.abs(finalImag) < MathType.EPSILON) {
+        finalImag = (1 / finalImag === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(finalReal, finalImag);
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arctan(). ${e.message}`);
+    }
   } 
   // #endregion
 
