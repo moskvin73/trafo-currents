@@ -914,7 +914,7 @@ export default class ComplexNumber extends MathType {
    * @param {ComplexNumber|number} power - Степень
    * @returns {ComplexNumber}
    */
-  pow(power) { return accuratePow(other); }
+  pow(power) { return this.accuratePow(other); }
 
   accuratePow(other) { 
     try {

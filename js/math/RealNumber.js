@@ -150,7 +150,7 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод возведения в степень
    */
-  pow(other) { return accuratePow(other); }
+  pow(other) { return this.accuratePow(other); }
 
 
   accuratePow(other) {
