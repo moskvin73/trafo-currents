@@ -753,7 +753,7 @@ export default class ComplexNumber extends MathType {
     return sumPart.log();
   }
 
-  /**
+   /**
    * Комплексный Арксинус (Главное значение)
    */
   arcsin() {

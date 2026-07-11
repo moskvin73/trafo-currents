@@ -22,22 +22,23 @@ export const MathRegistry = {
       const arg = args[0];
 
       switch (name) {
+        case 'sqrt': return arg.sqrt();
+        case 'lg': return arg.log10();
+        case 'ln': return arg.log();
+        case 'exp':  return arg.exp();
+
         case 'sin':  return arg.sin();
         case 'cos':  return arg.cos();
         case 'tan':  return arg.tan();
-        case 'exp':  return arg.exp();
-        case 'arccos':  return arg.arccos();
+        case 'sinh':  return arg.sin();
+        case 'cosh':  return arg.cos();
+        case 'tanh':  return arg.tan();
+
+        case 'arcsin':  return arg.arcsin();
         case 'arccos':  return arg.arccos();
         
-        case 'sqrt':
-          return arg.sqrt();
-
-        case 'lg':
-          return arg.log10();
-
-        case 'ln':
-          return arg.log();
-
+        case 'arcsinh':  return arg.arcsinh();
+        case 'arccosh':  return arg.arccosh();        
         default:
           throw new Error(`[Semantic Error]: Функция "${name}" с одним аргументом не поддерживается на ${loc}`);
       }
@@ -49,10 +50,9 @@ export const MathRegistry = {
 
       const { l, r } = dispatcher.promoteTypes(arg1, arg2);
       switch (name) {
-        case 'pow':
-          return l.accuratePow(r);
-        case 'log':
-          return l.logBase(r);
+        case 'pow': return l.accuratePow(r);
+        case 'log': return l.logBase(r);
+        case 'sqrt': return l.sqrt(r);
         default:
           throw new Error(`[Semantic Error]: Функция "${name}" с двумя аргументами не поддерживается на ${loc}`);
       }
