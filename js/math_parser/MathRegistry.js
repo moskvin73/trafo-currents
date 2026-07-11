@@ -60,6 +60,14 @@ export const COMPILER_REGISTRY = new Map([
   ['arctanh', [{ types: [RealNumber], callType: 'instance', method: 'arctanh' }, { types: [ComplexNumber], callType: 'instance', method: 'arctanh' }]],
 
   // === СОСТАВНЫЕ ФУНКЦИИ ПРЯМО В ТАБЛИЦЕ (Без раздувания числовых классов) ===
+  ['sec', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) }
+  ]],
+  ['csc', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) }
+  ]],
   ['ctg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
