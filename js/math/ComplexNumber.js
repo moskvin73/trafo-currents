@@ -296,11 +296,9 @@ export default class ComplexNumber extends MathType {
    * ИНТЕЛЛЕКТУАЛЬНЫЙ НАТУРАЛЬНЫЙ ЛОГАРИФМ Комплексного Числа
    */
   log() {
-    const EPSILON = 1e-15;
-
     // 1. Проверяем положение числа на осях координат
-    const isQuasiReal = Math.abs(this.#imaginary) < EPSILON;
-    const isQuasiImag = Math.abs(this.#real) < EPSILON;
+    const isQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
+    const isQuasiImag = Math.abs(this.#real) < MathType.EPSILON;
 
     const x = isQuasiImag ? 0 : this.#real;
     const y = isQuasiReal ? 0 : this.#imaginary;
@@ -332,7 +330,7 @@ export default class ComplexNumber extends MathType {
     if (isQuasiImag && y < 0) imagPart = -Math.PI / 2;
 
     // Если модуль равен единице (|z| = 1), то вещественная часть ln(1) = 0
-    if (Math.abs(r - 1) < EPSILON) realPart = 0;
+    if (Math.abs(r - 1) < MathType.EPSILON) realPart = 0;
 
     return new ComplexNumber(realPart, imagPart);
   }
@@ -354,13 +352,12 @@ export default class ComplexNumber extends MathType {
    */
   logBase(other) {
     const base = ComplexNumber.#from(other);
-    const EPSILON = 1e-15;
 
     const lnValue = this.log();
     const lnBase = base.log();
 
     // Защита от деления на ln(1) = 0
-    if (Math.abs(lnBase.real) < EPSILON && Math.abs(lnBase.imaginary) < EPSILON) {
+    if (Math.abs(lnBase.real) < MathType.EPSILON && Math.abs(lnBase.imaginary) < MathType.EPSILON) {
       throw new RangeError("[ComplexNumber Error]: Основание комплексного логарифма не может быть равно 1.");
     }
 
@@ -401,8 +398,8 @@ export default class ComplexNumber extends MathType {
     const imagPart = imagNumerator / denominator;
 
     // Фильтруем микро-погрешности плавающей точки для идеальной посадки на оси
-    const finalReal = Math.abs(realPart) < EPSILON ? 0 : realPart;
-    const finalImag = Math.abs(imagPart) < EPSILON ? 0 : imagPart;
+    const finalReal = Math.abs(realPart) < MathType.EPSILON ? 0 : realPart;
+    const finalImag = Math.abs(imagPart) < MathType.EPSILON ? 0 : imagPart;
 
     return new ComplexNumber(finalReal, finalImag);
   }
@@ -447,12 +444,12 @@ export default class ComplexNumber extends MathType {
   accuratePow(other) { 
     const p = ComplexNumber.#from(other);
 
-    const EPSILON = 1e-15; 
+    const MathType.EPSILON = 1e-15; 
 
     // Проверяем компоненты на "квази-вещественность" и "квази-целостность"
-    const isBaseQuasiReal = Math.abs(this.#imaginary) < EPSILON;
-    const isExpQuasiReal = Math.abs(other.imaginary) < EPSILON;
-    const isExpQuasiInteger = Math.abs(other.imaginary) < EPSILON && Math.abs(other.real - Math.round(other.real)) < EPSILON;
+    const isBaseQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
+    const isExpQuasiReal = Math.abs(other.imaginary) < MathType.EPSILON;
+    const isExpQuasiInteger = Math.abs(other.imaginary) < MathType.EPSILON && Math.abs(other.real - Math.round(other.real)) < MathType.EPSILON;
 
     // --- СЛУЧАЙ 1: ОСНОВАНИЕ НА ВЕЩЕСТВЕННОЙ ОСИ (Обсудили на прошлом шаге) ---
     if (isBaseQuasiReal && isExpQuasiReal) {
@@ -460,7 +457,7 @@ export default class ComplexNumber extends MathType {
       const e = other.real;
 
       if (b < 0 && !Number.isInteger(e)) {
-        const rational = MathType.toRational(Math.abs(e), EPSILON);
+        const rational = MathType.toRational(Math.abs(e), MathType.EPSILON);
         if (rational.den % 2 !== 0) {
           const magnitudeResult = Math.pow(Math.abs(b), e);
           const sign = (rational.num % 2 === 0) ? 1 : -1;
@@ -474,7 +471,7 @@ export default class ComplexNumber extends MathType {
     }
 
     // --- СЛУЧАЙ 2: ЧИСТО МНИМОЕ ОСНОВАНИЕ И ЦЕЛАЯ СТЕПЕНЬ (Наш новый случай) ---
-    const isBaseQuasiImag = Math.abs(this.real) < EPSILON;
+    const isBaseQuasiImag = Math.abs(this.real) < MathType.EPSILON;
     
     if (isBaseQuasiImag && isExpQuasiInteger) {
       const y = this.imag;          // Получаем чистую мнимую часть (например, 2 из 2i)
