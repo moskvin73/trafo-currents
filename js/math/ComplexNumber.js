@@ -726,26 +726,25 @@ export default class ComplexNumber extends MathType {
    */
   sqrt(nParam = 2) {
     try {
-      let n = nParam;
-      if (nParam instanceof ComplexNumber) {
-        n = Math.abs(nParam.imaginary) < MathType.EPSILON ? nParam.real : nParam;
-      } else if (nParam instanceof RealNumber) {
-        n = nParam.value;
-      }
-
+      // Единая стандартизированная точка приведения типов на перспективу
+      const nComplex = ComplexNumber.#from(nParam);
+      
       const x = this.#real;
       const y = this.#imaginary;
 
       // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если число или степень повреждены, строго возвращаем (NaN, NaN)
       if (Number.isNaN(x) || Number.isNaN(y) || 
-          (typeof n === 'number' && Number.isNaN(n)) || 
-          (typeof n === 'object' && (Number.isNaN(n.real) || Number.isNaN(n.imaginary)))) {
+          Number.isNaN(nComplex.real) || Number.isNaN(nComplex.imaginary)) {
         return new ComplexNumber(NaN, NaN);
       }
 
+      // Проверяем, является ли степень корня квази-вещественной
+      const isNReal = Math.abs(nComplex.imaginary) < MathType.EPSILON;
+      const nRealValue = nComplex.real;
+
       // 1. ОПТИМИЗАЦИЯ ДЛЯ САМОГО ВАЖНОГО СЛУЧАЯ: КВАДРАТНЫЙ КОРЕНЬ (n === 2)
-      // Эта реализация строго следует стандарту ISO C99 (Приложение G) для комплексного sqrt
-      if (n === 2) {
+      // Строго следует стандарту ISO C99 (Приложение G) для комплексного sqrt
+      if (isNReal && nRealValue === 2) {
         // Корень от чистого нуля возвращает исходный ноль с сохранением знаков
         if (x === 0 && y === 0) {
           return new ComplexNumber(0, y); 
@@ -770,7 +769,7 @@ export default class ComplexNumber extends MathType {
 
         if (x >= 0) {
           resReal = Math.sqrt(0.5 * (r + x));
-          resImag = y / (2 * resReal); // Деление на реальную часть автоматически сохраняет знак y, даже если y === -0
+          resImag = y / (2 * resReal); // Автоматически сохраняет знак y, даже если y === -0
         } else {
           resImag = y >= 0 || (y === 0 && 1 / y === Infinity) ? Math.sqrt(0.5 * (r - x)) : -Math.sqrt(0.5 * (r - x));
           resReal = y / (2 * resImag);
@@ -783,23 +782,22 @@ export default class ComplexNumber extends MathType {
         return new ComplexNumber(resReal, resImag);
       }
 
-      // 2. ОБРАБОТКА СТЕПЕНИ КОРНЯ С ИСПОЛЬЗОВАНИЕМ БЕЗОПАСНЫХ МЕТОДОВ КЛАССА
-      let exponent;
-      if (typeof n === 'number') {
-        if (n === 0) return new ComplexNumber(NaN, NaN); // Корень 0-й степени в IEEE 75ранзитах
-        if (n === 1) return this;
-        exponent = new ComplexNumber(1 / n, 0);
-      } else {
-        if (n.real === 0 && n.imaginary === 0) return new ComplexNumber(NaN, NaN);
-        exponent = new ComplexNumber(1, 0).divide(n); // Вызываем наш пуленепробиваемый divide
+      // 2. БЫСТРЫЕ ПУТИ ДЛЯ ДРУГИХ ВЕЩЕСТВЕННЫХ СТЕПЕНЕЙ КОРНЯ
+      if (isNReal) {
+        if (nRealValue === 0) return new ComplexNumber(NaN, NaN); // Корень 0-й степени не определен
+        if (nRealValue === 1) return this;                        // Корень 1-й степени равен числу
       }
+
+      // 3. ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ СТЕПЕНЕЙ КОРНЯ ЧЕРЕЗ БЕЗОПАСНЫЙ .divide()
+      // Вычисляем экспоненту степени как 1 / nComplex
+      const exponent = new ComplexNumber(1, 0).divide(nComplex);
 
       // Отправляем вычисление в точный pow
       return this.accuratePow(exponent);
 
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .sqrt(). ${e.message}`);
-    }    
+    }  
     /*let n = nParam;
     if (nParam instanceof ComplexNumber) {
       n = Math.abs(nParam.imaginary) < MathType.EPSILON ? nParam.real : nParam;
