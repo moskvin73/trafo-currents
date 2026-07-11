@@ -197,14 +197,34 @@ export default class ComplexNumber extends MathType {
    * @returns {ComplexNumber} Новое комплексное число.
    */
   inverse() {
-    // Находим знаменатель: x^2 + y^2
-    const denominator = this.#real ** 2 + this.#imaginary ** 2;
-    
-    // Вычисляем новые компоненты по формуле
-    return new ComplexNumber(
-      this.#real / denominator,
-      -this.#imaginary / denominator
-    );
+    const x = this.#real;
+    const y = this.#imaginary;
+
+    // 1. Быстрая проверка на чистый ноль (чтобы выдать чистую бесконечность)
+    if (x === 0 && y === 0) {
+      return new ComplexNumber(Infinity, -0); 
+    }
+
+    // 2. Быстрая проверка: если хотя бы одна компонента уже бесконечность
+    if (!isFinite(x) || !isFinite(y)) {
+      // В комплексном анализе 1 / Infinity всегда дает комплексный ноль.
+      // Знаки нуля сохраняют направление (правило знака мнимого нуля)
+      return new ComplexNumber(
+        (Math.abs(x) === Infinity) ? Math.sign(x) * 0 : 0,
+        (Math.abs(y) === Infinity) ? -Math.sign(y) * 0 : -0
+      );
+    }
+
+    // 3. Стандартный алгоритм Смита для обычных чисел (защита от NaN и переполнения)
+    if (Math.abs(x) >= Math.abs(y)) {
+      const ratio = y / x;
+      const denominator = x + y * ratio;
+      return new ComplexNumber(1 / denominator, -ratio / denominator);
+    } else {
+      const ratio = x / y;
+      const denominator = y + x * ratio;
+      return new ComplexNumber(ratio / denominator, -1 / denominator);
+    }
   }  
 
   /**
