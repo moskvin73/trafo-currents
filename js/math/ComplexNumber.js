@@ -633,7 +633,41 @@ export default class ComplexNumber extends MathType {
    * ЛОГАРИФМ ПО ПРОИЗВОЛЬНОМУ КОМПЛЕКСНОМУ ОСНОВАНИЮ Log(value, base)
    */
   logBase(other) {
-    const base = ComplexNumber.#from(other);
+    try {
+      const base = ComplexNumber.#from(other);
+
+      // 0. Вычисляем защищенные интеллектуальные логарифмы
+      const lnValue = this.log();
+      const lnBase = base.log();
+
+      // 1. ИЗОЛЯЦИЯ NaN: Если на этапе логарифмирования получился NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(lnValue.real) || Number.isNaN(lnValue.imaginary) || 
+          Number.isNaN(lnBase.real) || Number.isNaN(lnBase.imaginary)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 2. ДЕЛЕНИЕ ЧЕРЕЗ СТАНДАРТИЗИРОВАННЫЙ МЕТОД КЛАССА
+      // Метод .divide() сам применит алгоритм Смита, корректно обработает деление на ноль (lnBase = 0)
+      // без вызова RangeError, и правильно разрулит деление бесконечностей (Inf / Inf -> NaN)
+      const result = lnValue.divide(lnBase);
+
+      // 3. Интеллектуальная посадка результата на оси координат с сохранением знаков нулей (-0)
+      let realPart = result.real;
+      let imagPart = result.imaginary;
+
+      if (Math.abs(realPart) < MathType.EPSILON) {
+        realPart = (1 / realPart === -Infinity) ? -0 : 0;
+      }
+      if (Math.abs(imagPart) < MathType.EPSILON) {
+        imagPart = (1 / imagPart === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(realPart, imagPart);
+
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .logBase(). ${e.message}`);
+    }
+    /*const base = ComplexNumber.#from(other);
 
     const lnValue = this.log();
     const lnBase = base.log();
@@ -683,7 +717,7 @@ export default class ComplexNumber extends MathType {
     const finalReal = Math.abs(realPart) < MathType.EPSILON ? 0 : realPart;
     const finalImag = Math.abs(imagPart) < MathType.EPSILON ? 0 : imagPart;
 
-    return new ComplexNumber(finalReal, finalImag);
+    return new ComplexNumber(finalReal, finalImag);*/
   }
 
   /**
