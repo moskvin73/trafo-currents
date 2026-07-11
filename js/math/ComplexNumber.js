@@ -271,7 +271,7 @@ export default class ComplexNumber extends MathType {
     return ComplexNumber.#from(left).equals(right);
   }
  
- // ==========================================
+  // ==========================================
   // ЭКСПАНСИЯ: СТЕПЕНИ, КОРНИ, ЛОГАРИФМЫ (Instance)
   // ==========================================
 

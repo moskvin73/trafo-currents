@@ -28,7 +28,7 @@ export default class RealNumber extends MathType {
   }
 
   // ==========================================
-  // НИЗКОУРОВНЕВАЯ АРИФМЕТИКА (Однородные типы)
+  // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
   // ==========================================
 
   /**
@@ -86,14 +86,21 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   /**
-   * Строгое математическое равенство действительных и мнимых частей
+   * Строгое математическое равенство
    * @param {ComplexNumber|number} other 
    * @returns {boolean}
    */
   equals(other) {
     if (!(other instanceof RealNumber)) return false;
+    if (typeof other === 'number') return this.#value === other;
     return this.#value === other.value;
   }  
+
+  // ==========================================
+  // ЭКСПАНСИЯ: СТЕПЕНИ, КОРНИ, ЛОГАРИФМЫ (Instance)
+  // ==========================================
+
+  exp()  { return new RealNumber(Math.exp(this.#value)); }
 
   /**
    * Внутренний метод возведения в степень
@@ -150,15 +157,6 @@ export default class RealNumber extends MathType {
       const complexExp = new ComplexNumber(e, 0);
       return complexBase.accuratePow(complexExp);
   }
-
-  // ==========================================
-  // ВЕЩЕСТВЕННЫЕ МАТЕМАТИЧЕСКИЕ ФУНКЦИИ
-  // ==========================================
-
-  sin()  { return new RealNumber(Math.sin(this.#value)); }
-  cos()  { return new RealNumber(Math.cos(this.#value)); }
-  tan()  { return new RealNumber(Math.tan(this.#value)); }
-  exp()  { return new RealNumber(Math.exp(this.#value)); }
   
   /**
    * Вычисление корня n-й степени. По умолчанию n = 2 (квадратный корень)
@@ -276,6 +274,19 @@ export default class RealNumber extends MathType {
     const result = Math.log(this.#value) / Math.log(baseVal);
     return new RealNumber(result);
   }
+
+  // ==========================================
+  // ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ (Instance)
+  // ==========================================
+
+  sin()  { return new RealNumber(Math.sin(this.#value)); }
+  cos()  { return new RealNumber(Math.cos(this.#value)); }
+  tan()  { return new RealNumber(Math.tan(this.#value)); }
+
+  // ==========================================
+  // ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ (Instance)
+  // ==========================================
+
 
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
