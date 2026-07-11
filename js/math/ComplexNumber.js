@@ -135,21 +135,48 @@ export default class ComplexNumber extends MathType {
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
 
-  /**
+  // Универсальная таблица приведения по имени типа
+  static #converters = new Map([
+    ['ComplexNumber', (val) => val],
+    ['number',        (val) => new ComplexNumber(val, 0)],
+    ['RealNumber',    (val) => new ComplexNumber(val.value, 0)]
+    // Перспектива: легко добавить новые типы прямо по их имени:
+    // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
+    // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
+  ]);
+
+  /** 
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
    * @param {ComplexNumber|number|RealNumber} value 
    * @returns {ComplexNumber}
    */
   static #from(value) {
-    if (value instanceof ComplexNumber) return value;
-    if (typeof value === 'number' && !Number.isNaN(value)) {
-      return new ComplexNumber(value, 0);
+    // 1. Защита от null/undefined, чтобы безопасно читать свойства
+    if (value === null || value === undefined) {
+      throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
     }
-    if (value instanceof RealNumber && !Number.isNaN(value.value)) {
-      return new ComplexNumber(value.value, 0);
+
+    // 2. Определяем имя типа (строку) для поиска в Map
+    const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+
+    // 3. Ищем конвертер в таблице
+    const convert = this.#converters.get(typeKey);
+
+    // 4. Если типа нет в таблице — сразу выбрасываем ошибку
+    if (!convert) {
+      throw new TypeError(`[ComplexNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
     }
-    throw new TypeError(`[ComplexNumber]: Невозможно привести аргумент к комплексному числу.`);
+
+    // 5. Вызываем конвертер
+    const result = convert(value);
+
+    // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
+    if (result instanceof ComplexNumber && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
+      return result;
+    }
+
+    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
   }
 
   // ==========================================
