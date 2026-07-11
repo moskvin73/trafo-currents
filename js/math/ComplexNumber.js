@@ -183,6 +183,8 @@ export default class ComplexNumber extends MathType {
   // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
   // ==========================================
 
+  // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
+  
   /**
    * Реализация унарного минуса для комплексного числа
    */
@@ -256,6 +258,8 @@ export default class ComplexNumber extends MathType {
     }
   }
 
+  // #endregion
+  
   // ==========================================
   // МЕТОДЫ СРАВНЕНИЯ (Equality)
   // ==========================================
