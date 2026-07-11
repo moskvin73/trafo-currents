@@ -86,7 +86,7 @@ export default class ComplexNumber extends MathType {
    */
   #cleanRound(value) {
     // 1e-15 — это стандартный порог точности для double precision
-    return Math.abs(value) < 1e-15 ? 0 : value;
+    return Math.abs(value) < MathType.EPSILON ? 0 : value;
   }
 
   /**

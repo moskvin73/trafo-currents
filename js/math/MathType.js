@@ -4,7 +4,8 @@
  */
 export default class MathType {
 
-   static get EPSILON() { return 1e-15; }
+  // 1e-15 — это стандартный порог точности для double precision
+  static get EPSILON() { return 1e-15; }
    
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
