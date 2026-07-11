@@ -73,6 +73,10 @@ export default class ComplexNumber extends MathType {
 
   // Сопряженное число (a - bi)
   get conjugate() {
+    // Защита: если одна из компонент NaN, возвращаем чистый (NaN, NaN)
+    if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) {
+      return new ComplexNumber(NaN, NaN);
+    }
     return new ComplexNumber(this.#real, -this.#imaginary);
   }
 
