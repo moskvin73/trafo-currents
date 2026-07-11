@@ -902,7 +902,79 @@ export default class ComplexNumber extends MathType {
   }
 
   accuratePow(other) { 
-    const p = ComplexNumber.#from(other);
+    try {
+      // 0. Строгое приведение типов через единую фабрику
+      const p = ComplexNumber.#from(other);
+
+      const x = this.#real;
+      const y = this.#imaginary;
+      const ex = p.real;
+      const ey = p.imaginary;
+
+      // 1. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго изолируем ошибку
+      if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(ex) || Number.isNaN(ey)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // Проверяем компоненты очищенного объекта p на "квази-вещественность" и "квази-целостность"
+      const isBaseQuasiReal = Math.abs(y) < MathType.EPSILON;
+      const isExpQuasiReal = Math.abs(ey) < MathType.EPSILON;
+      const isExpQuasiInteger = isExpQuasiReal && Math.abs(ex - Math.round(ex)) < MathType.EPSILON;
+
+      // --- СЛУЧАЙ 1: ОСНОВАНИЕ И СТЕПЕНЬ НА ВЕЩЕСТВЕННОЙ ОСИ ---
+      if (isBaseQuasiReal && isExpQuasiReal) {
+        if (x < 0 && !Number.isInteger(ex)) {
+          const rational = MathType.toRational(Math.abs(ex), MathType.EPSILON);
+          if (rational.den % 2 !== 0) {
+            const magnitudeResult = Math.pow(Math.abs(x), ex);
+            const sign = (rational.num % 2 === 0) ? 1 : -1;
+            return new ComplexNumber(sign * magnitudeResult, 0);
+          }
+        }
+        
+        if (x > 0 || Number.isInteger(ex)) {
+          // Защита: Math.pow(0, отрицательное число) дает Infinity. 
+          // Результат должен лежать строго на оси, сохраняя знак нуля в мнимой части, если нужно.
+          return new ComplexNumber(Math.pow(x, ex), 0);
+        }
+      }
+
+      // --- СЛУЧАЙ 2: ЧИСТО МНИМОЕ ОСНОВАНИЕ И ЦЕЛАЯ СТЕПЕНЬ ---
+      const isBaseQuasiImag = Math.abs(x) < MathType.EPSILON;
+      
+      if (isBaseQuasiImag && isExpQuasiInteger) {
+        const n = Math.round(ex);
+
+        // Находим чистый модуль возведения в степень
+        const magnitude = Math.pow(Math.abs(y), n);
+        
+        // Определяем знак, если исходная мнимая часть была отрицательной
+        const signY = (y < 0 && n % 2 !== 0) ? -1 : 1;
+        const finalMagnitude = magnitude * signY;
+
+        // Анализируем остаток от деления степени на 4 для точного позиционирования на осях
+        const mod = ((n % 4) + 4) % 4; // Корректная обработка отрицательных степеней
+
+        switch (mod) {
+          case 0: // i^0 = 1
+            return new ComplexNumber(finalMagnitude, 0);
+          case 1: // i^1 = i
+            return new ComplexNumber(0, finalMagnitude);
+          case 2: // i^2 = -1
+            return new ComplexNumber(-finalMagnitude, 0);
+          case 3: // i^3 = -i
+            return new ComplexNumber(0, -finalMagnitude);
+        }
+      }
+
+      // --- ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ КОМПЛЕКСНЫХ ЧИСЕЛ ЧЕРЕЗ БЕЗОПАСНЫЕ МЕТОДЫ КЛАССА ---
+      // Вызываем защищенный .log(), затем .multiply() (который мы сейчас проверим) и защищенный .exp()
+      return this.log().multiply(p).exp();
+
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .accuratePow(). ${e.message}`);
+    }    
+   /* const p = ComplexNumber.#from(other);
 
     // Проверяем компоненты на "квази-вещественность" и "квази-целостность"
     const isBaseQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
@@ -959,7 +1031,7 @@ export default class ComplexNumber extends MathType {
 
     // --- ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ КОМПЛЕКСНЫХ ЧИСЕЛ ---
     // Если число лежит вне осей (например, 2 + 3i), считаем через канонический логарифм
-    return this.log().multiply(other).exp();    
+    return this.log().multiply(other).exp(); */
   }
 
   // ==========================================
