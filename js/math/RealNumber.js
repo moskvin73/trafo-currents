@@ -299,6 +299,37 @@ export default class RealNumber extends MathType {
   // ==========================================
  
    /**
+   * Интеллектуальный Арксинус
+   */
+  arcsin() {
+    // 1. Стандартный вещественный случай
+    if (Math.abs(this.#value) <= 1) {
+      return new RealNumber(Math.asin(this.#value));
+    }
+
+    // 2. Фазовый переход на комплексную плоскость для |x| > 1
+    const x = this.#value;
+    const sign = x > 0 ? 1 : -1;
+    
+    // Вещественная часть строго равна +pi/2 или -pi/2
+    const realPart = (Math.PI / 2) * sign;
+    // Мнимая часть рассчитывается через натуральный логарифм
+    const imagPart = -sign * Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+
+    return new ComplexNumber(realPart, imagPart);
+  }
+
+  /**
+   * Интеллектуальный Ареасинус (Гиперболический арксинус)
+   * Функция определена на всей вещественной оси (-inf; +inf), поэтому всегда возвращает RealNumber
+   */
+  arcsinh() {
+    // Математическая формула: arcsinh(x) = ln(x + sqrt(x^2 + 1))
+    // Используем Math.asinh для максимальной скорости встроенного движка V8
+    return new RealNumber(Math.asinh(this.#value));
+  }
+   
+   /**
    * Интеллектуальный Арккосинус с фазовым переходом (|x| > 1)
    */
   arccos() {
