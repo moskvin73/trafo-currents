@@ -1242,46 +1242,74 @@ export default class ComplexNumber extends MathType {
    * Комплексный Ареасинус (Главное значение)
    */
   arcsinh() {
-    // Формула: ln(z + sqrt(z^2 + 1))
-    
-    // 1. z^2
-    const zSquare = this.multiply(this);
-    
-    // 2. z^2 + 1
-    const zSquarePlusOne = new ComplexNumber(zSquare.real + 1, zSquare.imaginary);
-    
-    // 3. sqrt(z^2 + 1) — вызываем наш точный метод с фильтрацией осей
-    const sqrtPart = zSquarePlusOne.sqrt();
-    
-    // 4. z + sqrt(z^2 + 1)
-    const sumPart = new ComplexNumber(this.real + sqrtPart.real, this.imaginary + sqrtPart.imaginary);
-    
-    // 5. ln(...) — вызываем наш точный комплексный логарифм
-    return sumPart.log();
+     try {
+      const x = this.#real;
+      const y = this.#imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 1. Пограничный случай ISO C99: Вещественная бесконечность (устраняем Infinity - Infinity -> NaN)
+      if (!isFinite(x) && isFinite(y)) {
+        // arcsinh(±Infinity + i*y) = ±Infinity + i * 0 (знак мнимого нуля совпадает со знаком y)
+        const signY = (y === 0 && 1 / y === -Infinity) || y < 0 ? -0 : 0;
+        return new ComplexNumber(x, signY);
+      }
+
+      // 2. Использование безопасных методов класса для вычисления формулы ln(z + sqrt(z^2 + 1))
+      // z^2
+      const zSquare = this.multiply(this);
+      
+      // z^2 + 1 (используем пуленепробиваемый .add)
+      const zSquarePlusOne = zSquare.add(new ComplexNumber(1, 0));
+      
+      // sqrt(z^2 + 1)
+      const sqrtPart = zSquarePlusOne.sqrt();
+      
+      // z + sqrt(z^2 + 1)
+      const sumPart = this.add(sqrtPart);
+      
+      // ln(...)
+      return sumPart.log();
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arcsinh(). ${e.message}`);
+    }
   }
 
    /**
    * Комплексный Арксинус (Главное значение)
    */
   arcsin() {
-    // Формула: arcsin(z) = -i * arcsinh(i * z)
-    
-    // 1. Умножаем исходное число на мнимую единицу 'i': i * (x + iy) = -y + ix
-    const iTimesZ = new ComplexNumber(-this.imaginary, this.real);
-    
-    // 2. Вычисляем arcsinh(i * z)
-    const arcsinhResult = iTimesZ.arcsinh();
-    
-    // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
-    // Вещественной частью становится мнимая часть, а мнимой — минус вещественная
-    const finalReal = arcsinhResult.imaginary;
-    const finalImag = -arcsinhResult.real;
+    try {
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) {
+        return new ComplexNumber(NaN, NaN);
+      }
 
-    // Дополнительная фильтрация микро-погрешностей для идеальной посадки на оси
-    return new ComplexNumber(
-      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
-      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
-    );
+      // 1. Умножаем на мнимую единицу 'i': i * (x + iy) = -y + ix
+      const iTimesZ = new ComplexNumber(-this.#imaginary, this.#real);
+      
+      // 2. Вычисляем arcsinh(i * z)
+      const arcsinhResult = iTimesZ.arcsinh();
+      
+      // 3. Умножаем результат на '-i': -i * (R + Ii) = I - Ri
+      let finalReal = arcsinhResult.imaginary;
+      let finalImag = -arcsinhResult.real;
+
+      // 4. Интеллектуальная посадка на оси с жестким сохранением знаков нулей (-0)
+      if (Math.abs(finalReal) < MathType.EPSILON) {
+        finalReal = (1 / finalReal === -Infinity) ? -0 : 0;
+      }
+      if (Math.abs(finalImag) < MathType.EPSILON) {
+        finalImag = (1 / finalImag === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(finalReal, finalImag);
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arcsin(). ${e.message}`);
+    }
   }
 
   /**
