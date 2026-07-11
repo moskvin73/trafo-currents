@@ -81,6 +81,20 @@ export default class RealNumber extends MathType {
     return new RealNumber(this.#value / other.value);
   }
 
+  // ==========================================
+  // МЕТОДЫ СРАВНЕНИЯ (Equality)
+  // ==========================================
+
+  /**
+   * Строгое математическое равенство действительных и мнимых частей
+   * @param {ComplexNumber|number} other 
+   * @returns {boolean}
+   */
+  equals(other) {
+    if (!(other instanceof RealNumber)) return false;
+    return this.#value === other.value;
+  }  
+
   /**
    * Внутренний метод возведения в степень
    */
