@@ -44,7 +44,7 @@ export default class RealNumber extends MathType {
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
    * @param {number|RealNumber} value 
-   * @returns {ComplexNumber}
+   * @returns {RealNumber}
    */
   static #from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
@@ -67,7 +67,7 @@ export default class RealNumber extends MathType {
     const result = convert(value);
 
     // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
-    if (result instanceof ComplexNumber && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
+    if (result instanceof RealNumber && !Number.isNaN(result.value)) {
       return result;
     }
 
