@@ -89,28 +89,28 @@ export default class RealNumber extends MathType {
    * Внутренний метод сложения двух вещественных чисел
    */
   add(other) {
-    return new RealNumber(this.#value + RealNumber.#from(other).value);
+    return new RealNumber(this.#value + RealNumber.#from(other).#value);
   }
 
   /**
    * Внутренний метод вычитания двух вещественных чисел
    */
   subtract(other) {
-    return new RealNumber(this.#value - RealNumber.#from(other).value);
+    return new RealNumber(this.#value - RealNumber.#from(other).#value);
   }
 
   /**
    * Внутренний метод умножения двух вещественных чисел
    */
   multiply(other) {
-    return new RealNumber(this.#value * RealNumber.#from(other).value);
+    return new RealNumber(this.#value * RealNumber.#from(other).#value);
   }
 
   /**
    * Внутренний метод деления двух вещественных чисел
    */
   divide(other) {
-    return new RealNumber(this.#value / RealNumber.#from(other).value);
+    return new RealNumber(this.#value / RealNumber.#from(other).#value);
   }
 
   // ==========================================
