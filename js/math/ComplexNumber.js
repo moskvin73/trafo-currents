@@ -240,7 +240,28 @@ export default class ComplexNumber extends MathType {
   add(other) {
     try {
       const o = ComplexNumber.#from(other);
-      return new ComplexNumber(this.#real + o.real, this.#imaginary + o.imaginary);
+      
+      const r1 = this.#real;
+      const i1 = this.#imaginary;
+      const r2 = o.real;
+      const i2 = o.imaginary;
+
+      // 1. Изоляция NaN: если хоть одна компонента NaN, весь результат становится (NaN, NaN)
+      if (Number.isNaN(r1) || Number.isNaN(i1) || Number.isNaN(r2) || Number.isNaN(i2)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 2. Считаем базовые компоненты
+      const realResult = r1 + r2;
+      const imagResult = i1 + i2;
+
+      // 3. Проверка на конфликт бесконечностей (Infinity - Infinity)
+      // Если в процессе сложения где-то получился NaN, сбрасываем в (NaN, NaN) весь объект
+      if (Number.isNaN(realResult) || Number.isNaN(imagResult)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      return new ComplexNumber(realResult, imagResult);
     } catch (e) {
       throw new TypeError(`[ComplexNumber]: Ошибка в методе .add(). ${e.message}`);
     }
