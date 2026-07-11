@@ -189,7 +189,23 @@ export default class ComplexNumber extends MathType {
    */
   negate() {
     return new ComplexNumber(-this.real, -this.imaginary);
-  } 
+  }
+
+  /**
+   * Возвращает обратную величину комплексного числа (1 / z).
+   * При z = 0 возвращает ComplexNumber с компонентами Infinity/NaN.
+   * @returns {ComplexNumber} Новое комплексное число.
+   */
+  inverse() {
+    // Находим знаменатель: x^2 + y^2
+    const denominator = this.#real ** 2 + this.#imaginary ** 2;
+    
+    // Вычисляем новые компоненты по формуле
+    return new ComplexNumber(
+      this.#real / denominator,
+      -this.#imaginary / denominator
+    );
+  }  
 
   /**
    * Сложение: (a + bi) + (c + di) = (a + c) + (b + d)i

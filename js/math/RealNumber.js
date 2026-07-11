@@ -81,10 +81,13 @@ export default class RealNumber extends MathType {
   /**
    * Реализация унарного минуса для вещественного числа
    */
-  negate() {
-    return new RealNumber(-this.value);
-  }
+  negate() { return new RealNumber(-this.value); }
 
+  /**
+   * Возвращает обратную величину числа (результат деления единицы на это число).
+   * @returns {RealNumber} Новое число вида 1/x.
+   */  
+  inverse() { return new RealNumber(1 / this.value); }
   /**
    * Внутренний метод сложения двух вещественных чисел
    */
