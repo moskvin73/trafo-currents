@@ -71,7 +71,7 @@ export default class RealNumber extends MathType {
       return result;
     }
 
-    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
+    throw new TypeError(`[RealNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
   }  
 
   // ==========================================
