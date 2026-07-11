@@ -146,11 +146,42 @@ export default class RealNumber extends MathType {
   tan()  { return new RealNumber(Math.tan(this.#value)); }
   exp()  { return new RealNumber(Math.exp(this.#value)); }
   
-  sqrt() {
-    if (this.#value < 0) {
-      throw new RangeError("[RealNumber]: Квадратный корень из отрицательного числа не существует в вещественном поле.");
+  /**
+   * Вычисление корня n-й степени. По умолчанию n = 2 (квадратный корень)
+   * @param {number|RealNumber} nParam - степень корня
+   */
+  sqrt(nParam = 2) {
+    const n = nParam instanceof RealNumber ? nParam.value : nParam;
+
+    if (n === 0) {
+      throw new RangeError("[RealNumber Error]: Корень 0-й степени математически не определен.");
     }
-    return new RealNumber(Math.sqrt(this.#value));
+
+    // Вычисляем чистую экспоненту степени: корень n-й степени — это степень (1 / n)
+    const expValue = 1 / n;
+
+    // ОПТИМИЗАЦИЯ 1: Если expValue === 0.5 (значит n === 2), это КВАДРАТНЫЙ КОРЕНЬ
+    if (expValue === 0.5) {
+      if (this.#value >= 0) {
+        return new RealNumber(Math.sqrt(this.#value));
+      }
+      // Фазовый переход для отрицательных чисел при квадратном корне
+      return new ComplexNumber(0, Math.sqrt(Math.abs(this.#value)));
+    }
+
+    // ОПТИМИЗАЦИЯ 2: Если expValue === 1 (значит n === 1), корень 1-й степени равен самому числу
+    if (expValue === 1) {
+      return this;
+    }
+
+    // ОПТИМИЗАЦИЯ 3: Если expValue === 2 (значит n === 0.5), это ВОЗВЕДЕНИЕ В КВАДРАТ
+    if (expValue === 2) {
+      return new RealNumber(this.#value * this.#value);
+    }
+
+    // ОБЩИЙ СЛУЧАЙ ДЛЯ ВСЕХ ОСТАЛЬНЫХ СТЕПЕНЕЙ КОРНЯ (n = 3, 4, ...)
+    // Передаем объект степени в ваш точный метод точного возведения в степень
+    return this.accuratePow(new RealNumber(expValue));
   }
   
   /**
