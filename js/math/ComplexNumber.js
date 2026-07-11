@@ -461,11 +461,55 @@ export default class ComplexNumber extends MathType {
    */
   exp() {
     try {
-      const expReal = Math.exp(this.#real);
+      const x = this.#real;
+      const y = this.#imaginary;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ: Если одна из компонент NaN, а вторая конечна — строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        // Исключение по ISO C99: exp(±Infinity + i*NaN) должно порождать специфические бесконечности,
+        // но для стабильности математического ядра общего назначения (NaN, NaN) — самый безопасный выбор.
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 1. Пограничный случай: реальная часть равна минус бесконечности
+      if (x === -Infinity) {
+        // Если мнимая часть конечна, результат строго комплексный ноль.
+        // Если мнимая часть бесконечна, cos/sin дадут NaN, но e^(-Inf) = 0 перевешивает их.
+        // Знак мнимого нуля физически зависит от знака синуса, но (0, 0) — базовый стандарт.
+        return new ComplexNumber(0, 0);
+      }
+
+      // 2. Пограничный случай: реальная часть равна плюс бесконечности
+      if (x === Infinity) {
+        if (y === 0) {
+          return new ComplexNumber(Infinity, 0);
+        }
+        if (!isFinite(y)) {
+          // exp(+Infinity + i*Infinity) возвращает комплексную бесконечность с неопределённым знаком
+          return new ComplexNumber(Infinity, NaN); 
+        }
+        // Если y конечно, считаем стандартные знаки бесконечностей
+        const c = Math.cos(y);
+        const s = Math.sin(y);
+        return new ComplexNumber(
+          c === 0 ? 0 : (c > 0 ? Infinity : -Infinity),
+          s === 0 ? 0 : (s > 0 ? Infinity : -Infinity)
+        );
+      }
+
+      // 3. Пограничный случай: реальная часть конечна, а мнимая — бесконечна
+      if (!isFinite(y)) {
+        // exp(конечное + i*Infinity) не имеет математического смысла, так как угол бесконечен
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 4. Стандартный расчёт для обычных чисел
+      const expReal = Math.exp(x);
       return new ComplexNumber(
-        expReal * Math.cos(this.#imaginary),
-        expReal * Math.sin(this.#imaginary)
+        expReal * Math.cos(y),
+        expReal * Math.sin(y)
       );
+
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .exp(). ${e.message}`);
     }
