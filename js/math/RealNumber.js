@@ -377,6 +377,41 @@ export default class RealNumber extends MathType {
     return new ComplexNumber(realPart, Math.PI);
   } 
 
+  /**
+   * Интеллектуальный Арктангенс
+   * В вещественном поле определен на всей оси, фазовых переходов нет
+   */
+  arctan() {
+    return new RealNumber(Math.atan(this.#value));
+  }
+
+  /**
+   * Интеллектуальный Аретангенс (Гиперболический арктангенс)
+   * Область определения в вещественном поле строго (-1; 1)
+   */
+  arctanh() {
+    const x = this.#value;
+
+    // 1. Точки сингулярности (Асимптоты): arctanh(1) = +Infinity, arctanh(-1) = -Infinity
+    if (x === 1) return new RealNumber(Infinity);
+    if (x === -1) return new RealNumber(-Infinity);
+
+    // 2. Стандартный вещественный случай (-1 < x < 1)
+    if (Math.abs(x) < 1) {
+      return new RealNumber(Math.atanh(x));
+    }
+
+    // 3. Фазовый переход для x > 1
+    if (x > 1) {
+      const realPart = 0.5 * Math.log((x + 1) / (x - 1));
+      return new ComplexNumber(realPart, -Math.PI / 2);
+    }
+
+    // 4. Фазовый переход для x < -1
+    // Знаменатель и числитель меняются местами, чтобы под логарифмом было положительное число
+    const realPart = 0.5 * Math.log((1 + x) / (1 - x));
+    return new ComplexNumber(realPart, Math.PI / 2);
+  }  
   // #endregion
 
   // ==========================================
