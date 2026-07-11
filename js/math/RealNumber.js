@@ -259,7 +259,8 @@ export default class RealNumber extends MathType {
    * Интеллектуальный логарифм по произвольному основанию Log(value, base)
    */
   logBase(other) {
-    const baseVal = other instanceof RealNumber ? other.value : other;
+    //const baseVal = other instanceof RealNumber ? other.value : other;
+    const baseVal = RealNumber.#from(other).#value;
 
         // Точка неопределенности: log0(0) = NaN
     if (this.#value === 0 && baseVal === 0) {
@@ -437,16 +438,11 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   dot(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция невозможна с типом ${other.constructor.name}.`);
-    }
-    return new RealNumber(this.#value * other.value);
+    return new RealNumber(this.#value * RealNumber.#from(other).#value);
   }
 
   cross(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция невозможна с типом ${other.constructor.name}.`);
-    }
+    RealNumber.#from(other);
     return new RealNumber(0);
   }
 
