@@ -330,29 +330,34 @@ export default class ComplexNumber extends MathType {
       const x2 = o.real;
       const y2 = o.imaginary;
 
+      // 0. ПРЕДОХРАНИТЕЛЬ: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x1) || Number.isNaN(y1) || Number.isNaN(x2) || Number.isNaN(y2)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
       // 1. Обработка деления на чистый ноль (модуль делителя = 0)
       if (x2 === 0 && y2 === 0) {
-        // Если делимое тоже 0, то результат NaN, иначе Infinity со знаками
         if (x1 === 0 && y1 === 0) {
           return new ComplexNumber(NaN, NaN);
         }
-        // Математически возвращаем бесконечность. Знак зависит от делимого.
-        const signX = Math.sign(x1) || 1;
-        const signY = Math.sign(y1) || 1;
-        return new ComplexNumber(x1 !== 0 ? signX * Infinity : 0, y1 !== 0 ? signY * Infinity : 0);
+        // Правильное извлечение знака в IEEE 754 (с учётом -0)
+        const getSign = (val) => (val === 0 ? (1 / val === -Infinity ? -1 : 1) : Math.sign(val));
+        
+        // При делении на ноль компоненты уходят в бесконечность, знаки определяются перекрёстно
+        const r = (x1 * x2 + y1 * y2) >= 0 ? Infinity : -Infinity;
+        const i = (y1 * x2 - x1 * y2) >= 0 ? Infinity : -Infinity;
+        return new ComplexNumber(r, i);
       }
 
-      // 2. Обработка бесконечностей в делителе (IEEE 754)
+      // 2. Обработка бесконечностей в делителе (теперь здесь гарантированно нет NaN)
       if (!isFinite(x2) || !isFinite(y2)) {
-        // Если делимое ТОЖЕ бесконечность, то результат неопределен (NaN)
         if (!isFinite(x1) || !isFinite(y1)) {
           return new ComplexNumber(NaN, NaN);
         }
-        // Конечные числа, деленные на бесконечность, всегда дают комплексный ноль
         return new ComplexNumber(0, -0);
       }
 
-      // 3. Безопасный алгоритм Смита для обычных чисел (защита от ложного переполнения)
+      // 3. Безопасный алгоритм Смита для обычных чисел
       if (Math.abs(x2) >= Math.abs(y2)) {
         const ratio = y2 / x2;
         const denominator = x2 + y2 * ratio;
