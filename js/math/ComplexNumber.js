@@ -28,7 +28,7 @@ export default class ComplexNumber extends MathType {
   // ==========================================
   
   #validateNumber(value, context) {
-    if (typeof value !== 'number' || Number.isNaN(value)) {
+    if (typeof value !== 'number') {
       throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом.`);
     }
   }
