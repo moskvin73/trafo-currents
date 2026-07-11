@@ -14,7 +14,7 @@ export default class RealNumber extends MathType {
    */
   constructor(value) {
     super();
-    if (typeof value !== 'number') {// || Number.isNaN(value)) {
+    if (typeof value !== 'number') {
       throw new TypeError('[RealNumber]: Значение аргумента должно быть валидным числом.');
     }
     this.#value = value;
@@ -292,6 +292,24 @@ export default class RealNumber extends MathType {
   cosh() { return new RealNumber(Math.cosh(this.#value)); }
 
   tanh() { return new RealNumber(Math.tanh(this.#value)); }
+
+  // ==========================================
+  // ВЕКТОРНАЯ ГЕОМЕТРИЯ (Скалярное и Векторное произведение)
+  // ==========================================
+
+  dot(other) {
+    if (!(other instanceof RealNumber)) {
+      throw new TypeError(`[RealNumber]: Операция невозможна с типом ${other.constructor.name}.`);
+    }
+    return new RealNumber(this.#value * other.value);
+  }
+
+  cross(other) {
+    if (!(other instanceof RealNumber)) {
+      throw new TypeError(`[RealNumber]: Операция невозможна с типом ${other.constructor.name}.`);
+    }
+    return new RealNumber(0);
+  }
 
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
