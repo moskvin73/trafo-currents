@@ -289,11 +289,30 @@ export default class ComplexNumber extends MathType {
   multiply(other) {
     try {
       const o = ComplexNumber.#from(other);
-      const r = this.#real * o.real - this.#imaginary * o.imaginary;
-      const i = this.#imaginary * o.real + this.#real * o.imaginary;
-      return new ComplexNumber(r, i);
+      
+      const r1 = this.#real;
+      const i1 = this.#imaginary;
+      const r2 = o.real;
+      const i2 = o.imaginary;
+
+      // 1. Изоляция NaN: если хоть одна входная компонента NaN, весь результат становится (NaN, NaN)
+      if (Number.isNaN(r1) || Number.isNaN(i1) || Number.isNaN(r2) || Number.isNaN(i2)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 2. Считаем базовые компоненты вычитания
+      const realResult = r1 - r2;
+      const imagResult = i1 - i2;
+
+      // 3. Проверка на конфликт бесконечностей (например, Infinity - Infinity)
+      // Если в процессе вычитания где-то сгенерировался NaN, сбрасываем в (NaN, NaN) весь объект
+      if (Number.isNaN(realResult) || Number.isNaN(imagResult)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      return new ComplexNumber(realResult, imagResult);
     } catch (e) {
-      throw new TypeError(`[ComplexNumber]: Ошибка в методе .multiply(). ${e.message}`);
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .subtract(). ${e.message}`);
     }
   }
 
