@@ -137,27 +137,11 @@ export default class RealNumber extends MathType {
   /**
    * Внутренний метод возведения в степень
    */
-  pow(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция возведения в степень невозможна с типом ${other.constructor.name}.`);
-    }
-    
-    // ВАЖНО: Если мы пытаемся возвести отрицательное вещественное число 
-    // в дробную степень (например, (-4)^0.5), вещественного ответа не существует.
-    // Класс сигнализирует об этом ошибкой, чтобы парсер перевёл вычисление в комплексное поле.
-    if (this.#value < 0 && !Number.isInteger(other.value)) {
-      throw new RangeError("[RealNumber]: Невозможно возвести отрицательное число в дробную степень в вещественном поле.");
-    }
-    
-    return new RealNumber(Math.pow(this.#value, other.value));
-  }
+  pow(other) { return accuratePow(other); }
 
 
   accuratePow(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция возведения в степень невозможна с типом ${other.constructor.name}.`);
-    }
-
+      other = RealNumber.#from(other);
       const b = this.#value;
       const e = other.value;
 
