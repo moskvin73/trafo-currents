@@ -200,6 +200,11 @@ export default class ComplexNumber extends MathType {
     const x = this.#real;
     const y = this.#imaginary;
 
+    // 0. ПРЕДОХРАНИТЕЛЬ: Если хотя бы одна компонента NaN, возвращаем (NaN, NaN)
+    if (Number.isNaN(x) || Number.isNaN(y)) {
+      return new ComplexNumber(NaN, NaN);
+    }    
+
     // 1. Быстрая проверка на чистый ноль (чтобы выдать чистую бесконечность)
     if (x === 0 && y === 0) {
       return new ComplexNumber(Infinity, -0); 
