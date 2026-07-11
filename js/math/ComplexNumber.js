@@ -85,7 +85,6 @@ export default class ComplexNumber extends MathType {
    * Если число безумно близко к нулю (меньше 1e-15), возвращает чистый 0.
    */
   #cleanRound(value) {
-    // 1e-15 — это стандартный порог точности для double precision
     return Math.abs(value) < MathType.EPSILON ? 0 : value;
   }
 
