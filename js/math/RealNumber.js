@@ -96,10 +96,7 @@ export default class RealNumber extends MathType {
    * Внутренний метод вычитания двух вещественных чисел
    */
   subtract(other) {
-    if (!(other instanceof RealNumber)) {
-      throw new TypeError(`[RealNumber]: Операция вычитания невозможна с типом ${other.constructor.name}.`);
-    }
-    return new RealNumber(this.#value - other.value);
+    return new RealNumber(this.#value - RealNumber.#from(other).value);
   }
 
   /**
