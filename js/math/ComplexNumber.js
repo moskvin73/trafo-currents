@@ -404,19 +404,90 @@ export default class ComplexNumber extends MathType {
   }
 
   /**
-   * Квадратный корень комплексного числа (главное значение)
-   * @returns {ComplexNumber}
+   * Вычисление комплексного корня n-й степени (Главное значение)
+   * @param {number|RealNumber|ComplexNumber} nParam - степень корня
    */
-  sqrt() {
-    try {
-      const r = this.magnitude;
-      // Используем стабильные формулы для исключения потери точности
-      const realPart = Math.sqrt((r + this.#real) / 2);
-      const imagPart = Math.sign(this.#imaginary || 1) * Math.sqrt((r - this.#real) / 2);
-      return new ComplexNumber(realPart, imagPart);
-    } catch (e) {
-      throw new Error(`[ComplexNumber]: Ошибка в методе .sqrt(). ${e.message}`);
+  sqrt(nParam = 2) {
+    let n = nParam;
+    if (nParam instanceof ComplexNumber) {
+      n = Math.abs(nParam.imaginary) < MathType.EPSILON ? nParam.real : nParam;
+    } else if (nParam instanceof RealNumber) {
+      n = nParam.value;
     }
+
+    // Проверка на деление на ноль
+    if (n === 0 || (typeof n === 'object' && n.real === 0 && n.imaginary === 0)) {
+      throw new RangeError("[ComplexNumber Error]: Корень 0-й степени математически не определен.");
+    }
+
+    // 1. ВЫЧИСЛЯЕМ КОМПЛЕКСНУЮ ЭКСПОНЕНТУ СТЕПЕНИ ( 1 / n )
+    let expReal, expImag;
+    if (typeof n === 'number') {
+      expReal = 1 / n;
+      expImag = 0;
+    } else {
+      // Комплексное деление: 1 / (c + di)
+      const c = n.real;
+      const d = n.imaginary;
+      const denom = c * c + d * d;
+      expReal = c / denom;
+      expImag = -d / denom;
+    }
+
+    // 2. СТРОИМ ОПТИМИЗАЦИИ ВОКРУГ ВЕЩЕСТВЕННОЙ ЧАСТИ ЭКСПОНЕНТЫ
+    const isExpPureReal = Math.abs(expImag) < MathType.EPSILON;
+
+    if (isExpPureReal) {
+      // ОПТИМИЗАЦИЯ 1: Экспонента равна 0.5 (n = 2) -> КВАДРАТНЫЙ КОРЕНЬ
+      if (Math.abs(expReal - 0.5) < MathType.EPSILON) {
+        const isQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
+        const isQuasiImag = Math.abs(this.#real) < MathType.EPSILON;
+
+        const x = isQuasiImag ? 0 : this.#real;
+        const y = isQuasiReal ? 0 : this.#imaginary;
+
+        if (x === 0 && y === 0) return new ComplexNumber(0, 0);
+
+        if (y === 0) {
+          if (x > 0) return new ComplexNumber(Math.sqrt(x), 0);
+          return new ComplexNumber(0, Math.sqrt(Math.abs(x)));
+        }
+
+        if (x === 0) {
+          const component = Math.sqrt(Math.abs(y) / 2);
+          return y > 0 ? new ComplexNumber(component, component) : new ComplexNumber(component, -component);
+        }
+
+        const r = Math.hypot(x, y);
+        const resReal = Math.sqrt((r + x) / 2);
+        const resImag = Math.sqrt((r - x) / 2);
+        const sign = y >= 0 ? 1 : -1;
+
+        return new ComplexNumber(
+          Math.abs(resReal) < MathType.EPSILON ? 0 : resReal,
+          Math.abs(resImag * sign) < MathType.EPSILON ? 0 : resImag * sign
+        );
+      }
+
+      // ОПТИМИЗАЦИЯ 2: Экспонента равна 1 (n = 1) -> Корень 1-й степени равен числу
+      if (Math.abs(expReal - 1) < MathType.EPSILON) {
+        return this;
+      }
+
+      // ОПТИМИЗАЦИЯ 3: Экспонента равна 2 (n = 0.5) -> ВЫЧИСЛЕНИЕ КВАДРАТА ЧИСЛА
+      if (Math.abs(expReal - 2) < MathType.EPSILON) {
+        // (x + iy)^2 = (x^2 - y^2) + i * (2xy)
+        return new ComplexNumber(
+          this.#real * this.#real - this.#imaginary * this.#imaginary,
+          2 * this.#real * this.#imaginary
+        );
+      }
+    }
+
+    // 3. ОБЩИЙ СЛУЧАЙ ДЛЯ СЛОЖНЫХ СТЕПЕНЕЙ КОРНЯ
+    // Создаем объект экспоненты и отправляем в точный accuratePow
+    const complexExponent = new ComplexNumber(expReal, expImag);
+    return this.accuratePow(complexExponent);
   }
 
   /**
