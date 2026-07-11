@@ -546,8 +546,6 @@ export default class ComplexNumber extends MathType {
   accuratePow(other) { 
     const p = ComplexNumber.#from(other);
 
-    const MathType.EPSILON = 1e-15; 
-
     // Проверяем компоненты на "квази-вещественность" и "квази-целостность"
     const isBaseQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
     const isExpQuasiReal = Math.abs(other.imaginary) < MathType.EPSILON;
