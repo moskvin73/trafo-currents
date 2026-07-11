@@ -1316,52 +1316,81 @@ export default class ComplexNumber extends MathType {
    * Комплексный Арккосинус (Главное значение)
    */
   arccos() {
-    // 1. Вычисляем 1 - z^2
-    const zSquare = this.multiply(this);
-    const oneMinusZSquare = new ComplexNumber(1 - zSquare.real, -zSquare.imaginary);
+    try {
+      const x = this.#real;
+      const y = this.#imaginary;
 
-    // 2. Вычисляем sqrt(1 - z^2) с учетом EPSILON
-    const sqrtPart = oneMinusZSquare.sqrt();
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
 
-    // 3. Умножаем корень на i: i * (R + Ii) = -I + Ri
-    const iTimesSqrt = new ComplexNumber(-sqrtPart.imaginary, sqrtPart.real);
+      // 1. Вычисляем 1 - z^2 через безопасные методы класса
+      const zSquare = this.multiply(this);
+      const oneMinusZSquare = new ComplexNumber(1, 0).subtract(zSquare);
 
-    // 4. Складываем: z + i * sqrt(1 - z^2)
-    const sumPart = new ComplexNumber(this.real + iTimesSqrt.real, this.imaginary + iTimesSqrt.imaginary);
+      // 2. Вычисляем sqrt(1 - z^2)
+      const sqrtPart = oneMinusZSquare.sqrt();
 
-    // 5. Берем комплексный натуральный логарифм
-    const lnResult = sumPart.log();
+      // 3. Умножаем корень на i: i * (R + Ii) = -I + Ri
+      const iTimesSqrt = new ComplexNumber(-sqrtPart.imaginary, sqrtPart.real);
 
-    // 6. Умножаем финальный результат на -i: -i * (R + Ii) = I - Ri
-    const finalReal = lnResult.imaginary;
-    const finalImag = -lnResult.real;
+      // 4. Складываем: z + i * sqrt(1 - z^2) через безопасный метод класса
+      const sumPart = this.add(iTimesSqrt);
 
-    return new ComplexNumber(
-      Math.abs(finalReal) < MathType.EPSILON ? 0 : finalReal,
-      Math.abs(finalImag) < MathType.EPSILON ? 0 : finalImag
-    );
+      // 5. Берем комплексный натуральный логарифм
+      const lnResult = sumPart.log();
+
+      // 6. Умножаем финальный результат на -i: -i * (R + Ii) = I - Ri
+      let finalReal = lnResult.imaginary;
+      let finalImag = -lnResult.real;
+
+      // 7. Интеллектуальная посадка на оси с жестким сохранением знаков нулей (-0)
+      if (Math.abs(finalReal) < MathType.EPSILON) {
+        finalReal = (1 / finalReal === -Infinity) ? -0 : 0;
+      }
+      if (Math.abs(finalImag) < MathType.EPSILON) {
+        finalImag = (1 / finalImag === -Infinity) ? -0 : 0;
+      }
+
+      return new ComplexNumber(finalReal, finalImag);
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arccos(). ${e.message}`);
+    }
   }
 
   /**
    * Комплексный Арекосинус (Главное значение)
    */
   arccosh() {
-    // Формула: ln(z + sqrt(z - 1) * sqrt(z + 1))
-    // Раздельное извлечение корней гарантирует правильный выбор листов Римановой поверхности
-    const zMinusOne = new ComplexNumber(this.real - 1, this.imaginary);
-    const zPlusOne = new ComplexNumber(this.real + 1, this.imaginary);
+    try {
+      const x = this.#real;
+      const y = this.#imaginary;
 
-    const sqrt1 = zMinusOne.sqrt();
-    const sqrt2 = zPlusOne.sqrt();
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
 
-    // Перемножаем корни
-    const sqrtProduct = sqrt1.multiply(sqrt2);
+      // 1. Вычисляем (z - 1) и (z + 1) через безопасные методы
+      const zMinusOne = this.subtract(new ComplexNumber(1, 0));
+      const zPlusOne = this.add(new ComplexNumber(1, 0));
 
-    // Складываем с исходным комплексным числом z
-    const sumPart = new ComplexNumber(this.real + sqrtProduct.real, this.imaginary + sqrtProduct.imaginary);
+      // 2. Извлекаем корни (раздельно по Кэхану для правильных листов Римана)
+      const sqrt1 = zMinusOne.sqrt();
+      const sqrt2 = zPlusOne.sqrt();
 
-    // Возвращаем логарифм от полученной суммы
-    return sumPart.log();
+      // 3. Перемножаем корни через безопасный .multiply()
+      const sqrtProduct = sqrt1.multiply(sqrt2);
+
+      // 4. Складываем с исходным комплексным числом z
+      const sumPart = this.add(sqrtProduct);
+
+      // 5. Возвращаем логарифм от полученной суммы
+      return sumPart.log();
+    } catch (e) {
+      throw new Error(`[ComplexNumber]: Ошибка в методе .arccosh(). ${e.message}`);
+    }
   }  
 
    /**
