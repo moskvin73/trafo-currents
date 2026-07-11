@@ -139,13 +139,21 @@ export default class ComplexNumber extends MathType {
    * @returns {string}
    */
   toString() {
+    if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) return 'NaN';
+
     const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
-
-    if (i === 0) return `${r}`;
-    if (r === 0) return `${i}i`;
     
-    const sign = i > 0 ? '+' : '-';
+    const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
+
+    if (i === 0 && !isNegativeZero(i)) return `${r}`;
+    
+    const isNeg = i < 0 || isNegativeZero(i);
+    if (r === 0 && !isNegativeZero(r)) {
+      return isNeg ? `-${Math.abs(i)}i` : `${i}i`;
+    }
+    
+    const sign = isNeg ? '-' : '+';
     return `${r} ${sign} ${Math.abs(i)}i`;
   }
 
