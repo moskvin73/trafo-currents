@@ -87,7 +87,7 @@ export class UnaryOpNode extends ASTNode {
           innerCode = `(${innerCode})`;
       }
       
-      return `${OpSymbols[this.operator]}${innerCode}`;
+      return `${this.operator}${innerCode}`;
   }  
 
   evaluate(context) {
@@ -109,6 +109,19 @@ export class UnaryOpNode extends ASTNode {
     // в LaTeX могут понадобиться скобки. Но для простых узлов выводим как есть.
     return `${this.operator}${argTex}`;
   }
+}
+
+export class UnaryOpNodePlus extends ASTNode {
+  /**
+   * @param {ASTNode} argument - Узел, к которому применяется операция
+   * @param {SourceLocation} loc 
+   */
+  constructor(operator, argument, loc) {
+    super(loc);
+    this.argument = argument;
+  }
+
+
 }
 
 const dispatcher = new SemanticDispatcher();
