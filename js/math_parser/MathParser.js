@@ -171,9 +171,7 @@ export class MathParser {
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
   // =======================================================
 
-  #parseExpression() {
-    return this.#parseAssignment();
-  }
+  #parseExpression() { return this.#parseAssignment(); }
 
   /**
    * Присваивание (Самый низкий приоритет).
@@ -255,7 +253,7 @@ export class MathParser {
   }
 
   // Степень (Правая ассоциация)
-  #parsePower() {
+  #parsePower() { 
     let expr = this.#parsePrimary();
 
     if (this.lookahead.type === TokenType.POW) {
