@@ -207,6 +207,8 @@ export class SubNode extends BinaryOpNode {
     super(left, '-', right, loc);
   }
 
+  getPriority() { return OpPriority.ADD_SUB; }
+
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.subtract(r);
@@ -223,6 +225,8 @@ export class MulNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
   }
+
+  getPriority() { return OpPriority.MUL_DIV; }
 
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
@@ -241,6 +245,8 @@ export class DivNode extends BinaryOpNode {
     super(left, '-', right, loc);
   }
 
+  getPriority() { return OpPriority.MUL_DIV; }
+  
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.divide(r)(r);
