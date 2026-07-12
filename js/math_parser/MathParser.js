@@ -340,7 +340,6 @@ export class MathParser {
           while (Primary_FALLOW.has(token.type)) this.#consume();
           token = this.lookahead;
           if (!Primary_FIRST.has(token.type)) return new NumberNode(new RealNumber(1), token.loc);
-
         //default: throw new Error(`Неожиданный математический символ "${token.value}"`);
     }
   }
