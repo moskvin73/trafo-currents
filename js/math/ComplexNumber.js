@@ -178,7 +178,7 @@ export default class ComplexNumber extends MathType {
    * @param {ComplexNumber|number|RealNumber} value 
    * @returns {ComplexNumber}
    */
-  /*static #from(value) {
+  /*static from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
     if (value === null || value === undefined) {
       throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
@@ -253,7 +253,7 @@ export default class ComplexNumber extends MathType {
    */
   add(other) {
     try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
       
       const r1 = this.#real;
       const i1 = this.#imaginary;
@@ -288,7 +288,7 @@ export default class ComplexNumber extends MathType {
    */
   subtract(other) {
      try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
       
       const r1 = this.#real;
       const i1 = this.#imaginary;
@@ -324,7 +324,7 @@ export default class ComplexNumber extends MathType {
   multiply(other) {
     try {
       // 0. Строгое приведение типов через фабрику класса
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
 
       const a = this.#real;
       const b = this.#imaginary;
@@ -397,7 +397,7 @@ export default class ComplexNumber extends MathType {
    */
   divide(other) {
    try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
       
       const x1 = this.#real;
       const y1 = this.#imaginary;
@@ -482,7 +482,7 @@ export default class ComplexNumber extends MathType {
    */
   equals(other) {
     try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
       
       // Object.is идеально подходит для математических ядер:
       // 1. Object.is(0, -0) -> false (критично для комплексных разрезов фазы)
@@ -499,23 +499,23 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   static add(left, right) {
-    return ComplexNumber.#from(left).add(right);
+    return ComplexNumber.from(left).add(right);
   }
 
   static subtract(left, right) {
-    return ComplexNumber.#from(left).subtract(right);
+    return ComplexNumber.from(left).subtract(right);
   }
 
   static multiply(left, right) {
-    return ComplexNumber.#from(left).multiply(right);
+    return ComplexNumber.from(left).multiply(right);
   }
 
   static divide(left, right) {
-    return ComplexNumber.#from(left).divide(right);
+    return ComplexNumber.from(left).divide(right);
   }
 
   static equals(left, right) {
-    return ComplexNumber.#from(left).equals(right);
+    return ComplexNumber.from(left).equals(right);
   }
  
   // ==========================================
@@ -695,7 +695,7 @@ export default class ComplexNumber extends MathType {
    */
   logBase(other) {
     try {
-      const base = ComplexNumber.#from(other);
+      const base = ComplexNumber.from(other);
 
       // 0. Вычисляем защищенные интеллектуальные логарифмы
       const lnValue = this.log();
@@ -728,7 +728,7 @@ export default class ComplexNumber extends MathType {
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .logBase(). ${e.message}`);
     }
-    /*const base = ComplexNumber.#from(other);
+    /*const base = ComplexNumber.from(other);
 
     const lnValue = this.log();
     const lnBase = base.log();
@@ -788,7 +788,7 @@ export default class ComplexNumber extends MathType {
   sqrt(nParam = 2) {
     try {
       // Единая стандартизированная точка приведения типов на перспективу
-      const nComplex = ComplexNumber.#from(nParam);
+      const nComplex = ComplexNumber.from(nParam);
       
       const x = this.#real;
       const y = this.#imaginary;
@@ -952,7 +952,7 @@ export default class ComplexNumber extends MathType {
   accuratePow(other) { 
     try {
       // 0. Строгое приведение типов через единую фабрику
-      const p = ComplexNumber.#from(other);
+      const p = ComplexNumber.from(other);
 
       const x = this.#real;
       const y = this.#imaginary;
@@ -1022,7 +1022,7 @@ export default class ComplexNumber extends MathType {
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .accuratePow(). ${e.message}`);
     }    
-   /* const p = ComplexNumber.#from(other);
+   /* const p = ComplexNumber.from(other);
 
     // Проверяем компоненты на "квази-вещественность" и "квази-целостность"
     const isBaseQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
@@ -1087,19 +1087,19 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   static exp(value) {
-    return ComplexNumber.#from(value).exp();
+    return ComplexNumber.from(value).exp();
   }
 
   static log(value) {
-    return ComplexNumber.#from(value).log();
+    return ComplexNumber.from(value).log();
   }
 
   static sqrt(value) {
-    return ComplexNumber.#from(value).sqrt();
+    return ComplexNumber.from(value).sqrt();
   }
 
   static pow(base, power) {
-    return ComplexNumber.#from(base).pow(power);
+    return ComplexNumber.from(base).pow(power);
   }
 
   // ==========================================
@@ -1545,7 +1545,7 @@ export default class ComplexNumber extends MathType {
    */
   dot(other) {
     try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
       
       const a = this.#real;
       const b = this.#imaginary;
@@ -1583,7 +1583,7 @@ export default class ComplexNumber extends MathType {
    */
   cross(other) {
     try {
-      const o = ComplexNumber.#from(other);
+      const o = ComplexNumber.from(other);
 
       const a = this.#real;
       const b = this.#imaginary;
@@ -1616,14 +1616,14 @@ export default class ComplexNumber extends MathType {
   // СТАТИЧЕСКИЕ АНАЛОГИ (Static)
   // ==========================================
 
-  static sin(value) { return ComplexNumber.#from(value).sin(); }
-  static cos(value) { return ComplexNumber.#from(value).cos(); }
-  static tan(value) { return ComplexNumber.#from(value).tan(); }
+  static sin(value) { return ComplexNumber.from(value).sin(); }
+  static cos(value) { return ComplexNumber.from(value).cos(); }
+  static tan(value) { return ComplexNumber.from(value).tan(); }
   
-  static sinh(value) { return ComplexNumber.#from(value).sinh(); }
-  static cosh(value) { return ComplexNumber.#from(value).cosh(); }
-  static tanh(value) { return ComplexNumber.#from(value).tanh(); }
+  static sinh(value) { return ComplexNumber.from(value).sinh(); }
+  static cosh(value) { return ComplexNumber.from(value).cosh(); }
+  static tanh(value) { return ComplexNumber.from(value).tanh(); }
 
-  static dot(left, right) { return ComplexNumber.#from(left).dot(right); }
-  static cross(left, right) { return ComplexNumber.#from(left).cross(right); }  
+  static dot(left, right) { return ComplexNumber.from(left).dot(right); }
+  static cross(left, right) { return ComplexNumber.from(left).cross(right); }  
 }
