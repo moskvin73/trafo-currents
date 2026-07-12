@@ -97,9 +97,7 @@ export class MathParser {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.lookahead.loc));
       }
 
-    // Объединяем лексические ошибки лексера и синтаксические ошибки парсера в один массив!
-    const allCompilerErrors = [...this.lexer.errors, ...this.errors];
-    return { program, errors: allCompilerErrors };
+    return { program, errors: this.errors };
   }
 
   static parseStatement_FALLOW = Object.freeze(new Set([
