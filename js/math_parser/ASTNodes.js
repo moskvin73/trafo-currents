@@ -90,7 +90,7 @@ export class UnaryOpNode extends ASTNode {
       return `${this.operator}${innerCode}`;
   }  
 
-  evaluate(context) {
+  /*evaluate(context) {
     const argVal = this.argument.evaluate(context);
 
     if (this.operator === '+') {
@@ -101,7 +101,7 @@ export class UnaryOpNode extends ASTNode {
       return argVal.negate();
     }
     throw new Error(`[AST]: Неподдерживаемый унарный оператор "${this.operator}" на ${this.loc}`);
-  }
+  }*/
 
   toTeX() {
     const argTex = this.argument.toTeX();
@@ -111,16 +111,17 @@ export class UnaryOpNode extends ASTNode {
   }
 }
 
-export class UnaryOpNodePlus extends ASTNode {
+export class UnaryOpNodePlus extends UnaryOpNode {
   /**
    * @param {ASTNode} argument - Узел, к которому применяется операция
    * @param {SourceLocation} loc 
    */
   constructor(operator, argument, loc) {
-    super(loc);
+    super(',', argument, loc);
     this.argument = argument;
   }
 
+  evaluate(context) { return this.argument.evaluate(context); }
 
 }
 
