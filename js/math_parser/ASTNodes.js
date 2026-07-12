@@ -7,7 +7,7 @@ import { MathRegistry } from './MathRegistry.js';
 import SemanticDispatcher from './SemanticDispatcher.js';
 import { TokenType } from './TokenTypes.js';
 
-const OpPriority = {
+const OpPriority = { 
     ASSIGN: 1,       // '='
     ADD_SUB: 2,  // '+', '-'
     MUL_DIV: 3,  // '*', '/'
@@ -156,7 +156,7 @@ export class BinaryOpNode extends ASTNode {
   toTeX() {
     let leftCode = this.left.toTeX();
     let rightCode = this.right.toTeX();
-    const currentPriority = this.toTeX();
+    const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
     if (this.right.getPriority() < currentPriority) rightCode = `\\left(${rightCode}\\right)`;
@@ -187,7 +187,7 @@ class StrictRightBinNode extends BinaryOpNode {
   toTeX() {
     let leftCode = this.left.toTeX();
     let rightCode = this.right.toTeX();
-    const currentPriority = this.toTeX();
+    const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
     if (this.right.getPriority() <= currentPriority) rightCode = `\\left(${rightCode}\\right)`;
@@ -313,7 +313,8 @@ export class PowNode extends BinaryOpNode {
   } 
 
   toTeX() {
-    const l = this.left.toTeX();
+    let l = this.left.toTeX();
+    if (this.left.getPriority() < this.getPriority();) l = `\\left(${l}\\right)`;
     const r = this.right.toTeX();
     return `{${l}}^{${r}}`;
   }
