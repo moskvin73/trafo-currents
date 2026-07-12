@@ -192,18 +192,19 @@ export default class ComplexNumber extends MathType {
 
     // 4. Если типа нет в таблице — сразу выбрасываем ошибку
     if (!convert) {
-      throw new TypeError(`[ComplexNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
+      const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
+      throw new TypeError(`[ComplexNumber]: Тип "${typeName}" не поддерживается для приведения.`);
     }
 
     // 5. Вызываем конвертер
     const result = convert(value);
 
     // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
-    if (result instanceof ComplexNumber) {// && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
+    /*if (result instanceof ComplexNumber) {// && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
       return result;
     }
 
-    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
+    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);*/
   }
 
   // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
