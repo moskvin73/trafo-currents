@@ -282,7 +282,6 @@ export class DivNode extends StrictRightBinNode {
   }
 }
 
-
 /**
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
