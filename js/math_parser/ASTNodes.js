@@ -89,7 +89,18 @@ export class UnaryOpNode extends ASTNode {
   }
 
   getPriority() { return OpPriority.UNARY; }
-  
+
+  toString() {
+      let innerCode = this.argument.toString;
+      
+      // Если у внутреннего выражения приоритет ниже, берем его в скобки
+      if (this.argument.getPriority() < this.getPriority()) {
+          innerCode = `(${innerCode})`;
+      }
+      
+      return `${OpSymbols[this.operator]}${innerCode}`;
+  }  
+
   evaluate(context) {
     const argVal = this.argument.evaluate(context);
 
