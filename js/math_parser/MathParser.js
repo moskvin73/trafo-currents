@@ -238,13 +238,15 @@ export class MathParser {
 
   // Унарные знаки
   #parseUnary() {
-    const opToken = this.lookahead;
+    let opToken;
     switch (this.lookahead.type)
     {
       case TokenType.PLUS:
+        opToken = this.lookahead;
         this.#consume();
         return new UnaryOpNodePlus(this.#parseUnary(), opToken.loc);
       case TokenType.MINUS:
+        opToken = this.lookahead;
         this.#consume();
         return new UnaryOpNodeMinus(this.#parseUnary(), opToken.loc);
         break;
