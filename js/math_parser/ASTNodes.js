@@ -367,7 +367,7 @@ export class AssignNode extends ASTNode {
  * Узел для всей программы (блокнота/интерфейса вычислений)
  */
 export class ProgramNode {
-  constructor() {
+  constructor() { 
     this.statements = [];
   }
 
