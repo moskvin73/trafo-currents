@@ -195,10 +195,26 @@ export class BinaryOpNode extends ASTNode {
     const dens = [];
     const signState = { minusCount: 0 };
 
-    // Запускаем сборку факторов, начиная с самого себя (this)
+    // 1. Собираем все факторы в массивы
     this._collectFactors(this, false, nums, dens, signState);
 
-    // Умная функция сборки элементов на строке без лишних точек умножения
+    // Вспомогательная функция для сортировки: числа вперед!
+    const sortFactors = (nodes) => {
+      return nodes.sort((a, b) => {
+        const aIsNum = a instanceof NumberNode;
+        const bIsNum = b instanceof NumberNode;
+        
+        if (aIsNum && !bIsNum) return -1; // Число смещается влево (вперед)
+        if (!aIsNum && bIsNum) return 1;  // Не-число смещается вправо (назад)
+        return 0; // В остальных случаях порядок не меняется
+      });
+    };
+
+    // 2. Сортируем числители и знаменатели (числа уходят вперед)
+    const sortedNums = sortFactors(nums);
+    const sortedDens = sortFactors(dens);
+
+    // Наша умная функция сборки элементов на строке
     const joinFactors = (nodes) => {
       if (nodes.length === 0) return '';
       
@@ -208,7 +224,6 @@ export class BinaryOpNode extends ASTNode {
         const currentNode = nodes[i];
         let currentTeX = currentNode.toTeX();
 
-        // Защита скобками: если приоритет ниже умножения (например, сложение или комплексное число)
         if (currentNode.getPriority?.() < OpPriority.MUL_DIV) {
           currentTeX = `\\left(${currentTeX}\\right)`;
         }
@@ -219,7 +234,6 @@ export class BinaryOpNode extends ASTNode {
           const leftStr = resultTeX.trim();
           const rightStr = currentTeX.trim();
 
-          // Регулярные выражения проверяют стык строк на наличие цифр
           const endsWithDigit = /[0-9]$/.test(leftStr);
           const startsWithDigit = /^[0-9]/.test(rightStr);
           const startsWithTeXConstant = /^\\[a-zA-Z]/.test(rightStr);
@@ -231,10 +245,11 @@ export class BinaryOpNode extends ASTNode {
             needDot = true; // Число * \pi -> нужна точка
           }
 
-          // Склеиваем: либо точкой \cdot, либо красивым пробелом для символьных переменных
           if (needDot) {
             resultTeX += ` \\cdot ${currentTeX}`;
           } else {
+            // Тонкий нюанс: если число встало после буквы (вдруг сортировка не сработала), 
+            // или если идут две буквы, то точку не ставим, но делаем красивый пробел
             resultTeX += ` ${currentTeX}`;
           }
         }
@@ -242,18 +257,15 @@ export class BinaryOpNode extends ASTNode {
       return resultTeX;
     };
 
-    // Выносим глобальный знак
     const globalSign = (signState.minusCount % 2 !== 0) ? '- ' : '';
 
-    // КРАЙНИЙ КЕЙС: Если в цепочке вообще НЕ БЫЛО делений (например, выражение вида A * B * C)
-    // То рисовать \frac{}{} не нужно. Рендерим просто красивую строчку умножения.
-    if (dens.length === 0) {
-      return `${globalSign}${joinFactors(nums)}`;
+    if (sortedDens.length === 0) {
+      return `${globalSign}${joinFactors(sortedNums)}`;
     }
 
-    // Если знаменатель есть, строим профессиональную дробь
-    const numTeX = joinFactors(nums);
-    const denTeX = joinFactors(dens);
+    // 3. Собираем итоговые строки из уже отсортированных массивов
+    const numTeX = joinFactors(sortedNums);
+    const denTeX = joinFactors(sortedDens);
 
     return `${globalSign}\\frac{${numTeX}}{${denTeX}}`;
   }
@@ -375,9 +387,6 @@ export class MulNode extends BinaryOpNode {
   } 
 
   toTeX() { return super._renderFractionChain(); }
-  /*simpleTeX(l, r) {
-    return `${l} \\cdot ${r}`;
-  }*/
 }
 
 export class DivNode extends StrictRightBinNode {
