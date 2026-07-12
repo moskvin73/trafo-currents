@@ -88,12 +88,45 @@ export class UnaryOpNode extends ASTNode {
   }  
 
   toTeX() {
-    const argTex = this.argument.toTeX();
+    const signState = { minusCount: 0 };
+    
+    // Запускаем сборку знаков с текущего узла
+    const coreNode = this._collapseUnaryChain(this, signState);
+
+    // Получаем TeX-код для «чистого» центрального узла
+    let argTex = coreNode.toTeX();
+    
+    // Проверяем приоритет: если внутри унарной цепочки сидит выражение 
+    // с низким приоритетом (например, сложение A+B), его нужно взять в скобки
+    if (coreNode.getPriority() < this.getPriority()) {
+      argTex = `\\left(${argTex}\\right)`;
+    }
+
+    // Определяем итоговый знак цепочки
+    const finalOperator = (signState.minusCount % 2 !== 0) ? '-' : '';
+
+    return `${finalOperator}${argTex}`;
+
+    /*const argTex = this.argument.toTeX();
     if (this.argument.getPriority() < this.getPriority()) {
       argTex = `\\left(${argTex}\\right)`;
     }
-    return `${this.operator}${argTex}`;
+    return `${this.operator}${argTex}`;*/
   }
+
+  // Вспомогательный метод для размотки цепочки знаков +---++
+  _collapseUnaryChain(node, signState) {
+    // Если текущий узел — унарная операция, обрабатываем её и идём вглубь
+    if (node instanceof UnaryOpNode) {
+      if (node.operator === '-') {
+        signState.minusCount++;
+      }
+      return this._collapseUnaryChain(node.argument, signState);
+    }
+    
+    // Как только наткнулись на не-унарный узел, это база — возвращаем его
+    return node;
+  }  
 }
 
 export class UnaryOpNodePlus extends UnaryOpNode {
@@ -259,7 +292,7 @@ export class DivNode extends StrictRightBinNode {
     return l.divide(r);
   } 
 
-  toTeX() {
+  toTeX() { 
     const nums = [];
     const dens = [];
     // Объект-состояние для подсчета унарных минусов
