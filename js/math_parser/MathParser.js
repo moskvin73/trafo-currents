@@ -88,16 +88,16 @@ export class MathParser {
   parse() {
     const program = new ProgramNode();
 
+    try {
     while (this.lookahead.type !== TokenType.EOF) {
-      try {
         const stmt = this.#parseStatement();
         if (stmt) program.statements.push(stmt);
+      }
       } catch (error) {
         // Восстановление после синтаксической ошибки: пишем в отчет и мотаем до конца строки
         this.errors.push(new CompilerError(error.message, this.lookahead.loc));
         //this.#synchronize();
       }
-    }
 
     // Объединяем лексические ошибки лексера и синтаксические ошибки парсера в один массив!
     const allCompilerErrors = [...this.lexer.errors, ...this.errors];
