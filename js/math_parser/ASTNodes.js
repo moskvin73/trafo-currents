@@ -80,7 +80,7 @@ export class UnaryOpNode extends ASTNode {
   getPriority() { return OpPriority.UNARY; }
 
   toString() {
-      let innerCode = this.argument.toString;
+      let innerCode = this.argument.toString();
       
       // Если у внутреннего выражения приоритет ниже, берем его в скобки
       if (this.argument.getPriority() < this.getPriority()) {
