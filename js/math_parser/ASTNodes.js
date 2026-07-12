@@ -7,6 +7,26 @@ import { MathRegistry } from './MathRegistry.js';
 import SemanticDispatcher from './SemanticDispatcher.js';
 import { TokenType } from './TokenTypes.js';
 
+const OpPriority = {
+    ASSIGN: 1,       // '='
+    ADD: 2, SUB: 2,  // '+', '-'
+    MUL: 3, DIV: 3,  // '*', '/'
+    UNARY: 4,        // унарные '+' и '-'
+    POW: 5,          // '^'
+    PRIMARY: 6       // Числа, переменные
+};
+
+const OpSymbols = {
+    ASSIGN: " = ",
+    ADD: " + ",
+    SUB: " - ",
+    MUL: " * ",
+    DIV: " / ",
+    UNARY_PLUS: "+",
+    UNARY_MINUS: "-",
+    POW: "^"
+};
+
 /**
  * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
  */
@@ -17,6 +37,10 @@ export default class ASTNode {
   constructor(loc) {
     this.loc = loc;
   }
+
+  getPriority() { throw new Error("Not implemented"); }
+
+  toString() { throw new Error("Not implemented"); }
 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context = {}) {
