@@ -183,6 +183,29 @@ export class BinaryOpNode extends ASTNode {
   }*/
 }
 
+class StrictRightBinNode extends ASTNode {
+  constructor(left, operator, right, loc) {
+    super(loc);
+    this.left = left;
+    this.operator = operator;
+    this.right = right;
+  }
+
+  toString() {
+    let leftCode = this.left.toCode();
+    let rightCode = this.right.toCode();
+    const currentPriority = this.getPriority();
+
+    // Слева - строго меньше
+    if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
+    
+    // Справа - МЕНЬШЕ ИЛИ РАВЕН (ваше условие)
+    if (this.right.getPriority() <= currentPriority) rightCode = `(${rightCode})`;
+
+    return `${leftCode}${this.operator}${rightCode}`;
+  }
+}
+
 export class AddNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '+', right, loc);
@@ -246,7 +269,7 @@ export class DivNode extends BinaryOpNode {
   }
 
   getPriority() { return OpPriority.MUL_DIV; }
-  
+
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.divide(r)(r);
