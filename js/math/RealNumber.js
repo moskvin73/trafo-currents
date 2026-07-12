@@ -378,7 +378,30 @@ export default class RealNumber extends MathType {
    * Интеллектуальный десятичный логарифм lg(x)
    */
   log10() {
-    if (this.#value > 0) {
+    const x = this.#value;
+
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
+    if (x > 0) {
+      return new RealNumber(Math.log10(x));
+    }
+
+    // Обработка нулей с сохранением направления разреза
+    if (x === 0) {
+      if (Object.is(x, -0)) {
+        // lg(-0) = -Infinity + i * (pi / ln(10))
+        return new ComplexNumber(-Infinity, Math.PI / Math.LN10);
+      }
+      return new RealNumber(-Infinity);
+    }
+
+    // 3. Для отрицательных переходим через комплексный натуральный логарифм,
+    // используя стандартную константу JavaScript Math.LN10
+    const complexLn = this.log(); // Получаем защищенный ComplexNumber
+    
+    return new ComplexNumber(complexLn.real / Math.LN10, complexLn.imaginary / Math.LN10);
+
+    /*if (this.#value > 0) {
       return new RealNumber(Math.log10(this.#value));
     }
 
@@ -391,7 +414,7 @@ export default class RealNumber extends MathType {
     const complexLn = this.log(); // Получаем ComplexNumber
     const ln10 = Math.log(10);
     
-    return new ComplexNumber(complexLn.real / ln10, complexLn.imaginary / ln10);
+    return new ComplexNumber(complexLn.real / ln10, complexLn.imaginary / ln10);*/
   }
 
   /**
