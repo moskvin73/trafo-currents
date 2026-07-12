@@ -426,9 +426,10 @@ export class MulNode extends BinaryOpNode {
     return l.multiply(r);
   } 
 
-  simpleTeX(l, r) {
+  toTeX() { return super._renderFractionChain(); }
+  /*simpleTeX(l, r) {
     return `${l} \\cdot ${r}`;
-  }
+  }*/
 }
 
 export class DivNode extends StrictRightBinNode {
@@ -443,80 +444,7 @@ export class DivNode extends StrictRightBinNode {
     return l.divide(r);
   } 
 
-  toTeX() { 
-    const nums = [];
-    const dens = [];
-    // Объект-состояние для подсчета унарных минусов
-    const signState = { minusCount: 0 };
-
-    // Собираем числители и знаменатели с учетом инверсии и знаков
-    this._collectFactors(this.left, false, nums, dens, signState);
-    this._collectFactors(this.right, true, nums, dens, signState);
-
-    // Вспомогательная функция для сборки элементов через \cdot
-    /*const joinFactors = (nodes) => {
-      return nodes.map(node => {
-        let tex = node.toTeX();
-        // Если приоритет ниже умножения (например, сложение/вычитание), нужны скобки
-        if (node.getPriority?.() < OpPriority.MUL_DIV) {
-          tex = `\\left(${tex}\\right)`;
-        }
-        return tex;
-      }).join(' \\cdot ');
-    };*/
-
-    const numTeX = joinFactors(nums);
-    const denTeX = joinFactors(dens);
-
-    // Если количество унарных минусов нечетное, выносим знак минус вперед
-    const globalSign = (signState.minusCount % 2 !== 0) ? '- ' : '';
-
-    return `${globalSign}\\frac{${numTeX}}{${denTeX}}`;
-  }
-
-  // Рекурсивный сборщик со знаком инверсии
-  _collectFactors(node, isInverted, nums, dens, signState) {
-    // 1. Обработка унарных операций (+ / -)
-    if (node instanceof UnaryOpNode) {
-      // Если внутри унарного знака сидит выражение с низким приоритетом (сложение/вычитание),
-      // мы не имеем права выносить этот знак наружу всей дроби.
-      if (node.argument.getPriority?.() < OpPriority.MUL_DIV) {
-        if (isInverted) dens.push(node); else nums.push(node);
-        return;
-      }
-
-      // Если это минус, инкрементируем глобальный счетчик знаков дроби
-      if (node.operator === '-') {
-        signState.minusCount++;
-      }
-      
-      // Проваливаемся дальше по цепочке унарных операций (разматываем +---++)
-      this._collectFactors(node.argument, isInverted, nums, dens, signState);
-      return;
-    }
-
-    // 2. Бинарное ДЕЛЕНИЕ
-    if (node instanceof DivNode) {
-      this._collectFactors(node.left, isInverted, nums, dens, signState);
-      this._collectFactors(node.right, !isInverted, nums, dens, signState);
-      return;
-    }
-
-    // 3. Бинарное УМНОЖЕНИЕ (добавьте, когда создадите класс умножения)
-    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
-      this._collectFactors(node.left, isInverted, nums, dens, signState);
-      this._collectFactors(node.right, isInverted, nums, dens, signState);
-      return;
-    }
-
-    // 4. База рекурсии: обычный изолированный узел (число, переменная, функция)
-    // Мы дошли до конца цепочки знаков для данного фактора.
-    if (isInverted) {
-      dens.push(node);
-    } else {
-      nums.push(node);
-    }
-  }
+  toTeX() { return super._renderFractionChain(); }
 }
 
 export class PowNode extends BinaryOpNode {
