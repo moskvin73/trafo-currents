@@ -6,7 +6,13 @@ export default class MathType {
 
   // 1e-15 — это стандартный порог точности для double precision
   static get EPSILON() { return 1e-15; }
-   
+  
+  constructor() {
+    if (this.constructor === MathType) {
+      throw new TypeError("[MathType]: Нельзя создать экземпляр абстрактного базового класса.");
+    }
+  }
+
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
@@ -34,7 +40,7 @@ export default class MathType {
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }
 
-   // ==========================================
+  // ==========================================
   // АБСТРАКТНАЯ БАЗОВАЯ АРИФМЕТИКА
   // ==========================================
 
@@ -134,5 +140,39 @@ export default class MathType {
     } while (Math.abs(val - h1 / k1) > val * tolerance);
 
     return { num: h1, den: k1 }; // num - числитель (p), den - знаменатель (q)
+  }
+
+  /**
+   * Универсальный статический фабричный метод приведения типов.
+   * Наследуется всеми классами (ComplexNumber, RealNumber) автоматически.
+   */
+  static from(value) {
+    // Получаем имя текущего класса-наследника для красивых ошибок (например, "ComplexNumber" или "RealNumber")
+    const currentClassName = this.name;
+
+    if (value === null || value === undefined) {
+      throw new TypeError(`[${currentClassName}]: Невозможно привести ${value} к типу ${currentClassName}.`);
+    }
+
+    // 1. Извлекаем ключ: для объектов — ссылка на класс-конструктор, для примитивов — typeof строка
+    const typeKey = typeof value === 'object' ? value.constructor : typeof value;
+
+    // 2. Ищем таблицу конвертеров текущего класса-наследника через полиморфный контекст 'this'
+    const convertersMap = this.converters;
+
+    if (!convertersMap) {
+      throw new Error(`[${currentClassName}]: В классе-наследнике не определена таблица конвертеров "static converters".`);
+    }
+
+    // 3. Ищем конвертер в таблице наследника
+    const convert = convertersMap.get(typeKey);
+
+    if (!convert) {
+      const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
+      throw new TypeError(`[${currentClassName}]: Тип "${typeName}" не поддерживается для приведения.`);
+    }
+
+    // 4. Вызываем конвертер и сразу возвращаем результат
+    return convert(value);
   }  
 }
