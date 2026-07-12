@@ -279,6 +279,25 @@ export class DivNode extends StrictRightBinNode {
   }
 }
 
+export class PowNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '^', right, loc);
+  }
+
+  getPriority() { return OpPriority.POW; }
+
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+    return l.divide(r)(r);
+  } 
+
+  toTeX() {
+    const l = this.left.toTeX();
+    const r = this.right.toTeX();
+    return `\\frac{${l}}{${r}}`;
+  }
+}
+
 /**
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
