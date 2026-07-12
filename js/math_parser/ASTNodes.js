@@ -64,6 +64,11 @@ export class MathNode extends ASTNode {
       throw new TypeError("[MathNode]: Нельзя создать экземпляр абстрактного базового класса.");
     }
   }
+
+  /**
+   * Добавляет себя в список и останавливает погружение.
+   */
+  collectMathExpressions(list) { list.push(this); }  
 }
 
 /**
