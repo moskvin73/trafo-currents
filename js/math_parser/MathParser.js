@@ -72,7 +72,9 @@ export class MathParser {
       this.#consume();
       return currentToken;
     }
-    throw new Error(`${errorMessage} на ${this.lookahead.loc}`);
+    this.#error(errorMessage, this.lookahead.loc);
+    return expectedType;
+    //throw new Error(`${errorMessage} на ${this.lookahead.loc}`);
   }
 
   #error(message, loc) {
