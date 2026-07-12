@@ -113,7 +113,6 @@ export class UnaryOpNodePlus extends UnaryOpNode {
    */
   constructor(operator, argument, loc) {
     super('+', argument, loc);
-    this.argument = argument;
   }
 
   evaluate(context) { return this.argument.evaluate(context); }
@@ -126,7 +125,6 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
    */
   constructor(operator, argument, loc) {
     super('-', argument, loc);
-    this.argument = argument;
   }
 
   evaluate(context) { 
@@ -149,8 +147,17 @@ export class BinaryOpNode extends ASTNode {
     this.right = right;
   }
 
+  toString() {
+    let leftCode = this.left.toCode();
+    let rightCode = this.right.toCode();
+    const currentPriority = this.getPriority();
 
-  evaluate(context) {
+    if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
+    if (this.right.getPriority() < currentPriority) rightCode = `(${rightCode})`;
+
+    return `${leftCode}${this.operator}${rightCode}`;
+  }
+  /*evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     switch (this.operator) {
       case '+': return l.add(r);
@@ -173,6 +180,23 @@ export class BinaryOpNode extends ASTNode {
       case '/': return `\\frac{${l}}{${r}}`;
       case '^': return `{${l}}^{${r}}`;
     }
+  }*/
+}
+
+export class AddNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '+', right, loc);
+  }
+
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+    return l.add(r);
+  } 
+
+  toTeX() {
+    const l = this.left.toTeX();
+    const r = this.right.toTeX();
+    return `${l} + ${r}`;
   }
 }
 
