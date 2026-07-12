@@ -421,8 +421,57 @@ export default class RealNumber extends MathType {
    * Интеллектуальный логарифм по произвольному основанию Log(value, base)
    */
   logBase(other) {
-    //const baseVal = other instanceof RealNumber ? other.value : other;
-    const baseVal = RealNumber.#from(other).#value;
+
+    try {
+      // Ваша лаконичная JIT-оптимизированная строка приведения типа
+      const baseVal = RealNumber.#from(other).#value;
+      const x = this.#value;
+
+      // ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(x) || Number.isNaN(baseVal)) {
+        return new RealNumber(NaN);
+      }
+
+      // Точка неопределенности: log0(0) = NaN
+      if (x === 0 && baseVal === 0) {
+        return new RealNumber(NaN);
+      }
+
+      // 1. Если само значение равно 0, а основание корректно
+      if (x === 0) {
+        // Устраняем баг поглощения знака -0: если x === -0 или baseVal равен проблемным точкам,
+        // безопаснее всего сразу отдать расчет комплексному ядру
+        if (Object.is(x, -0) || Object.is(baseVal, -0)) {
+          return new ComplexNumber(x, 0).logBase(new ComplexNumber(baseVal, 0));
+        }
+        if (baseVal > 1) return new RealNumber(-Infinity);
+        if (baseVal > 0 && baseVal < 1) return new RealNumber(Infinity); // log_{0.5}(0) = +Infinity
+      }
+
+      // 2. Проверка сингулярностей основания логарифма
+      if (baseVal <= 0 || baseVal === 1) {
+        // Если основание проблемное, полностью делегируем вычисления в комплексное поле
+        const complexBase = new ComplexNumber(baseVal, 0);
+        const complexValue = new ComplexNumber(x, 0);
+        return complexValue.logBase(complexBase);
+      }
+
+      // 3. Если основание корректно (base > 0, base != 1), а значение отрицательное
+      if (x < 0) {
+        const complexLnValue = this.log(); // Наш комплексный ln(x)
+        const lnBase = Math.log(baseVal);
+        
+        return new ComplexNumber(complexLnValue.real / lnBase, complexLnValue.imaginary / lnBase);
+      }
+
+      // 4. Идеальный стандартный случай
+      const result = Math.log(x) / Math.log(baseVal);
+      return new RealNumber(result);
+
+    } catch (e) {
+      throw new Error(`[RealNumber]: Ошибка в методе .logBase(). ${e.message}`);
+    }    
+    /*const baseVal = RealNumber.#from(other).#value;
 
         // Точка неопределенности: log0(0) = NaN
     if (this.#value === 0 && baseVal === 0) {
@@ -453,7 +502,7 @@ export default class RealNumber extends MathType {
 
     // 4. Идеальный стандартный случай
     const result = Math.log(this.#value) / Math.log(baseVal);
-    return new RealNumber(result);
+    return new RealNumber(result);*/
   }
 
   // ==========================================
