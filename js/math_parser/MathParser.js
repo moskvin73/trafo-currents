@@ -203,7 +203,6 @@ export class MathParser {
   // Множество FIRST для знаков сложения/вычитания
   #parseAddition() {
     let expr = this.#parseMultiplication();
-
     while (true) switch (this.lookahead.type) {
       case TokenType.PLUS:
         this.#consume();
@@ -246,7 +245,6 @@ export class MathParser {
         opToken = this.lookahead;
         this.#consume();
         return new UnaryOpNodeMinus(this.#parseUnary(), opToken.loc);
-        break;
       default: return this.#parsePower();
     }
   }
@@ -287,27 +285,28 @@ export class MathParser {
         case TokenType.MATH_NAN:
             this.#consume();
             return new ConstantNode(TokenType.MATH_NAN, token.loc);
-    }
 
-    if (this.lookahead.type === TokenType.NUMBER) {
-      this.#consume();
-      return new NumberNode(new RealNumber(token.value), token.loc);
-    }
+         case TokenType.NUMBERN:
+            this.#consume();
+            return new NumberNode(new RealNumber(token.value), token.loc);
 
-    if (this.lookahead.type === TokenType.COMPLEX_NUMBER) {
-      this.#consume();
-      return new NumberNode(new ComplexNumber(0, token.value), token.loc);
-    }
+        case TokenType.NUMBERN:
+             this.#consume();
+             return new NumberNode(new ComplexNumber(0, token.value), token.loc);
 
-    if (this.lookahead.type === TokenType.LPAREN) {
-      this.#consume();
-      const expr = this.#parseExpression();
-      this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
-      return expr;
+        case TokenType.NUMBERN:
+             this.#consume();
+             const expr = this.#parseExpression();
+             this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
+             return expr;
+             
+        case TokenType.VARIABLE:
+             return this.#callFuncORVar();
+        default: throw new Error(`Неожиданный математический символ "${token.value}"`);
     }
+  }
 
-    // СЮДА ПОПАДАЮТ ВСЕ ИДЕНТИФИКАТОРЫ
-    if (this.lookahead.type === TokenType.VARIABLE) {
+  #callFuncORVar() {
       const idToken = this.lookahead;
       this.#consume();
 
@@ -334,9 +333,6 @@ export class MathParser {
 
       // Если скобки нет — это обычное чтение переменной из памяти
       return new VariableNode(idToken.value, idToken.loc);
-    }
-
-    throw new Error(`Неожиданный математический символ "${token.value}"`);
   }
 
   #synchronize() {
