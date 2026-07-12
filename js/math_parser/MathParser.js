@@ -1,6 +1,15 @@
 import { TokenType } from './TokenTypes.js';
 import { CompilerError } from './CompilerErrors.js';
-import ASTNode, { NumberNode, UnaryOpNode, BinaryOpNode, CallNode, AssignNode, VariableNode, PrintNode, ProgramNode, ConstantNode } from './ASTNodes.js';
+import ASTNode, { 
+  NumberNode,
+  UnaryOpNode, 
+  BinaryOpNode, 
+  CallNode, 
+  AssignNode, 
+  VariableNode, 
+  PrintNode, 
+  ProgramNode, 
+  ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
@@ -107,7 +116,7 @@ export class MathParser {
     }
 
     return new StatementNode(exprNode, isSilent);
-    }
+  }
 
   #parsePrintStatement() {
     const printToken = this.lookahead;
