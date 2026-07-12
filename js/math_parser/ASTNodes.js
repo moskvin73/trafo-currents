@@ -185,10 +185,7 @@ export class BinaryOpNode extends ASTNode {
 
 class StrictRightBinNode extends BinaryOpNode {
   constructor(left, operator, right, loc) {
-    super(loc);
-    this.left = left;
-    this.operator = operator;
-    this.right = right;
+    super(left, operator, right, loc);
   }
 
   toString() {
