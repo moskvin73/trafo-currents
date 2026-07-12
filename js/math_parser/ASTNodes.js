@@ -245,7 +245,7 @@ export class SubNode extends StrictRightBinNode {
 
 export class MulNode extends BinaryOpNode {
   constructor(left, right, loc) {
-    super(left, '-', right, loc);
+    super(left, '*', right, loc);
   }
 
   getPriority() { return OpPriority.MUL_DIV; }
@@ -264,7 +264,7 @@ export class MulNode extends BinaryOpNode {
 
 export class DivNode extends StrictRightBinNode {
   constructor(left, right, loc) {
-    super(left, '-', right, loc);
+    super(left, '/', right, loc);
   }
 
   getPriority() { return OpPriority.MUL_DIV; }
