@@ -223,15 +223,17 @@ export class MathParser {
   // Множество FIRST для знаков умножения/деления
   #parseMultiplication() {
     let expr = this.#parseUnary();
-
-    while (this.lookahead.type === TokenType.MUL || this.lookahead.type === TokenType.DIV) {
-      const opToken = this.lookahead;
-      this.#consume();
-      
-      const right = this.#parseUnary();
-      expr = new BinaryOpNode(expr, opToken.value, right, expr.loc);
+    while (true) switch (this.lookahead.type) {
+      case TokenType.MUL:
+        this.#consume();
+        expr = new MulNode(expr, this.#parseUnary(), expr.loc);
+        break;
+      case TokenType.DIV:
+        this.#consume();
+        expr = new DivNode(expr, this.#parseUnary(), expr.loc);
+        break;
+      default: return expr;
     }
-    return expr;
   }
 
   // Унарные знаки
