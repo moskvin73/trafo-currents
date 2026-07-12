@@ -113,7 +113,7 @@ export class UnaryOpNodePlus extends UnaryOpNode {
    * @param {ASTNode} argument - Узел, к которому применяется операция
    * @param {SourceLocation} loc 
    */
-  constructor(operator, argument, loc) {
+  constructor(argument, loc) {
     super('+', argument, loc);
   }
 
@@ -125,7 +125,7 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
    * @param {ASTNode} argument - Узел, к которому применяется операция
    * @param {SourceLocation} loc 
    */
-  constructor(operator, argument, loc) {
+  constructor(argument, loc) {
     super('-', argument, loc);
   }
 

@@ -238,14 +238,18 @@ export class MathParser {
 
   // Унарные знаки
   #parseUnary() {
-    if (this.lookahead.type === TokenType.PLUS || this.lookahead.type === TokenType.MINUS) {
-      const opToken = this.lookahead;
-      this.#consume();
-      
-      const right = this.#parseUnary();
-      return new UnaryOpNode(opToken.value, right, opToken.loc);
+    const opToken = this.lookahead;
+    switch (this.lookahead.type)
+    {
+      case TokenType.PLUS:
+        this.#consume();
+        return new UnaryOpNodePlus(this.#parseUnary(), opToken.loc);
+      case TokenType.MINUS:
+        this.#consume();
+        return new UnaryOpNodeMinus(this.#parseUnary(), opToken.loc);
+        break;
+      default: return this.#parsePower();
     }
-    return this.#parsePower();
   }
 
   // Степень (Правая ассоциация)
