@@ -133,11 +133,6 @@ export class UnaryOpNodePlus extends UnaryOpNode {
   }
 
   evaluate(context) { return this.argument.evaluate(context); }
-
-  /*toTeX() {
-    const argTex = this.argument.toTeX();
-    return `${this.operator}${argTex}`;
-  }*/
 }
 
 export class UnaryOpNodeMinus extends UnaryOpNode {
@@ -189,8 +184,61 @@ export class BinaryOpNode extends ASTNode {
     if (this.right.getPriority() < currentPriority) rightCode = `\\left(${rightCode}\\right)`;
 
     return this.simpleTeX(leftCode, rightCode);
-  }
+  }  
 }
+
+// Вспомогательная функция для склейки множителей по правилам книжной типографики
+function joinFactors(nodes) {
+  if (nodes.length === 0) return '';
+  
+  let resultTeX = '';
+
+  for (let i = 0; i < nodes.length; i++) {
+    const currentNode = nodes[i];
+    let currentTeX = currentNode.toTeX();
+
+    // Защита скобками: благодаря вашей идее с динамическим приоритетом,
+    // комплексное число здесь автоматически получит скобки, так как ADD_SUB < MUL_DIV!
+    if (currentNode.getPriority() < OpPriority.MUL_DIV) {
+      currentTeX = `\\left(${currentTeX}\\right)`;
+    }
+
+    if (i === 0) {
+      resultTeX = currentTeX;
+    } else {
+      const leftStr = resultTeX.trim();
+      const rightStr = currentTeX.trim();
+
+      // Смотрим на стык двух TeX-строк:
+      // 1. Заканчивается ли левая часть цифрой?
+      const endsWithDigit = /[0-9]$/.test(leftStr);
+      // 2. Начинается ли правая часть с цифры?
+      const startsWithDigit = /^[0-9]/.test(rightStr);
+      // 3. Начинается ли правая часть с константы TeX (например, \pi, \e)?
+      const startsWithTeXConstant = /^\\[a-zA-Z]/.test(rightStr);
+
+      let needDot = false;
+
+      if (endsWithDigit && startsWithDigit) {
+        // Например: 5 * 3 -> 5 \cdot 3
+        needDot = true;
+      } else if (endsWithDigit && startsWithTeXConstant) {
+        // Например: 5 * \pi -> 5 \cdot \pi
+        needDot = true;
+      }
+
+      // Склеиваем: либо через точку, либо через красивый тонкий пробел '\,'
+      if (needDot) {
+        resultTeX += ` \\cdot ${currentTeX}`;
+      } else {
+        resultTeX += ` \\, ${currentTeX}`;
+      }
+    }
+  }
+
+  return resultTeX;
+}
+
 
 class StrictRightBinNode extends BinaryOpNode {
   constructor(left, operator, right, loc) {
