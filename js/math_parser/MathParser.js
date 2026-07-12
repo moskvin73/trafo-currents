@@ -29,6 +29,8 @@ export class StatementNode {
     this.isSilent = isSilent;
   }
 
+  toString() { return this.node.toString(); }
+  
   evaluate(context) {
     const result = this.node.evaluate(context);
     return {
