@@ -331,7 +331,33 @@ export default class RealNumber extends MathType {
    * Интеллектуальный натуральный логарифм ln(x)
    */
   log() {
+    const x = this.#value;
+
+    // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если значение NaN, строго возвращаем RealNumber(NaN)
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
     // 1. Для строго положительных чисел считаем стандартно
+    if (x > 0) {
+      return new RealNumber(Math.log(x));
+    }
+
+    // 2. СТАНДАРТ ISO C99: Обработка вещественных нулей (+0 и -0)
+    if (x === 0) {
+      // Если это отрицательный нуль -0, мы ОБЯЗАНЫ совершить фазовый переход на комплексный разрез:
+      // ln(-0) = -Infinity + i * pi
+      if (Object.is(x, -0)) {
+        return new ComplexNumber(-Infinity, Math.PI);
+      }
+      // Для обычного положительного нуля возвращаем вещественный -Infinity
+      return new RealNumber(-Infinity);
+    }
+
+    // 3. Для строго отрицательных уходим в комплексную плоскость: ln(|x|) + i * pi
+    const realPart = Math.log(Math.abs(x));
+    const imagPart = Math.PI;
+    
+    return new ComplexNumber(realPart, imagPart);    
+    /*// 1. Для строго положительных чисел считаем стандартно
     if (this.#value > 0) {
       return new RealNumber(Math.log(this.#value));
     }
@@ -345,7 +371,7 @@ export default class RealNumber extends MathType {
     const realPart = Math.log(Math.abs(this.#value));
     const imagPart = Math.PI;
     
-    return new ComplexNumber(realPart, imagPart);
+    return new ComplexNumber(realPart, imagPart);*/
   }
 
   /**
