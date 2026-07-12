@@ -146,7 +146,7 @@
 	
 	<script type="module">
 	
-        import { MathLexer } from './js/math_parser/MathLexer.js';
+        //import { MathLexer } from './js/math_parser/MathLexer.js';
         import { MathParser } from './js/math_parser/MathParser.js';
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
@@ -193,8 +193,8 @@
 
                 try {
                     // Запускаем наш потоковый LL(1) компилятор
-                    const lexer = new MathLexer(rawCode);
-                    const parser = new MathParser(lexer);
+                    //const lexer = new MathLexer(rawCode);
+                    const parser = new MathParser(rawCode);
                     const parseResult = parser.parse();
 
                     // Проверяем наличие ошибок лексики или синтаксиса
