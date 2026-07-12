@@ -62,6 +62,8 @@ export class NumberNode extends ASTNode {
     this.value = mathTypeValue; // Здесь может лежать и RealNumber, и ComplexNumber
   }
 
+  getPriority() { return OpPriority.PRIMARY; }
+
   evaluate(context) {
     return this.value; // Просто возвращает математический объект
   }
@@ -156,6 +158,8 @@ export class VariableNode extends ASTNode {
     this.name = name;
   }
 
+  getPriority() { return OpPriority.PRIMARY; }
+  
   evaluate(context) {
     // Ищем переменную в локальном контексте вызова
     if (this.name in context) {
