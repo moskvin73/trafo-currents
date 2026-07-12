@@ -47,7 +47,7 @@ export default class RealNumber extends MathType {
    * @param {number|RealNumber} value 
    * @returns {RealNumber}
    */
-  /*static #from(value) {
+  /*static from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
     if (value === null || value === undefined) {
       throw new TypeError(`[RealNumber]: Невозможно привести ${value} к комплексному числу.`);
@@ -87,28 +87,28 @@ export default class RealNumber extends MathType {
    * Внутренний метод сложения двух вещественных чисел
    */
   add(other) {
-    return new RealNumber(this.#value + RealNumber.#from(other).#value);
+    return new RealNumber(this.#value + RealNumber.from(other).#value);
   }
 
   /**
    * Внутренний метод вычитания двух вещественных чисел
    */
   subtract(other) {
-    return new RealNumber(this.#value - RealNumber.#from(other).#value);
+    return new RealNumber(this.#value - RealNumber.from(other).#value);
   }
 
   /**
    * Внутренний метод умножения двух вещественных чисел
    */
   multiply(other) {
-    return new RealNumber(this.#value * RealNumber.#from(other).#value);
+    return new RealNumber(this.#value * RealNumber.from(other).#value);
   }
 
   /**
    * Внутренний метод деления двух вещественных чисел
    */
   divide(other) {
-    return new RealNumber(this.#value / RealNumber.#from(other).#value);
+    return new RealNumber(this.#value / RealNumber.from(other).#value);
   }
 
   // ==========================================
@@ -124,8 +124,8 @@ export default class RealNumber extends MathType {
    */
   equals(other) {
     try {
-      // Используем ваш проверенный метод приведения типов RealNumber.#from
-      const o = RealNumber.#from(other);
+      // Используем ваш проверенный метод приведения типов RealNumber.from
+      const o = RealNumber.from(other);
       
       // Object.is — стандартный способ JS проверить абсолютную идентичность:
       // 1. Object.is(NaN, NaN) -> true
@@ -151,7 +151,7 @@ export default class RealNumber extends MathType {
   accuratePow(other) {
    try {
       // 1. Приведение типа через внутреннюю вещественную фабрику
-      const p = RealNumber.#from(other);
+      const p = RealNumber.from(other);
       
       const b = this.#value;
       const e = p.#value; // Читаем приватное поле симметричного экземпляра
@@ -207,7 +207,7 @@ export default class RealNumber extends MathType {
     } catch (e) {
       throw new Error(`[RealNumber]: Ошибка в методе .accuratePow(). ${e.message}`);
     }    
-      /*other = RealNumber.#from(other);
+      /*other = RealNumber.from(other);
       const b = this.#value;
       const e = other.value;
 
@@ -247,7 +247,7 @@ export default class RealNumber extends MathType {
   sqrt(nParam = 2) {
     try {
       // 1. Приведение типа через внутреннюю вещественную фабрику
-      const p = RealNumber.#from(nParam);
+      const p = RealNumber.from(nParam);
       const n = p.#value; // Читаем приватное поле симметричного экземпляра
 
       const x = this.#value;
@@ -289,7 +289,7 @@ export default class RealNumber extends MathType {
       throw new Error(`[RealNumber]: Ошибка в методе .sqrt(). ${e.message}`);
     }
     /*//const n = nParam instanceof RealNumber ? nParam.value : nParam;
-    const n = RealNumber.#from(nParam).#value;
+    const n = RealNumber.from(nParam).#value;
 
     if (n === 0) {
       throw new RangeError("[RealNumber Error]: Корень 0-й степени математически не определен.");
@@ -419,7 +419,7 @@ export default class RealNumber extends MathType {
 
     try {
       // Ваша лаконичная JIT-оптимизированная строка приведения типа
-      const baseVal = RealNumber.#from(other).#value;
+      const baseVal = RealNumber.from(other).#value;
       const x = this.#value;
 
       // ПРЕДОХРАНИТЕЛЬ NaN
@@ -466,7 +466,7 @@ export default class RealNumber extends MathType {
     } catch (e) {
       throw new Error(`[RealNumber]: Ошибка в методе .logBase(). ${e.message}`);
     }    
-    /*const baseVal = RealNumber.#from(other).#value;
+    /*const baseVal = RealNumber.from(other).#value;
 
         // Точка неопределенности: log0(0) = NaN
     if (this.#value === 0 && baseVal === 0) {
@@ -750,7 +750,7 @@ export default class RealNumber extends MathType {
    */
   dot(other) {
     try {
-      const o = RealNumber.#from(other);
+      const o = RealNumber.from(other);
       
       const x1 = this.#value;
       const x2 = o.#value;
@@ -781,7 +781,7 @@ export default class RealNumber extends MathType {
    */
   cross(other) {
     try {
-      const o = RealNumber.#from(other);
+      const o = RealNumber.from(other);
 
       // ПРЕДОХРАНИТЕЛЬ NaN
       if (Number.isNaN(this.#value) || Number.isNaN(o.#value)) {
