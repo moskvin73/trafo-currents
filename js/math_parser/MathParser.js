@@ -116,8 +116,21 @@ export class MathParser {
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
     let isSilent = false;
-    
-    if (this.lookahead.type === TokenType.SEMICOLON) {
+    while (true) switch (this.lookahead.type)
+    {
+      case TokenType.EOF:
+      case TokenType.SEMICOLON:
+        this.#consume();
+        return new StatementNode(exprNode, false);
+      case TokenType.SILENT:
+        this.#consume();
+        return new StatementNode(exprNode, exprNode instanceof AssignNode);
+      default:
+        this.#error(
+          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`,
+           this.lookahead.loc);
+    }
+    /*if (this.lookahead.type === TokenType.SEMICOLON) {
       this.#consume(); // успешно поглотили ';'
     } else if (this.lookahead.type === TokenType.SILENT) {
       isSilent = exprNode instanceof AssignNode;
@@ -130,7 +143,7 @@ export class MathParser {
       throw new Error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`);
     }
 
-    return new StatementNode(exprNode, isSilent);
+    return new StatementNode(exprNode, isSilent);*/
   }
 
   #parsePrintStatement() {
