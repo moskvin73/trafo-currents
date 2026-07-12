@@ -325,6 +325,8 @@ export class VariableNode extends ASTNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
+  toString() { return this.name; }
+
   evaluate(context) {
     // Ищем переменную в локальном контексте вызова
     if (this.name in context) {
@@ -346,7 +348,9 @@ export class AssignNode extends ASTNode {
     this.expression = expression;
   }
 
-  getPriority() { return OpPriority.ASSIGN; }  
+  getPriority() { return OpPriority.ASSIGN; }
+
+  toString() { return `${this.name} = ${this.expression.toString()}`; }
 
   evaluate(context) {
     const value = this.expression.evaluate(context);
