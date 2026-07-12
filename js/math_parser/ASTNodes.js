@@ -44,6 +44,16 @@ export default class ASTNode {
   toTeX() {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
   }
+
+  /**
+   * Чисто виртуальный метод. ДОЛЖЕН быть реализован во всех дочерних классах.
+   * @param {MathNode[]} list 
+   */
+  collectMathExpressions(list) {
+    // Если управление попало сюда, значит производный класс не создал свой метод
+    throw new Error(
+      `[Abstract Error]: Класс "${this.constructor.name}" обязан реализовать метод collectMathExpressions(list).`
+    );  
 }
 
 
@@ -766,7 +776,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 
 export class CallNode extends MathNode {
   constructor(name, args, loc) {
-    super(loc);
+    super(loc); 
     this.name = name; // Имя функции (строка)
     this.args = args; // Массив дочерних узлов ASTNode
   }
