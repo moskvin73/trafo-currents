@@ -88,6 +88,8 @@ export class UnaryOpNode extends ASTNode {
     this.argument = argument;
   }
 
+  getPriority() { return OpPriority.UNARY; }
+  
   evaluate(context) {
     const argVal = this.argument.evaluate(context);
 
@@ -159,7 +161,7 @@ export class VariableNode extends ASTNode {
   }
 
   getPriority() { return OpPriority.PRIMARY; }
-  
+
   evaluate(context) {
     // Ищем переменную в локальном контексте вызова
     if (this.name in context) {
