@@ -294,12 +294,12 @@ export class MathParser {
              this.#consume();
              return new NumberNode(new ComplexNumber(0, token.value), token.loc);
 
-        case TokenType.NUMBERN:
+        case TokenType.LPAREN:
              this.#consume();
              const expr = this.#parseExpression();
              this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
              return expr;
-             
+
         case TokenType.VARIABLE:
              return this.#callFuncORVar();
         default: throw new Error(`Неожиданный математический символ "${token.value}"`);
