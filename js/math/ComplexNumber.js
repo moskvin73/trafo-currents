@@ -197,7 +197,8 @@ export default class ComplexNumber extends MathType {
     }
 
     // 5. Вызываем конвертер
-    const result = convert(value);
+    //const result = convert(value);
+    return convert(value);
 
     // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
     /*if (result instanceof ComplexNumber) {// && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
