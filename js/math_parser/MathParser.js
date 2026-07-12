@@ -286,11 +286,11 @@ export class MathParser {
             this.#consume();
             return new ConstantNode(TokenType.MATH_NAN, token.loc);
 
-         case TokenType.NUMBERN:
+         case TokenType.NUMBER:
             this.#consume();
             return new NumberNode(new RealNumber(token.value), token.loc);
 
-        case TokenType.NUMBERN:
+        case TokenType.COMPLEX_NUMBER:
              this.#consume();
              return new NumberNode(new ComplexNumber(0, token.value), token.loc);
 
