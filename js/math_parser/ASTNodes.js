@@ -390,6 +390,10 @@ export class PrintNode extends ASTNode {
     this.elements = elements;
   }
 
+  toString() {
+    
+  }
+
   evaluate(context) {
     return this.elements.map(element => {
       // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ
@@ -472,8 +476,6 @@ export class PrintNode extends ASTNode {
 
       return resultHtml;
     }).join('');
-
-
   }    
 }
 
