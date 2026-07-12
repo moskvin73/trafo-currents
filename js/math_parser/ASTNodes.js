@@ -87,19 +87,6 @@ export class UnaryOpNode extends ASTNode {
       return `${this.operator}${innerCode}`;
   }  
 
-  /*evaluate(context) {
-    const argVal = this.argument.evaluate(context);
-
-    if (this.operator === '+') {
-      return argVal; // Плюс ничего не меняет
-    }
-    if (this.operator === '-') {
-      // Унарный минус — это умножение комплексного числа на -1
-      return argVal.negate();
-    }
-    throw new Error(`[AST]: Неподдерживаемый унарный оператор "${this.operator}" на ${this.loc}`);
-  }*/
-
   toTeX() {
     const argTex = this.argument.toTeX();
     // Если аргумент — это бинарная операция со знаком (например, - (a + b)),
@@ -159,30 +146,6 @@ export class BinaryOpNode extends ASTNode {
 
     return `${leftCode}${this.operator}${rightCode}`;
   }
-  /*evaluate(context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
-    switch (this.operator) {
-      case '+': return l.add(r);
-      case '-': return l.subtract(r);
-      case '*': return l.multiply(r);
-      case '/': return l.divide(r);
-      case '^': return l.accuratePow(r);
-      default:
-        throw new Error(`[AST]: Неизвестный оператор "${this.operator}" на ${this.loc}`);
-    }   
-  }
-
-  toTeX() {
-    const l = this.left.toTeX();
-    const r = this.right.toTeX();
-    switch (this.operator) {
-      case '+': return `${l} + ${r}`;
-      case '-': return `${l} - ${r}`;
-      case '*': return `${l} \\cdot ${r}`;
-      case '/': return `\\frac{${l}}{${r}}`;
-      case '^': return `{${l}}^{${r}}`;
-    }
-  }*/
 }
 
 class StrictRightBinNode extends BinaryOpNode {
@@ -335,9 +298,7 @@ export class VariableNode extends ASTNode {
     throw new Error(`[AST]: Переменная "${this.name}" не определена в текущем контексте.`);
   }
 
-  toTeX() {
-    return this.name; // В LaTeX переменные выводятся своим именем
-  }
+  toTeX() { return this.name; }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
