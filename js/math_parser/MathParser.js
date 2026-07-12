@@ -296,7 +296,7 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-     const token = this.lookahead;
+    const token = this.lookahead;
 
     switch (token.type) {
         case TokenType.MATH_PI:
