@@ -536,6 +536,12 @@ export class ProgramNode {
     }
     return outputHTML;
   }
+
+  collectMathExpressions(list) {
+    // Обходим все аргументы функции, каждый из них может быть математикой
+    for (const stmt of this.statements) {
+      stmt.collectMathExpressions(list);
+  }  
 }
 
 /**
@@ -553,6 +559,12 @@ export class PrintNode extends ASTNode {
       return element.toString();
     }).join(', ') + ")";
   }
+
+  collectMathExpressions(list) {
+    // Обходим все аргументы функции, каждый из них может быть математикой
+    for (const stmt of this.elements) {
+      stmt.collectMathExpressions(list);
+  }  
 
   evaluate(context) {
     return this.elements.map(element => {
