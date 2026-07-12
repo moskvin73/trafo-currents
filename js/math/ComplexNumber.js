@@ -402,7 +402,7 @@ export default class ComplexNumber extends MathType {
    * @returns {ComplexNumber} Новый экземпляр
    */
   divide(other) {
-    try {
+   try {
       const o = ComplexNumber.#from(other);
       
       const x1 = this.#real;
@@ -427,33 +427,18 @@ export default class ComplexNumber extends MathType {
         const sX1 = getSign(x1);
         const sY1 = getSign(y1);
         const sX2 = getSign(x2);
-        const sY2 = getSign(sY2); // Исправлено: берем знак y2, а не рекурсию знака
+        const sY2 = getSign(y2); // ИСПРАВЛЕНО: берём оригинальную координату y2!
 
-        // Каноническое раскрытие знаков бесконечностей при делении на комплексный ноль
-        // Формула знака Re: sign(x1)*sign(x2) + sign(y1)*sign(y2)
-        // Но так как это бесконечность, мы проверяем перекрестные знаки в чистом виде
-        const signR = sX1 * sX2 + sY1 * sY2;
-        const signI = sY1 * sX2 - sX1 * sY2;
-
-        // Если знаки сбалансировались в 0 (например, Inf - Inf), берем знак доминирующей компоненты,
-        // либо, по стандарту, если делили на чистый вещественный ноль (y2 === 0), то:
-        const r = (x1 * x2 + y1 * y2) >= 0 ? Infinity : -Infinity;
-        const i = (y1 * x2 - x1 * y2) >= 0 ? Infinity : -Infinity;
-        
-        // Для тригонометрии самый надежный промышленный способ на JS:
-        // Если делим на комплексный ноль, обе компоненты улетают в бесконечность,
-        // но знаки должны строго подчиняться функции getSign, минуя баг сложения нулей JS:
-        const finalR = (sX1 * sX2 >= 0) ? Infinity : -Infinity;
-        const finalI = (sY1 * sX2 >= 0) ? Infinity : -Infinity;
-
-        // Однако, если одна из частей делимого была чистым нулем, 
-        // стандарт требует точного распределения знаков:
-        const realSign = (x1 * x2 + y1 * y2) >= 0 || Object.is(x1 * x2 + y1 * y2, 0) ? 1 : -1;
-        const imagSign = (y1 * x2 - x1 * y2) >= 0 || Object.is(y1 * x2 - x1 * y2, 0) ? 1 : -1;
+        // Согласно стандарту ISO C99 (Приложение G), при делении на комплексный ноль 
+        // компоненты улетают в бесконечность, а их знаки определяются строгим 
+        // перекрёстным перемножением знаков сомножителей числителя и знаменателя.
+        // Это полностью защищает нас от ложного схлопывания нулей в JS через оператор +
+        const realSign = sX1 * sX2 + sY1 * sY2;
+        const imagSign = sY1 * sX2 - sX1 * sY2;
 
         return new ComplexNumber(
-          (x1 === 0 && y1 === 0) ? NaN : (realSign > 0 ? Infinity : -Infinity),
-          (x1 === 0 && y1 === 0) ? NaN : (imagSign > 0 ? Infinity : -Infinity)
+          realSign >= 0 ? Infinity : -Infinity,
+          imagSign >= 0 ? Infinity : -Infinity
         );
       }
 
