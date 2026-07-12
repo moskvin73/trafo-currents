@@ -291,15 +291,15 @@ export class PowNode extends BinaryOpNode {
     let rightCode = this.right.toCode();
     const currentPriority = this.getPriority();
 
-    // Слева - строго меньше
     if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
     
-    // Справа - МЕНЬШЕ ИЛИ РАВЕН (ваше условие)
-    if (this.right.getPriority() <= currentPriority) rightCode = `(${rightCode})`;
+    const isRightUnary = this.right instanceof UnaryOpNode;
+
+    if (!isRightUnary && this.right.getPriority() < currentPriority) rightCode = `(${rightCode})`;
 
     return `${leftCode}${this.operator}${rightCode}`;
   }
-    
+
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.accuratePow(r);
