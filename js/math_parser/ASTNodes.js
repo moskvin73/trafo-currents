@@ -562,8 +562,12 @@ export class PrintNode extends ASTNode {
 
   collectMathExpressions(list) {
     // Обходим все аргументы функции, каждый из них может быть математикой
-    for (const stmt of this.elements) {
-      stmt.collectMathExpressions(list);
+    return this.elements.map(element => {
+      // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ
+      if (element.type !== 'TEXT_BLOCK') {
+        element.collectMathExpressions(list);
+      }
+    });
   }  
 
   evaluate(context) {
