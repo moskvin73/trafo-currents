@@ -294,7 +294,7 @@ export class PowNode extends BinaryOpNode {
   toTeX() {
     const l = this.left.toTeX();
     const r = this.right.toTeX();
-    return `\\frac{${l}}{${r}}`;
+    return `{${l}}^{${r}}`;
   }
 }
 
