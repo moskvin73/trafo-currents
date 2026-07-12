@@ -53,6 +53,8 @@ export class NumberNode extends ASTNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
+  toString() { return String(this.value); }
+
   evaluate(context) { return this.value; }
 
   toTeX() { return this.value.toRawTeX(); }
