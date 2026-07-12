@@ -106,12 +106,6 @@ export class UnaryOpNode extends ASTNode {
     const finalOperator = (signState.minusCount % 2 !== 0) ? '-' : '';
 
     return `${finalOperator}${argTex}`;
-
-    /*const argTex = this.argument.toTeX();
-    if (this.argument.getPriority() < this.getPriority()) {
-      argTex = `\\left(${argTex}\\right)`;
-    }
-    return `${this.operator}${argTex}`;*/
   }
 
   // Вспомогательный метод для размотки цепочки знаков +---++
