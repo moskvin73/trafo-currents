@@ -40,9 +40,7 @@ export class StatementNode {
     };
   }
 
-  toTeX() {
-    return this.node.toTeX();
-  }
+  toTeX() { return this.node.toTeX(); }
 }
 
 /**

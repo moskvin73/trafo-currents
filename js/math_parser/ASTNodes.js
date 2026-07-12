@@ -48,7 +48,7 @@ export default class ASTNode {
 export class NumberNode extends ASTNode {
   constructor(mathTypeValue, loc) {
     super(loc);
-    this.value = mathTypeValue; // Здесь может лежать и RealNumber, и ComplexNumber
+    this.value = mathTypeValue;
   }
 
   getPriority() { return OpPriority.PRIMARY; }
@@ -89,6 +89,10 @@ export class UnaryOpNode extends ASTNode {
 
   toTeX() {
     const argTex = this.argument.toTeX();
+    if (this.argument.getPriority() < this.getPriority()) {
+    {
+      argTex = `\\left(${argTex}\\right)`;
+    }
     // Если аргумент — это бинарная операция со знаком (например, - (a + b)),
     // в LaTeX могут понадобиться скобки. Но для простых узлов выводим как есть.
     return `${this.operator}${argTex}`;
