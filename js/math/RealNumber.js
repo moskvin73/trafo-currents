@@ -589,6 +589,32 @@ export default class RealNumber extends MathType {
   arccos() {
     const x = this.#value;
 
+    // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если значение NaN, строго возвращаем RealNumber(NaN)
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
+    // 1. Стандартный вещественный случай (внутри ОДЗ)
+    if (Math.abs(x) <= 1) {
+      return new RealNumber(Math.acos(x));
+    }
+
+    // 2. Фазовый переход для x > 1 (вещественная часть становится строго 0)
+    if (x > 1) {
+      // Для x > 1 мнимая часть ОБЯЗАНА быть отрицательной (-j)
+      const imagPart = -Math.log(x + Math.sqrt(x * x - 1));
+      return new ComplexNumber(0, imagPart);
+    }
+
+    // 3. Фазовый переход для x < -1 (вещественная часть становится строго PI)
+    // УСТРАНЯЕМ БАГ ЗНАКА: Для x < -1 мнимая часть ОБЯЗАНА быть строго ПОЛОЖИТЕЛЬНОЙ (+j)
+    // Математическое тождество: arccos(-x) = PI - arccos(x). 
+    // Поскольку для x > 1 мнимая часть отрицательна, для x < -1 она меняет знак на плюс!
+    // Проверим: arccos(-2) = PI - arccos(2) = PI - (0 - j*1.3169) = PI + j*1.3169.
+    // Ваш исходный код для x < -1 возвращал плюс, что СЛУЧАЙНО оказалось верным из-за компенсации знаков,
+    // но в Блоке 2 знак стоял минус. Проверим общую аналитическую непрерывность:
+    const imagPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+    return new ComplexNumber(Math.PI, imagPart);    
+    /*const x = this.#value;
+
     // 1. Стандартный вещественный случай
     if (Math.abs(x) <= 1) {
       return new RealNumber(Math.acos(x));
@@ -603,7 +629,7 @@ export default class RealNumber extends MathType {
     // 3. Фазовый переход для x < -1 (вещественная часть становится строго PI)
     // Симметричный разрез плоскости
     const imagPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
-    return new ComplexNumber(Math.PI, imagPart);
+    return new ComplexNumber(Math.PI, imagPart);*/
   }
 
   /**
@@ -611,7 +637,27 @@ export default class RealNumber extends MathType {
    * Область определения в вещественном поле: [1; +inf)
    */
   arccosh() {
-     const x = this.#value;
+    const x = this.#value;
+
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
+    // 1. Стандартный вещественный случай (x >= 1)
+    if (x >= 1) {
+      return new RealNumber(Math.acosh(x));
+    }
+
+    // 2. Фазовый переход на мнимую ось в интервале [-1; 1)
+    // Сюда идеально попадает ваш кейс x = -0.5
+    if (x > -1) {
+      const imagPart = Math.acos(x); // Для -0.5 это даст ровно 2.094395... (2*pi/3)
+      return new ComplexNumber(0, imagPart);
+    }
+
+    // 3. Фазовый переход для чисел строго левее критической точки (x <= -1)
+    // Здесь Re = ln(|x| + sqrt(x^2 - 1)), Im = PI. Все знаки и компоненты согласованы с ISO C99.
+    const realPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+    return new ComplexNumber(realPart, Math.PI);    
+     /*const x = this.#value;
 
     // 1. Стандартный вещественный случай (x >= 1)
     if (x >= 1) {
@@ -628,7 +674,7 @@ export default class RealNumber extends MathType {
     // 3. Фазовый переход для чисел строго левее критической точки (x <= -1)
     // Вот теперь под корнем гарантированно положительное число (например, для -2: 4 - 1 = 3)
     const realPart = Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
-    return new ComplexNumber(realPart, Math.PI);
+    return new ComplexNumber(realPart, Math.PI);*/
   } 
 
   /**
