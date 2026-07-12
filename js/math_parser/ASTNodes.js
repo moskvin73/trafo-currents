@@ -462,23 +462,28 @@ const PRECOMPUTED_CONSTANTS = {
 export const CONSTANTS_AST_REGISTRY = new Map([
   [TokenType.MATH_PI, {
     instance: PRECOMPUTED_CONSTANTS.PI,
-    tex: '\\pi'
+    tex: '\\pi',
+    str: '%pi'
   }],
   [TokenType.MATH_E, {
     instance: PRECOMPUTED_CONSTANTS.E,
-    tex: 'e'
+    tex: 'e',
+    str: '%e'
   }],
   [TokenType.MATH_PHI, {
     instance: PRECOMPUTED_CONSTANTS.PHI,
-    tex: '\\phi'
+    tex: '\\phi',
+    str: '%phi'
   }],
   [TokenType.MATH_INF, {
     instance: PRECOMPUTED_CONSTANTS.INF,
-    tex: '\\infty'
+    tex: '\\infty',
+    str: '%inf'
   }],
   [TokenType.MATH_NAN, {
     instance: PRECOMPUTED_CONSTANTS.NAN,
-    tex: '\\color{red}\\text{NaN}'
+    tex: '\\color{red}\\text{NaN}',
+    str: '%nan'
   }]
 ])
 
@@ -494,7 +499,7 @@ export class ConstantNode extends ASTNode {
 
   toString() {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
-    return config ? config.tex : "";
+    return config ? config.str : "";
   }
 
   evaluate(context) {
