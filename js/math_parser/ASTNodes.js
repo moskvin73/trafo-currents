@@ -371,6 +371,12 @@ export class ProgramNode {
     this.statements = [];
   }
 
+  toString() {
+    return this.statements
+          .map(statement => statement.toString())
+          .join('\n');
+  }
+
   evaluate(context = {}) {
     let outputHTML = "";
     for (const stmt of this.statements) {
