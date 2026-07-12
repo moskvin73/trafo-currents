@@ -323,7 +323,6 @@ export class MathParser {
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
     let token = this.lookahead;
-
     while (true) switch (token.type) {
         case TokenType.MATH_PI:
             this.#consume();
@@ -363,11 +362,16 @@ export class MathParser {
              return this.#callFuncORVar();
         default:
           this.#error(`Неожиданный математический символ "${token.value}"`, token.loc);
-          this.#consume();
-          while (!Primary_FALLOW.has(token.type)) this.#consume();
+          while (true)
+          {
+            this.#consume();
+            if (Primary_FIRST.has(token.type)) break;
+            if (Primary_FALLOW.has(token.type))
+            {
+              return new NumberNode(new RealNumber(1), token.loc);
+            }
+          }
           token = this.lookahead;
-          if (!Primary_FIRST.has(token.type)) return new NumberNode(new RealNumber(1), token.loc);
-        //default: throw new Error(`Неожиданный математический символ "${token.value}"`);
     }
   }
 
