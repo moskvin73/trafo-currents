@@ -691,7 +691,35 @@ export default class RealNumber extends MathType {
    * Область определения в вещественном поле строго (-1; 1)
    */
   arctanh() {
-    const x = this.#value;
+   const x = this.#value;
+
+    // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если значение NaN, строго возвращаем RealNumber(NaN)
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
+    // 1. Точки сингулярности (Асимптоты): arctanh(1) = +Infinity, arctanh(-1) = -Infinity
+    // Движок JS выполняет это идеально, но явный Fast Path экономит такты процессора
+    if (x === 1) return new RealNumber(Infinity);
+    if (x === -1) return new RealNumber(-Infinity);
+
+    // 2. Стандартный вещественный случай (-1 < x < 1)
+    // Math.atanh сохраняет знаки нулей: atanh(-0) = -0
+    if (Math.abs(x) < 1) {
+      return new RealNumber(Math.atanh(x));
+    }
+
+    // 3. ФАЗОВЫЕ ПЕРЕХОДЫ ДЛЯ |x| > 1
+    // Устраняем баг знака мнимой части и опечатку логарифма вещественной части строго по ISO C99.
+    // Каноническое комплексное представление: arctanh(x) = 0.5 * ln(|x+1| / |x-1|) - i * pi/2
+    
+    // Универсальная формула вещественной части, защищенная от генерации ложных NaN
+    const realPart = 0.5 * Math.log(Math.abs((x + 1) / (x - 1)));
+    
+    // Согласно стандарту ISO C99 (Приложение G), для вещественных чисел за пределами ОДЗ
+    // мнимая часть комплексного аретангенса всегда строго равна -pi/2
+    const imagPart = -Math.PI / 2;
+
+    return new ComplexNumber(realPart, imagPart);
+    /*const x = this.#value;
 
     // 1. Точки сингулярности (Асимптоты): arctanh(1) = +Infinity, arctanh(-1) = -Infinity
     if (x === 1) return new RealNumber(Infinity);
@@ -711,7 +739,7 @@ export default class RealNumber extends MathType {
     // 4. Фазовый переход для x < -1
     // Знаменатель и числитель меняются местами, чтобы под логарифмом было положительное число
     const realPart = 0.5 * Math.log((1 + x) / (1 - x));
-    return new ComplexNumber(realPart, Math.PI / 2);
+    return new ComplexNumber(realPart, Math.PI / 2);*/
   }  
   // #endregion
 
