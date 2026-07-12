@@ -163,29 +163,29 @@ export class MathParser {
     // Если скобка закрывается сразу, значит print() пустой
     if (this.lookahead.type !== TokenType.RPAREN) {
         while (true) {
-        if (this.lookahead.type === TokenType.TEXT_BLOCK) {
-            elements.push({ 
-            type: 'TEXT_BLOCK', 
-            value: this.lookahead.value 
-            });
-            this.#consume();
-        } else {
-            // Парсим полноценное математическое выражение (переменная, функция, операция)
-            elements.push(this.#parseExpression());
-        }
+          if (this.lookahead.type === TokenType.TEXT_BLOCK) {
+              elements.push({ 
+              type: 'TEXT_BLOCK', 
+              value: this.lookahead.value 
+              });
+              this.#consume();
+          } else {
+              // Парсим полноценное математическое выражение (переменная, функция, операция)
+              elements.push(this.#parseExpression());
+          }
 
-        // Если следующий токен — запятая, поглощаем её и продолжаем цикл
-        if (this.lookahead.type === TokenType.COMMA) {
-            this.#consume();
-            
-            // Проверка на trailing comma: если после запятой сразу закрывающая скобка
-            if (this.lookahead.type === TokenType.RPAREN) {
-            break; 
-            }
-        } else {
-            // Если запятой нет, то это должен быть конец списка аргументов
-            break;
-        }
+          // Если следующий токен — запятая, поглощаем её и продолжаем цикл
+          if (this.lookahead.type === TokenType.COMMA) {
+              this.#consume();
+              
+              // Проверка на trailing comma: если после запятой сразу закрывающая скобка
+              if (this.lookahead.type === TokenType.RPAREN) {
+              break; 
+              }
+          } else {
+              // Если запятой нет, то это должен быть конец списка аргументов
+              break;
+          }
         }
     }
 
