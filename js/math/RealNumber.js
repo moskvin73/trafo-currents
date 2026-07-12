@@ -250,8 +250,50 @@ export default class RealNumber extends MathType {
    * @param {number|RealNumber} nParam - степень корня
    */
   sqrt(nParam = 2) {
+    try {
+      // 1. Приведение типа через внутреннюю вещественную фабрику
+      const p = RealNumber.#from(nParam);
+      const n = p.#value; // Читаем приватное поле симметричного экземпляра
 
-    //const n = nParam instanceof RealNumber ? nParam.value : nParam;
+      const x = this.#value;
+
+      // 2. ПРЕДОХРАНИТЕЛЬ NaN: Если число или степень корни NaN — строго возвращаем RealNumber(NaN)
+      if (Number.isNaN(x) || Number.isNaN(n)) {
+        return new RealNumber(NaN);
+      }
+
+      // 3. ОПТИМИЗАЦИЯ 1: КВАДРАТНЫЙ КОРЕНЬ (n === 2)
+      // Заменяем хрупкое сравнение expValue === 0.5 на прямое сравнение степени
+      if (n === 2) {
+        if (x >= 0) {
+          return new RealNumber(Math.sqrt(x));
+        }
+        // ФАЗОВЫЙ ПЕРЕХОД по стандарту ISO C99 (Приложение G):
+        // Главное значение корня из отрицательного вещественного числа всегда имеет ПОЛОЖИТЕЛЬНУЮ мнимую часть (+j)
+        return new ComplexNumber(0, Math.sqrt(Math.abs(x)));
+      }
+
+      // 4. ОПТИМИЗАЦИЯ 2: КОРЕНЬ 1-й СТЕПЕНИ (n === 1)
+      if (n === 1) {
+        return this;
+      }
+
+      // 5. ОПТИМИЗАЦИЯ 3: ВОЗВЕДЕНИЕ В КВАДРАТ (n === 0.5)
+      if (n === 0.5) {
+        return new RealNumber(x * x);
+      }
+
+      // 6. ОБЩИЙ СЛУЧАЙ ДЛЯ ВСЕХ ОСТАЛЬНЫХ СТЕПЕНЕЙ КОРНЯ (n = 3, 4, 0, ...)
+      // Вычисляем экспоненту степени: 1 / n. 
+      // Если n === 0, JS вернет Infinity, и метод accuratePow обработает это строго по IEEE 754 без throw.
+      const expValue = 1 / n;
+
+      return this.accuratePow(new RealNumber(expValue));
+
+    } catch (e) {
+      throw new Error(`[RealNumber]: Ошибка в методе .sqrt(). ${e.message}`);
+    }
+    /*//const n = nParam instanceof RealNumber ? nParam.value : nParam;
     const n = RealNumber.#from(nParam).#value;
 
     if (n === 0) {
@@ -282,7 +324,7 @@ export default class RealNumber extends MathType {
 
     // ОБЩИЙ СЛУЧАЙ ДЛЯ ВСЕХ ОСТАЛЬНЫХ СТЕПЕНЕЙ КОРНЯ (n = 3, 4, ...)
     // Передаем объект степени в ваш точный метод точного возведения в степень
-    return this.accuratePow(new RealNumber(expValue));
+    return this.accuratePow(new RealNumber(expValue));*/
   }
   
   /**
