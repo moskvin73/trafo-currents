@@ -282,13 +282,6 @@ export class PrintNode extends ASTNode {
           continue;
         }
 
-        // --- Стандартные альтернативные LaTeX-разделители ---
-        /*if (rawText.startsWith("\\[", i) || rawText.startsWith("\\]", i)) {
-          throw new Error(
-            "Используйте стандартные разделители '$$' вместо '\\[' и '\\]'."
-          );
-        }*/
-
         // Экранируем стандартные HTML-символы, чтобы не сломать DOM
         let char = rawText[i];
         if (char === '&') char = '&amp;';
