@@ -268,6 +268,32 @@ export class MathParser {
     return expr;
   }
 
+  static Primary_FIRST = Object.freeze(new Set([
+    TokenType.MATH_PI,
+    TokenType.MATH_E,
+    TokenType.MATH_PHI,
+    TokenType.MATH_INF,
+    TokenType.MATH_NAN,
+    TokenType.NUMBER,
+    TokenType.COMPLEX_NUMBER,
+    TokenType.LPAREN,
+    TokenType.VARIABLE,
+  ]));
+
+  static Primary_FALLOW = Object.freeze(new Set([
+    TokenType.EOF,
+    TokenType.SEMICOLON,
+    TokenType.SILENT,
+    TokenType.PARENR,
+    TokenType.POW,
+    TokenType.MUL,
+    TokenType.DIV,
+    TokenType.PLUS,
+    TokenType.MINUS,
+    TokenType.ASSIGN,
+    TokenType.COMMA,
+  ]));
+
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
      const token = this.lookahead;

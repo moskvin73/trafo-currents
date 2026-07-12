@@ -9,7 +9,7 @@ export const TokenType = Object.freeze({
   POW: 7,            // ^ или **
   ASSIGN: 8,         // = 
   LPAREN: 9,         // (
-  RPAREN: 10,        // )
+  PARENR: 10,        // )
   VARIABLE: 11,      // Переменные
   TEXT_BLOCK: 12,    // "строка"
   COMMENT: 13,        // // комментарий
