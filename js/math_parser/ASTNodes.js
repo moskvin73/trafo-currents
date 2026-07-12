@@ -310,7 +310,7 @@ export class DivNode extends StrictRightBinNode {
     }
 
     // 3. Случай: Наткнулись на умножение (если класс MulNode/ProdNode определен)
-    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
+    if (node instanceof MulNode) {
       this._collectFactors(node.left, isInverted, nums, dens, signState);
       this._collectFactors(node.right, isInverted, nums, dens, signState);
       return;
