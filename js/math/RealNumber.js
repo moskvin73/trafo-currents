@@ -827,6 +827,19 @@ export default class RealNumber extends MathType {
    * Стандартный строковый вывод
    */
   toString() {
-    return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : this.#value}`;
+    const val = this.#value;
+
+    if (Number.isNaN(val)) return 'NaN';
+    if (!isFinite(val)) return val.toString(); // Вернет 'Infinity' или '-Infinity'
+
+    // Фильтрация погрешностей для строк
+    let cleanVal = val;
+    if (Math.abs(val) < MathType.EPSILON) {
+      cleanVal = Object.is(val, -0) || val < 0 ? -0 : 0;
+    }
+
+    if (Object.is(cleanVal, -0)) return '-0';
+    return `${cleanVal}`;    
+    //return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : this.#value}`;
   }
 }
