@@ -366,13 +366,13 @@ export class MathParser {
           while (true)
           {
             this.#consume();
+            token = this.lookahead;
             if (this.Primary_FIRST.has(token.type)) break;
             if (this.Primary_FALLOW.has(token.type))
             {
               return new NumberNode(new RealNumber(1), token.loc);
             }
           }
-          token = this.lookahead;
     }
   }
 
