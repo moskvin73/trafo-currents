@@ -292,37 +292,47 @@ export class DivNode extends StrictRightBinNode {
 
   // Рекурсивный сборщик со знаком инверсии
   _collectFactors(node, isInverted, nums, dens, signState) {
-    // 1. Случай: Наткнулись на унарную операцию (+ или -)
+    // 1. Обработка унарных операций (+ / -)
     if (node instanceof UnaryOpNode) {
-      if (node.operator === '-') {
-        signState.minusCount++; // Фиксируем минус
+      // Если внутри унарного знака сидит выражение с низким приоритетом (сложение/вычитание),
+      // мы не имеем права выносить этот знак наружу всей дроби.
+      if (node.argument.getPriority?.() < OpPriority.MUL_DIV) {
+        if (isInverted) dens.push(node); else nums.push(node);
+        return;
       }
-      // Для унарного плюса ничего не делаем, просто проваливаемся глубже
+
+      // Если это минус, инкрементируем глобальный счетчик знаков дроби
+      if (node.operator === '-') {
+        signState.minusCount++;
+      }
+      
+      // Проваливаемся дальше по цепочке унарных операций (разматываем +---++)
       this._collectFactors(node.argument, isInverted, nums, dens, signState);
       return;
     }
 
-    // 2. Случай: Наткнулись на деление
+    // 2. Бинарное ДЕЛЕНИЕ
     if (node instanceof DivNode) {
       this._collectFactors(node.left, isInverted, nums, dens, signState);
       this._collectFactors(node.right, !isInverted, nums, dens, signState);
       return;
     }
 
-    // 3. Случай: Наткнулись на умножение (если класс MulNode/ProdNode определен)
-    if (node instanceof MulNode) {
+    // 3. Бинарное УМНОЖЕНИЕ (добавьте, когда создадите класс умножения)
+    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
       this._collectFactors(node.left, isInverted, nums, dens, signState);
       this._collectFactors(node.right, isInverted, nums, dens, signState);
       return;
     }
 
-    // 4. База рекурсии: складываем узел как неделимый элемент
+    // 4. База рекурсии: обычный изолированный узел (число, переменная, функция)
+    // Мы дошли до конца цепочки знаков для данного фактора.
     if (isInverted) {
       dens.push(node);
     } else {
       nums.push(node);
     }
-  }  
+  }
 }
 
 export class PowNode extends BinaryOpNode {
