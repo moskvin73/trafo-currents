@@ -225,7 +225,7 @@ export class AddNode extends BinaryOpNode {
   }
 }
 
-export class SubNode extends BinaryOpNode {
+export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
   }
@@ -263,7 +263,7 @@ export class MulNode extends BinaryOpNode {
   }
 }
 
-export class DivNode extends BinaryOpNode {
+export class DivNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
   }
