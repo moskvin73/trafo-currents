@@ -75,6 +75,11 @@ export class MathParser {
     throw new Error(`${errorMessage} на ${this.lookahead.loc}`);
   }
 
+  #error(message, loc) {
+    const err = new CompilerError(message, loc);
+    this.errors.push(err);
+  }
+
   /**
    * Главный метод запуска LL(1) анализа
    */
