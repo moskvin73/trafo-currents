@@ -32,7 +32,7 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   // Универсальная таблица приведения по имени типа
-  static #converters = new Map([
+  static #localConverters = new Map([
     ['number',        (val) => new RealNumber(val)],
     [RealNumber,      (val) => val]
     // Перспектива: легко добавить новые типы прямо по их имени:
@@ -40,13 +40,14 @@ export default class RealNumber extends MathType {
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
   ]);
 
+  static get converters() { return RealNumber.#localConverters; }
   /** 
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
    * @param {number|RealNumber} value 
    * @returns {RealNumber}
    */
-  static #from(value) {
+  /*static #from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
     if (value === null || value === undefined) {
       throw new TypeError(`[RealNumber]: Невозможно привести ${value} к комплексному числу.`);
@@ -66,16 +67,7 @@ export default class RealNumber extends MathType {
     }
 
     return convert(value);
-    // 5. Вызываем конвертер
-    /*const result = convert(value);
-
-    // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
-    if (result instanceof RealNumber && !Number.isNaN(result.value)) {
-      return result;
-    }
-
-    throw new TypeError(`[RealNumber]: Ошибка валидации приведения для типа "${typeKey}".`);*/
-  }  
+  }*/
 
   // ==========================================
   // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
