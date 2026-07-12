@@ -24,6 +24,10 @@ export default class ASTNode {
    * @param {SourceLocation} loc - Координаты токена в исходном коде
    */
   constructor(loc) {
+    // 1. Защита от прямого создания экземпляра Base класса
+    if (this.constructor === ASTNode) {
+      throw new TypeError("[ASTNode]: Нельзя создать экземпляр абстрактного базового класса.");
+    }    
     this.loc = loc;
   }
 
@@ -42,10 +46,20 @@ export default class ASTNode {
   }
 }
 
+
+export class MathNode extends ASTNode {
+  constructor(loc) {
+    super(loc);
+    if (this.constructor === MathNode) {
+      throw new TypeError("[MathNode]: Нельзя создать экземпляр абстрактного базового класса.");
+    }
+  }
+}
+
 /**
  * Узел числа (Терминальный узел / Лист дерева)
  */
-export class NumberNode extends ASTNode {
+export class NumberNode extends MathNode {
   constructor(mathTypeValue, loc) {
     super(loc);
     this.value = mathTypeValue;
@@ -63,7 +77,7 @@ export class NumberNode extends ASTNode {
 /**
  * Узел унарной операции (например: -x, +sin(i))
  */
-export class UnaryOpNode extends ASTNode {
+export class UnaryOpNode extends MathNode {
   /**
    * @param {string} operator - '+' или '-'
    * @param {ASTNode} argument - Узел, к которому применяется операция
@@ -156,7 +170,7 @@ const dispatcher = new SemanticDispatcher();
 /**
  * Узел бинарной операции (+, -, *, /, ^)
  */
-export class BinaryOpNode extends ASTNode {
+export class BinaryOpNode extends MathNode {
   constructor(left, operator, right, loc) {
     super(loc);
     this.left = left;
@@ -441,7 +455,7 @@ export class PowNode extends BinaryOpNode {
 /**
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
-export class VariableNode extends ASTNode {
+export class VariableNode extends MathNode {
   constructor(name, loc) {
     super(loc);
     this.name = name;
@@ -463,7 +477,7 @@ export class VariableNode extends ASTNode {
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
-export class AssignNode extends ASTNode {
+export class AssignNode extends MathNode {
   constructor(name, expression, loc) {
     super(loc);
     this.name = name;
@@ -648,7 +662,7 @@ export const CONSTANTS_AST_REGISTRY = new Map([
   }]
 ])
 
-export class ConstantNode extends ASTNode {
+export class ConstantNode extends MathNode {
   #tokenType;
 
   constructor(tokenType, loc) {
@@ -750,7 +764,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
   ['arg',    { tex: '\\arg' }]  // Аргумент комплексного числа
 ]);
 
-export class CallNode extends ASTNode {
+export class CallNode extends MathNode {
   constructor(name, args, loc) {
     super(loc);
     this.name = name; // Имя функции (строка)
