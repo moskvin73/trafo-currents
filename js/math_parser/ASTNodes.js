@@ -314,7 +314,7 @@ export class PowNode extends BinaryOpNode {
 
   toTeX() {
     let l = this.left.toTeX();
-    if (this.left.getPriority() < this.getPriority();) l = `\\left(${l}\\right)`;
+    if (this.left.getPriority() < this.getPriority()) l = `\\left(${l}\\right)`;
     const r = this.right.toTeX();
     return `{${l}}^{${r}}`;
   }
