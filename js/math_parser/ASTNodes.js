@@ -90,11 +90,8 @@ export class UnaryOpNode extends ASTNode {
   toTeX() {
     const argTex = this.argument.toTeX();
     if (this.argument.getPriority() < this.getPriority()) {
-    {
       argTex = `\\left(${argTex}\\right)`;
     }
-    // Если аргумент — это бинарная операция со знаком (например, - (a + b)),
-    // в LaTeX могут понадобиться скобки. Но для простых узлов выводим как есть.
     return `${this.operator}${argTex}`;
   }
 }
@@ -109,6 +106,11 @@ export class UnaryOpNodePlus extends UnaryOpNode {
   }
 
   evaluate(context) { return this.argument.evaluate(context); }
+
+  toTeX() {
+    const argTex = this.argument.toTeX();
+    return `${this.operator}${argTex}`;
+  }
 }
 
 export class UnaryOpNodeMinus extends UnaryOpNode {
@@ -150,6 +152,17 @@ export class BinaryOpNode extends ASTNode {
 
     return `${leftCode}${this.operator}${rightCode}`;
   }
+
+  toTeX() {
+    let leftCode = this.left.toTeX();
+    let rightCode = this.right.toTeX();
+    const currentPriority = this.toTeX();
+
+    if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
+    if (this.right.getPriority() < currentPriority) rightCode = `\\left(${rightCode}\\right)`;
+
+    return this.simpleTeX(leftCode, rightCode);
+  }
 }
 
 class StrictRightBinNode extends BinaryOpNode {
@@ -169,6 +182,17 @@ class StrictRightBinNode extends BinaryOpNode {
     if (this.right.getPriority() <= currentPriority) rightCode = `(${rightCode})`;
 
     return `${leftCode}${this.operator}${rightCode}`;
+  }
+
+  toTeX() {
+    let leftCode = this.left.toTeX();
+    let rightCode = this.right.toTeX();
+    const currentPriority = this.toTeX();
+
+    if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
+    if (this.right.getPriority() <= currentPriority) rightCode = `\\left(${rightCode}\\right)`;
+
+    return this.simpleTeX(leftCode, rightCode);
   }
 }
 
