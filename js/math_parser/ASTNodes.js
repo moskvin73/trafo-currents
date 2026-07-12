@@ -184,6 +184,115 @@ export class BinaryOpNode extends ASTNode {
     if (this.right.getPriority() < currentPriority) rightCode = `\\left(${rightCode}\\right)`;
 
     return this.simpleTeX(leftCode, rightCode);
+  }
+
+  /**
+   * Общий метод для красивого книжного рендеринга умножения и деления.
+   * Дочерние классы (MulNode, DivNode) будут просто вызывать его.
+   */
+  _renderFractionChain() {
+    const nums = [];
+    const dens = [];
+    const signState = { minusCount: 0 };
+
+    // Запускаем сборку факторов, начиная с самого себя (this)
+    this._collectFactors(this, false, nums, dens, signState);
+
+    // Умная функция сборки элементов на строке без лишних точек умножения
+    const joinFactors = (nodes) => {
+      if (nodes.length === 0) return '';
+      
+      let resultTeX = '';
+
+      for (let i = 0; i < nodes.length; i++) {
+        const currentNode = nodes[i];
+        let currentTeX = currentNode.toTeX();
+
+        // Защита скобками: если приоритет ниже умножения (например, сложение или комплексное число)
+        if (currentNode.getPriority?.() < OpPriority.MUL_DIV) {
+          currentTeX = `\\left(${currentTeX}\\right)`;
+        }
+
+        if (i === 0) {
+          resultTeX = currentTeX;
+        } else {
+          const leftStr = resultTeX.trim();
+          const rightStr = currentTeX.trim();
+
+          // Регулярные выражения проверяют стык строк на наличие цифр
+          const endsWithDigit = /[0-9]$/.test(leftStr);
+          const startsWithDigit = /^[0-9]/.test(rightStr);
+          const startsWithTeXConstant = /^\\[a-zA-Z]/.test(rightStr);
+
+          let needDot = false;
+          if (endsWithDigit && startsWithDigit) {
+            needDot = true; // Число * Число -> нужна точка
+          } else if (endsWithDigit && startsWithTeXConstant) {
+            needDot = true; // Число * \pi -> нужна точка
+          }
+
+          // Склеиваем: либо точкой \cdot, либо красивым пробелом для символьных переменных
+          if (needDot) {
+            resultTeX += ` \\cdot ${currentTeX}`;
+          } else {
+            resultTeX += ` ${currentTeX}`;
+          }
+        }
+      }
+      return resultTeX;
+    };
+
+    // Выносим глобальный знак
+    const globalSign = (signState.minusCount % 2 !== 0) ? '- ' : '';
+
+    // КРАЙНИЙ КЕЙС: Если в цепочке вообще НЕ БЫЛО делений (например, выражение вида A * B * C)
+    // То рисовать \frac{}{} не нужно. Рендерим просто красивую строчку умножения.
+    if (dens.length === 0) {
+      return `${globalSign}${joinFactors(nums)}`;
+    }
+
+    // Если знаменатель есть, строим профессиональную дробь
+    const numTeX = joinFactors(nums);
+    const denTeX = joinFactors(dens);
+
+    return `${globalSign}\\frac{${numTeX}}{${denTeX}}`;
+  }
+
+  // Единый рекурсивный сборщик факторов для всех видов бинарных узлов умножения/деления
+  _collectFactors(node, isInverted, nums, dens, signState) {
+    // 1. Обработка унарных операций (+ / -)
+    if (node instanceof UnaryOpNode) {
+      if (node.argument.getPriority?.() < OpPriority.MUL_DIV) {
+        if (isInverted) dens.push(node); else nums.push(node);
+        return;
+      }
+      if (node.operator === '-') {
+        signState.minusCount++;
+      }
+      this._collectFactors(node.argument, isInverted, nums, dens, signState);
+      return;
+    }
+
+    // 2. Бинарное ДЕЛЕНИЕ (Разворачиваем правую ветку)
+    if (node instanceof DivNode) {
+      this._collectFactors(node.left, isInverted, nums, dens, signState);
+      this._collectFactors(node.right, !isInverted, nums, dens, signState);
+      return;
+    }
+
+    // 3. Бинарное УМНОЖЕНИЕ (Сохраняем текущее направление)
+    if (node instanceof MulNode) {
+      this._collectFactors(node.left, isInverted, nums, dens, signState);
+      this._collectFactors(node.right, isInverted, nums, dens, signState);
+      return;
+    }
+
+    // 4. База рекурсии: обычный изолированный узел (число, переменная, функция)
+    if (isInverted) {
+      dens.push(node);
+    } else {
+      nums.push(node);
+    }
   }  
 }
 
