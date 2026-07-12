@@ -391,7 +391,10 @@ export class PrintNode extends ASTNode {
   }
 
   toString() {
-    
+    return "print (" + this.elements.map(element => {
+      if (element.type == 'TEXT_BLOCK') element.value;
+      return element.toString();
+    }).join(', ') + ")";
   }
 
   evaluate(context) {
@@ -402,7 +405,7 @@ export class PrintNode extends ASTNode {
         // Математика всегда возвращается как инлайн-формула
         return `$${evaluatedValue.toRawTeX()}$`;
       }
-
+ 
       // 2. ОБРАБОТКА ТЕКСТОВЫХ БЛОКОВ С ВАЛИДАЦИЕЙ И ЭКРАНИРОВАНИЕМ
       const rawText = element.value;
       let resultHtml = "";
