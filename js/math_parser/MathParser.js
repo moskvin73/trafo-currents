@@ -108,7 +108,6 @@ export class MathParser {
     TokenType.EOF,
     TokenType.SEMICOLON,
     TokenType.SILENT,
-    TokenType.PARENR,
   ]));
 
   static Expr_FIRST = Object.freeze(new Set([
