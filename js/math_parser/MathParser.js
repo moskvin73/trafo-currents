@@ -55,8 +55,7 @@ export class MathParser {
   constructor(input, baseLine = 1, baseColumn = 1) {
     this.errors = [];
     this.lexer = new MathLexer(input, this.errors, baseLine, baseColumn);
-    this.lookahead = null; // Тот самый ЕДИНСТВЕННЫЙ первый токен LL(1)
-    
+    this.lookahead = null;
     // Инициализируем lookahead первым токеном из потока
     this.#consume();
   }
