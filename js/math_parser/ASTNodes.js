@@ -150,8 +150,8 @@ export class BinaryOpNode extends ASTNode {
   }
 
   toString() {
-    let leftCode = this.left.toCode();
-    let rightCode = this.right.toCode();
+    let leftCode = this.left.toString();
+    let rightCode = this.right.toString();
     const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
@@ -191,8 +191,8 @@ class StrictRightBinNode extends BinaryOpNode {
   }
 
   toString() {
-    let leftCode = this.left.toCode();
-    let rightCode = this.right.toCode();
+    let leftCode = this.left.toString();
+    let rightCode = this.right.toString();
     const currentPriority = this.getPriority();
 
     // Слева - строго меньше
@@ -289,8 +289,8 @@ export class PowNode extends BinaryOpNode {
   getPriority() { return OpPriority.POW; }
 
   toString() {
-    let leftCode = this.left.toCode();
-    let rightCode = this.right.toCode();
+    let leftCode = this.left.toString();
+    let rightCode = this.right.toString();
     const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
