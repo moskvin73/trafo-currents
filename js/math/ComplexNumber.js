@@ -329,7 +329,7 @@ export default class ComplexNumber extends MathType {
    */
   multiply(other) {
     try {
-      // 0. Строгое приведение типов через вашу фабрику
+      // 0. Строгое приведение типов через фабрику класса
       const o = ComplexNumber.#from(other);
 
       const a = this.#real;
@@ -359,30 +359,34 @@ export default class ComplexNumber extends MathType {
         const isOtherInf = !isFinite(c) || !isFinite(d);
 
         if (isThisInf || isOtherInf) {
-          // Если мы умножаем бесконечность на ноль (или NaN), стандарт ISO C99 требует
-          // превратить все неопределенные промежуточные произведения (NaN) в чистые нули,
-          // чтобы они не уничтожили знаки доминирующих бесконечностей.
+          // Запоминаем, в каких направлениях изначально содержалась настоящая бесконечность,
+          // до того, как мы превратим NaN в нули. 
+          // В JS выражения Infinity * 1 или Infinity * Infinity дают честную бесконечность.
+          const hasRealInf = !isFinite(a * c) || !isFinite(b * d);
+          const hasImagInf = !isFinite(b * c) || !isFinite(a * d);
+
+          // Согласно стандарту ISO C99, превращаем все неопределенные промежуточные 
+          // произведения (NaN от операции 0 * Infinity) в чистые нули.
           ac = Number.isNaN(ac) ? 0 : ac;
           bd = Number.isNaN(bd) ? 0 : bd;
           bc = Number.isNaN(bc) ? 0 : bc;
           ad = Number.isNaN(ad) ? 0 : ad;
 
-          // Пересчитываем компоненты со сброшенными NaN
+          // Пересчитываем компоненты со сброшенными в 0 значениями NaN
           r = ac - bd;
           i = bc + ad;
 
-          // Направляем бесконечности строго по знакам, исключая "полу-конечные" состояния
-          // Результатом умножения бесконечного вектора всегда является бесконечный вектор
           const getSign = (val) => (val === 0 ? (1 / val === -Infinity ? -1 : 1) : Math.sign(val));
           
-          // Финальное распределение знаков направленных бесконечностей
-          const finalR = !isFinite(r) ? r : (getSign(r) * Infinity);
-          const finalI = !isFinite(i) ? i : (getSign(i) * Infinity);
+          // Бесконечность присваивается ТОЛЬКО той компоненте, где был бесконечный сомножитель.
+          // Если компонента после очистки от NaN стала конечной (например, r = 0), она ОБЯЗАНА остаться конечной.
+          const finalR = !isFinite(r) ? r : (hasRealInf ? getSign(r) * Infinity : r);
+          const finalI = !isFinite(i) ? i : (hasImagInf ? getSign(i) * Infinity : i);
 
           return new ComplexNumber(finalR, finalI);
         }
 
-        // Если бесконечностей на входе не было, значит NaN легитимен (например, операции с NaN)
+        // Если бесконечностей на входе не было, значит NaN легитимен
         return new ComplexNumber(NaN, NaN);
       }
 
