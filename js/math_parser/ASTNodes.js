@@ -9,8 +9,8 @@ import { TokenType } from './TokenTypes.js';
 
 const OpPriority = {
     ASSIGN: 1,       // '='
-    ADD: 2, SUB: 2,  // '+', '-'
-    MUL: 3, DIV: 3,  // '*', '/'
+    ADD_SUB: 2,  // '+', '-'
+    MUL_DIV: 3,  // '*', '/'
     UNARY: 4,        // унарные '+' и '-'
     POW: 5,          // '^'
     PRIMARY: 6       // Числа, переменные
@@ -187,6 +187,8 @@ export class AddNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '+', right, loc);
   }
+
+  getPriority() { return OpPriority.ADD_SUB; }
 
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
