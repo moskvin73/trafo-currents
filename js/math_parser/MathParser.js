@@ -154,19 +154,22 @@ export class MathParser {
   ]));
 
   #parsePrintStatement() {
+    const elements = [];
+
     const printToken = this.lookahead;
     this.#consume();
-    this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print");
-
-    const elements = [];
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
+      while (!parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+      return new PrintNode(elements, printToken.loc);
+    }
 
     // Если скобка закрывается сразу, значит print() пустой
     if (this.lookahead.type !== TokenType.RPAREN) {
         while (true) {
           if (this.lookahead.type === TokenType.TEXT_BLOCK) {
               elements.push({ 
-              type: 'TEXT_BLOCK', 
-              value: this.lookahead.value 
+                type: 'TEXT_BLOCK', 
+                value: this.lookahead.value 
               });
               this.#consume();
           } else {
@@ -189,7 +192,10 @@ export class MathParser {
         }
     }
 
-    this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print");
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+    }
     return new PrintNode(elements, printToken.loc);
   }
 
