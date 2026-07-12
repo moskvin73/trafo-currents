@@ -162,7 +162,7 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   // Универсальная таблица приведения по имени типа
-  static #converters = new Map([
+  static #localConverters = new Map([
     [ComplexNumber, (val) => val],
     ['number',        (val) => new ComplexNumber(val, 0)],
     [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
@@ -171,13 +171,14 @@ export default class ComplexNumber extends MathType {
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
   ]);
 
+  static get converters() { return ComplexNumber.#localConverters; }
   /** 
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
    * @param {ComplexNumber|number|RealNumber} value 
    * @returns {ComplexNumber}
    */
-  static #from(value) {
+  /*static #from(value) {
     // 1. Защита от null/undefined, чтобы безопасно читать свойства
     if (value === null || value === undefined) {
       throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
@@ -195,18 +196,8 @@ export default class ComplexNumber extends MathType {
       const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
       throw new TypeError(`[ComplexNumber]: Тип "${typeName}" не поддерживается для приведения.`);
     }
-
-    // 5. Вызываем конвертер
-    //const result = convert(value);
     return convert(value);
-
-    // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
-    /*if (result instanceof ComplexNumber) {// && !Number.isNaN(result.real) && !Number.isNaN(result.imag)) {
-      return result;
-    }
-
-    throw new TypeError(`[ComplexNumber]: Ошибка валидации приведения для типа "${typeKey}".`);*/
-  }
+  }*/
 
   // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
   // ==========================================
