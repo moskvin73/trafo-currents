@@ -293,21 +293,7 @@ export default class ComplexNumber extends MathType {
    * @returns {ComplexNumber} Новый экземпляр
    */
   subtract(other) {
-    try {
-      const o = ComplexNumber.#from(other);
-      return new ComplexNumber(this.#real - o.real, this.#imaginary - o.imaginary);
-    } catch (e) {
-      throw new TypeError(`[ComplexNumber]: Ошибка в методе .subtract(). ${e.message}`);
-    }
-  }
-
-  /**
-   * Умножение: (a + bi) * (c + di) = (ac - bd) + (bc + ad)i
-   * @param {ComplexNumber|number} other 
-   * @returns {ComplexNumber} Новый экземпляр
-   */
-  multiply(other) {
-    try {
+     try {
       const o = ComplexNumber.#from(other);
       
       const r1 = this.#real;
@@ -333,6 +319,78 @@ export default class ComplexNumber extends MathType {
       return new ComplexNumber(realResult, imagResult);
     } catch (e) {
       throw new TypeError(`[ComplexNumber]: Ошибка в методе .subtract(). ${e.message}`);
+    }
+  }
+
+  /**
+   * Умножение: (a + bi) * (c + di) = (ac - bd) + (bc + ad)i
+   * @param {ComplexNumber|number} other 
+   * @returns {ComplexNumber} Новый экземпляр
+   */
+  multiply(other) {
+    try {
+      // 0. Строгое приведение типов через вашу фабрику
+      const o = ComplexNumber.#from(other);
+
+      const a = this.#real;
+      const b = this.#imaginary;
+      const c = o.real;
+      const d = o.imaginary;
+
+      // 1. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем (NaN, NaN)
+      if (Number.isNaN(a) || Number.isNaN(b) || Number.isNaN(c) || Number.isNaN(d)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 2. Рассчитываем базовые произведения по стандартной формуле
+      let ac = a * c;
+      let bd = b * d;
+      let bc = b * c;
+      let ad = a * d;
+
+      let r = ac - bd;
+      let i = bc + ad;
+
+      // 3. ОБРАБОТКА БЕСКОНЕЧНОСТЕЙ (Устраняем ложные NaN по стандарту ISO C99)
+      // Если в процессе умножения получился NaN (например, из-за операции 0 * Infinity),
+      // но при этом изначально хотя бы ОДНО число было бесконечным — результат ОБЯЗАН быть бесконечным!
+      if (Number.isNaN(r) || Number.isNaN(i)) {
+        const isThisInf = !isFinite(a) || !isFinite(b);
+        const isOtherInf = !isFinite(c) || !isFinite(d);
+
+        if (isThisInf || isOtherInf) {
+          // Если мы умножаем бесконечность на ноль (или NaN), стандарт ISO C99 требует
+          // превратить все неопределенные промежуточные произведения (NaN) в чистые нули,
+          // чтобы они не уничтожили знаки доминирующих бесконечностей.
+          ac = Number.isNaN(ac) ? 0 : ac;
+          bd = Number.isNaN(bd) ? 0 : bd;
+          bc = Number.isNaN(bc) ? 0 : bc;
+          ad = Number.isNaN(ad) ? 0 : ad;
+
+          // Пересчитываем компоненты со сброшенными NaN
+          r = ac - bd;
+          i = bc + ad;
+
+          // Направляем бесконечности строго по знакам, исключая "полу-конечные" состояния
+          // Результатом умножения бесконечного вектора всегда является бесконечный вектор
+          const getSign = (val) => (val === 0 ? (1 / val === -Infinity ? -1 : 1) : Math.sign(val));
+          
+          // Финальное распределение знаков направленных бесконечностей
+          const finalR = !isFinite(r) ? r : (getSign(r) * Infinity);
+          const finalI = !isFinite(i) ? i : (getSign(i) * Infinity);
+
+          return new ComplexNumber(finalR, finalI);
+        }
+
+        // Если бесконечностей на входе не было, значит NaN легитимен (например, операции с NaN)
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 4. Обычный расчет для конечных чисел
+      return new ComplexNumber(r, i);
+
+    } catch (e) {
+      throw new TypeError(`[ComplexNumber]: Ошибка в методе .multiply(). ${e.message}`);
     }
   }
 
