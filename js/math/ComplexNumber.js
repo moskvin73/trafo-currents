@@ -546,35 +546,29 @@ export default class ComplexNumber extends MathType {
    * @returns {ComplexNumber}
    */
   exp() {
-    try {
+   try {
       const x = this.#real;
       const y = this.#imaginary;
 
-      // 0. ПРЕДОХРАНИТЕЛЬ: Если одна из компонент NaN, а вторая конечна — строго возвращаем (NaN, NaN)
-      if (Number.isNaN(x) || Number.isNaN(y)) {
-        // Исключение по ISO C99: exp(±Infinity + i*NaN) должно порождать специфические бесконечности,
-        // но для стабильности математического ядра общего назначения (NaN, NaN) — самый безопасный выбор.
-        return new ComplexNumber(NaN, NaN);
-      }
-
-      // 1. Пограничный случай: реальная часть равна минус бесконечности
+      // 1. КРИТИЧЕСКИЙ ПЕРЕХВАТ ПО ISO C99: вещественная часть равна минус бесконечности.
+      // e^(-Infinity + i*Infinity) обязано давать комплексный ноль!
+      // Этот блок ДОЛЖЕН стоять выше любых тригонометрических расчетов, чтобы 0 перевесил NaN.
       if (x === -Infinity) {
-        // Если мнимая часть конечна, результат строго комплексный ноль.
-        // Если мнимая часть бесконечна, cos/sin дадут NaN, но e^(-Inf) = 0 перевешивает их.
-        // Знак мнимого нуля физически зависит от знака синуса, но (0, 0) — базовый стандарт.
+        // Знак нуля в строгой физике может зависеть от знаков cos/sin, 
+        // но для стабильности тригонометрических сеток возвращаем чистый (0, 0)
         return new ComplexNumber(0, 0);
       }
 
-      // 2. Пограничный случай: реальная часть равна плюс бесконечности
+      // 2. ПРЕДОХРАНИТЕЛЬ NaN: Если одна из компонент NaN — строго возвращаем (NaN, NaN)
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        return new ComplexNumber(NaN, NaN);
+      }
+
+      // 3. Пограничный случай: реальная часть равна плюс бесконечности (взрывной рост модуля)
       if (x === Infinity) {
-        if (y === 0) {
-          return new ComplexNumber(Infinity, 0);
-        }
-        if (!isFinite(y)) {
-          // exp(+Infinity + i*Infinity) возвращает комплексную бесконечность с неопределённым знаком
-          return new ComplexNumber(Infinity, NaN); 
-        }
-        // Если y конечно, считаем стандартные знаки бесконечностей
+        if (y === 0) return new ComplexNumber(Infinity, 0);
+        if (!isFinite(y)) return new ComplexNumber(Infinity, NaN); // Фаза бесконечна при бесконечном модуле
+        
         const c = Math.cos(y);
         const s = Math.sin(y);
         return new ComplexNumber(
@@ -583,13 +577,13 @@ export default class ComplexNumber extends MathType {
         );
       }
 
-      // 3. Пограничный случай: реальная часть конечна, а мнимая — бесконечна
+      // 4. Пограничный случай: реальная часть конечна, а мнимая — бесконечна
       if (!isFinite(y)) {
         // exp(конечное + i*Infinity) не имеет математического смысла, так как угол бесконечен
         return new ComplexNumber(NaN, NaN);
       }
 
-      // 4. Стандартный расчёт для обычных чисел
+      // 5. Стандартный расчёт для обычных конечных чисел
       const expReal = Math.exp(x);
       return new ComplexNumber(
         expReal * Math.cos(y),
