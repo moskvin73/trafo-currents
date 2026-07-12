@@ -807,7 +807,20 @@ export default class RealNumber extends MathType {
    * Возвращает чистую строку TeX
    */
   toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
-    return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : MathType.formatNumberToTeX(this.#value, locale)}`;
+   const val = this.#value;
+
+    // 1. Изолируем и спасаем знак -0, так как num.toString() внутри утилиты сотрет минус
+    if (Object.is(val, -0)) return '-0';
+
+    // 2. Фильтруем микро-погрешности плавающей точки JS
+    let cleanVal = val;
+    if (Math.abs(val) < MathType.EPSILON) {
+      cleanVal = 0; // Обычный 0, так как случай с -0 мы перехватили строкой выше
+    }
+
+    // 3. Полностью делегируем форматирование вашему интеллектуальному методу MathType
+    return MathType.formatNumberToTeX(cleanVal, locale);    
+    //return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : MathType.formatNumberToTeX(this.#value, locale)}`;
   }
 
   /**
