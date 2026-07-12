@@ -211,12 +211,6 @@ export class AddNode extends BinaryOpNode {
   simpleTeX(l, r) {
     return `${l} + ${r}`;
   }
-
-  /*toTeX() {
-    const l = this.left.toTeX();
-    const r = this.right.toTeX();
-    return `${l} + ${r}`;
-  }*/
 }
 
 export class SubNode extends StrictRightBinNode {
@@ -234,13 +228,6 @@ export class SubNode extends StrictRightBinNode {
   simpleTeX(l, r) {
     return `${l} - ${r}`;
   }
-
-
-  /*toTeX() {
-    const l = this.left.toTeX();
-    const r = this.right.toTeX();
-    return `${l} - ${r}`;
-  }*/
 }
 
 export class MulNode extends BinaryOpNode {
@@ -258,13 +245,6 @@ export class MulNode extends BinaryOpNode {
   simpleTeX(l, r) {
     return `${l} \\cdot ${r}`;
   }
-
-  
-  /*toTeX() {
-    const l = this.left.toTeX();
-    const r = this.right.toTeX();
-    return `${l} \\cdot ${r}`;
-  }*/
 }
 
 export class DivNode extends StrictRightBinNode {
@@ -284,6 +264,32 @@ export class DivNode extends StrictRightBinNode {
     const r = this.right.toTeX();
     return `\\frac{${l}}{${r}}`;
   }
+
+  // Рекурсивный сборщик со знаком инверсии
+  _collectFactors(node, isInverted, nums, dens) {
+    // Случай 1: Наткнулись на еще одно деление. Раскладываем его дальше.
+    if (node instanceof DivNode) {
+      this._collectFactors(node.left, isInverted, nums, dens);
+      this._collectFactors(node.right, !isInverted, nums, dens); // правая часть инвертируется
+      return;
+    }
+
+    // Случай 2: Наткнулись на умножение (если у вас есть класс MulNode)
+    // Умножение не меняет знак инверсии для своих веток
+    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
+      this._collectFactors(node.left, isInverted, nums, dens);
+      this._collectFactors(node.right, isInverted, nums, dens);
+      return;
+    }
+
+    // Случай 3: Любой другой узел (базовый, сложение, степень и т.д.)
+    // База рекурсии — складываем узел как неделимое целое
+    if (isInverted) {
+      dens.push(node);
+    } else {
+      nums.push(node);
+    }
+  }  
 }
 
 export class PowNode extends BinaryOpNode {
