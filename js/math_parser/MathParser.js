@@ -104,6 +104,27 @@ export class MathParser {
     return { program, errors: allCompilerErrors };
   }
 
+  static parseStatement_FALLOW = Object.freeze(new Set([
+    TokenType.EOF,
+    TokenType.SEMICOLON,
+    TokenType.SILENT,
+    TokenType.PARENR,
+  ]));
+
+  static Expr_FIRST = Object.freeze(new Set([
+    TokenType.MATH_PI,
+    TokenType.MATH_E,
+    TokenType.MATH_PHI,
+    TokenType.MATH_INF,
+    TokenType.MATH_NAN,
+    TokenType.NUMBER,
+    TokenType.COMPLEX_NUMBER,
+    TokenType.LPAREN,
+    TokenType.VARIABLE,
+    TokenType.PLUS,
+    TokenType.MINUS,
+  ]));
+
   #parseStatement() {
     let exprNode = null;
 
@@ -115,7 +136,6 @@ export class MathParser {
     }
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
-    //let isSilent = false;
     while (true) switch (this.lookahead.type)
     {
       case TokenType.EOF:
@@ -129,21 +149,13 @@ export class MathParser {
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`,
            this.lookahead.loc);
+        while (true)
+        {
+          this.#consume();
+          if (MathParser.Expr_FIRST.has(this.lookahead.type)) return new StatementNode(exprNode, false);
+          if (!MathParser.parseStatement_FIRST.has(this.lookahead.type)) break;
+        }
     }
-    /*if (this.lookahead.type === TokenType.SEMICOLON) {
-      this.#consume(); // успешно поглотили ';'
-    } else if (this.lookahead.type === TokenType.SILENT) {
-      isSilent = exprNode instanceof AssignNode;
-      this.#consume(); // успешно поглотили '$'
-    } else if (this.lookahead.type === TokenType.EOF) {
-      // Исключение только для самой последней конструкции в конце файла
-      isSilent = false; 
-    } else {
-      // Если знака нет между командами — это синтаксическая ошибка для ВСЕХ
-      throw new Error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`);
-    }
-
-    return new StatementNode(exprNode, isSilent);*/
   }
 
   static parsePrintStatement_FALLOW = Object.freeze(new Set([
