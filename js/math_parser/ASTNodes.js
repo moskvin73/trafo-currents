@@ -140,10 +140,10 @@ export class UnaryOpNodePlus extends UnaryOpNode {
 
   evaluate(context) { return this.argument.evaluate(context); }
 
-  toTeX() {
+  /*toTeX() {
     const argTex = this.argument.toTeX();
     return `${this.operator}${argTex}`;
-  }
+  }*/
 }
 
 export class UnaryOpNodeMinus extends UnaryOpNode {
