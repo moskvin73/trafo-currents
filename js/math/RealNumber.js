@@ -154,7 +154,65 @@ export default class RealNumber extends MathType {
 
 
   accuratePow(other) {
-      other = RealNumber.#from(other);
+   try {
+      // 1. Приведение типа через внутреннюю вещественную фабрику
+      const p = RealNumber.#from(other);
+      
+      const b = this.#value;
+      const e = p.#value; // Читаем приватное поле симметричного экземпляра
+
+      // 2. ПРЕДОХРАНИТЕЛЬ NaN: Если основание или степень NaN — строго возвращаем RealNumber(NaN)
+      if (Number.isNaN(b) || Number.isNaN(e)) {
+        return new RealNumber(NaN);
+      }
+
+      // 3. СТАНДАРТ IEEE 754 ДЛЯ СТЕПЕНИ 0 (Любое число в степени 0 равно 1)
+      if (e === 0) return new RealNumber(1);
+
+      // 4. СТАНДАРТ IEEE 754 ДЛЯ ОСНОВАНИЯ 0 (Исправляем баг зануления отрицательных степеней)
+      if (b === 0) {
+        // 0^(положительное число) -> 0. Например, 0^5 = 0
+        // 0^(отрицательное число) -> Infinity. Например, 0^(-2) = 1/(0^2) = Infinity
+        return e > 0 ? new RealNumber(0) : new RealNumber(Infinity);
+      }
+
+      // 5. Поведение для положительных оснований (Движок JS считает идеально по IEEE 754, включая Infinity)
+      if (b > 0) return new RealNumber(Math.pow(b, e));
+      
+      // 6. Поведение для отрицательных оснований при бесконечных степенях
+      if (!isFinite(e)) {
+        // Уходим в комплексный класс, так как (-b)^Infinity не имеет однозначного вещественного решения
+        const complexBase = new ComplexNumber(b, 0);
+        const complexExp = new ComplexNumber(e, 0);
+        return complexBase.accuratePow(complexExp);
+      }
+
+      // 7. Если степень — честное целое число, знак раскрывается классическим Math.pow
+      if (Number.isInteger(e)) return new RealNumber(Math.pow(b, e));
+
+      // 8. ИНТЕЛЛЕКТУАЛЬНЫЙ АНАЛИЗ ДЛЯ ОТРИЦАТЕЛЬНЫХ ОСНОВАНИЙ И ДРОБНЫХ СТЕПЕНЕЙ (b < 0)
+      const rational = MathType.toRational(Math.abs(e));
+      
+      if (rational.den % 2 !== 0) {
+        // Вещественный корень нечетной степени существует!
+        const magnitudeResult = Math.pow(Math.abs(b), e);
+        const sign = (rational.num % 2 === 0) ? 1 : -1;
+        return new RealNumber(sign * magnitudeResult);
+      }
+
+      // ====================================================================
+      // ФАЗОВЫЙ ПЕРЕХОД: вещественного корня нет (например, четный знаменатель дроби)
+      // Красиво и безопасно передаем управление комплексному классу, как вы и задумали!
+      // ====================================================================
+      const complexBase = new ComplexNumber(b, 0);
+      const complexExp = new ComplexNumber(e, 0);
+      
+      return complexBase.accuratePow(complexExp);
+
+    } catch (e) {
+      throw new Error(`[RealNumber]: Ошибка в методе .accuratePow(). ${e.message}`);
+    }    
+      /*other = RealNumber.#from(other);
       const b = this.#value;
       const e = other.value;
 
@@ -184,7 +242,7 @@ export default class RealNumber extends MathType {
       // Вот теперь со спокойной совестью уходим в комплексную плоскость на главный лист.
       const complexBase = new ComplexNumber(b, 0);
       const complexExp = new ComplexNumber(e, 0);
-      return complexBase.accuratePow(complexExp);
+      return complexBase.accuratePow(complexExp);*/
   }
   
   /**
