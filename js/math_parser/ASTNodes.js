@@ -260,27 +260,20 @@ export class DivNode extends StrictRightBinNode {
   } 
 
   toTeX() {
-    /*const l = this.left.toTeX();
-    const r = this.right.toTeX();
-    return `\\frac{${l}}{${r}}`;*/
-
     const nums = [];
     const dens = [];
+    // Объект-состояние для подсчета унарных минусов
+    const signState = { minusCount: 0 };
 
-    // Запускаем локальный обход для левой и правой ветки.
-    // Для левой ветки инверсия = false (всё, что там множитель — в числитель, делитель — в знаменатель).
-    this._collectFactors(this.left, false, nums, dens);
-    
-    // Для правой ветки инверсия = true (так как мы делим на всю правую ветку, 
-    // все её числители станут знаменателями, и наоборот).
-    this._collectFactors(this.right, true, nums, dens);
+    // Собираем числители и знаменатели с учетом инверсии и знаков
+    this._collectFactors(this.left, false, nums, dens, signState);
+    this._collectFactors(this.right, true, nums, dens, signState);
 
-    // Вспомогательная функция для сборки массива TeX-строк через \cdot
+    // Вспомогательная функция для сборки элементов через \cdot
     const joinFactors = (nodes) => {
       return nodes.map(node => {
         let tex = node.toTeX();
-        // Если приоритет узла ниже, чем умножение (например, узел сложения/вычитания),
-        // его обязательно нужно защитить скобками.
+        // Если приоритет ниже умножения (например, сложение/вычитание), нужны скобки
         if (node.getPriority?.() < OpPriority.MUL_DIV) {
           tex = `\\left(${tex}\\right)`;
         }
@@ -291,28 +284,39 @@ export class DivNode extends StrictRightBinNode {
     const numTeX = joinFactors(nums);
     const denTeX = joinFactors(dens);
 
-    return `\\frac{${numTeX}}{${denTeX}}`;
+    // Если количество унарных минусов нечетное, выносим знак минус вперед
+    const globalSign = (signState.minusCount % 2 !== 0) ? '- ' : '';
+
+    return `${globalSign}\\frac{${numTeX}}{${denTeX}}`;
   }
 
   // Рекурсивный сборщик со знаком инверсии
-  _collectFactors(node, isInverted, nums, dens) {
-    // Случай 1: Наткнулись на еще одно деление. Раскладываем его дальше.
+  _collectFactors(node, isInverted, nums, dens, signState) {
+    // 1. Случай: Наткнулись на унарную операцию (+ или -)
+    if (node instanceof UnaryOpNode) {
+      if (node.operator === '-') {
+        signState.minusCount++; // Фиксируем минус
+      }
+      // Для унарного плюса ничего не делаем, просто проваливаемся глубже
+      this._collectFactors(node.argument, isInverted, nums, dens, signState);
+      return;
+    }
+
+    // 2. Случай: Наткнулись на деление
     if (node instanceof DivNode) {
-      this._collectFactors(node.left, isInverted, nums, dens);
-      this._collectFactors(node.right, !isInverted, nums, dens); // правая часть инвертируется
+      this._collectFactors(node.left, isInverted, nums, dens, signState);
+      this._collectFactors(node.right, !isInverted, nums, dens, signState);
       return;
     }
 
-    // Случай 2: Наткнулись на умножение (если у вас есть класс MulNode)
-    // Умножение не меняет знак инверсии для своих веток
-    if (node instanceof MulNode) {
-      this._collectFactors(node.left, isInverted, nums, dens);
-      this._collectFactors(node.right, isInverted, nums, dens);
+    // 3. Случай: Наткнулись на умножение (если класс MulNode/ProdNode определен)
+    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
+      this._collectFactors(node.left, isInverted, nums, dens, signState);
+      this._collectFactors(node.right, isInverted, nums, dens, signState);
       return;
     }
 
-    // Случай 3: Любой другой узел (базовый, сложение, степень и т.д.)
-    // База рекурсии — складываем узел как неделимое целое
+    // 4. База рекурсии: складываем узел как неделимый элемент
     if (isInverted) {
       dens.push(node);
     } else {
