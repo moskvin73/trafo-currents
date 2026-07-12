@@ -20,9 +20,9 @@ const constantMap = {
 
 
 export class MathLexer {
-  constructor(input, baseLine = 1, baseColumn = 1) {
+  constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
-    this.errors = [];
+    this.errors = errors;
     this.i = 0;
     this.currentLine = baseLine;
     this.currentColumn = baseColumn;

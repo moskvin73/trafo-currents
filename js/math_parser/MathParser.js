@@ -18,6 +18,7 @@ import ASTNode, {
   ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
+import { MathLexer } from './MathLexer.js';
 
 /**
  * Единый узел для любой инструкции в коде
@@ -51,9 +52,9 @@ export class MathParser {
   /**
    * @param {MathLexer} lexer - Потоковый лексер нового поколения
    */
-  constructor(lexer) {
-    this.lexer = lexer;
+  constructor(input, baseLine = 1, baseColumn = 1) {
     this.errors = [];
+    this.lexer = new MathLexer(input, this.errors, baseLine, baseColumn);
     this.lookahead = null; // Тот самый ЕДИНСТВЕННЫЙ первый токен LL(1)
     
     // Инициализируем lookahead первым токеном из потока
@@ -74,7 +75,6 @@ export class MathParser {
     }
     this.#error(errorMessage, this.lookahead.loc);
     return false;
-    //throw new Error(`${errorMessage} на ${this.lookahead.loc}`);
   }
 
   #error(message, loc) {
