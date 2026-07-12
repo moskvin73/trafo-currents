@@ -53,13 +53,9 @@ export class NumberNode extends ASTNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  evaluate(context) {
-    return this.value; // Просто возвращает математический объект
-  }
+  evaluate(context) { return this.value; }
 
-  toTeX() {
-    return this.value.toRawTeX(); // Каждый тип сам знает, как себя нарисовать!
-  }
+  toTeX() { return this.value.toRawTeX(); }
 }
 
 /**
