@@ -182,6 +182,9 @@ export class AssignNode extends ASTNode {
     this.name = name;
     this.expression = expression;
   }
+
+  getPriority() { return OpPriority.ASSIGN; }  
+
   evaluate(context) {
     const value = this.expression.evaluate(context);
     context[this.name] = value;
