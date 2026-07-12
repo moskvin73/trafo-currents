@@ -318,7 +318,7 @@ export class PowNode extends BinaryOpNode {
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends ASTNode {
-  constructor(loc) {
+  constructor(name, loc) {
     super(loc);
     this.name = name;
   }
