@@ -95,7 +95,7 @@ export class MathParser {
       } catch (error) {
         // Восстановление после синтаксической ошибки: пишем в отчет и мотаем до конца строки
         this.errors.push(new CompilerError(error.message, this.lookahead.loc));
-        this.#synchronize();
+        //this.#synchronize();
       }
     }
 
