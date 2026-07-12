@@ -70,10 +70,10 @@ export class MathParser {
     if (this.lookahead.type === expectedType) {
       const currentToken = this.lookahead;
       this.#consume();
-      return currentToken;
+      return true;
     }
     this.#error(errorMessage, this.lookahead.loc);
-    return expectedType;
+    return false;
     //throw new Error(`${errorMessage} на ${this.lookahead.loc}`);
   }
 
