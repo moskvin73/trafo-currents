@@ -200,6 +200,58 @@ export class AddNode extends BinaryOpNode {
   }
 }
 
+export class SubNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '-', right, loc);
+  }
+
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+    return l.subtract(r);
+  } 
+
+  toTeX() {
+    const l = this.left.toTeX();
+    const r = this.right.toTeX();
+    return `${l} - ${r}`;
+  }
+}
+
+export class MulNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '-', right, loc);
+  }
+
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+    return l.multiply(r);
+  } 
+
+  toTeX() {
+    const l = this.left.toTeX();
+    const r = this.right.toTeX();
+    return `${l} \\cdot ${r}`;
+  }
+}
+
+export class DivNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '-', right, loc);
+  }
+
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
+    return l.divide(r)(r);
+  } 
+
+  toTeX() {
+    const l = this.left.toTeX();
+    const r = this.right.toTeX();
+    return `\\frac{${l}}{${r}}`;
+  }
+}
+
+
 /**
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
