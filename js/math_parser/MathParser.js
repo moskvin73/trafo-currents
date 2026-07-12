@@ -153,7 +153,7 @@ export class MathParser {
         {
           this.#consume();
           if (MathParser.Expr_FIRST.has(this.lookahead.type)) return new StatementNode(exprNode, false);
-          if (!MathParser.parseStatement_FIRST.has(this.lookahead.type)) break;
+          if (MathParser.parseStatement_FALLOW.has(this.lookahead.type)) break;
         }
     }
   }
