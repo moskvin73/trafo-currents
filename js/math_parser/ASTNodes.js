@@ -117,13 +117,29 @@ export class UnaryOpNodePlus extends UnaryOpNode {
    * @param {SourceLocation} loc 
    */
   constructor(operator, argument, loc) {
-    super(',', argument, loc);
+    super('+', argument, loc);
     this.argument = argument;
   }
 
   evaluate(context) { return this.argument.evaluate(context); }
-
 }
+
+export class UnaryOpNodeMinus extends UnaryOpNode {
+  /**
+   * @param {ASTNode} argument - Узел, к которому применяется операция
+   * @param {SourceLocation} loc 
+   */
+  constructor(operator, argument, loc) {
+    super('-', argument, loc);
+    this.argument = argument;
+  }
+
+  evaluate(context) { 
+    const argVal = this.argument.evaluate(context);
+    return argVal.negate();
+  }
+}
+
 
 const dispatcher = new SemanticDispatcher();
 
