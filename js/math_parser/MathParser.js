@@ -94,9 +94,7 @@ export class MathParser {
           if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
-        // Восстановление после синтаксической ошибки: пишем в отчет и мотаем до конца строки
         this.errors.push(new CompilerError(error.message, this.lookahead.loc));
-        //this.#synchronize();
       }
 
     // Объединяем лексические ошибки лексера и синтаксические ошибки парсера в один массив!
