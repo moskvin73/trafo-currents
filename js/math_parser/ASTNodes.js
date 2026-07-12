@@ -16,17 +16,6 @@ const OpPriority = {
     PRIMARY: 6       // Числа, переменные
 };
 
-const OpSymbols = {
-    ASSIGN: " = ",
-    ADD: " + ",
-    SUB: " - ",
-    MUL: " * ",
-    DIV: " / ",
-    UNARY_PLUS: "+",
-    UNARY_MINUS: "-",
-    POW: "^"
-};
-
 /**
  * Базовый абстрактный класс для всех узлов Дерева Выражений (AST).
  */
@@ -366,6 +355,8 @@ export class ConstantNode extends ASTNode {
     this.#tokenType = tokenType; 
   }
 
+  getPriority() { return OpPriority.PRIMARY; }
+
   evaluate(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
@@ -460,6 +451,8 @@ export class CallNode extends ASTNode {
     this.args = args; // Массив дочерних узлов ASTNode
   }
 
+  getPriority() { return OpPriority.PRIMARY; }
+
   evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
@@ -488,16 +481,5 @@ export class CallNode extends ASTNode {
     // Обертка \operatorname позволяет рендерить "myFunc(x)" правильным математическим шрифтом, а не курсивом переменных.
     const joinedArgs = argsTexArray.join(', ');
     return `\\operatorname{${this.name}}\\left(${joinedArgs}\\right)`;
-    
-    /*const argsTex = this.args.map(arg => arg.toTeX()).join(', ');
-    // Если функция стандартная, добавим обратный слеш для LaTeX (\sin, \cos, \ln)
-    if (this.name === 'pow')
-    {
-      return `\\text{${this.name}}\\left(${argsTex}\\right)`;
-    }
-    const isStandard = ['sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh', 'exp', 'sqrt'].includes(this.name);
-    const texName = this.name === 'log' ? '\\ln' : (isStandard ? `\\${this.name}` : this.name);
-    
-    return `${texName}\\left(${argsTex}\\right)`;*/
   }
 }
