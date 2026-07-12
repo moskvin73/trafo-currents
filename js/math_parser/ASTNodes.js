@@ -595,7 +595,7 @@ export class CallNode extends ASTNode {
 
   toString() {
     const argsCode = this.args.map(arg => arg.toString()).join(", ");
-    return '${this.name}(${argsCode})';
+    return `${this.name}(${argsCode})`;
   }
 
   evaluate(context) {
