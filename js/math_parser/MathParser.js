@@ -159,7 +159,7 @@ export class MathParser {
     const printToken = this.lookahead;
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
-      while (!parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+      while (!this.parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
       return new PrintNode(elements, printToken.loc);
     }
 
@@ -194,7 +194,7 @@ export class MathParser {
 
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
-      while (!parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+      while (!this.parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
     }
     return new PrintNode(elements, printToken.loc);
   }
@@ -366,8 +366,8 @@ export class MathParser {
           while (true)
           {
             this.#consume();
-            if (Primary_FIRST.has(token.type)) break;
-            if (Primary_FALLOW.has(token.type))
+            if (this.Primary_FIRST.has(token.type)) break;
+            if (this.Primary_FALLOW.has(token.type))
             {
               return new NumberNode(new RealNumber(1), token.loc);
             }
