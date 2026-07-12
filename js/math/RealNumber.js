@@ -577,6 +577,7 @@ export default class RealNumber extends MathType {
    * Функция определена на всей вещественной оси (-inf; +inf), поэтому всегда возвращает RealNumber
    */
   arcsinh() {
+    if (Number.isNaN(this.#value)) return new RealNumber(NaN);
     // Математическая формула: arcsinh(x) = ln(x + sqrt(x^2 + 1))
     // Используем Math.asinh для максимальной скорости встроенного движка V8
     return new RealNumber(Math.asinh(this.#value));
