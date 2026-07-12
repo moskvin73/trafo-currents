@@ -747,13 +747,56 @@ export default class RealNumber extends MathType {
   // ВЕКТОРНАЯ ГЕОМЕТРИЯ (Скалярное и Векторное произведение)
   // ==========================================
 
+  /**
+   * Скалярное произведение двух вещественных векторов (чисел).
+   * Полностью совместимо с IEEE 754 на бесконечностях.
+   * @param {RealNumber|number} other 
+   * @returns {RealNumber}
+   */
   dot(other) {
-    return new RealNumber(this.#value * RealNumber.#from(other).#value);
+    try {
+      const o = RealNumber.#from(other);
+      
+      const x1 = this.#value;
+      const x2 = o.#value;
+
+      // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если хоть одна компонента NaN, строго возвращаем RealNumber(NaN)
+      if (Number.isNaN(x1) || Number.isNaN(x2)) {
+        return new RealNumber(NaN);
+      }
+
+      // 1. Защита от неопределенности (0 * Infinity) при ортогональных бесконечностях.
+      // Если один вектор бесконечный, а второй нулевой, их проекция равна строго 0.
+      let result = x1 * x2;
+      if (Number.isNaN(result) && (x1 === 0 || x2 === 0)) {
+        result = 0; 
+      }
+
+      return new RealNumber(result);
+    } catch (e) {
+      throw new TypeError(`[RealNumber]: Ошибка в методе .dot(). ${e.message}`);
+    }
   }
 
+  /**
+   * Модуль косого (векторного) произведения на плоскости.
+   * На вещественной числовой прямой все векторы коллинеарны, поэтому всегда равен 0.
+   * @param {RealNumber|number} other 
+   * @returns {RealNumber}
+   */
   cross(other) {
-    RealNumber.#from(other);
-    return new RealNumber(0);
+    try {
+      const o = RealNumber.#from(other);
+
+      // ПРЕДОХРАНИТЕЛЬ NaN
+      if (Number.isNaN(this.#value) || Number.isNaN(o.#value)) {
+        return new RealNumber(NaN);
+      }
+
+      return new RealNumber(0);
+    } catch (e) {
+      throw new TypeError(`[RealNumber]: Ошибка в методе .cross(). ${e.message}`);
+    }
   }
 
   // ==========================================
