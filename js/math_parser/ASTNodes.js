@@ -521,7 +521,8 @@ export class ConstantNode extends ASTNode {
   getPriority() { return OpPriority.PRIMARY; }
 
   toString() {
-    
+    const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
+    return config ? config.tex : "";
   }
 
   evaluate(context) {
