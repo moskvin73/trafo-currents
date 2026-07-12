@@ -89,9 +89,9 @@ export class MathParser {
     const program = new ProgramNode();
 
     try {
-    while (this.lookahead.type !== TokenType.EOF) {
-        const stmt = this.#parseStatement();
-        if (stmt) program.statements.push(stmt);
+        while (this.lookahead.type !== TokenType.EOF) {
+          const stmt = this.#parseStatement();
+          if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
         // Восстановление после синтаксической ошибки: пишем в отчет и мотаем до конца строки
