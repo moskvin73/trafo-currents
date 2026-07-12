@@ -260,7 +260,7 @@ export class MathParser {
       const opToken = this.lookahead;
       this.#consume();      
       const right = this.#parseUnary(); // Правая рекурсия
-      expr = new PowNode(expr, opToken.value, right, opToken.loc);
+      expr = new PowNode(expr, right, opToken.loc);
     }
     return expr;
   }
