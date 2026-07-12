@@ -258,10 +258,9 @@ export class MathParser {
 
     if (this.lookahead.type === TokenType.POW) {
       const opToken = this.lookahead;
-      this.#consume();
-      
+      this.#consume();      
       const right = this.#parseUnary(); // Правая рекурсия
-      expr = new BinaryOpNode(expr, opToken.value, right, opToken.loc);
+      expr = new PowNode(expr, opToken.value, right, opToken.loc);
     }
     return expr;
   }
