@@ -260,9 +260,38 @@ export class DivNode extends StrictRightBinNode {
   } 
 
   toTeX() {
-    const l = this.left.toTeX();
+    /*const l = this.left.toTeX();
     const r = this.right.toTeX();
-    return `\\frac{${l}}{${r}}`;
+    return `\\frac{${l}}{${r}}`;*/
+
+    const nums = [];
+    const dens = [];
+
+    // Запускаем локальный обход для левой и правой ветки.
+    // Для левой ветки инверсия = false (всё, что там множитель — в числитель, делитель — в знаменатель).
+    this._collectFactors(this.left, false, nums, dens);
+    
+    // Для правой ветки инверсия = true (так как мы делим на всю правую ветку, 
+    // все её числители станут знаменателями, и наоборот).
+    this._collectFactors(this.right, true, nums, dens);
+
+    // Вспомогательная функция для сборки массива TeX-строк через \cdot
+    const joinFactors = (nodes) => {
+      return nodes.map(node => {
+        let tex = node.toTeX();
+        // Если приоритет узла ниже, чем умножение (например, узел сложения/вычитания),
+        // его обязательно нужно защитить скобками.
+        if (node.getPriority?.() < OpPriority.MUL_DIV) {
+          tex = `\\left(${tex}\\right)`;
+        }
+        return tex;
+      }).join(' \\cdot ');
+    };
+
+    const numTeX = joinFactors(nums);
+    const denTeX = joinFactors(dens);
+
+    return `\\frac{${numTeX}}{${denTeX}}`;
   }
 
   // Рекурсивный сборщик со знаком инверсии
