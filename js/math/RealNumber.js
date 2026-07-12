@@ -62,7 +62,7 @@ export default class RealNumber extends MathType {
     // 4. Если типа нет в таблице — сразу выбрасываем ошибку
     if (!convert) {
       const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
-      throw new TypeError(`[RealNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
+      throw new TypeError(`[RealNumber]: Тип "${typeName}" не поддерживается для приведения.`);
     }
 
     return convert(value);
