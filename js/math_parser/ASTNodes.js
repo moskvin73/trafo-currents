@@ -276,7 +276,7 @@ export class DivNode extends StrictRightBinNode {
 
     // Случай 2: Наткнулись на умножение (если у вас есть класс MulNode)
     // Умножение не меняет знак инверсии для своих веток
-    if (typeof MulNode !== 'undefined' && node instanceof MulNode) {
+    if (node instanceof MulNode) {
       this._collectFactors(node.left, isInverted, nums, dens);
       this._collectFactors(node.right, isInverted, nums, dens);
       return;
