@@ -115,7 +115,7 @@ export class MathParser {
     }
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
-    let isSilent = false;
+    //let isSilent = false;
     while (true) switch (this.lookahead.type)
     {
       case TokenType.EOF:
