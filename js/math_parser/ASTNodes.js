@@ -269,7 +269,7 @@ export class DivNode extends StrictRightBinNode {
 
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
-    return l.divide(r)(r);
+    return l.divide(r);
   } 
 
   toTeX() {
@@ -288,7 +288,7 @@ export class PowNode extends BinaryOpNode {
 
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
-    return l.divide(r)(r);
+    return l.accuratePow(r);
   } 
 
   toTeX() {
