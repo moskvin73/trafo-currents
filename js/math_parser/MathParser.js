@@ -336,6 +336,7 @@ export class MathParser {
         case TokenType.VARIABLE:
              return this.#callFuncORVar();
         default:
+          this.#error(`Неожиданный математический символ "${token.value}"`, token.loc);
           this.#consume();
           while (Primary_FALLOW.has(token.type)) this.#consume();
           token = this.lookahead;
