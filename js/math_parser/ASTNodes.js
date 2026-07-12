@@ -345,7 +345,7 @@ export class DivNode extends StrictRightBinNode {
     this._collectFactors(this.right, true, nums, dens, signState);
 
     // Вспомогательная функция для сборки элементов через \cdot
-    const joinFactors = (nodes) => {
+    /*const joinFactors = (nodes) => {
       return nodes.map(node => {
         let tex = node.toTeX();
         // Если приоритет ниже умножения (например, сложение/вычитание), нужны скобки
@@ -354,7 +354,7 @@ export class DivNode extends StrictRightBinNode {
         }
         return tex;
       }).join(' \\cdot ');
-    };
+    };*/
 
     const numTeX = joinFactors(nums);
     const denTeX = joinFactors(dens);
