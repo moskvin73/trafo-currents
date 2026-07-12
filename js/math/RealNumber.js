@@ -682,6 +682,7 @@ export default class RealNumber extends MathType {
    * В вещественном поле определен на всей оси, фазовых переходов нет
    */
   arctan() {
+    if (Number.isNaN(this.#value)) return new RealNumber(NaN);
     return new RealNumber(Math.atan(this.#value));
   }
 
