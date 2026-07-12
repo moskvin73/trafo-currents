@@ -622,7 +622,8 @@ export class CallNode extends ASTNode {
   getPriority() { return OpPriority.PRIMARY; }
 
   toString() {
-    
+    const argsCode = this.args.map(arg => arg.toString()).join(", ");
+    return '${this.name}(${argsCode})';
   }
 
   evaluate(context) {
