@@ -163,9 +163,9 @@ export default class ComplexNumber extends MathType {
 
   // Универсальная таблица приведения по имени типа
   static #converters = new Map([
-    ['ComplexNumber', (val) => val],
+    [ComplexNumber, (val) => val],
     ['number',        (val) => new ComplexNumber(val, 0)],
-    ['RealNumber',    (val) => new ComplexNumber(val.value, 0)]
+    [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
     // Перспектива: легко добавить новые типы прямо по их имени:
     // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
@@ -184,7 +184,8 @@ export default class ComplexNumber extends MathType {
     }
 
     // 2. Определяем имя типа (строку) для поиска в Map
-    const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+    //const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+    const typeKey = typeof value === 'object' ? value.constructor : typeof value;
 
     // 3. Ищем конвертер в таблице
     const convert = this.#converters.get(typeKey);
