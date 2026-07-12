@@ -196,7 +196,7 @@
                     const parser = new MathParser(rawCode);
                     const parseResult = parser.parse();
 
-                    echoBlock.textContent = parseResult.toString();
+                    echoBlock.textContent = parseResult.program.toString();
 
                     // Проверяем наличие ошибок лексики или синтаксиса
                     if (parseResult.errors.length > 0) {
