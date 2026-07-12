@@ -207,14 +207,17 @@ export class MathParser {
   #parseAddition() {
     let expr = this.#parseMultiplication();
 
-    while (this.lookahead.type === TokenType.PLUS || this.lookahead.type === TokenType.MINUS) {
-      const opToken = this.lookahead;
-      this.#consume(); // Сожрали оператор, сдвинули lookahead к следующему числу
-      
-      const right = this.#parseMultiplication();
-      expr = new BinaryOpNode(expr, opToken.value, right, expr.loc);
+    while (true) switch (this.lookahead.type) {
+      case TokenType.PLUS:
+        this.#consume();
+        expr = new AddNode(expr, this.#parseMultiplication(), expr.loc);
+        break;
+      case TokenType.MINUS:
+        this.#consume();
+        expr = new SubNode(expr, this.#parseMultiplication(), expr.loc);
+        break;
+      default: return expr;
     }
-    return expr;
   }
 
   // Множество FIRST для знаков умножения/деления
