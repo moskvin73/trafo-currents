@@ -532,7 +532,30 @@ export default class RealNumber extends MathType {
    * Интеллектуальный Арксинус
    */
   arcsin() {
-    // 1. Стандартный вещественный случай
+    const x = this.#value;
+
+    // 0. ПРЕДОХРАНИТЕЛЬ NaN: Если значение NaN, строго возвращаем RealNumber(NaN)
+    if (Number.isNaN(x)) return new RealNumber(NaN);
+
+    // 1. Стандартный вещественный случай (внутри ОДЗ)
+    // Math.asin идеально сохраняет знак отрицательного нуля: asin(-0) = -0
+    if (Math.abs(x) <= 1) {
+      return new RealNumber(Math.asin(x));
+    }
+
+    // 2. ФАЗОВЫЙ ПЕРЕХОД на комплексную плоскость для |x| > 1
+    // Устраняем баг знака мнимой части строго по стандарту ISO C99
+    const sign = x > 0 ? 1 : -1;
+    
+    // Вещественная часть строго равна +pi/2 или -pi/2
+    const realPart = (Math.PI / 2) * sign;
+    
+    // Мнимая часть рассчитывается через каноническое логарифмическое представление arcosh(|x|):
+    // Знак мнимой части ОБЯЗАН совпадать со знаком x (для x > 1 -> +j, для x < -1 -> -j)
+    const imagPart = sign * Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
+
+    return new ComplexNumber(realPart, imagPart);    
+   /* // 1. Стандартный вещественный случай
     if (Math.abs(this.#value) <= 1) {
       return new RealNumber(Math.asin(this.#value));
     }
@@ -546,7 +569,7 @@ export default class RealNumber extends MathType {
     // Мнимая часть рассчитывается через натуральный логарифм
     const imagPart = -sign * Math.log(Math.abs(x) + Math.sqrt(x * x - 1));
 
-    return new ComplexNumber(realPart, imagPart);
+    return new ComplexNumber(realPart, imagPart);*/
   }
 
   /**
