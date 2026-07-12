@@ -206,13 +206,17 @@ export class AddNode extends BinaryOpNode {
   evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.add(r);
-  } 
+  }
 
-  toTeX() {
+  simpleTeX(l, r) {
+    return `${l} + ${r}`;
+  }
+
+  /*toTeX() {
     const l = this.left.toTeX();
     const r = this.right.toTeX();
     return `${l} + ${r}`;
-  }
+  }*/
 }
 
 export class SubNode extends StrictRightBinNode {
