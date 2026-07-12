@@ -621,6 +621,10 @@ export class CallNode extends ASTNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
+  toString() {
+    
+  }
+
   evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
