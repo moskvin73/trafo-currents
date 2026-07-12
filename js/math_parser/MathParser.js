@@ -94,7 +94,7 @@ export class MathParser {
           if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
-        this.errors.push(new CompilerError(error.message, this.lookahead.loc));
+        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.lookahead.loc));
       }
 
     // Объединяем лексические ошибки лексера и синтаксические ошибки парсера в один массив!
