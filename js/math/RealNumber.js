@@ -34,7 +34,7 @@ export default class RealNumber extends MathType {
   // Универсальная таблица приведения по имени типа
   static #converters = new Map([
     ['number',        (val) => new RealNumber(val)],
-    ['RealNumber',    (val) => val]
+    [RealNumber,      (val) => val]
     // Перспектива: легко добавить новые типы прямо по их имени:
     // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
@@ -53,25 +53,28 @@ export default class RealNumber extends MathType {
     }
 
     // 2. Определяем имя типа (строку) для поиска в Map
-    const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+    //const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
+    const typeKey = typeof value === 'object' ? value.constructor : typeof value;
 
     // 3. Ищем конвертер в таблице
     const convert = this.#converters.get(typeKey);
 
     // 4. Если типа нет в таблице — сразу выбрасываем ошибку
     if (!convert) {
+      const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
       throw new TypeError(`[RealNumber]: Тип "${typeKey}" не поддерживается для приведения.`);
     }
 
+    return convert(value);
     // 5. Вызываем конвертер
-    const result = convert(value);
+    /*const result = convert(value);
 
     // 6. Финальная валидация (проверяем, что на выходе валидный инстанс и внутри нет NaN)
     if (result instanceof RealNumber && !Number.isNaN(result.value)) {
       return result;
     }
 
-    throw new TypeError(`[RealNumber]: Ошибка валидации приведения для типа "${typeKey}".`);
+    throw new TypeError(`[RealNumber]: Ошибка валидации приведения для типа "${typeKey}".`);*/
   }  
 
   // ==========================================
