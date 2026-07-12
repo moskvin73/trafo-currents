@@ -342,7 +342,7 @@ export class VariableNode extends ASTNode {
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends ASTNode {
-  constructor(loc) {
+  constructor(name, expression, loc) {
     super(loc);
     this.name = name;
     this.expression = expression;
