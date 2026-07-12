@@ -520,6 +520,10 @@ export class ConstantNode extends ASTNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
+  toString() {
+    
+  }
+
   evaluate(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
