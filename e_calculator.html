@@ -193,9 +193,10 @@
 
                 try {
                     // Запускаем наш потоковый LL(1) компилятор
-                    //const lexer = new MathLexer(rawCode);
                     const parser = new MathParser(rawCode);
                     const parseResult = parser.parse();
+
+                    echoBlock.textContent = parseResult.toString();
 
                     // Проверяем наличие ошибок лексики или синтаксиса
                     if (parseResult.errors.length > 0) {
