@@ -146,6 +146,13 @@ export class MathParser {
     return new StatementNode(exprNode, isSilent);*/
   }
 
+  static parsePrintStatement_FALLOW = Object.freeze(new Set([
+    TokenType.EOF,
+    TokenType.SEMICOLON,
+    TokenType.SILENT,
+    TokenType.PARENR,
+  ]));
+
   #parsePrintStatement() {
     const printToken = this.lookahead;
     this.#consume();
