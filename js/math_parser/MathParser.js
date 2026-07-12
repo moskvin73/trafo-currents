@@ -148,7 +148,10 @@ export class MathParser {
            this.lookahead.loc);
         while (true)
         {
-          if (MathParser.Expr_FIRST.has(this.lookahead.type)) return new StatementNode(exprNode, false);
+          if (MathParser.Expr_FIRST.has(this.lookahead.type)) {
+            this.#consume();
+            return new StatementNode(exprNode, false);
+          }
           this.#consume();
           if (MathParser.parseStatement_FALLOW.has(this.lookahead.type)) break;
         }
