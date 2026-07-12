@@ -144,7 +144,7 @@ export class MathParser {
         return new StatementNode(exprNode, exprNode instanceof AssignNode);
       default:
         this.#error(
-          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' после инструкции "${this.lookahead.value}"`,
+          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lookahead.value}"`,
            this.lookahead.loc);
         while (true)
         {
@@ -371,7 +371,7 @@ export class MathParser {
         case TokenType.VARIABLE:
              return this.#callFuncORVar();
         default:
-          this.#error(`Неожиданный математический символ "${token.value}"`, token.loc);
+          this.#error(`Ожидался операнд "${token.value}"`, token.loc);
           while (true)
           {
             this.#consume();
