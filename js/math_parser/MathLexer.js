@@ -369,9 +369,9 @@ export class MathLexer {
             const currentPos = this.i;
             this.#readCodePointAndAdvance(); // ГАРАНТИРОВАННО сдвигаем курсор на 1 символ
             const badChar = src.slice(currentPos, this.i);
-            
+            const formattedChar = formatBadChar(badChar);
             this.errors.push(new CompilerError(
-              `Неизвестный ASCII символ "${badChar}"`, 
+              `Неизвестный ASCII символ "${formattedChar}"`, 
                createLoc()
             ));
             continue; // Переходим к следующему символу
@@ -405,12 +405,6 @@ export class MathLexer {
           }
           return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), createLoc());
         }
-
-        // Безопасный отлов сломанных/неизвестных символов
-        /*const currentPos = this.i;
-        this.#readCodePointAndAdvance(); // Сдвинет на 1 или 2 в зависимости от валидности суррогата
-        const badChar = src.slice(currentPos, this.i);
-        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));*/
 
         const currentPos = this.i;
         let graphemeLength = 1;
@@ -449,6 +443,7 @@ export class MathLexer {
           }
         }
         const badChar = src.slice(currentPos, this.i);
+        const formattedChar = formatBadChar(badChar);
         this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));
       }
     }
