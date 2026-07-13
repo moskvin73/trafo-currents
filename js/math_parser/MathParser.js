@@ -62,7 +62,6 @@ export class TeXOutputFormatter {
     // 1. Если это операция присваивания (например, U = 10 + 3i)
     if (inputTree instanceof AssignNode) {
       const varNameTeX = inputTree.name;
-      const resultTeX = resultValue.toRawTeX();
       return `${varNameTeX} = ${this.format(inputTree.expression, resultValue)}`;
     }
 
