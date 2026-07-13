@@ -321,7 +321,10 @@ export class MathLexer {
             const startLoc = new SourceLocation(startLine, startColumn, startIndex);
             if (dotCount > 1) this.errors.push(new CompilerError(`Неверный формат числа "${numStr}"`, startLoc));
             const parsedVal = parseFloat(numStr) || 0;
-            if (this.i < len && src.charCodeAt(this.i) === 105) { this.#readCodePointAndAdvance(); return new Token(TokenType.COMPLEX_NUMBER, parsedVal, startLoc); }
+            if (this.i < len && src.charCodeAt(this.i) === 105) { 
+              this.#readCodePointAndAdvance(); 
+              return new Token(TokenType.COMPLEX_NUMBER, parsedVal, startLoc);
+            }
             return new Token(TokenType.NUMBER, parsedVal, startLoc);
           }
 
@@ -344,7 +347,8 @@ export class MathLexer {
                 break;
               }
             }
-            return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), new SourceLocation(startLine, startColumn, startIndex));
+            return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), 
+                          new SourceLocation(startLine, startColumn, startIndex));
           }
         }
       } else {
@@ -373,14 +377,16 @@ export class MathLexer {
               break;
             }
           }
-          return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), new SourceLocation(startLine, startColumn, startIndex));
+          return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), 
+                                new SourceLocation(startLine, startColumn, startIndex));
         }
 
         // Безопасный отлов сломанных/неизвестных символов
         const currentPos = this.i;
         this.#readCodePointAndAdvance(); // Сдвинет на 1 или 2 в зависимости от валидности суррогата
         const badChar = src.slice(currentPos, this.i);
-        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, new SourceLocation(startLine, startColumn, startIndex)));
+        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, 
+                              new SourceLocation(startLine, startColumn, startIndex)));
       }
     }
 
