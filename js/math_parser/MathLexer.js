@@ -109,6 +109,54 @@ export class MathLexer {
     return this.i + 1 < this.chars.length ? this.chars[this.i + 1] : null;
   }
 
+  #readCodePointAndAdvance() {
+    if (this.i >= this.source.length) return null;
+
+    const cp = this.source.codePointAt(this.i);
+    const code = this.source.charCodeAt(this.i);
+
+    // Обработка переводов строк (счетчик строк)
+    if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) { // \n, \u2028, \u2029, NEL, FF
+      this.currentLine++;
+      this.currentColumn = 1;
+      this.i++;
+      return code;
+    }
+    if (code === 13) { // \r
+      this.currentLine++;
+      this.currentColumn = 1;
+      this.i++;
+      if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) { // \r\n
+        this.i++;
+      }
+      return code;
+    }
+
+    // Проверяем, является ли символ валидной суррогатной парой (занимает 2 индекса)
+    // High surrogate: 0xD800 - 0xDBFF. Low surrogate: 0xDC00 - 0xDFFF
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      if (this.i + 1 < this.source.length) {
+        const nextCode = this.source.charCodeAt(this.i + 1);
+        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+          // Пара валидна!
+          this.currentColumn++; // Визуально символ один
+          this.i += 2;          // В строке занимает 2 позиции
+          return cp;
+        }
+      }
+      // Если нижнего суррогата нет — пара БИТАЯ.
+      // Обрабатываем верхний суррогат как одиночный ошибочный символ!
+      this.currentColumn++;
+      this.i++;
+      return code;
+    }
+
+    // Обычный ASCII или BMP Юникод символ (1 индекс)
+    this.currentColumn++;
+    this.i++;
+    return code;
+  }
+  
   /**
    * Считывает и возвращает СЛЕДУЮЩИЙ единственный токен из потока (LL(1))
    */
