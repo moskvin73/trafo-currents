@@ -238,17 +238,17 @@ export class MathParser {
   #parsePrintStatement() {
     const elements = [];
 
-    const printToken = this.c_token;
+    const print_loc = location;
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
-      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token.type)) this.#consume();
-      return new PrintNode(elements, printToken.loc);
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return new PrintNode(elements, print_loc);
     }
 
     // Если скобка закрывается сразу, значит print() пустой
-    if (this.c_token.type !== TokenType.RPAREN) {
+    if (this.c_token !== TokenType.RPAREN) {
         while (true) {
-          if (this.c_token.type === TokenType.TEXT_BLOCK) {
+          if (this.c_token === TokenType.TEXT_BLOCK) {
               elements.push({ 
                 type: 'TEXT_BLOCK', 
                 value: this.c_token.value 
@@ -260,11 +260,11 @@ export class MathParser {
           }
 
           // Если следующий токен — запятая, поглощаем её и продолжаем цикл
-          if (this.c_token.type === TokenType.COMMA) {
+          if (this.c_token === TokenType.COMMA) {
               this.#consume();
               
               // Проверка на trailing comma: если после запятой сразу закрывающая скобка
-              if (this.c_token.type === TokenType.RPAREN) {
+              if (this.c_token=== TokenType.RPAREN) {
               break; 
               }
           } else {
@@ -276,9 +276,9 @@ export class MathParser {
 
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
-      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token.type)) this.#consume();
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
     }
-    return new PrintNode(elements, printToken.loc);
+    return new PrintNode(elements, print_loc);
   }
 
   // =======================================================
