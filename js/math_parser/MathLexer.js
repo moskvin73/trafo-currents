@@ -18,8 +18,60 @@ const constantMap = {
   '%nan':  TokenType.MATH_NAN
 };
 
+// Полный список пробельных кодовой точек Юникода (отсортирован)
+const UNICODE_SPACES = new Int32Array([
+  0x0009, 0x000A, 0x000B, 0x000C, 0x000D, // Управляющие ASCII (\t, \n, \v, \f, \r)
+  0x0020,                                 // Обычный пробел
+  0x0085,                                 // NEXT LINE (NEL) из C# / IBM
+  0x00A0,                                 // NON-BREAKING SPACE
+  0x1680,                                 // OGHAM SPACE MARK
+  0x2000, 0x2001, 0x2002, 0x2003, 0x2004, // Квантовые пробелы (En Space, Em Space и т.д.)
+  0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 
+  0x200A, 
+  0x2028,                                 // LINE SEPARATOR
+  0x2029,                                 // PARAGRAPH SEPARATOR
+  0x202F,                                 // NARROW NO-BREAK SPACE
+  0x205F,                                 // MEDIUM MATHEMATICAL SPACE
+  0x3000,                                 // IDEOGRAPHIC SPACE (Иероглифический пробел)
+  0xFEFF                                  // BYTE ORDER MARK (BOM)
+]);
 
-export class MathLexer {
+function isUnicodeSpace(code) {
+  let low = 0, high = UNICODE_SPACES.length - 1;
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    const val = UNICODE_SPACES[mid];
+    if (val === code) return true;
+    if (val < code) low = mid + 1;
+    else high = mid - 1;
+  }
+  return false;
+}
+
+const UNICODE_LETTERS = new Int32Array([
+  0x00C0, 0x00D6, 0x00D8, 0x00F6, 0x00F8, 0x02AF, // Расширенная латиница
+  0x0370, 0x037D, 0x037F, 0x03FF,                 // Греческий
+  0x0400, 0x04FF, 0x0500, 0x052F,                 // Кириллица и Доп. Кириллица
+  0x0531, 0x0556, 0x0561, 0x0588,                 // Армянский
+  0x05D0, 0x05EA,                                 // Иврит
+  0x0620, 0x064A,                                 // Арабский
+  0x4E00, 0x9FFF,                                 // Иероглифы CJK (Основной блок)
+  0xAC00, 0xD7A3                                  // Хангыль (Корейский)
+]);
+
+function isUnicodeLetter(code) {
+  let low = 0, high = (UNICODE_LETTERS.length >> 1) - 1;
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    const i = mid << 1;
+    if (code >= UNICODE_LETTERS[i] && code <= UNICODE_LETTERS[i + 1]) return true;
+    if (code < UNICODE_LETTERS[i]) high = mid - 1;
+    else low = mid + 1;
+  }
+  return false;
+}
+
+export class MathLexer { 
   constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
     this.errors = errors;
