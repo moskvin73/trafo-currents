@@ -336,14 +336,17 @@ export class MathParser {
   // Множество FIRST для знаков умножения/деления
   #parseMultiplication() {
     let expr = this.#parseUnary();
-    while (true) switch (this.c_token.type) {
+    let loc;
+    while (true) switch (this.c_token) {
       case TokenType.MUL:
+        loc = location;
         this.#consume();
-        expr = new MulNode(expr, this.#parseUnary(), expr.loc);
+        expr = new MulNode(expr, this.#parseUnary(), loc);
         break;
       case TokenType.DIV:
+        loc = location;
         this.#consume();
-        expr = new DivNode(expr, this.#parseUnary(), expr.loc);
+        expr = new DivNode(expr, this.#parseUnary(), loc);
         break;
       default: return expr;
     }
@@ -351,17 +354,17 @@ export class MathParser {
 
   // Унарные знаки
   #parseUnary() {
-    let opToken;
-    switch (this.c_token.type)
+    let loc;
+    switch (this.c_token)
     {
       case TokenType.PLUS:
-        opToken = this.c_token;
+        loc = location;
         this.#consume();
-        return new UnaryOpNodePlus(this.#parseUnary(), opToken.loc);
+        return new UnaryOpNodePlus(this.#parseUnary(), loc);
       case TokenType.MINUS:
-        opToken = this.c_token;
+        loc = location;
         this.#consume();
-        return new UnaryOpNodeMinus(this.#parseUnary(), opToken.loc);
+        return new UnaryOpNodeMinus(this.#parseUnary(), loc);
       default: return this.#parsePower();
     }
   }
@@ -370,10 +373,10 @@ export class MathParser {
   #parsePower() { 
     let expr = this.#parsePrimary();
 
-    if (this.c_token.type === TokenType.POW) {
-      const opToken = this.c_token;
+    if (this.c_token === TokenType.POW) {
+      const loc = location;
       this.#consume();      
-      expr = new PowNode(expr, this.#parseUnary(), opToken.loc);
+      expr = new PowNode(expr, this.#parseUnary(), loc);
     }
     return expr;
   }
@@ -406,31 +409,31 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-    let token = this.c_token;
-    while (true) switch (token.type) {
+    let token_loc = location;location;
+    while (true) switch (this.c_token) {
         case TokenType.MATH_PI:
             this.#consume();
-            return new ConstantNode(TokenType.MATH_PI, token.loc);
+            return new ConstantNode(TokenType.MATH_PI, token_loc);
             
         case TokenType.MATH_E:
             this.#consume();
-            return new ConstantNode(TokenType.MATH_E, token.loc);
+            return new ConstantNode(TokenType.MATH_E, token_loc);
             
         case TokenType.MATH_PHI:
             this.#consume();
-            return new ConstantNode(TokenType.MATH_PHI, token.loc);
+            return new ConstantNode(TokenType.MATH_PHI, token_loc);
             
         case TokenType.MATH_INF:
             this.#consume();
-            return new ConstantNode(TokenType.MATH_INF, token.loc);
+            return new ConstantNode(TokenType.MATH_INF, token_loc);
             
         case TokenType.MATH_NAN:
             this.#consume();
-            return new ConstantNode(TokenType.MATH_NAN, token.loc);
+            return new ConstantNode(TokenType.MATH_NAN, token_loc);
 
          case TokenType.NUMBER:
             this.#consume();
-            return new NumberNode(new RealNumber(token.value), token.loc);
+            return new NumberNode(new RealNumber(token.value), token_loc);
 
         case TokenType.COMPLEX_NUMBER:
              this.#consume();
