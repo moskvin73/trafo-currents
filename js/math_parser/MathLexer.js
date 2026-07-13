@@ -357,12 +357,21 @@ export class MathLexer {
         if (isUnicodeLetter(code)) {
           const idStart = this.i;
           this.#readCodePointAndAdvance();
+          
           while (this.i < len) {
             const nextCp = src.codePointAt(this.i);
-            // Буквы или цифры (ASCII / Юникод) внутри названия переменной
-            if ((nextCp < 128 && (asciiMap[nextCp] === C_ALPHA || asciiMap[nextCp] === C_DIGIT)) || isUnicodeLetter(nextCp)) {
+            
+            // Внутри названия переменной разрешаем:
+            // 1. ASCII буквы, ASCII цифры или подчёркивание
+            // 2. Юникод-буквы (\p{L})
+            // 3. Юникод-числа (\p{N})
+            const isAsciiPart = nextCp < 128 && (asciiMap[nextCp] === C_ALPHA || asciiMap[nextCp] === C_DIGIT);
+            
+            if (isAsciiPart || isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
               this.#readCodePointAndAdvance();
-            } else break;
+            } else {
+              break;
+            }
           }
           return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), new SourceLocation(startLine, startColumn, startIndex));
         }
