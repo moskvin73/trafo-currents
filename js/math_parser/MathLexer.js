@@ -444,7 +444,7 @@ export class MathLexer {
         }
         const badChar = src.slice(currentPos, this.i);
         const formattedChar = formatBadChar(badChar);
-        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));
+        this.errors.push(new CompilerError(`Неизвестный символ "${formattedChar}"`, createLoc()));
       }
     }
 
