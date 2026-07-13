@@ -225,27 +225,26 @@ export class BinaryOpNode extends MathNode {
     const dens = [];
     const signState = { minusCount: 0 };
 
-    // 1. Собираем все факторы в массивы
+    // 1. Собираем все факторы
     this._collectFactors(this, false, nums, dens, signState);
 
-    // Вспомогательная функция для сортировки: числа вперед!
+    // Сортируем (числа вперед)
     const sortFactors = (nodes) => {
       return nodes.sort((a, b) => {
         const aIsNum = a instanceof NumberNode;
         const bIsNum = b instanceof NumberNode;
-        
-        if (aIsNum && !bIsNum) return -1; // Число смещается влево (вперед)
-        if (!aIsNum && bIsNum) return 1;  // Не-число смещается вправо (назад)
-        return 0; // В остальных случаях порядок не меняется
+        if (aIsNum && !bIsNum) return -1;
+        if (!aIsNum && bIsNum) return 1;
+        return 0;
       });
     };
 
-    // 2. Сортируем числители и знаменатели (числа уходят вперед)
     const sortedNums = sortFactors(nums);
     const sortedDens = sortFactors(dens);
 
-    // Наша умная функция сборки элементов на строке
-    const joinFactors = (nodes) => {
+    // 2. Обновленная функция сборки элементов
+    // Добавляем второй параметр: isSingleChain (равен true, если этот массив — весь числитель или весь знаменатель целиком)
+    const joinFactors = (nodes, isSingleChain = false) => {
       if (nodes.length === 0) return '';
       
       let resultTeX = '';
@@ -254,8 +253,15 @@ export class BinaryOpNode extends MathNode {
         const currentNode = nodes[i];
         let currentTeX = currentNode.toTeX();
 
+        // УМНОЕ ПРАВИЛО СКОБОК:
+        // Мы ставим скобки, только если приоритет ниже умножения И выполняется одно из двух:
+        // 1. В этой цепочке больше одного элемента (например, A * (B + C))
+        // 2. Или этот элемент единственный, но это НЕ выражение числителя/знаменателя (isSingleChain === false)
         if (currentNode.getPriority?.() < OpPriority.MUL_DIV) {
-          currentTeX = `\\left(${currentTeX}\\right)`;
+          const needBrackets = !isSingleChain || nodes.length > 1;
+          if (needBrackets) {
+            currentTeX = `\\left(${currentTeX}\\right)`;
+          }
         }
 
         if (i === 0) {
@@ -270,16 +276,14 @@ export class BinaryOpNode extends MathNode {
 
           let needDot = false;
           if (endsWithDigit && startsWithDigit) {
-            needDot = true; // Число * Число -> нужна точка
+            needDot = true;
           } else if (endsWithDigit && startsWithTeXConstant) {
-            needDot = true; // Число * \pi -> нужна точка
+            needDot = true;
           }
 
           if (needDot) {
             resultTeX += ` \\cdot ${currentTeX}`;
           } else {
-            // Тонкий нюанс: если число встало после буквы (вдруг сортировка не сработала), 
-            // или если идут две буквы, то точку не ставим, но делаем красивый пробел
             resultTeX += ` ${currentTeX}`;
           }
         }
@@ -289,17 +293,18 @@ export class BinaryOpNode extends MathNode {
 
     const globalSign = (signState.minusCount % 2 !== 0) ? '- ' : '';
 
+    // Если знаменателя нет
     if (sortedDens.length === 0) {
-      return `${globalSign}${joinFactors(sortedNums)}`;
+      return `${globalSign}${joinFactors(sortedNums, false)}`;
     }
 
-    // 3. Собираем итоговые строки из уже отсортированных массивов
-    const numTeX = joinFactors(sortedNums);
-    const denTeX = joinFactors(sortedDens);
+    // 3. Собираем числитель и знаменатель, указывая, что они являются одиночными монолитами (isSingleChain = true)
+    const numTeX = joinFactors(sortedNums, true);
+    const denTeX = joinFactors(sortedDens, true);
 
     return `${globalSign}\\frac{${numTeX}}{${denTeX}}`;
   }
-
+  
   // Единый рекурсивный сборщик факторов для всех видов бинарных узлов умножения/деления
   _collectFactors(node, isInverted, nums, dens, signState) {
     // 1. Обработка унарных операций (+ / -)
