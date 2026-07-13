@@ -50,6 +50,68 @@ export class StatementNode {
   toTeX() { return this.node.toTeX(); }
 }
 
+export class TeXOutputFormatter {
+  /**
+   * Главный метод, возвращающий финальную строку для MathJax
+   * @param {ASTNode} inputTree - Исходное дерево, построенное парсером
+   * @param {MathValue} resultValue - Атомарный объект-результат вычисления (.toRawTeX())
+   * @returns {string} Строка TeX для рендеринга
+   */
+  static format(inputTree, resultValue) {
+    // 1. Если это операция присваивания (например, U = 10 + 3i)
+    if (inputTree instanceof AssignNode) {
+      const varNameTeX = inputTree.left.toTeX();
+      const resultTeX = resultValue.toRawTeX();
+      return `${varNameTeX} = ${resultTeX}`;
+    }
+
+    // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
+    if (this._isStaticLiteralTree(inputTree)) {
+      return resultValue.toRawTeX(); // Гасим левую часть, выводим только ответ
+    }
+
+    // 3. Для полноценных вычислений выводим классическую цепочку (например, 2 * 5 = 10)
+    return `${inputTree.toTeX()} = ${resultValue.toRawTeX()}`;
+  }
+
+  /**
+   * Рекурсивно проверяет, является ли дерево просто статичной записью константы
+   * @private
+   */
+  static _isStaticLiteralTree(node) {
+    // База: числа и системные константы (%pi, %inf) — это статика
+    if (node instanceof NumberNode || node instanceof ConstantNode) {
+      return true;
+    }
+
+    // Унарные цепочки (+---10) — это тоже статика
+    if (node instanceof UnaryOpNode) {
+      return this._isStaticLiteralTree(node.argument);
+    }
+
+    // Бинарные операции (сложение, умножение)
+    if (node instanceof BinaryOpNode) {
+      // Чтобы не сгасить красивое вычисление "5 * 2 = 10", мы считаем 
+      // статикой ТОЛЬКО каноническую запись комплексного числа (a + b*i или a - b*i).
+      // Проверяем: если это операция сложения/вычитания, и она состоит из статичных узлов,
+      // то разрешаем скрыть левую часть выражения.
+      if (node.operator === '+' || node.operator === '-') {
+        return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
+      }
+      
+      // Если в статичном выражении комплексного числа мнимая часть записана как 3 * i,
+      // то узел умножения тоже нужно пропустить как статику
+      if (node.operator === '*') {
+        return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
+      }
+    }
+
+    // Любые переменные (VariableNode), функции (CallNode) или деления (DivNode) 
+    // делают дерево динамическим — для них левую часть нужно показывать обязательно!
+    return false;
+  }
+}
+
 /**
  * Финальный отказоустойчивый Парсер (Рекурсивный спуск)
  */
