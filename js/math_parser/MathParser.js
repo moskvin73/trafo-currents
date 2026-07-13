@@ -126,27 +126,27 @@ export class MathParser {
   /**
    * @param {MathLexer} lexer - Потоковый лексер нового поколения
    */
-  constructor(input, baseLine = 1, baseColumn = 1) {
+  constructor(input, baseLine = 1) {
     this.errors = [];
-    this.lexer = new MathLexer(input, this.errors, baseLine, baseColumn);
-    this.lookahead = null;
+    this.lexer = new MathLexer(input, this.errors, baseLine);
+    this.c_token = TokenType.EOF;
     // Инициализируем lookahead первым токеном из потока
     this.#consume();
   }
 
   // Сдвигает поток, считывая следующий токен из лексера
   #consume() {
-    this.lookahead = this.lexer.next();
+    this.c_token = this.lexer.next();
   }
 
   // Проверяет совпадение типа и сдвигает lookahead. Если тип не совпал — это синтаксический сбой.
   #match(expectedType, errorMessage) {
-    if (this.lookahead.type === expectedType) {
-      const currentToken = this.lookahead;
+    if (this.c_token.type === expectedType) {
+      const currentToken = this.c_token;
       this.#consume();
       return true;
     }
-    this.#error(errorMessage, this.lookahead.loc);
+    this.#error(errorMessage, this.c_token.loc);
     return false;
   }
 
@@ -162,12 +162,12 @@ export class MathParser {
     const program = new ProgramNode();
 
     try {
-        while (this.lookahead.type !== TokenType.EOF) {
+        while (this.c_token.type !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
-        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.lookahead.loc));
+        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.c_token.loc));
       }
 
     return { program, errors: this.errors };
@@ -197,14 +197,14 @@ export class MathParser {
     let exprNode = null;
 
     // 1. Парсим узел (это либо print, либо любое математическое выражение/присваивание)
-    if (this.lookahead.type === TokenType.VARIABLE && this.lookahead.value === 'print') {
+    if (this.c_token.type === TokenType.VARIABLE && this.c_token.value === 'print') {
       exprNode = this.#parsePrintStatement();
     } else {
       exprNode = this.#parseExpression();
     }
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
-    while (true) switch (this.lookahead.type)
+    while (true) switch (this.c_token.type)
     {
       case TokenType.EOF:
       case TokenType.SEMICOLON:
@@ -215,16 +215,16 @@ export class MathParser {
         return new StatementNode(exprNode, exprNode instanceof AssignNode);
       default:
         this.#error(
-          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lookahead.value}"`,
-           this.lookahead.loc);
+          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.c_token.value}"`,
+           this.c_token.loc);
         while (true)
         {
-          if (MathParser.Expr_FIRST.has(this.lookahead.type)) {
+          if (MathParser.Expr_FIRST.has(this.c_token.type)) {
             this.#consume();
             return new StatementNode(exprNode, false);
           }
           this.#consume();
-          if (MathParser.parseStatement_FALLOW.has(this.lookahead.type)) break;
+          if (MathParser.parseStatement_FALLOW.has(this.c_token.type)) break;
         }
     }
   }
@@ -239,20 +239,20 @@ export class MathParser {
   #parsePrintStatement() {
     const elements = [];
 
-    const printToken = this.lookahead;
+    const printToken = this.c_token;
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
-      while (!MathParser.parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token.type)) this.#consume();
       return new PrintNode(elements, printToken.loc);
     }
 
     // Если скобка закрывается сразу, значит print() пустой
-    if (this.lookahead.type !== TokenType.RPAREN) {
+    if (this.c_token.type !== TokenType.RPAREN) {
         while (true) {
-          if (this.lookahead.type === TokenType.TEXT_BLOCK) {
+          if (this.c_token.type === TokenType.TEXT_BLOCK) {
               elements.push({ 
                 type: 'TEXT_BLOCK', 
-                value: this.lookahead.value 
+                value: this.c_token.value 
               });
               this.#consume();
           } else {
@@ -261,11 +261,11 @@ export class MathParser {
           }
 
           // Если следующий токен — запятая, поглощаем её и продолжаем цикл
-          if (this.lookahead.type === TokenType.COMMA) {
+          if (this.c_token.type === TokenType.COMMA) {
               this.#consume();
               
               // Проверка на trailing comma: если после запятой сразу закрывающая скобка
-              if (this.lookahead.type === TokenType.RPAREN) {
+              if (this.c_token.type === TokenType.RPAREN) {
               break; 
               }
           } else {
@@ -277,7 +277,7 @@ export class MathParser {
 
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
-      while (!MathParser.parsePrintStatement_FALLOW.has(this.lookahead.type)) this.#consume();
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token.type)) this.#consume();
     }
     return new PrintNode(elements, printToken.loc);
   }
@@ -297,8 +297,8 @@ export class MathParser {
     let expr = this.#parseAddition();
 
     // Если следующим токеном идёт знак равенства '='
-    if (this.lookahead.type === TokenType.ASSIGN) {
-      const opToken = this.lookahead;
+    if (this.c_token.type === TokenType.ASSIGN) {
+      const opToken = this.c_token;
       this.#consume(); // сожрали '='
 
       // КРИТИЧЕСКАЯ СЕМАНТИЧЕСКАЯ ПРОВЕРКА: слева ОБЯЗАНА быть переменная!
@@ -319,7 +319,7 @@ export class MathParser {
   // Множество FIRST для знаков сложения/вычитания
   #parseAddition() {
     let expr = this.#parseMultiplication();
-    while (true) switch (this.lookahead.type) {
+    while (true) switch (this.c_token.type) {
       case TokenType.PLUS:
         this.#consume();
         expr = new AddNode(expr, this.#parseMultiplication(), expr.loc);
@@ -335,7 +335,7 @@ export class MathParser {
   // Множество FIRST для знаков умножения/деления
   #parseMultiplication() {
     let expr = this.#parseUnary();
-    while (true) switch (this.lookahead.type) {
+    while (true) switch (this.c_token.type) {
       case TokenType.MUL:
         this.#consume();
         expr = new MulNode(expr, this.#parseUnary(), expr.loc);
@@ -351,14 +351,14 @@ export class MathParser {
   // Унарные знаки
   #parseUnary() {
     let opToken;
-    switch (this.lookahead.type)
+    switch (this.c_token.type)
     {
       case TokenType.PLUS:
-        opToken = this.lookahead;
+        opToken = this.c_token;
         this.#consume();
         return new UnaryOpNodePlus(this.#parseUnary(), opToken.loc);
       case TokenType.MINUS:
-        opToken = this.lookahead;
+        opToken = this.c_token;
         this.#consume();
         return new UnaryOpNodeMinus(this.#parseUnary(), opToken.loc);
       default: return this.#parsePower();
@@ -369,8 +369,8 @@ export class MathParser {
   #parsePower() { 
     let expr = this.#parsePrimary();
 
-    if (this.lookahead.type === TokenType.POW) {
-      const opToken = this.lookahead;
+    if (this.c_token.type === TokenType.POW) {
+      const opToken = this.c_token;
       this.#consume();      
       expr = new PowNode(expr, this.#parseUnary(), opToken.loc);
     }
@@ -405,7 +405,7 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-    let token = this.lookahead;
+    let token = this.c_token;
     while (true) switch (token.type) {
         case TokenType.MATH_PI:
             this.#consume();
@@ -448,7 +448,7 @@ export class MathParser {
           while (true)
           {
             this.#consume();
-            token = this.lookahead;
+            token = this.c_token;
             if (MathParser.Primary_FIRST.has(token.type)) break;
             if (MathParser.Primary_FALLOW.has(token.type))
             {
@@ -459,19 +459,19 @@ export class MathParser {
   }
 
   #callFuncORVar() {
-      const idToken = this.lookahead;
+      const idToken = this.c_token;
       this.#consume();
 
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
-      if (this.lookahead.type === TokenType.LPAREN) {
+      if (this.c_token.type === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
 
         const args = [];
         // Читаем список аргументов через запятую (например: pow(x, 3) или sin(x))
-        if (this.lookahead.type !== TokenType.RPAREN) {
+        if (this.c_token.type !== TokenType.RPAREN) {
           args.push(this.#parseExpression());
           
-          while (this.lookahead.type === TokenType.COMMA) {
+          while (this.c_token.type === TokenType.COMMA) {
             this.#consume(); // сожрали ','
             args.push(this.#parseExpression());
           }
