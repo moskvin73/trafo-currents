@@ -235,7 +235,7 @@
                             // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
                             if (response.isPrintCommand) {
                                 const printRow = document.createElement("div");
-                                printRow.className = "output-row print-row"; 
+                                printRow.className = "print-row"; 
                                 printRow.innerHTML = response.value; 
                                 resultBlock.appendChild(printRow);
                             } 
