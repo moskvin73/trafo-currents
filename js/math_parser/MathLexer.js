@@ -350,6 +350,17 @@ export class MathLexer {
             return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), 
                           new SourceLocation(startLine, startColumn, startIndex));
           }
+          default: {
+            const currentPos = this.i;
+            this.#readCodePointAndAdvance(); // ГАРАНТИРОВАННО сдвигаем курсор на 1 символ
+            const badChar = src.slice(currentPos, this.i);
+            
+            this.errors.push(new CompilerError(
+              `Неизвестный ASCII символ "${badChar}"`, 
+              new SourceLocation(startLine, startColumn, startIndex)
+            ));
+            continue; // Переходим к следующему символу
+          }
         }
       } else {
         // --- ТОЧНАЯ ЮНИКОД ДОРОЖКА (code >= 128) ---
