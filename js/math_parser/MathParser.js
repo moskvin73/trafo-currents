@@ -64,7 +64,7 @@ export class TeXOutputFormatter {
       const varNameTeX = inputTree.name;
       const resultTeX = resultValue.toRawTeX();
       //return `${varNameTeX} = ${resultTeX}`;
-      return `${varNameTeX} = ${format(inputTree.expression, resultValue)}`;
+      return `${varNameTeX} = ${this.format(inputTree.expression, resultValue)}`;
     }
 
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
