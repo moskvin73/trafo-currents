@@ -33,7 +33,7 @@ const asciiMap = new Uint8Array(128);
 
 // Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
 for (let c of ['\t', '\n', '\v', '\f', '\r', ' ']) {
-  asciiMap[c] = C_SPACE;
+  asciiMap[c.charCodeAt(0)] = C_SPACE;
 }
 
 // Заполняем цифры (0-9)
@@ -53,7 +53,7 @@ asciiMap[37] = C_PERCENT; // Процент %
 
 // Операторы фиксированной длины (+, -, *, /, =, (, ), ;, $, , , ^)
 for (let c of ['+', '-', '*', '/', '=', '(', ')', ';', '$', ',' , '^']) {
-  asciiMap[c] = C_OPERATOR;
+  asciiMap[c.charCodeAt(0)] = C_OPERATOR;
 }
 
 // Полный список пробельных кодовых точек Юникода (категория \p{Zs} + C# NEL + BOM)
