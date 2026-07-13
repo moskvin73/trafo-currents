@@ -448,7 +448,10 @@ export class MathLexer {
       }
     }
 
-    const loc = new SourceLocation(this, this.i, this.i, this.currentLine, this.lineStartIdx, this.currentLine, this.lineStartIdx);
+    const loc = new SourceLocation(this, 
+      this.i, this.i, 
+      this.currentLine, this.lineStartIdx, 
+      this.currentLine, this.lineStartIdx);
     return new Token(TokenType.EOF, 'EOF',  loc);
   }  
 
