@@ -5,6 +5,7 @@ import ASTNode, {
   UnaryOpNode, 
   UnaryOpNodePlus,
   UnaryOpNodeMinus,
+  BinaryOpNode,
   AddNode,
   SubNode,
   MulNode,
