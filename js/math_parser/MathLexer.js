@@ -375,10 +375,54 @@ export class MathLexer {
         }
 
         // Безопасный отлов сломанных/неизвестных символов
-        const currentPos = this.i;
+        /*const currentPos = this.i;
         this.#readCodePointAndAdvance(); // Сдвинет на 1 или 2 в зависимости от валидности суррогата
         const badChar = src.slice(currentPos, this.i);
+        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));*/
+
+        const currentPos = this.i;
+        let graphemeLength = 1;
+
+        // Если Intl.Segmenter доступен, берем длину ПЕРВОЙ полной графемы
+        if (typeof Intl.Segmenter !== 'undefined') {
+          if (!this._segmenter) {
+            this._segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+          }
+          // Сегментируем остаток строки и берем первый визуальный символ
+          const segments = this._segmenter.segment(src.slice(currentPos));
+          const firstGrapheme = segments.containing(0); 
+          if (firstGrapheme) {
+            graphemeLength = firstGrapheme.segment.length; // Физическая длина в UTF-16 ячейках
+          }
+        } else {
+          // Fallback: если сегментера нет, аккуратно шагаем хотя бы по суррогатным парам
+          if (code >= 0xD800 && code <= 0xDBFF && currentPos + 1 < len) {
+            const nextCode = src.charCodeAt(currentPos + 1);
+            if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+              graphemeLength = 2;
+            }
+          }
+        }
+
+        // Продвигаем курсор лексера сразу на всю длину сложного эмодзи/символа
+        // При этом важно правильно обновить счетчики строк, если внутри графемы был перенос (маловероятно, но для безопасности)
+        for (let step = 0; step < graphemeLength; step++) {
+          const checkCode = src.charCodeAt(this.i);
+          if (checkCode === 10 || checkCode === 13 || checkCode === 8232 || checkCode === 8233 || checkCode === 133 || checkCode === 12) {
+            // Если это перевод строки (например, битый невидимый символ переноса), вызываем штатный метод
+            this.#readCodePointAndAdvance();
+          } else {
+            // Для обычных внутренностей эмодзи просто сдвигаем физический индекс
+            this.i++;
+          }
+        }
+
+        // Вырезаем весь радужный флаг или семью целиком!
+        const badChar = src.slice(currentPos, this.i);
+
+        const badChar = src.slice(currentPos, this.i);
         this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));
+
       }
     }
 
