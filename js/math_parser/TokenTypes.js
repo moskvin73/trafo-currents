@@ -1,4 +1,4 @@
-export const TokenType = Object.freeze({
+/*export const TokenType = Object.freeze({
   EOF: 0,
   NUMBER: 1,         // Вещественное число
   COMPLEX_NUMBER: 2, // Комплексное число (1i, 4i)
@@ -21,4 +21,40 @@ export const TokenType = Object.freeze({
   MATH_PHI: 19, // %phi
   MATH_INF: 20, // %inf 
   MATH_NAN: 21,  // %nan  
-});
+});*/
+// Просто пишем список названий по порядку
+const tokenNames = [
+  'EOF',
+  'NUMBER',
+  'COMPLEX_NUMBER',
+  'PLUS',
+  'MINUS',
+  'MUL',
+  'DIV',
+  'POW',
+  'ASSIGN',
+  'LPAREN',
+  'PARENR',
+  'VARIABLE',
+  'TEXT_BLOCK',
+  'COMMENT',
+  'SEMICOLON',
+  'SILENT',
+  'COMMA',
+  'MATH_PI',
+  'MATH_E',
+  'MATH_PHI',
+  'MATH_INF',
+  'MATH_NAN'
+];
+
+// Создаем пустой объект перечисления
+export const TokenType = {};
+
+// Автоматически заполняем его: { EOF: 0, NUMBER: 1, COMPLEX_NUMBER: 2, ... }
+for (let i = 0; i < tokenNames.length; i++) {
+  TokenType[tokenNames[i]] = i;
+}
+
+// Замораживаем для оптимизации V8
+Object.freeze(TokenType);
