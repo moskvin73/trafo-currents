@@ -541,6 +541,7 @@ export class ProgramNode {
   collectMathExpressions(list) {
     // Обходим все аргументы функции, каждый из них может быть математикой
     for (const stmt of this.statements) {
+      if (typeof stmt.collectMathExpressions === 'function') {
       stmt.collectMathExpressions(list);
     }  
   }
