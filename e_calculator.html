@@ -87,51 +87,29 @@
 			resize: vertical;
 			transition: border-color 0.2s;
 		}*/
-#calc-terminal-input {
-    flex: 1;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 12px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 15px;
-    line-height: 1.5;
-    outline: none;
-    
-    /* ИЗМЕНЕНИЯ ТУТ: */
-    resize: none;             /* Запрещаем ручное изменение размера */
-    overflow-y: hidden;       /* Прячем вертикальную полосу прокрутки */
-    box-sizing: border-box;   /* Гарантирует правильный расчет высоты с padding */
-    
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
+        #calc-terminal-input {
+            flex: 1;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.5;
+            outline: none;
+            
+            /* ИЗМЕНЕНИЯ ТУТ: */
+            resize: none;             /* Запрещаем ручное изменение размера */
+            overflow-y: hidden;       /* Прячем вертикальную полосу прокрутки */
+            box-sizing: border-box;   /* Гарантирует правильный расчет высоты с padding */
+            
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
         
 		#calc-terminal-input:focus {
 			border-color: #0f2d59; /* Подсветка вашим синим цветом при фокусе */
 			box-shadow: 0 0 0 3px rgba(15, 45, 89, 0.1);
 		}
 
-.output-row {
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 15px;
-    line-height: 1.5;
-    
-    /* Управление переносами и отступами */
-    display: block;             /* Делает строку полноценным блоком */
-    white-space: pre-wrap;      /* Сохраняет все переносы строк (\n) и пробелы из JS */
-    word-break: break-word;     /* Безопасно переносит слишком длинные числа */
-    
-    /* Внешние отступы между строками вывода (если нужно отделять их друг от друга) */
-    margin-bottom: 12px;        
-}
-
-/* Выравнивание масштаба MathJax под 15px */
-.output-row .mjx-mstyle, 
-.output-row .MathJax {
-    font-size: 100% !important; 
-    line-height: normal !important;
-    display: inline-block;      /* Чтобы MathJax корректно вел себя при переносе текста */
-    vertical-align: middle;     /* Аккуратное выравнивание по высоте букв */
-}        
 
 		/* Кнопка Enter в вашей синей палитре */
 		#calc-submit-btn {
@@ -212,21 +190,21 @@
 	    
         import { MathParser, TeXOutputFormatter } from './js/math_parser/MathParser.js';
 
-const terminalInput = document.getElementById('calc-terminal-input');
+        const terminalInput = document.getElementById('calc-terminal-input');
 
-if (terminalInput) {
-    // Функция автоматического изменения высоты
-    const adjustHeight = () => {
-        terminalInput.style.height = 'auto'; // Сбрасываем высоту для корректного перерасчета
-        terminalInput.style.height = `${terminalInput.scrollHeight}px`; // Задаем высоту по контенту
-    };
+        if (terminalInput) {
+            // Функция автоматического изменения высоты
+            const adjustHeight = () => {
+                terminalInput.style.height = 'auto'; // Сбрасываем высоту для корректного перерасчета
+                terminalInput.style.height = `${terminalInput.scrollHeight}px`; // Задаем высоту по контенту
+            };
 
-    // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
-    terminalInput.addEventListener('input', adjustHeight);
+            // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
+            terminalInput.addEventListener('input', adjustHeight);
 
-    // Первичный расчет (на случай, если в поле уже есть текст при загрузке страницы)
-    adjustHeight();
-}
+            // Первичный расчет (на случай, если в поле уже есть текст при загрузке страницы)
+            adjustHeight();
+        }
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
