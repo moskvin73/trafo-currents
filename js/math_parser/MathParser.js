@@ -296,22 +296,21 @@ export class MathParser {
     let expr = this.#parseAddition();
 
     // Если следующим токеном идёт знак равенства '='
-    if (this.c_token.type === TokenType.ASSIGN) {
-      const opToken = this.c_token;
+    if (this.c_token === TokenType.ASSIGN) {
+      const opToken_loc = location;
       this.#consume(); // сожрали '='
 
       // КРИТИЧЕСКАЯ СЕМАНТИЧЕСКАЯ ПРОВЕРКА: слева ОБЯЗАНА быть переменная!
       if (!(expr instanceof VariableNode)) {
-        this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`,  opToken.loc);
+        this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`,  opToken_loc);
       }
 
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
       
       // Возвращаем узел присваивания, забирая имя из VariableNode
-      return new AssignNode(expr.name, right, opToken.loc);
+      return new AssignNode(expr.name, right, opToken_loc);
     }
-
     return expr;
   }
 
