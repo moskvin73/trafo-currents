@@ -388,27 +388,18 @@ export class MathLexer {
    * Безопасно обрабатывает суррогатные пары Юникода.
    */
   countGraphemes(fromIndex, toIndex) {
-    const src = this.source;
-    let count = 1; // Колонки обычно 1-based
-    let curr = fromIndex;
+    if (fromIndex >= toIndex) return 1; // Колонки 1-based
 
-    while (curr < toIndex) {
-      const code = src.charCodeAt(curr);
+    // 1. Вырезаем кусок строки от начала линии до нужной позиции
+    const subStr = this.source.slice(fromIndex, toIndex);
 
-      // Проверяем валидную суррогатную пару
-      if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < toIndex) {
-        const nextCode = src.charCodeAt(curr + 1);
-        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
-          count++;
-          curr += 2; // Пара занимает 2 индекса в UTF-16, но визуально это 1 символ
-          continue;
-        }
-      }
-
+    // 2. Используем итератор Intl.Segmenter
+    // Мы не собираем массив через Array.from(), чтобы не плодить память. 
+    // Мы просто линейно считаем количество итераций (графем) в цикле.
+    let count = 1; // Стартуем с 1-й колонки
+    for (const _ of graphemeSegmenter.segment(subStr)) {
       count++;
-      curr++;
     }
-
     return count;
   }  
 }
