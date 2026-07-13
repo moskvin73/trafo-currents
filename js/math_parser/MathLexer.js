@@ -204,7 +204,7 @@ export class MathLexer {
       this.tokenEndLine,
       this.tokenEndLineIdx
     );
-  }
+  } 
 
   /** Вспомогательный метод подсчета визуальных графем Юникода */
   countGraphemes(fromIndex, toIndex) {

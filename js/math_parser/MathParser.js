@@ -134,19 +134,18 @@ export class MathParser {
     this.#consume();
   }
 
+  get location() { return this.lexer.createLocation(); }
+
   // Сдвигает поток, считывая следующий токен из лексера
-  #consume() {
-    this.c_token = this.lexer.next();
-  }
+  #consume() { this.c_token = this.lexer.next(); }
 
   // Проверяет совпадение типа и сдвигает lookahead. Если тип не совпал — это синтаксический сбой.
-  #match(expectedType, errorMessage) {
-    if (this.c_token === expectedType) {
-      const currentToken = this.c_token;
+  #match(token_id, errorMessage) {
+    if (this.c_token === token_id) {
       this.#consume();
       return true;
     }
-    this.#error(errorMessage, this.c_token.loc);
+    this.#error(errorMessage, location);
     return false;
   }
 
@@ -162,12 +161,12 @@ export class MathParser {
     const program = new ProgramNode();
 
     try {
-        while (this.c_token.type !== TokenType.EOF) {
+        while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
-        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.c_token.loc));
+        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, location));
       }
 
     return { program, errors: this.errors };
