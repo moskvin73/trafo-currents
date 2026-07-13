@@ -124,12 +124,12 @@ function isUnicodeNumber(code) {
 }
 
 export class MathLexer { 
-  constructor(input, errors, baseLine = 1, baseColumn = 1) {
+  constructor(input, errors, baseLine = 1) {
     this.source = input; 
     this.errors = errors;
     this.i = 0;
+    this.lineStartIdx = 0;
     this.currentLine = baseLine;
-    this.currentColumn = baseColumn;
   }
 
 
@@ -142,17 +142,17 @@ export class MathLexer {
     // Обработка переводов строк (счетчик строк)
     if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) { // \n, \u2028, \u2029, NEL, FF
       this.currentLine++;
-      this.currentColumn = 1;
       this.i++;
+      this.lineStartIdx = this.i;
       return code;
     }
     if (code === 13) { // \r
       this.currentLine++;
-      this.currentColumn = 1;
       this.i++;
       if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) { // \r\n
         this.i++;
       }
+      this.lineStartIdx = this.i;
       return code;
     }
 
@@ -163,20 +163,17 @@ export class MathLexer {
         const nextCode = this.source.charCodeAt(this.i + 1);
         if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
           // Пара валидна!
-          this.currentColumn++; // Визуально символ один
           this.i += 2;          // В строке занимает 2 позиции
           return cp;
         }
       }
       // Если нижнего суррогата нет — пара БИТАЯ.
       // Обрабатываем верхний суррогат как одиночный ошибочный символ!
-      this.currentColumn++;
       this.i++;
       return code;
     }
 
     // Обычный ASCII или BMP Юникод символ (1 индекс)
-    this.currentColumn++;
     this.i++;
     return code;
   }
@@ -193,8 +190,8 @@ export class MathLexer {
       const charClass = code < 128 ? asciiMap[code] : C_UNKNOWN;
 
       const startLine = this.currentLine;
-      const startColumn = this.currentColumn;
       const startIndex = this.i;
+      const startLineIdx = this.lineStartIdx;
 
       // --- БЫСТРАЯ ASCII ДОРОЖКА ---
       if (code < 128) {
