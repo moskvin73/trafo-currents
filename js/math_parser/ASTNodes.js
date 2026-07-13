@@ -543,7 +543,8 @@ export class ProgramNode {
     for (const stmt of this.statements) {
       if (typeof stmt.collectMathExpressions === 'function') {
       stmt.collectMathExpressions(list);
-    }  
+      }  
+    }
   }
 }
 

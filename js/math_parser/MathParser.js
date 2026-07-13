@@ -29,6 +29,13 @@ export class StatementNode {
     this.isSilent = isSilent;
   }
 
+  collectMathExpressions(list) {
+    // Обходим все аргументы функции, каждый из них может быть математикой
+      if (typeof node.collectMathExpressions === 'function') {
+      node.collectMathExpressions(list);
+    }
+  }
+
   toString() { return this.node.toString(); }
   
   evaluate(context) {
