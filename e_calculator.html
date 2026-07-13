@@ -105,6 +105,29 @@
 			box-shadow: 0 0 0 3px rgba(15, 45, 89, 0.1);
 		}
 
+.output-row {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.5;
+    
+    /* Управление переносами и отступами */
+    display: block;             /* Делает строку полноценным блоком */
+    white-space: pre-wrap;      /* Сохраняет все переносы строк (\n) и пробелы из JS */
+    word-break: break-word;     /* Безопасно переносит слишком длинные числа */
+    
+    /* Внешние отступы между строками вывода (если нужно отделять их друг от друга) */
+    margin-bottom: 12px;        
+}
+
+/* Выравнивание масштаба MathJax под 15px */
+.output-row .mjx-mstyle, 
+.output-row .MathJax {
+    font-size: 100% !important; 
+    line-height: normal !important;
+    display: inline-block;      /* Чтобы MathJax корректно вел себя при переносе текста */
+    vertical-align: middle;     /* Аккуратное выравнивание по высоте букв */
+}        
+
 		/* Кнопка Enter в вашей синей палитре */
 		#calc-submit-btn {
 			background: #0f2d59;
