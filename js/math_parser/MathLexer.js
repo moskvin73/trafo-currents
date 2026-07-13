@@ -193,7 +193,15 @@ export class MathLexer {
       const startIndex = this.i;
       const startLineIdx = this.lineStartIdx;
 
-      //const createClass = (id, type) => { return 0; }
+      const createLoc = () => { 
+      return new SourceLocation(this, 
+          startIndex, 
+          this.i, 
+          startLine, 
+          startLineIdx, 
+          this.currentLine, 
+          this.lineStartIdx
+      );};
 
       // --- БЫСТРАЯ ASCII ДОРОЖКА ---
       if (code < 128) {
@@ -217,7 +225,7 @@ export class MathLexer {
             // Степень **
             if (code === 42 && src.charCodeAt(this.i + 1) === 42) {
               this.#readCodePointAndAdvance(); this.#readCodePointAndAdvance();
-              return new Token(TokenType.POW, '^', new SourceLocation(startLine, startColumn, startIndex));
+              return new Token(TokenType.POW, '^', createLoc());
             }
 
             this.#readCodePointAndAdvance();
@@ -234,7 +242,7 @@ export class MathLexer {
             else if (code === 94) type = TokenType.POW;
             else if (code === 42) type = TokenType.MUL;
 
-            return new Token(type, String.fromCharCode(code), new SourceLocation(startLine, startColumn, startIndex));
+            return new Token(type, String.fromCharCode(code), createLoc());
           }
 
           case C_QUOTE: {
@@ -245,7 +253,7 @@ export class MathLexer {
               this.#readCodePointAndAdvance();
             }
             const textValue = src.slice(textStart, this.i);
-            const startLoc = new SourceLocation(startLine, startColumn, startIndex);
+            const startLoc = createLoc();
             if (this.i >= len) {
               this.errors.push(new CompilerError(`Незакрытая текстовая строка`, startLoc));
               return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
@@ -264,7 +272,7 @@ export class MathLexer {
             }
             const constName = '%' + src.slice(constStart, this.i);
             const matchedType = constantMap[constName];
-            const startLoc = new SourceLocation(startLine, startColumn, startIndex);
+            const startLoc =  createLoc();
             if (matchedType) return { type: matchedType, value: constName, loc: startLoc };
             this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, startLoc));
             continue;
@@ -292,7 +300,7 @@ export class MathLexer {
               }
             }
             const numStr = src.slice(numStart, this.i);
-            const startLoc = new SourceLocation(startLine, startColumn, startIndex);
+            const startLoc =  createLoc();
             if (dotCount > 1) this.errors.push(new CompilerError(`Неверный формат числа "${numStr}"`, startLoc));
             const parsedVal = parseFloat(numStr) || 0;
             if (this.i < len && src.charCodeAt(this.i) === 105) { 
@@ -321,8 +329,7 @@ export class MathLexer {
                 break;
               }
             }
-            return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), 
-                          new SourceLocation(startLine, startColumn, startIndex));
+            return new Token(TokenType.VARIABLE, src.slice(idStart, this.i),  createLoc());
           }
           default: {
             const currentPos = this.i;
@@ -331,7 +338,7 @@ export class MathLexer {
             
             this.errors.push(new CompilerError(
               `Неизвестный ASCII символ "${badChar}"`, 
-              new SourceLocation(startLine, startColumn, startIndex)
+               createLoc()
             ));
             continue; // Переходим к следующему символу
           }
@@ -362,20 +369,18 @@ export class MathLexer {
               break;
             }
           }
-          return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), 
-                                new SourceLocation(startLine, startColumn, startIndex));
+          return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), createLoc());
         }
 
         // Безопасный отлов сломанных/неизвестных символов
         const currentPos = this.i;
         this.#readCodePointAndAdvance(); // Сдвинет на 1 или 2 в зависимости от валидности суррогата
         const badChar = src.slice(currentPos, this.i);
-        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, 
-                              new SourceLocation(startLine, startColumn, startIndex)));
+        this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));
       }
     }
 
-    return new Token(TokenType.EOF, 'EOF', new SourceLocation(this.currentLine, this.currentColumn, this.i));
+    return new Token(TokenType.EOF, 'EOF',  createLoc());
   }  
 
   /**
