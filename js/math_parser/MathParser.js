@@ -141,7 +141,7 @@ export class MathParser {
 
   // Проверяет совпадение типа и сдвигает lookahead. Если тип не совпал — это синтаксический сбой.
   #match(expectedType, errorMessage) {
-    if (this.c_token.type === expectedType) {
+    if (this.c_token === expectedType) {
       const currentToken = this.c_token;
       this.#consume();
       return true;
