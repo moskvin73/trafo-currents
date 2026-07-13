@@ -251,7 +251,7 @@ export class MathParser {
           if (this.c_token === TokenType.TEXT_BLOCK) {
               elements.push({ 
                 type: 'TEXT_BLOCK', 
-                value: this.c_token.value 
+                value: this.lexer.stringValue() 
               });
               this.#consume();
           } else {
