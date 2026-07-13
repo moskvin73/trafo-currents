@@ -225,7 +225,7 @@
                             else if (!response.isSilent) {
                                 const mathRow = document.createElement("div");
                                 mathRow.className = "output-row"; // Стандартная карточка вывода
-                                const resultValue = response.value.toRawTeX();
+                                const resultValue = response.value;
                                 const myRenderString = TeXOutputFormatter.format(stmt, resultValue);
                                 mathRow.innerHTML = `$$${myRenderString}$$`;
                                 //mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
