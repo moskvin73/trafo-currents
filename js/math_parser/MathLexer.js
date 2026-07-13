@@ -124,21 +124,21 @@ function isUnicodeNumber(code) {
 }
 
 export class MathLexer { 
-  constructor(input, errors, baseLine = 1, baseColumn = 1) {
+  /*constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
     this.errors = errors;
     this.i = 0;
     this.currentLine = baseLine;
     this.currentColumn = baseColumn;
-  }
+  }*/
 
-  /*constructor(input, errors, baseLine = 1, baseColumn = 1) {
-    this.source = input; // Работаем с нативной строкой! Никаких Array.from
+  constructor(input, errors, baseLine = 1, baseColumn = 1) {
+    this.source = input; 
     this.errors = errors;
     this.i = 0;
     this.currentLine = baseLine;
     this.currentColumn = baseColumn;
-  }*/
+  }
 
   /*#advanceChar() {
     if (this.i >= this.chars.length) return null;
