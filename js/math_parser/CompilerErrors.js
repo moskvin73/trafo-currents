@@ -11,7 +11,10 @@ export class CompilerError {
   }
 
   toString() {
-    return `[${this.severity.toUpperCase()}] ${this.message} (вкладка/строка ${this.location.line}, позиция ${this.location.column})`;
+    if (this.location.isInLine())
+      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:${this.location.endColumn})`;
+    else
+      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:строка ${this.location.endLine}, позиция ${this.location.endColumn})`;
   }
 }
 
@@ -28,6 +31,8 @@ export class SourceLocation {
     this._endLine = endLine;
     this.endLineIdx = endLineIdx;
   }
+
+  isInLine() { return this._startLine === this._endLine; }
 
   // Строки отдаются мгновенно за O(1)
   get line() { return this._startLine; }
