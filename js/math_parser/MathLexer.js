@@ -382,7 +382,8 @@ export class MathLexer {
       }
     }
 
-    return new Token(TokenType.EOF, 'EOF',  createLoc());
+    const loc = new SourceLocation(this, this.i, this.i, this.currentLine, this.lineStartIdx, this.currentLine, this.lineStartIdx);
+    return new Token(TokenType.EOF, 'EOF',  loc);
   }  
 
   /**
