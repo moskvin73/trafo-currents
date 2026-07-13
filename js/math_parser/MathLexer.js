@@ -157,64 +157,97 @@ function isUnicodeNumber(code) {
   return false;
 }
 
-export class MathLexer { 
+export class MathLexer {
   constructor(input, errors, baseLine = 1) {
-    this.source = input; 
+    this.source = input;
     this.errors = errors;
     this.i = 0;
-    this.lineStartIdx = 0;
     this.currentLine = baseLine;
+    this.lineStartIdx = 0;
+
+    // Внутреннее состояние ПОСЛЕДНЕГО успешно прочитанного тонена
+    this.tokenStart = 0;
+    this.tokenEnd = 0;
+    this.tokenStartLine = 0;
+    this.tokenStartLineIdx = 0;
+    this.tokenEndLine = 0;
+    this.tokenEndLineIdx = 0;
+    
+    // Сюда сохраняем распарсенное число, чтобы parseFloat не вызывать дважды
+    this.tokenNumberValue = 0; 
+
+    this._segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
   }
 
+  // ============================================================================
+  // ПУБЛИЧНЫЕ МЕТОДЫ ПОЛУЧЕНИЯ ДАННЫХ ПО ТРЕБОВАНИЮ
+  // ============================================================================
+
+  /** Возвращает строковое значение текущего токена (имя переменной, текст строки) */
+  stringValue() {
+    return this.source.slice(this.tokenStart, this.tokenEnd);
+  }
+
+  /** Возвращает готовое числовое значение (для TokenType.NUMBER / TokenType.COMPLEX_NUMBER) */
+  numberValue() {
+    return this.tokenNumberValue;
+  }
+
+  /** Создает и возвращает легковесный объект локации для AST дерева */
+  createLocation() {
+    return new SourceLocation(
+      this,
+      this.tokenStart,
+      this.tokenEnd,
+      this.tokenStartLine,
+      this.tokenStartLineIdx,
+      this.tokenEndLine,
+      this.tokenEndLineIdx
+    );
+  }
+
+  /** Вспомогательный метод подсчета визуальных графем Юникода */
+  countGraphemes(fromIndex, toIndex) {
+    if (fromIndex >= toIndex) return 1;
+    const subStr = this.source.slice(fromIndex, toIndex);
+    let count = 1;
+    if (this._segmenter) {
+      for (const _ of this._segmenter.segment(subStr)) count++;
+    } else {
+      let curr = 0;
+      while (curr < subStr.length) {
+        const code = subStr.charCodeAt(curr);
+        if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < subStr.length && subStr.charCodeAt(curr + 1) >= 0xDC00 && subStr.charCodeAt(curr + 1) <= 0xDFFF) {
+          count++; curr += 2; continue;
+        }
+        count++; curr++;
+      }
+    }
+    return count;
+  }
 
   #readCodePointAndAdvance() {
     if (this.i >= this.source.length) return null;
-
     const cp = this.source.codePointAt(this.i);
     const code = this.source.charCodeAt(this.i);
 
-    // Обработка переводов строк (счетчик строк)
-    if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) { // \n, \u2028, \u2029, NEL, FF
-      this.currentLine++;
-      this.i++;
-      this.lineStartIdx = this.i;
-      return code;
+    if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) {
+      this.currentLine++; this.i++; this.lineStartIdx = this.i; return code;
     }
-    if (code === 13) { // \r
-      this.currentLine++;
-      this.i++;
-      if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) { // \r\n
-        this.i++;
-      }
-      this.lineStartIdx = this.i;
-      return code;
+    if (code === 13) {
+      this.currentLine++; this.i++;
+      if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
+      this.lineStartIdx = this.i; return code;
     }
-
-    // Проверяем, является ли символ валидной суррогатной парой (занимает 2 индекса)
-    // High surrogate: 0xD800 - 0xDBFF. Low surrogate: 0xDC00 - 0xDFFF
-    if (code >= 0xD800 && code <= 0xDBFF) {
-      if (this.i + 1 < this.source.length) {
-        const nextCode = this.source.charCodeAt(this.i + 1);
-        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
-          // Пара валидна!
-          this.i += 2;          // В строке занимает 2 позиции
-          return cp;
-        }
-      }
-      // Если нижнего суррогата нет — пара БИТАЯ.
-      // Обрабатываем верхний суррогат как одиночный ошибочный символ!
-      this.i++;
-      return code;
+    if (code >= 0xD800 && code <= 0xDBFF && this.i + 1 < this.source.length && this.source.charCodeAt(this.i + 1) >= 0xDC00 && this.source.charCodeAt(this.i + 1) <= 0xDFFF) {
+      this.i += 2; return cp;
     }
-
-    // Обычный ASCII или BMP Юникод символ (1 индекс)
-    this.i++;
-    return code;
+    this.i++; return code;
   }
 
-  /**
-   * Считывает и возвращает СЛЕДУЮЩИЙ единственный токен из потока (LL(1))
-   */
+  // ============================================================================
+  // ОСНОВНОЙ ЦИКЛ: СКОРОСТЬ ВЫШЕ В РАЗЫ, НУЛЬ АЛЛОКАЦИЙ ПРИ УСПЕШНОМ ПАРСИНГЕ
+  // ============================================================================
   next() {
     const src = this.source;
     const len = src.length;
@@ -223,25 +256,15 @@ export class MathLexer {
       const code = src.codePointAt(this.i);
       const charClass = code < 128 ? asciiMap[code] : C_UNKNOWN;
 
+      // Фиксируем стартовые метки
+      const startIdx = this.i;
       const startLine = this.currentLine;
-      const startIndex = this.i;
       const startLineIdx = this.lineStartIdx;
 
-      const createLoc = () => { 
-      return new SourceLocation(this, 
-          startIndex, 
-          this.i, 
-          startLine, 
-          startLineIdx, 
-          this.currentLine, 
-          this.lineStartIdx
-      );};
-
-      // --- БЫСТРАЯ ASCII ДОРОЖКА ---
       if (code < 128) {
         switch (charClass) {
           case C_SPACE: {
-            this.#readCodePointAndAdvance(); // Просто поглощаем пробел
+            this.#readCodePointAndAdvance();
             continue;
           }
 
@@ -251,18 +274,27 @@ export class MathLexer {
               this.#readCodePointAndAdvance(); this.#readCodePointAndAdvance();
               while (this.i < len) {
                 const next = src.charCodeAt(this.i);
-                if (next === 10 || next === 13 || next === 8232 || nextCode === 8233 || next === 133 || next === 12) break;
+                if (next === 10 || next === 13 || next === 8232 || next === 8233 || next === 133 || next === 12) break;
                 this.#readCodePointAndAdvance();
               }
               continue;
             }
-            // Степень **
-            if (code === 42 && src.charCodeAt(this.i + 1) === 42) {
-              this.#readCodePointAndAdvance(); this.#readCodePointAndAdvance();
-              return new Token(TokenType.POW, '^', createLoc());
-            }
 
-            this.#readCodePointAndAdvance();
+            // Вспомогательная функция для записи состояния оператора
+            const commitOperator = (type, shiftCount) => {
+              for (let s = 0; s < shiftCount; s++) this.#readCodePointAndAdvance();
+              this.tokenStart = startIdx;
+              this.tokenEnd = this.i;
+              this.tokenStartLine = startLine;
+              this.tokenStartLineIdx = startLineIdx;
+              this.tokenEndLine = this.currentLine;
+              this.tokenEndLineIdx = this.lineStartIdx;
+              return type;
+            };
+
+            // Степень **
+            if (code === 42 && src.charCodeAt(this.i + 1) === 42) return commitOperator(TokenType.POW, 2);
+
             let type;
             if (code === 43) type = TokenType.PLUS;
             else if (code === 45) type = TokenType.MINUS;
@@ -276,83 +308,112 @@ export class MathLexer {
             else if (code === 94) type = TokenType.POW;
             else if (code === 42) type = TokenType.MUL;
 
-            return new Token(type, String.fromCharCode(code), createLoc());
+            return commitOperator(type, 1);
           }
 
           case C_QUOTE: {
             const quote = code;
             this.#readCodePointAndAdvance();
-            const textStart = this.i;
-            while (this.i < len && src.charCodeAt(this.i) !== quote) {
-              this.#readCodePointAndAdvance();
-            }
-            const textValue = src.slice(textStart, this.i);
-            const startLoc = createLoc();
+            while (this.i < len && src.charCodeAt(this.i) !== quote) this.#readCodePointAndAdvance();
+
+            this.tokenStart = startIdx + 1; // Пропускаем открывающую кавычку
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+
             if (this.i >= len) {
-              this.errors.push(new CompilerError(`Незакрытая текстовая строка`, startLoc));
-              return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
+              const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+              this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));
+              this.tokenEndLine = this.currentLine;
+              this.tokenEndLineIdx = this.lineStartIdx;
+              return TokenType.TEXTokenType.BLOCK;
             }
-            this.#readCodePointAndAdvance();
-            return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
+            this.#readCodePointAndAdvance(); // закрывающая кавычка
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+            return TokenType.TEXTokenType.BLOCK;
           }
 
           case C_PERCENT: { // %pi, %e
             this.#readCodePointAndAdvance();
-            const constStart = this.i;
             while (this.i < len) {
               const next = src.charCodeAt(this.i);
               if ((next >= 65 && next <= 90) || (next >= 97 && next <= 122)) this.#readCodePointAndAdvance();
               else break;
             }
-            const constName = '%' + src.slice(constStart, this.i);
+            this.tokenStart = startIdx;
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+
+            const constName = src.slice(startIdx, this.i);
             const matchedType = constantMap[constName];
-            const startLoc =  createLoc();
-            if (matchedType) return { type: matchedType, value: constName, loc: startLoc };
-            this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, startLoc));
+            if (matchedType) return matchedType; // Возвращает числовой ID из карты констант
+
+            const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+            this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, errLoc));
             continue;
           }
-
-          case C_DIGIT: { // Числа + Экспонента
-            const numStart = this.i;
-            let dotCount = 0;
+          case C_DIGIT: {
             while (this.i < len) {
               const next = src.charCodeAt(this.i);
-              if (next === 46) { dotCount++; this.#readCodePointAndAdvance(); }
-              else if (next >= 48 && next <= 57) this.#readCodePointAndAdvance();
-              else break;
+              if (next === 46 || (next >= 48 && next <= 57)) {
+                this.#readCodePointAndAdvance();
+              } else {
+                break;
+              }
             }
-            // Научная нотация e/E
+            
+            // Проверяем научную (экспоненциальную) нотацию: e/E
             if (this.i < len) {
               const next = src.charCodeAt(this.i);
               if (next === 101 || next === 69) {
-                let look = this.i + 1, hasSign = false;
-                if (look < len && (src.charCodeAt(look) === 43 || src.charCodeAt(look) === 45)) { look++; hasSign = true; }
+                let look = this.i + 1;
+                let hasSign = false;
+                if (look < len && (src.charCodeAt(look) === 43 || src.charCodeAt(look) === 45)) { 
+                  look++; 
+                  hasSign = true; 
+                }
                 if (look < len && src.charCodeAt(look) >= 48 && src.charCodeAt(look) <= 57) {
-                  this.#readCodePointAndAdvance(); if (hasSign) this.#readCodePointAndAdvance();
-                  while (this.i < len && src.charCodeAt(this.i) >= 48 && src.charCodeAt(this.i) <= 57) this.#readCodePointAndAdvance();
+                  this.#readCodePointAndAdvance(); // поглотили e/E
+                  if (hasSign) this.#readCodePointAndAdvance(); // поглотили +/-
+                  while (this.i < len && src.charCodeAt(this.i) >= 48 && src.charCodeAt(this.i) <= 57) {
+                    this.#readCodePointAndAdvance();
+                  }
                 }
               }
             }
-            const numStr = src.slice(numStart, this.i);
-            const startLoc =  createLoc();
-            if (dotCount > 1) this.errors.push(new CompilerError(`Неверный формат числа "${numStr}"`, startLoc));
-            const parsedVal = parseFloat(numStr) || 0;
+
+            this.tokenStart = startIdx;
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+
+            // Извлекаем подстроку и парсим число в примитив ровно один раз
+            this.tokenNumberValue = parseFloat(src.slice(startIdx, this.i)) || 0;
+
+            // Мгновенная склейка комплексных чисел прямо на уровне лексем (105 = 'i')
             if (this.i < len && src.charCodeAt(this.i) === 105) { 
-              this.#readCodePointAndAdvance(); 
-              return new Token(TokenType.COMPLEX_NUMBER, parsedVal, startLoc);
+              this.#readCodePointAndAdvance();
+              this.tokenEnd = this.i; // Расширяем правую границу токена, включая 'i'
+              return TokenType.COMPLEX_NUMBER;
             }
-            return new Token(TokenType.NUMBER, parsedVal, startLoc);
+            return TokenType.NUMBER;
           }
 
-          case C_ALPHA: { // Идентификаторы (Латиница)
-            const idStart = this.i;
+          case C_ALPHA: { // Идентификаторы (начало с ASCII-буквы)
             this.#readCodePointAndAdvance();
             while (this.i < len) {
               const next = src.charCodeAt(this.i);
+              // Разрешаем латиницу, цифры и подчёркивание
               if ((next >= 65 && next <= 90) || (next >= 97 && next <= 122) || (next >= 48 && next <= 57) || next === 95) {
                 this.#readCodePointAndAdvance();
               } else if (next > 127) {
-                // Если идентификатор начался на ASCII, но продолжился Юникод буквой или Юникод числом
+                // Если слово началось с латиницы, но продолжилось Юникод-буквами/числами
                 const nextCp = src.codePointAt(this.i);
                 if (isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
                   this.#readCodePointAndAdvance();
@@ -363,38 +424,36 @@ export class MathLexer {
                 break;
               }
             }
-            return new Token(TokenType.VARIABLE, src.slice(idStart, this.i),  createLoc());
+            this.tokenStart = startIdx;
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+            return TokenType.VARIABLE;
           }
-          default: {
-            const currentPos = this.i;
-            this.#readCodePointAndAdvance(); // ГАРАНТИРОВАННО сдвигаем курсор на 1 символ
-            const badChar = src.slice(currentPos, this.i);
-            const formattedChar = formatBadChar(badChar);
-            this.errors.push(new CompilerError(
-              `Неизвестный ASCII символ "${formattedChar}"`, 
-               createLoc()
-            ));
-            continue; // Переходим к следующему символу
+
+          default: { // Неизвестный или запрещённый ASCII-символ (например, '\', '#', '`')
+            this.#readCodePointAndAdvance();
+            const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+            this.errors.push(new CompilerError(`Неизвестный ASCII символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
+            continue; // Идем искать следующий полезный токен
           }
         }
       } else {
-        // --- ТОЧНАЯ ЮНИКОД ДОРОЖКА (code >= 128) ---
-        if (isUnicodeSpace(code)) {
-          this.#readCodePointAndAdvance();
-          continue;
+        // --- 2. ТОЧНАЯ ЮНИКОД-ДОРОЖКА (Кодовые точки >= 128) ---
+        
+        // Проверяем полнокровные пробельные символы Юникода (\p{Zs} и др.)
+        if (isUnicodeSpace(code)) { 
+          this.#readCodePointAndAdvance(); 
+          continue; 
         }
 
+        // Переменные, начавшиеся сразу с Юникод-букв (кириллица, корейский и т.д.)
         if (isUnicodeLetter(code)) {
-          const idStart = this.i;
           this.#readCodePointAndAdvance();
-          
           while (this.i < len) {
             const nextCp = src.codePointAt(this.i);
-            
-            // Внутри названия переменной разрешаем:
-            // 1. ASCII буквы, ASCII цифры или подчёркивание
-            // 2. Юникод-буквы (\p{L})
-            // 3. Юникод-числа (\p{N})
             const isAsciiPart = nextCp < 128 && (asciiMap[nextCp] === C_ALPHA || asciiMap[nextCp] === C_DIGIT);
             
             if (isAsciiPart || isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
@@ -403,75 +462,50 @@ export class MathLexer {
               break;
             }
           }
-          return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), createLoc());
+          this.tokenStart = startIdx;
+          this.tokenEnd = this.i;
+          this.tokenStartLine = startLine;
+          this.tokenStartLineIdx = startLineIdx;
+          this.tokenEndLine = this.currentLine;
+          this.tokenEndLineIdx = this.lineStartIdx;
+          return TokenType.VARIABLE;
         }
 
-        const currentPos = this.i;
+        // ОБРАБОТКА НЕИЗВЕСТНЫХ СЛОЖНЫХ СИМВОЛОВ И СОСТАВНЫХ ЭМОДЗИ
         let graphemeLength = 1;
-
-        // Если Intl.Segmenter доступен, берем длину ПЕРВОЙ полной графемы
-        if (typeof Intl.Segmenter !== 'undefined') {
-          if (!this._segmenter) {
-            this._segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-          }
-          // Сегментируем остаток строки и берем первый визуальный символ
-          const segments = this._segmenter.segment(src.slice(currentPos));
-          const firstGrapheme = segments.containing(0); 
+        if (this._segmenter) {
+          // Вычисляем физическую UTF-16 длину первой цельной графемы
+          const firstGrapheme = this._segmenter.segment(src.slice(startIdx)).containing(0);
           if (firstGrapheme) {
-            graphemeLength = firstGrapheme.segment.length; // Физическая длина в UTF-16 ячейках
+            graphemeLength = firstGrapheme.segment.length;
           }
         } else {
-          // Fallback: если сегментера нет, аккуратно шагаем хотя бы по суррогатным парам
-          if (code >= 0xD800 && code <= 0xDBFF && currentPos + 1 < len) {
-            const nextCode = src.charCodeAt(currentPos + 1);
-            if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+          // Запасной вариант (fallback): если сегментера нет, безопасно шагаем по суррогатным парам
+          if (code >= 0xD800 && code <= 0xDBFF && startIdx + 1 < len) {
+            if (src.charCodeAt(startIdx + 1) >= 0xDC00 && src.charCodeAt(startIdx + 1) <= 0xDFFF) {
               graphemeLength = 2;
             }
           }
         }
 
-        // Продвигаем курсор лексера сразу на всю длину сложного эмодзи/символа
-        // При этом важно правильно обновить счетчики строк, если внутри графемы был перенос (маловероятно, но для безопасности)
+        // Поглощаем всю сложную ошибку (флаг, цвет кожи, семья) целиком, сохраняя счетчики строк
         for (let step = 0; step < graphemeLength; step++) {
-          const checkCode = src.charCodeAt(this.i);
-          if (checkCode === 10 || checkCode === 13 || checkCode === 8232 || checkCode === 8233 || checkCode === 133 || checkCode === 12) {
-            // Если это перевод строки (например, битый невидимый символ переноса), вызываем штатный метод
-            this.#readCodePointAndAdvance();
-          } else {
-            // Для обычных внутренностей эмодзи просто сдвигаем физический индекс
-            this.i++;
-          }
+          this.#readCodePointAndAdvance();
         }
-        const badChar = src.slice(currentPos, this.i);
-        const formattedChar = formatBadChar(badChar);
-        this.errors.push(new CompilerError(`Неизвестный символ "${formattedChar}"`, createLoc()));
+
+        const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+        this.errors.push(new CompilerError(`Неизвестный символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
+        continue;
       }
     }
 
-    const loc = new SourceLocation(this, 
-      this.i, this.i, 
-      this.currentLine, this.lineStartIdx, 
-      this.currentLine, this.lineStartIdx);
-    return new Token(TokenType.EOF, 'EOF',  loc);
-  }  
-
-  /**
-   * Подсчитывает количество визуальных символов (графем) между двумя индексами.
-   * Безопасно обрабатывает суррогатные пары Юникода.
-   */
-  countGraphemes(fromIndex, toIndex) {
-    if (fromIndex >= toIndex) return 1; // Колонки 1-based
-
-    // 1. Вырезаем кусок строки от начала линии до нужной позиции
-    const subStr = this.source.slice(fromIndex, toIndex);
-
-    // 2. Используем итератор Intl.Segmenter
-    // Мы не собираем массив через Array.from(), чтобы не плодить память. 
-    // Мы просто линейно считаем количество итераций (графем) в цикле.
-    let count = 1; // Стартуем с 1-й колонки
-    for (const _ of graphemeSegmenter.segment(subStr)) {
-      count++;
-    }
-    return count;
-  }  
-}
+    // Достигли конца файла (EOF)
+    this.tokenStart = this.i; 
+    this.tokenEnd = this.i;
+    this.tokenStartLine = this.currentLine; 
+    this.tokenStartLineIdx = this.lineStartIdx;
+    this.tokenEndLine = this.currentLine; 
+    this.tokenEndLineIdx = this.lineStartIdx;
+    return TokenType.EOF;
+  }
+}		  
