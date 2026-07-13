@@ -33,12 +33,17 @@
 		/* Эхо-вывод того кода, который ввёл пользователь */
 		.calc-card-echo {
 			font-family: 'Fira Code', 'Courier New', monospace;
-			font-size: 14px;
+			font-size: 15px;
 			color: #475569;
 			background: #f1f5f9;
 			padding: 6px 12px;
 			border-radius: 4px;
-			display: inline-block;
+    /* Управление переносами и отступами */
+    display: inline-block;             /* Делает строку полноценным блоком */
+    white-space: pre-wrap;      /* Сохраняет все переносы строк (\n) и пробелы из JS */
+    word-break: break-word;     /* Безопасно переносит слишком длинные числа */
+
+			/*display: inline-block;*/
 			margin-bottom: 10px;
 			border-left: 3px solid #0f2d59; /* Ваш фирменный глубокий синий */
 		}
