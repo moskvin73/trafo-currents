@@ -193,6 +193,8 @@ export class MathLexer {
       const startIndex = this.i;
       const startLineIdx = this.lineStartIdx;
 
+      //const createClass = (id, type) => { return 0; }
+
       // --- БЫСТРАЯ ASCII ДОРОЖКА ---
       if (code < 128) {
         switch (charClass) {
