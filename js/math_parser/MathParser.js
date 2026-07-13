@@ -196,14 +196,14 @@ export class MathParser {
     let exprNode = null;
 
     // 1. Парсим узел (это либо print, либо любое математическое выражение/присваивание)
-    if (this.c_token.type === TokenType.VARIABLE && this.c_token.value === 'print') {
+    if (this.c_token === TokenType.VARIABLE && this.lexer.stringValue() === 'print') {
       exprNode = this.#parsePrintStatement();
     } else {
       exprNode = this.#parseExpression();
     }
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
-    while (true) switch (this.c_token.type)
+    while (true) switch (this.c_token)
     {
       case TokenType.EOF:
       case TokenType.SEMICOLON:
@@ -214,16 +214,16 @@ export class MathParser {
         return new StatementNode(exprNode, exprNode instanceof AssignNode);
       default:
         this.#error(
-          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.c_token.value}"`,
-           this.c_token.loc);
+          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
+           location);
         while (true)
         {
-          if (MathParser.Expr_FIRST.has(this.c_token.type)) {
+          if (MathParser.Expr_FIRST.has(this.c_token)) {
             this.#consume();
             return new StatementNode(exprNode, false);
           }
           this.#consume();
-          if (MathParser.parseStatement_FALLOW.has(this.c_token.type)) break;
+          if (MathParser.parseStatement_FALLOW.has(this.c_token)) break;
         }
     }
   }
