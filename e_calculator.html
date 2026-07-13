@@ -117,6 +117,24 @@
 			}
 		}
 	
+        /* Нацеливаемся только на элементы MathJax внутри блоков вывода */
+        /* Замените .output-block на класс вашей серой рамки, если он называется иначе */
+        .output-block .mjx-mstyle {
+            font-size: 100% !important; /* Отменяем уменьшение шрифта */
+        }
+
+        .output-block .mjx-mstyle mfrac {
+            padding: 0.2em 0 !important; /* Добавляем правильные отступы для дроби */
+        }
+
+        /* Опционально: центрируем числитель и знаменатель, если они сместятся */
+        .output-block .mjx-mstyle mfrac > * {
+            font-size: 100% !important;             
+        }
+
+        .print-row .mjx-mstyle {
+            font-size: 100% !important;
+        }        
 	</style>
 </head>
 
