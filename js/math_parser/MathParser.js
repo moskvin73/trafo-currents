@@ -65,6 +65,10 @@ export class TeXOutputFormatter {
       return `${varNameTeX} = ${this.format(inputTree.expression, resultValue)}`;
     }
 
+    if (resultValue instanceof ComplexNumber && this._isStaticLiteralTreeComplex(inputTree)) {
+      return resultValue.toRawTeX();
+    }
+
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
     if (this._isStaticLiteralTree(inputTree)) {
       return resultValue.toRawTeX(); // Гасим левую часть, выводим только ответ
@@ -89,8 +93,8 @@ export class TeXOutputFormatter {
       return this._isStaticLiteralTree(node.argument);
     }
 
-    // Бинарные операции (сложение, умножение)
-    if (node instanceof BinaryOpNode) {
+    // Бинарные операции (сложение, вычитаение)
+    /*if (node instanceof BinaryOpNode) {
       // Чтобы не сгасить красивое вычисление "5 * 2 = 10", мы считаем 
       // статикой ТОЛЬКО каноническую запись комплексного числа (a + b*i или a - b*i).
       // Проверяем: если это операция сложения/вычитания, и она состоит из статичных узлов,
@@ -98,17 +102,15 @@ export class TeXOutputFormatter {
       if (node.operator === '+' || node.operator === '-') {
         return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
       }
-      
-      // Если в статичном выражении комплексного числа мнимая часть записана как 3 * i,
-      // то узел умножения тоже нужно пропустить как статику
-      /*if (node.operator === '*') {
-        return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
-      }*/
-    }
+    }*/
 
     // Любые переменные (VariableNode), функции (CallNode) или деления (DivNode) 
     // делают дерево динамическим — для них левую часть нужно показывать обязательно!
     return false;
+  }
+
+  static _isStaticLiteralTreeComplex(node) {
+
   }
 }
 
