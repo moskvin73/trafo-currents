@@ -103,9 +103,9 @@ export class TeXOutputFormatter {
       
       // Если в статичном выражении комплексного числа мнимая часть записана как 3 * i,
       // то узел умножения тоже нужно пропустить как статику
-      if (node.operator === '*') {
+      /*if (node.operator === '*') {
         return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
-      }
+      }*/
     }
 
     // Любые переменные (VariableNode), функции (CallNode) или деления (DivNode) 
