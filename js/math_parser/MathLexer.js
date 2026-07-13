@@ -101,6 +101,28 @@ function isUnicodeLetter(code) {
   return false;
 }
 
+const UNICODE_NUMBERS = new Int32Array([
+  0x00B2, 0x00B3, 0x00B9, 0x00B9, // ² , ³ , ¹
+  0x0660, 0x0669,                 // Арабские цифры (٠-٩)
+  0x06F0, 0x06F9,                 // Персидские цифры
+  0x2150, 0x2189,                 // Дроби и старые римские числа (¼, ½, Ⅰ, Ⅱ...)
+  0x2460, 0x249F,                 // Цифры в кружочках (①, ②...)
+  0x3007, 0x3007,                 // Иероглифический ноль (〇)
+  0xFF10, 0xFF19                  // Полноширинные цифры (０-９)
+]);
+
+function isUnicodeNumber(code) {
+  let low = 0, high = (UNICODE_NUMBERS.length >> 1) - 1;
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    const i = mid << 1;
+    if (code >= UNICODE_NUMBERS[i] && code <= UNICODE_NUMBERS[i + 1]) return true;
+    if (code < UNICODE_NUMBERS[i]) high = mid - 1;
+    else low = mid + 1;
+  }
+  return false;
+}
+
 export class MathLexer { 
   constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
