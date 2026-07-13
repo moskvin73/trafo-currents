@@ -18,7 +18,6 @@ const constantMap = {
   '%nan':  TokenType.MATH_NAN
 };
 
-// Полный список пробельных кодовой точек Юникода (отсортирован)
 const UNICODE_SPACES = new Int32Array([
   0x0009, 0x000A, 0x000B, 0x000C, 0x000D, // Управляющие ASCII (\t, \n, \v, \f, \r)
   0x0020,                                 // Обычный пробел
@@ -47,6 +46,7 @@ function isUnicodeSpace(code) {
   }
   return false;
 }
+
 
 const UNICODE_LETTERS = new Int32Array([
   0x00C0, 0x00D6, 0x00D8, 0x00F6, 0x00F8, 0x02AF, // Расширенная латиница
