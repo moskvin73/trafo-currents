@@ -61,9 +61,10 @@ export class TeXOutputFormatter {
   static format(inputTree, resultValue) {
     // 1. Если это операция присваивания (например, U = 10 + 3i)
     if (inputTree instanceof AssignNode) {
-      const varNameTeX = inputTree.name;//inputTree.left.toTeX();
+      const varNameTeX = inputTree.name;
       const resultTeX = resultValue.toRawTeX();
-      return `${varNameTeX} = ${resultTeX}`;
+      //return `${varNameTeX} = ${resultTeX}`;
+      return `${varNameTeX} = ${format(inputTree.expression, resultValue)}`;
     }
 
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
