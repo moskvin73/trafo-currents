@@ -19,10 +19,27 @@ export class CompilerError {
  * Класс, описывающий точную координату в исходном коде.
  */
 export class SourceLocation {
-  constructor(line, column, index) {
-    this.line = line;
-    this.column = column;
-    this.index = index;
+  constructor(lexer, start, end, startLine, startLineIdx, endLine, endLineIdx) {
+    this.lexer = lexer;
+    this.start = start;
+    this.end = end;
+    this._startLine = startLine;
+    this.startLineIdx = startLineIdx;
+    this._endLine = endLine;
+    this.endLineIdx = endLineIdx;
+  }
+
+  // Строки отдаются мгновенно за O(1)
+  get line() { return this._startLine; }
+  get endLine() { return this._endLine; }
+
+  // Расчет колонок делегируется лексеру
+  get column() {
+    return this.lexer.countGraphemes(this.startLineIdx, this.start);
+  }
+
+  get endColumn() {
+    return this.lexer.countGraphemes(this.endLineIdx, this.end);
   }
 
   toString() {
