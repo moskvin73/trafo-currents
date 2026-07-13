@@ -416,13 +416,8 @@ export class MathLexer {
             this.i++;
           }
         }
-
-        // Вырезаем весь радужный флаг или семью целиком!
-        const badChar = src.slice(currentPos, this.i);
-
         const badChar = src.slice(currentPos, this.i);
         this.errors.push(new CompilerError(`Неизвестный символ "${badChar}"`, createLoc()));
-
       }
     }
 
