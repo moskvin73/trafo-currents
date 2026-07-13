@@ -146,8 +146,7 @@
 	
 	<script type="module">
 	
-        //import { MathLexer } from './js/math_parser/MathLexer.js';
-        import { MathParser } from './js/math_parser/MathParser.js';
+        import { MathParser, TeXOutputFormatter } from './js/math_parser/MathParser.js';
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
@@ -226,7 +225,10 @@
                             else if (!response.isSilent) {
                                 const mathRow = document.createElement("div");
                                 mathRow.className = "output-row"; // Стандартная карточка вывода
-                                mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
+                                const resultValue = response.value.toRawTeX();
+                                const myRenderString = TeXOutputFormatter.format(stmt, resultValue);
+                                mathRow.innerHTML = `$$${myRenderString}$$`;
+                                //mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
                                 resultBlock.appendChild(mathRow);
                             }
                         });
