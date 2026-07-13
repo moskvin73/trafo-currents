@@ -181,6 +181,9 @@ export class MathLexer {
     return code;
   }
 
+  /**
+   * Считывает и возвращает СЛЕДУЮЩИЙ единственный токен из потока (LL(1))
+   */
   next() {
     const src = this.source;
     const len = src.length;
@@ -375,122 +378,33 @@ export class MathLexer {
 
     return new Token(TokenType.EOF, 'EOF', new SourceLocation(this.currentLine, this.currentColumn, this.i));
   }  
+
   /**
-   * Считывает и возвращает СЛЕДУЮЩИЙ единственный токен из потока (LL(1))
+   * Подсчитывает количество визуальных символов (графем) между двумя индексами.
+   * Безопасно обрабатывает суррогатные пары Юникода.
    */
-  /*next() {
-    while (this.i < this.chars.length) {
-      let char = this.chars[this.i];
-      let startLoc = new SourceLocation(this.currentLine, this.currentColumn, this.i);
+  countGraphemes(fromIndex, toIndex) {
+    const src = this.source;
+    let count = 1; // Колонки обычно 1-based
+    let curr = fromIndex;
 
-      // 1. Пропускаем пробелы Юникода
-      if (/\p{White_Space}/u.test(char)) {
-        this.#advanceChar();
-        continue;
+    while (curr < toIndex) {
+      const code = src.charCodeAt(curr);
+
+      // Проверяем валидную суррогатную пару
+      if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < toIndex) {
+        const nextCode = src.charCodeAt(curr + 1);
+        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+          count++;
+          curr += 2; // Пара занимает 2 индекса в UTF-16, но визуально это 1 символ
+          continue;
+        }
       }
 
-      // 2. Однострочные комментарии
-      if (char === '/' && this.#peekNextChar() === '/') {
-        this.#advanceChar(); this.#advanceChar(); // сожрали //
-        let commentValue = '';
-        while (this.i < this.chars.length && !/[\n\r\u2028\u2029]/.test(this.chars[this.i])) {
-          commentValue += this.#advanceChar();
-        }
-        // В LL(1) парсере мы можем просто пропустить комментарий, 
-        // сразу перейдя к поиску следующего полезного токена!
-        continue;
-      }
-
-      // 3. Текстовые блоки "строка"
-      if (char === '"' || char === "'") {
-        const quote = this.#advanceChar();
-        let textValue = '';
-        while (this.i < this.chars.length && this.chars[this.i] !== quote) {
-          textValue += this.#advanceChar();
-        }
-        if (this.i >= this.chars.length) {
-          this.errors.push(new CompilerError(`Незакрытая текстовая строка`, startLoc));
-          return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
-        }
-        this.#advanceChar(); // закрывающая кавычка
-        return new Token(TokenType.TEXT_BLOCK, textValue, startLoc);
-      }
-
-      if (char === '%') {
-        this.#advanceChar(); // Поглощаем символ '%'
-        let constName = '%';
-
-        // Считываем все идущие подряд латинские буквы (идентификатор константы)
-        while (this.i < this.chars.length && /[a-zA-Z]/.test(this.chars[this.i])) {
-          constName += this.#advanceChar();
-        }
-
-        const matchedType = constantMap[constName];
-
-        if (matchedType) {
-          return {
-            type: matchedType,
-            value: constName,
-            loc: startLoc // Использует ваш метод генерации координат
-          };
-        }
-
-        // Если после % идет неизвестное имя или пустота, фиксируем ошибку компиляции
-        this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, startLoc));
-      }
-
-      // 4. Математические операторы фиксированной длины
-      if (char === '+') { this.#advanceChar(); return new Token(TokenType.PLUS, '+', startLoc); }
-      if (char === '-') { this.#advanceChar(); return new Token(TokenType.MINUS, '-', startLoc); }
-      if (char === '/') { this.#advanceChar(); return new Token(TokenType.DIV, '/', startLoc); }
-      if (char === '=') { this.#advanceChar(); return new Token(TokenType.ASSIGN, '=', startLoc); }
-      if (char === '(') { this.#advanceChar(); return new Token(TokenType.LPAREN, '(', startLoc); }
-      if (char === ')') { this.#advanceChar(); return new Token(TokenType.RPAREN, ')', startLoc); }
-      if (char === ';') { this.#advanceChar(); return new Token(TokenType.SEMICOLON, ';', startLoc); }
-      if (char === '$') { this.#advanceChar(); return new Token(TokenType.SILENT, '$', startLoc); }
-      if (char === ',') { this.#advanceChar(); return new Token(TokenType.COMMA, ',', startLoc); }
-
-      // Степень (поддержка ^ и **)
-      if (char === '^') { this.#advanceChar(); return new Token(TokenType.POW, '^', startLoc); }
-      if (char === '*' && this.#peekNextChar() === '*') {
-        this.#advanceChar(); this.#advanceChar();
-        return new Token(TokenType.POW, '^', startLoc);
-      }
-      if (char === '*') { this.#advanceChar(); return new Token(TokenType.MUL, '*', startLoc); }
-
-      // 5. Числа (Вещественные и Комплексные)
-      if (/[0-9]/.test(char) || (char === '.' && /[0-9]/.test(this.#peekNextChar()))) {
-        let numStr = '';
-        while (this.i < this.chars.length && /[0-9.]/.test(this.chars[this.i])) {
-          numStr += this.#advanceChar();
-        }
-        if ((numStr.match(/\./g) || []).length > 1) {
-          this.errors.push(new CompilerError(`Неверный формат числа "${numStr}"`, startLoc));
-        }
-        const parsedVal = parseFloat(numStr) || 0;
-
-        // Если за числом строго идет 'i' — склеиваем в COMPLEX_NUMBER прямо на уровне лексем!
-        if (this.i < this.chars.length && this.chars[this.i] === 'i') {
-          this.#advanceChar(); // поглотили 'i'
-          return new Token(TokenType.COMPLEX_NUMBER, parsedVal, startLoc);
-        }
-        return new Token(TokenType.NUMBER, parsedVal, startLoc);
-      }
-
-      // 6. Идентификаторы (Функции и переменные)
-      if (/[\p{L}_]/u.test(char)) {
-        let idStr = '';
-        while (this.i < this.chars.length && /[\p{L}\p{N}_]/u.test(this.chars[this.i])) {
-          idStr += this.#advanceChar();
-        }
-        return new Token(TokenType.VARIABLE, idStr, startLoc);
-      }
-
-      // Мягкий отлов неизвестных символов
-      this.errors.push(new CompilerError(`Неизвестный символ "${char}"`, startLoc));
-      this.#advanceChar();
+      count++;
+      curr++;
     }
 
-    return new Token(TokenType.EOF, 'EOF', new SourceLocation(this.currentLine, this.currentColumn, this.i));
-  }*/
+    return count;
+  }  
 }
