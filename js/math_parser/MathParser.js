@@ -317,14 +317,17 @@ export class MathParser {
   // Множество FIRST для знаков сложения/вычитания
   #parseAddition() {
     let expr = this.#parseMultiplication();
-    while (true) switch (this.c_token.type) {
+    let loc;
+    while (true) switch (this.c_token) {
       case TokenType.PLUS:
+        loc = location;
         this.#consume();
-        expr = new AddNode(expr, this.#parseMultiplication(), expr.loc);
+        expr = new AddNode(expr, this.#parseMultiplication(), loc);
         break;
       case TokenType.MINUS:
+        loc = location;
         this.#consume();
-        expr = new SubNode(expr, this.#parseMultiplication(), expr.loc);
+        expr = new SubNode(expr, this.#parseMultiplication(), loc);
         break;
       default: return expr;
     }
