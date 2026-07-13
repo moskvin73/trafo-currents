@@ -32,7 +32,7 @@ const C_PERCENT  = 6;
 const asciiMap = new Uint8Array(128);
 
 // Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
-for (let c of) {
+for (let c of ['\t', '\n', '\v', '\f', '\r', ' ']) {
   asciiMap[c] = C_SPACE;
 }
 
