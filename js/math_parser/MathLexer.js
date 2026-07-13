@@ -332,10 +332,17 @@ export class MathLexer {
               const next = src.charCodeAt(this.i);
               if ((next >= 65 && next <= 90) || (next >= 97 && next <= 122) || (next >= 48 && next <= 57) || next === 95) {
                 this.#readCodePointAndAdvance();
-              } else if (next > 127) { // Переход в Юникод посреди слова
-                if (isUnicodeLetter(src.codePointAt(this.i))) this.#readCodePointAndAdvance();
-                else break;
-              } else break;
+              } else if (next > 127) {
+                // Если идентификатор начался на ASCII, но продолжился Юникод буквой или Юникод числом
+                const nextCp = src.codePointAt(this.i);
+                if (isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
+                  this.#readCodePointAndAdvance();
+                } else {
+                  break;
+                }
+              } else {
+                break;
+              }
             }
             return new Token(TokenType.VARIABLE, src.slice(idStart, this.i), new SourceLocation(startLine, startColumn, startIndex));
           }
