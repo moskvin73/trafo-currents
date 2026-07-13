@@ -110,7 +110,12 @@ export class TeXOutputFormatter {
   }
 
   static _isStaticLiteralTreeComplex(node) {
-
+    if (node instanceof BinaryOpNode) {
+      if (node.operator === '+' || node.operator === '-') {
+        return this._isStaticLiteralTree(node.left) && this._isStaticLiteralTree(node.right);
+      }
+    }
+    return this._isStaticLiteralTree(node);
   }
 }
 
