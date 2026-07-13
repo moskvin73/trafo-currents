@@ -80,6 +80,14 @@ export class MathLexer {
     this.currentColumn = baseColumn;
   }
 
+  /*constructor(input, errors, baseLine = 1, baseColumn = 1) {
+    this.source = input; // Работаем с нативной строкой! Никаких Array.from
+    this.errors = errors;
+    this.i = 0;
+    this.currentLine = baseLine;
+    this.currentColumn = baseColumn;
+  }*/
+
   #advanceChar() {
     if (this.i >= this.chars.length) return null;
     const char = this.chars[this.i];
