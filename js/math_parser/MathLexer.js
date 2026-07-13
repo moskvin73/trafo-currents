@@ -18,23 +18,65 @@ const constantMap = {
   '%nan':  TokenType.MATH_NAN
 };
 
+// ============================================================================
+// 1. КОНСТАНТЫ И КЛАССЫ СИМВОЛОВ (Инициализируются 1 раз при старте приложения)
+// ============================================================================
+const C_UNKNOWN  = 0;
+const C_SPACE    = 1; 
+const C_DIGIT    = 2; 
+const C_ALPHA    = 3; 
+const C_OPERATOR = 4; 
+const C_QUOTE    = 5; 
+const C_PERCENT  = 6; 
+
+const asciiMap = new Uint8Array(128);
+
+// Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
+for (let c of) {
+  asciiMap[c] = C_SPACE;
+}
+
+// Заполняем цифры (0-9)
+for (let c = 48; c <= 57; c++) {
+  asciiMap[c] = C_DIGIT;
+}
+
+// Заполняем буквы ASCII (A-Z) и (a-z)
+for (let c = 65; c <= 90; c++) asciiMap[c] = C_ALPHA;
+for (let c = 97; c <= 122; c++) asciiMap[c] = C_ALPHA;
+asciiMap[95] = C_ALPHA; // Подчёркивание '_'
+
+// Заполняем спец-символы
+asciiMap[34] = C_QUOTE;   // Кавычка "
+asciiMap[39] = C_QUOTE;   // Кавычка '
+asciiMap[37] = C_PERCENT; // Процент %
+
+// Операторы фиксированной длины (+, -, *, /, =, (, ), ;, $, , , ^)
+for (let c of) {
+  asciiMap[c] = C_OPERATOR;
+}
+
+// Полный список пробельных кодовых точек Юникода (категория \p{Zs} + C# NEL + BOM)
 const UNICODE_SPACES = new Int32Array([
-  0x0009, 0x000A, 0x000B, 0x000C, 0x000D, // Управляющие ASCII (\t, \n, \v, \f, \r)
-  0x0020,                                 // Обычный пробел
-  0x0085,                                 // NEXT LINE (NEL) из C# / IBM
-  0x00A0,                                 // NON-BREAKING SPACE
-  0x1680,                                 // OGHAM SPACE MARK
-  0x2000, 0x2001, 0x2002, 0x2003, 0x2004, // Квантовые пробелы (En Space, Em Space и т.д.)
-  0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 
-  0x200A, 
-  0x2028,                                 // LINE SEPARATOR
-  0x2029,                                 // PARAGRAPH SEPARATOR
-  0x202F,                                 // NARROW NO-BREAK SPACE
-  0x205F,                                 // MEDIUM MATHEMATICAL SPACE
-  0x3000,                                 // IDEOGRAPHIC SPACE (Иероглифический пробел)
-  0xFEFF                                  // BYTE ORDER MARK (BOM)
+  0x0009, 0x000A, 0x000B, 0x000C, 0x000D,
+  0x0020, 0x0085, 0x00A0, 0x1680, 
+  0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 
+  0x2028, 0x2029, 0x202F, 0x205F, 0x3000, 0xFEFF
 ]);
 
+// Интервалы букв Юникода (\p{L})
+const UNICODE_LETTERS = new Int32Array([
+  0x00C0, 0x00D6, 0x00D8, 0x00F6, 0x00F8, 0x02AF,
+  0x0370, 0x037D, 0x037F, 0x03FF,
+  0x0400, 0x04FF, 0x0500, 0x052F,
+  0x0531, 0x0556, 0x0561, 0x0588,
+  0x05D0, 0x05EA,
+  0x0620, 0x064A,
+  0x4E00, 0x9FFF,
+  0xAC00, 0xD7A3
+]);
+
+// Вспомогательные функции бинарного поиска
 function isUnicodeSpace(code) {
   let low = 0, high = UNICODE_SPACES.length - 1;
   while (low <= high) {
@@ -47,18 +89,6 @@ function isUnicodeSpace(code) {
   return false;
 }
 
-
-const UNICODE_LETTERS = new Int32Array([
-  0x00C0, 0x00D6, 0x00D8, 0x00F6, 0x00F8, 0x02AF, // Расширенная латиница
-  0x0370, 0x037D, 0x037F, 0x03FF,                 // Греческий
-  0x0400, 0x04FF, 0x0500, 0x052F,                 // Кириллица и Доп. Кириллица
-  0x0531, 0x0556, 0x0561, 0x0588,                 // Армянский
-  0x05D0, 0x05EA,                                 // Иврит
-  0x0620, 0x064A,                                 // Арабский
-  0x4E00, 0x9FFF,                                 // Иероглифы CJK (Основной блок)
-  0xAC00, 0xD7A3                                  // Хангыль (Корейский)
-]);
-
 function isUnicodeLetter(code) {
   let low = 0, high = (UNICODE_LETTERS.length >> 1) - 1;
   while (low <= high) {
@@ -70,15 +100,6 @@ function isUnicodeLetter(code) {
   }
   return false;
 }
-
-// Классы символов для быстрой маршрутизации
-const C_UNKNOWN    = 0;
-const C_SPACE      = 1; // Пробелы ASCII
-const C_DIGIT      = 2; // 0-9
-const C_ALPHA      = 3; // a-zA-Z и подчёркивание _
-const C_OPERATOR   = 4; // Простые операторы фиксированной длины (+, -, *, /, и т.д.)
-const C_QUOTE      = 5; // Кавычки ' и "
-const C_PERCENT    = 6; // Процент % для констант
 
 export class MathLexer { 
   constructor(input, errors, baseLine = 1, baseColumn = 1) {
