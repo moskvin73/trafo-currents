@@ -124,14 +124,6 @@ function isUnicodeNumber(code) {
 }
 
 export class MathLexer { 
-  /*constructor(input, errors, baseLine = 1, baseColumn = 1) {
-    this.chars = Array.from(input);
-    this.errors = errors;
-    this.i = 0;
-    this.currentLine = baseLine;
-    this.currentColumn = baseColumn;
-  }*/
-
   constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.source = input; 
     this.errors = errors;
@@ -140,26 +132,6 @@ export class MathLexer {
     this.currentColumn = baseColumn;
   }
 
-  /*#advanceChar() {
-    if (this.i >= this.chars.length) return null;
-    const char = this.chars[this.i];
-    if (char === '\n' || char === '\r' || char === '\u2028' || char === '\u2029') {
-      this.currentLine++;
-      this.currentColumn = 1;
-    } else {
-      this.currentColumn++;
-    }
-    this.i++;
-    return char;
-  }
-
-  #peekChar() {
-    return this.i < this.chars.length ? this.chars[this.i] : null;
-  }
-
-  #peekNextChar() {
-    return this.i + 1 < this.chars.length ? this.chars[this.i + 1] : null;
-  }*/
 
   #readCodePointAndAdvance() {
     if (this.i >= this.source.length) return null;
