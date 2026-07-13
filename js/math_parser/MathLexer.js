@@ -71,6 +71,15 @@ function isUnicodeLetter(code) {
   return false;
 }
 
+// Классы символов для быстрой маршрутизации
+const C_UNKNOWN    = 0;
+const C_SPACE      = 1; // Пробелы ASCII
+const C_DIGIT      = 2; // 0-9
+const C_ALPHA      = 3; // a-zA-Z и подчёркивание _
+const C_OPERATOR   = 4; // Простые операторы фиксированной длины (+, -, *, /, и т.д.)
+const C_QUOTE      = 5; // Кавычки ' и "
+const C_PERCENT    = 6; // Процент % для констант
+
 export class MathLexer { 
   constructor(input, errors, baseLine = 1, baseColumn = 1) {
     this.chars = Array.from(input);
@@ -156,7 +165,7 @@ export class MathLexer {
     this.i++;
     return code;
   }
-  
+
   /**
    * Считывает и возвращает СЛЕДУЮЩИЙ единственный токен из потока (LL(1))
    */
