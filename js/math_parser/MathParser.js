@@ -63,7 +63,6 @@ export class TeXOutputFormatter {
     if (inputTree instanceof AssignNode) {
       const varNameTeX = inputTree.name;
       const resultTeX = resultValue.toRawTeX();
-      //return `${varNameTeX} = ${resultTeX}`;
       return `${varNameTeX} = ${this.format(inputTree.expression, resultValue)}`;
     }
 
