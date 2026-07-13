@@ -53,7 +53,8 @@ export default class ASTNode {
     // Если управление попало сюда, значит производный класс не создал свой метод
     throw new Error(
       `[Abstract Error]: Класс "${this.constructor.name}" обязан реализовать метод collectMathExpressions(list).`
-    );  
+    );
+  }
 }
 
 
@@ -541,7 +542,8 @@ export class ProgramNode {
     // Обходим все аргументы функции, каждый из них может быть математикой
     for (const stmt of this.statements) {
       stmt.collectMathExpressions(list);
-  }  
+    }  
+  }
 }
 
 /**
