@@ -200,7 +200,7 @@ export class MathParser {
         else
         {
           const resultValue = response.value;
-          const renderString = TeXOutputFormatter.format(stmt.node, resultValue);
+          const renderString = TeXOutputFormatter.format(stmt.node, resultValue, this.context);
           return { mixed: false,  isSilent: stmt.isSilent, value: `$$${renderString}$$` };
         }
       });
