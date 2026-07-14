@@ -90,6 +90,9 @@
             resize: none;             /* Запрещаем ручное изменение размера */
             overflow-y: hidden;       /* Прячем вертикальную полосу прокрутки */
             box-sizing: border-box;   /* Гарантирует правильный расчет высоты с padding */
+ 
+            field-sizing: content;     /* Браузер сам меняет высоту под текст */
+            min-height: 48px;         /* Стартовая высота пустого поля (подберите под себя) */
             
             transition: border-color 0.2s, box-shadow 0.2s;
         }
