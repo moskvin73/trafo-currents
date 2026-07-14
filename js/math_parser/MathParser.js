@@ -291,6 +291,7 @@ export class MathParser {
     {
         this.#error(`Ожидался опервнд "${this.lexer.stringValue()}"`, this.location);      
     }
+    return result;
   }
 
   /**
