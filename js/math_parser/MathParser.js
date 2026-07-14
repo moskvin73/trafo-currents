@@ -145,7 +145,7 @@ export class MathParser {
       this.#consume();
       return true;
     }
-    this.#error(errorMessage, location);
+    this.#error(errorMessage, this.location);
     return false;
   }
 
@@ -166,7 +166,7 @@ export class MathParser {
           if (stmt) program.statements.push(stmt);
       }
       } catch (error) {
-        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, location));
+        this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.location));
       }
 
     return { program, errors: this.errors };
@@ -215,7 +215,7 @@ export class MathParser {
       default:
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
-           location);
+           this.location);
         while (true)
         {
           if (MathParser.Expr_FIRST.has(this.c_token)) {
@@ -238,7 +238,7 @@ export class MathParser {
   #parsePrintStatement() {
     const elements = [];
 
-    const print_loc = location;
+    const print_loc = this.location;
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
@@ -297,7 +297,7 @@ export class MathParser {
 
     // Если следующим токеном идёт знак равенства '='
     if (this.c_token === TokenType.ASSIGN) {
-      const opToken_loc = location;
+      const opToken_loc = this.location;
       this.#consume(); // сожрали '='
 
       // КРИТИЧЕСКАЯ СЕМАНТИЧЕСКАЯ ПРОВЕРКА: слева ОБЯЗАНА быть переменная!
@@ -320,12 +320,12 @@ export class MathParser {
     let loc;
     while (true) switch (this.c_token) {
       case TokenType.PLUS:
-        loc = location;
+        loc = this.location;
         this.#consume();
         expr = new AddNode(expr, this.#parseMultiplication(), loc);
         break;
       case TokenType.MINUS:
-        loc = location;
+        loc = this.location;
         this.#consume();
         expr = new SubNode(expr, this.#parseMultiplication(), loc);
         break;
@@ -339,12 +339,12 @@ export class MathParser {
     let loc;
     while (true) switch (this.c_token) {
       case TokenType.MUL:
-        loc = location;
+        loc = this.location;
         this.#consume();
         expr = new MulNode(expr, this.#parseUnary(), loc);
         break;
       case TokenType.DIV:
-        loc = location;
+        loc = this.location;
         this.#consume();
         expr = new DivNode(expr, this.#parseUnary(), loc);
         break;
@@ -358,11 +358,11 @@ export class MathParser {
     switch (this.c_token)
     {
       case TokenType.PLUS:
-        loc = location;
+        loc = this.location;
         this.#consume();
         return new UnaryOpNodePlus(this.#parseUnary(), loc);
       case TokenType.MINUS:
-        loc = location;
+        loc = this.location;
         this.#consume();
         return new UnaryOpNodeMinus(this.#parseUnary(), loc);
       default: return this.#parsePower();
@@ -374,7 +374,7 @@ export class MathParser {
     let expr = this.#parsePrimary();
 
     if (this.c_token === TokenType.POW) {
-      const loc = location;
+      const loc = this.location;
       this.#consume();      
       expr = new PowNode(expr, this.#parseUnary(), loc);
     }
@@ -409,7 +409,7 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-    let token_loc = location;
+    let token_loc = this.location;
     while (true) switch (this.c_token) {
         case TokenType.MATH_PI:
             this.#consume();
@@ -456,7 +456,7 @@ export class MathParser {
           while (true)
           {
             this.#consume();
-            token_loc = location;
+            token_loc = this.location;
             if (MathParser.Primary_FIRST.has(this.c_token)) break;
             if (MathParser.Primary_FALLOW.has(this.c_token))
             {
@@ -467,7 +467,7 @@ export class MathParser {
   }
 
   #callFuncORVar() {
-      token_loc = location;
+      token_loc = this.location;
       const id_name = this.lexer.stringValue();
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
