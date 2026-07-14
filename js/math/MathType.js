@@ -103,7 +103,7 @@ export default class MathType {
     if (settings && typeof settings.precision === 'number') {
       // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
       const precision = Math.max(0, Math.min(100, settings.precision));
-      return num.toFixed(precision);
+      str = num.toFixed(precision);
     }
     else str = num.toString();
 
