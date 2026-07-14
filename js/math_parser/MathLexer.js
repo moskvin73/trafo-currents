@@ -331,7 +331,7 @@ export class MathLexer {
             this.#readCodePointAndAdvance(); // закрывающая кавычка
             this.tokenEndLine = this.currentLine;
             this.tokenEndLineIdx = this.lineStartIdx;
-            return TokenType.TEXTokenType.BLOCK;
+            return TokenType.TEXT_BLOCK;
           }
 
           case C_PERCENT: { // %pi, %e
