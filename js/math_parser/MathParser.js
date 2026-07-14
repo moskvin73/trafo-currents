@@ -131,6 +131,7 @@ export class MathParser {
     this.errors = [];
     this.lexer = new MathLexer(input, this.errors, baseLine);
     this.c_token = TokenType.EOF;
+    this.context = new SymbolTableContext();
     // Инициализируем lookahead первым токеном из потока
     this.#consume();
   }
