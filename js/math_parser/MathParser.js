@@ -194,7 +194,7 @@ export class MathParser {
   toTex() {
     if (this.errors.length === 0)
     {
-      return this.#program.statements.forEach((stmt) => {
+      return this.#program.statements.map((stmt) => {
         const response = stmt.evaluate(this.context);
         if (stmt.isPrintCommand) return { mixed: true, isSilent: stmt.isSilent, value: response.value };
         else
