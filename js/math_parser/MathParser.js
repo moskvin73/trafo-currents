@@ -192,7 +192,7 @@ export class MathParser {
   }
 
   toTex() {
-    if (errors.length === 0)
+    if (this.errors.length === 0)
     {
       return this.#program.statements.forEach((stmt) => {
         const response = stmt.evaluate(globalScope);
@@ -209,10 +209,12 @@ export class MathParser {
   }
 
   evaluate() {
+    if (this.errors.length === 0) {
       return this.#program.statements.forEach((stmt) => {
         const response = stmt.evaluate(globalScope);
         response.value;
       });
+    }
     return [];
   }
 
