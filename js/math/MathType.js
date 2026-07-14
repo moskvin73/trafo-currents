@@ -121,8 +121,27 @@ export default class MathType {
     const parts = formatter.formatToParts(1.1);
     const separator = parts.find(part => part.type === 'decimal')?.value || '.';
 
+    const precision = (settings && typeof settings.precision === 'number') 
+      ? Math.max(0, Math.min(20, settings.precision)) // Максимум для Intl — 20 знаков
+      : null;
+      
+    let str;
 
-    const str = num.toString();
+    if (precision !== null)
+    {
+      const absNum = Math.abs(num);
+        if (absNum > 0 && (absNum <= 1e-4 || absNum >= 1e+7)) {
+          str = num.toExponential(precision);
+        } else {
+          str = num.toString();
+          if (str.includes('.') && typeof settings?.precision === 'number') {
+            str = Number(num.toFixed(precision)).toString();
+          }
+        }
+    } else str = num.toString();
+
+
+    //const str = num.toString();
     const eIndex = str.indexOf('e');
     const localize = (val) => val.replace('.', separator);
 
