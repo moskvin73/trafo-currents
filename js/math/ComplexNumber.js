@@ -119,7 +119,7 @@ export default class ComplexNumber extends MathType {
   /**
    * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
    */
-  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+  toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
     // Если число полностью сломано, возвращаем строку NaN
     if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) return 'NaN';
 
@@ -129,7 +129,7 @@ export default class ComplexNumber extends MathType {
     // Хелпер для проверки, является ли число положительным/отрицательным нулем
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
 
-    const f = (num) => MathType.formatNumberToTeX(num, locale);
+    const f = (num) => MathType.formatNumberToTeX(num, settings, locale);
 
     // Мнимой части нет вообще (и она не является -0, который важен для отображения)
     if (i === 0 && !isNegativeZero(i)) return f(r);

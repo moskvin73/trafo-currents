@@ -801,7 +801,7 @@ export default class RealNumber extends MathType {
   /**
    * Возвращает чистую строку TeX
    */
-  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+  toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
    const val = this.#value;
 
     // 1. Изолируем и спасаем знак -0, так как num.toString() внутри утилиты сотрет минус
@@ -814,14 +814,14 @@ export default class RealNumber extends MathType {
     }
 
     // 3. Полностью делегируем форматирование вашему интеллектуальному методу MathType
-    return MathType.formatNumberToTeX(cleanVal, locale);    
+    return MathType.formatNumberToTeX(cleanVal, settings, locale);    
     //return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : MathType.formatNumberToTeX(this.#value, locale)}`;
   }
 
   /**
    * Стандартный строковый вывод
    */
-  toString() {
+  toString(settings) {
     const val = this.#value;
 
     if (Number.isNaN(val)) return 'NaN';
@@ -834,6 +834,13 @@ export default class RealNumber extends MathType {
     }
 
     if (Object.is(cleanVal, -0)) return '-0';
+
+    if (settings && typeof settings.precision === 'number') {
+      // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
+      const precision = Math.max(0, Math.min(100, settings.precision));
+      return cleanVal.toFixed(precision);
+    }
+
     return `${cleanVal}`;    
     //return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : this.#value}`;
   }
