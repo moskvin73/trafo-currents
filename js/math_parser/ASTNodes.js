@@ -831,9 +831,10 @@ export class CallNode extends MathNode {
   evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
-
+    const sym = context.getSymbolByName(this.name);
+    return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
     // 2. Передаем имя и вычисленные объекты в глобальный семантический реестр функций
-    return MathRegistry.execute(this.name, evaluatedArgs, this.loc);
+    //return MathRegistry.execute(this.name, evaluatedArgs, this.loc);
   }
 
   toTeX() {
