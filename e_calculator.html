@@ -195,7 +195,8 @@
                     const activeBlock = document.querySelector(".active-input-block") || terminalInput;
                     activeBlock.scrollIntoView({
                         behavior: 'smooth', // Плавная прокрутка экрана
-                        block: 'end'    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
+                        block: 'nearest',    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
+                        inline: 'nearest'
                     });
                 }                
             };
@@ -291,30 +292,6 @@
                                 resultBlock.appendChild(mathRow);
                             }
                         });
-
-                       /* parseResult.program.statements.forEach((stmt) => {
-                            // Вычисляем инструкцию в текущем контексте памяти
-                            const response = stmt.evaluate(globalScope);
-
-                            // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
-                            if (response.isPrintCommand) {
-                                const printRow = document.createElement("div");
-                                printRow.className = "print-row"; 
-                                printRow.innerHTML = response.value; 
-                                resultBlock.appendChild(printRow);
-                            } 
-                            // 2. ЕСЛИ ЭТО МАТЕМАТИКА (И ОНА НЕ СКРЫТА ФЛАГОМ $)
-                            else if (!response.isSilent) {
-                                const mathRow = document.createElement("div");
-                                mathRow.className = "output-row"; // Стандартная карточка вывода
-                                const resultValue = response.value;
-                                const myRenderString = TeXOutputFormatter.format(stmt.node, resultValue);
-                                mathRow.innerHTML = `$$${myRenderString}$$`;
-                                //mathRow.innerHTML = `$$${stmt.toTeX()} = ${response.value.toRawTeX()}$$`;
-                                resultBlock.appendChild(mathRow);
-                            }
-                        });*/
-
                         // Если цикл прошёл, но в resultBlock ничего не добавилось (все строки были скрыты через $)
                         if (resultBlock.children.length === 0) {
                             const silentRow = document.createElement("div");
