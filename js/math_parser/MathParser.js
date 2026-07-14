@@ -234,7 +234,7 @@ export class MathParser {
            this.location);
         while (true)
         {
-          if (MathParser.parseStatement.has(this.c_token)) {
+          if (MathParser.parseStatement_FIRST.has(this.c_token)) {
             return new StatementNode(exprNode, false);
           }
           this.#consume();
