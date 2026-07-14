@@ -498,7 +498,7 @@ export class MathParser {
   #callFuncORVar() {
       const token_loc = this.location;
       const id_name = this.lexer.stringValue();      
-      const id = this.context.getSymbolByName(this.lexer.stringValue());
+      const id = this.context.getSymbolByName(id_name);
       let is_error = false;
       if (id === null) {
         this.#error(`Неопределённый идентификатор "${id_name}"`, token_loc);
