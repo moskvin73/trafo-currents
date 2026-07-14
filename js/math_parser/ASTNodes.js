@@ -816,9 +816,9 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 ]);
 
 export class CallNode extends MathNode {
-  constructor(name, args, loc) {
+  constructor(id_name, args, loc) {
     super(loc); 
-    this.name = name; // Имя функции (строка)
+    this.id_name = id_name; // Имя функции (строка)
     this.args = args; // Массив дочерних узлов ASTNode
   }
 
@@ -826,22 +826,22 @@ export class CallNode extends MathNode {
 
   toString(context) {
     const argsCode = this.args.map(arg => arg.toString(context)).join(", ");
-    return `${this.name}(${argsCode})`;
+    const name = context.getNameById(this.id_name);
+    return `${name}(${argsCode})`;
   }
 
   evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
-    const sym = context.getSymbolByName(this.name);
+    const sym = context.getSymbolById(this.id_name);
     return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
-    // 2. Передаем имя и вычисленные объекты в глобальный семантический реестр функций
-    //return MathRegistry.execute(this.name, evaluatedArgs, this.loc);
   }
 
   toTeX(context) {
     // Рендерим аргументы узла в LaTeX-строки
     const argsTexArray = this.args.map(arg => arg.toTeX(context));
-    const config = TEX_FUNCTIONS_REGISTRY.get(this.name);
+    const name = context.getNameById(this.id_name);
+    const config = TEX_FUNCTIONS_REGISTRY.get(name);
 
     // 1. Если задано сложное кастомное отображение (шаблон вроде pow, sqrt, floor, abs)
     if (config?.render) {
