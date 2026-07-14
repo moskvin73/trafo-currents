@@ -196,12 +196,12 @@ export class MathParser {
     {
       return this.#program.statements.map((stmt) => {
         const response = stmt.evaluate(this.context);
-        if (stmt.isPrintCommand) return { mixed: true, isSilent: stmt.isSilent, value: response.value };
+        if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
         else
         {
           const resultValue = response.value;
           const renderString = TeXOutputFormatter.format(stmt.node, resultValue, this.context);
-          return { mixed: false,  isSilent: stmt.isSilent, value: `$$${renderString}$$` };
+          return { mixed: false,  isSilent: response.isSilent, value: `$$${renderString}$$` };
         }
       });
     }
