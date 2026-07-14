@@ -156,23 +156,34 @@ export default class ComplexNumber extends MathType {
    * Стандартный вывод в формате строки "a + bi" с очисткой от погрешностей
    * @returns {string}
    */
-  toString() {
+  toString(settings) {
     if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) return 'NaN';
 
     const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
+
+    r_f = (val) => {
+      if (settings && typeof settings.precision === 'number') {
+        // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
+        const precision = Math.max(0, Math.min(100, settings.precision));
+        return val.toFixed(precision);
+      }
+      return `${val}i`;
+    };
     
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
 
-    if (i === 0 && !isNegativeZero(i)) return `${r}`;
+    if (i === 0 && !isNegativeZero(i)) return r_f(r);//`${r}`;
     
     const isNeg = i < 0 || isNegativeZero(i);
     if (r === 0 && !isNegativeZero(r)) {
-      return isNeg ? `-${Math.abs(i)}i` : `${i}i`;
+      //return isNeg ? `-${Math.abs(i)}i` : `${i}i`;
+      return isNeg ? `-${r_f(Math.abs(i))}i` : `${r_f(i)}i`;
     }
     
     const sign = isNeg ? '-' : '+';
-    return `${r} ${sign} ${Math.abs(i)}i`;
+    //return `${r} ${sign} ${Math.abs(i)}i`;
+    return `${r_f(r)} ${sign} ${r_f(Math.abs(i))}i`;
   }
 
   // ==========================================
