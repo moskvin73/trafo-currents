@@ -500,7 +500,7 @@ export class VariableNode extends MathNode {
     }
   }
 
-  toTeX(context) { return this.name; }
+  toTeX(context) { return context.getNameById(this.id_name); }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
