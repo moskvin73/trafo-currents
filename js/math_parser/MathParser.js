@@ -178,6 +178,22 @@ export class MathParser {
     TokenType.SILENT,
   ]));
 
+  static parseStatement_FIRST = Object.freeze(new Set([
+    TokenType.RW_PRINT,
+    TokenType.MATH_PI,
+    TokenType.MATH_E,
+    TokenType.MATH_PHI,
+    TokenType.MATH_INF,
+    TokenType.MATH_NAN,
+    TokenType.NUMBER,
+    TokenType.COMPLEX_NUMBER,
+    TokenType.LPAREN,
+    TokenType.VARIABLE,
+    TokenType.PLUS,
+    TokenType.MINUS,
+  ]));
+
+
   static Expr_FIRST = Object.freeze(new Set([
     TokenType.MATH_PI,
     TokenType.MATH_E,
@@ -218,8 +234,7 @@ export class MathParser {
            this.location);
         while (true)
         {
-          if (MathParser.Expr_FIRST.has(this.c_token)) {
-            this.#consume();
+          if (MathParser.parseStatement.has(this.c_token)) {
             return new StatementNode(exprNode, false);
           }
           this.#consume();
