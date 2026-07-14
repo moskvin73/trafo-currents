@@ -201,6 +201,16 @@
             transform: scale(0.97);
         }
 
+        .result-side {
+            flex: 1;
+            min-width: 300px;
+            background: #f8fafc;
+            padding: 2px;
+            border-radius: 2px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .input-row-container {
                 flex-direction: column;
@@ -324,7 +334,7 @@
 
                 // 4. Создаем блок для вывода результата
                 const resultBlock = document.createElement("div");
-                resultBlock.className = "graphic-side"; // Используем ваш родной адаптивный класс оформления
+                resultBlock.className = "result-side"; // Используем ваш родной адаптивный класс оформления
                 card.appendChild(resultBlock);
 
                 try {
