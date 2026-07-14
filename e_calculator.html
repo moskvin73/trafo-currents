@@ -179,7 +179,8 @@
 	<script type="module">
 	    
         import { MathParser, TeXOutputFormatter } from './js/math_parser/MathParser.js';
-
+        import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
+        
         const terminalInput = document.getElementById('calc-terminal-input');
 
         if (terminalInput) {
@@ -217,7 +218,7 @@
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
-        const globalScope = {};
+        const globalScope = new SymbolTableContext();
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputArea = document.getElementById("calc-terminal-input");
