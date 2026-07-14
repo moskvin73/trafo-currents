@@ -200,6 +200,8 @@
                 }                
             };
 
+            terminalInput.addEventListener('focus', adjustHeight);
+            
             // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
             terminalInput.addEventListener('input', adjustHeight);
 
