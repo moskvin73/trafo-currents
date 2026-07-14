@@ -97,7 +97,7 @@ export default class MathType {
     // 3. Определение системного десятичного разделителя
     const formatter = new Intl.NumberFormat(locale);
     const parts = formatter.formatToParts(1.1);
-    const separator = parts.find(part => part.type === 'decimal')?.value || '.';
+    const separator = `{${parts.find(part => part.type === 'decimal')?.value || '.'}}`;
 
     const precision = (settings && typeof settings.precision === 'number') 
       ? Math.max(0, Math.min(20, settings.precision)) // Максимум для Intl — 20 знаков
