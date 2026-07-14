@@ -331,13 +331,20 @@ export class MathParser {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`,  opToken_loc);
       }
 
-      const name_id = this.context.acquireId(expr.name);
 
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      
-      // Возвращаем узел присваивания, забирая имя из VariableNode
-      return new AssignNode(expr.name, right, opToken_loc);
+
+      const sym_id = this.context.getSymbolByName(expr.name);
+      if (sym_id.type === SYM_VARIABLE ||  sym_id.type ===SYM_UNDEFINED)
+      {
+        // Возвращаем узел присваивания, забирая имя из VariableNode
+        return new AssignNode(expr.name, right, opToken_loc);
+      }
+      else
+      {
+        this.#error(`[Semantic Error]: Идентификатор не является переменной.`,  opToken_loc);
+      }
     }
     return expr;
   }
