@@ -336,14 +336,14 @@ export class MathParser {
       const right = this.#parseAssignment();
 
       const sym_id = this.context.getSymbolByName(expr.name);
-      if (sym_id.type === SYM_VARIABLE ||  sym_id.type ===SYM_UNDEFINED)
+      if (sym_id.type !== null)
       {
         // Возвращаем узел присваивания, забирая имя из VariableNode
         return new AssignNode(expr.name, right, opToken_loc);
       }
       else
       {
-        this.#error(`[Semantic Error]: Идентификатор не является переменной.`,  opToken_loc);
+        this.#error(`[Semantic Error]: Неопредилённый идентификатор.`,  opToken_loc);
       }
     }
     return expr;
