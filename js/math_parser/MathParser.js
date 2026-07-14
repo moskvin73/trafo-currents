@@ -536,14 +536,16 @@ export class MathParser {
         }
       }
 
+      // Если скобки нет — это обычное чтение переменной из памяти
+
       if (id.type !== SYM_VARIABLE) {
         this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
         is_error = true;
       }
+
       if (is_error) {
           return new NumberNode(new RealNumber(1), token_loc);
       } else {
-        // Если скобки нет — это обычное чтение переменной из памяти
         return new VariableNode(id_name, token_loc);
       }
   }
