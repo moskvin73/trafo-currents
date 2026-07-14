@@ -521,6 +521,7 @@ export class AssignNode extends MathNode {
     const value = this.expression.evaluate(context);
     const sym = context.getSymbolByName(this.name);
     sym.value = value;
+    sym.type = SYM_VARIABLE;
     //context[this.name] = value;
     return value;
   }
