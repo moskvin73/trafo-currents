@@ -193,6 +193,17 @@ export class MathParser {
     //return { program, errors: this.errors };
   }
 
+  toTex() {
+    if (errors.length === 0)
+    {
+      return this.#program.statements.forEach((stmt) => {
+        const response = stmt.evaluate(globalScope);
+        return response.value; 
+      });
+    }
+    return [];
+  }
+
   static parseStatement_FALLOW = Object.freeze(new Set([
     TokenType.EOF,
     TokenType.SEMICOLON,
