@@ -136,6 +136,8 @@ export default class MathType {
       exponent = exponent.slice(1);
     }
 
+    mantissa = mantissa.replace(/\.?0+$/, '');
+
     // Сокращаем запись, если мантисса равна 1 или -1
     if (mantissa === '1') {
       return `10^{${exponent}}`;
