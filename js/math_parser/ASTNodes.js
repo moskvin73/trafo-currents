@@ -491,7 +491,7 @@ export class VariableNode extends MathNode {
     // Ищем переменную в локальном контексте вызова
     //if (this.name in context) {
       //return context[this.name];
-      const sym = context.getSymbolById(id);
+      const sym = context.getSymbolById(this.name);
       if (sym.type === SYM_UNDEFINED) {
         throw new Error(`[AST]: Переменная "${this.name}" не идентифецирована в текущем контексте.`);
       }
@@ -519,7 +519,7 @@ export class AssignNode extends MathNode {
 
   evaluate(context) {
     const value = this.expression.evaluate(context);
-    context[this.name] = value;
+    //context[this.name] = value;
     return value;
   }
   toTeX() {
