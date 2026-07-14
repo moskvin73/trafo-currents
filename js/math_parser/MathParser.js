@@ -289,7 +289,7 @@ export class MathParser {
     const result = this.#parseAssignment();
     while (MathParser.Expr_FIRST.has(this.c_token))
     {
-        this.#error(`Ожидался опервнд "${this.lexer.stringValue()}"`, this.location);
+        this.#error(`Ожидался оператор "${this.lexer.stringValue()}"`, this.location);
         this.#parseAssignment();  
     }
     return result;
