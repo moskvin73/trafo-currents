@@ -191,7 +191,8 @@
 
                 // автоматически удерживаем вводимую строку в поле зрения
                 if (document.activeElement === terminalInput) {
-                    terminalInput.scrollIntoView({
+                    const activeBlock = document.querySelector(".active-input-block") || terminalInput;
+                    activeBlock.scrollIntoView({
                         behavior: 'smooth', // Плавная прокрутка экрана
                         block: 'end'    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
                     });
