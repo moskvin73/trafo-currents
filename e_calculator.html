@@ -184,7 +184,8 @@
         if (terminalInput) {
             // Функция автоматического изменения высоты
             const adjustHeight = () => {
-                terminalInput.style.height = 'auto'; // Сбрасываем высоту для корректного перерасчета
+                //terminalInput.style.height = 'auto'; // Сбрасываем высоту для корректного перерасчета
+                terminalInput.style.height = '0px';
                 terminalInput.style.height = `${terminalInput.scrollHeight}px`; // Задаем высоту по контенту
             };
 
