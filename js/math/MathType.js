@@ -121,9 +121,8 @@ export default class MathType {
     const parts = formatter.formatToParts(1.1);
     const separator = parts.find(part => part.type === 'decimal')?.value || '.';
 
-    const str = MathType.m_round(num, settings, locale);
 
-    //const str = num.toString();
+    const str = num.toString();
     const eIndex = str.indexOf('e');
     const localize = (val) => val.replace('.', separator);
 
