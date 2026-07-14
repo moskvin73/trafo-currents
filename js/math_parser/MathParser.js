@@ -135,6 +135,7 @@ export class MathParser {
     this.#consume();
   }
 
+  // Возвращает положение текущий лексемы
   get location() { return this.lexer.createLocation(); }
 
   // Сдвигает поток, считывая следующий токен из лексера
