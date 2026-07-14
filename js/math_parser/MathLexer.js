@@ -10,7 +10,7 @@ export class Token {
 }
 
 // Карта быстрого сопоставления с типами токенов
-const constantMap = {
+const reservedWordsMap = {
   '%pi':   TokenType.MATH_PI,
   '%e':    TokenType.MATH_E,
   '%phi':  TokenType.MATH_PHI,
@@ -350,7 +350,7 @@ export class MathLexer {
             this.tokenEndLineIdx = this.lineStartIdx;
 
             const constName = src.slice(startIdx, this.i);
-            const matchedType = constantMap[constName];
+            const matchedType = reservedWordsMap[constName];
             if (matchedType) return matchedType; // Возвращает числовой ID из карты констант
 
             const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
@@ -431,6 +431,15 @@ export class MathLexer {
             this.tokenStartLineIdx = startLineIdx;
             this.tokenEndLine = this.currentLine;
             this.tokenEndLineIdx = this.lineStartIdx;
+
+            const idLength = this.i - startIdx;
+            if (idLength > 1 && idLength < 10) {
+              const text = src.slice(startIdx, this.i);
+              const matchedType = reservedWordsMap[text];
+              if (matchedType !== undefined) {
+                return matchedType;
+              }
+            }
             return TokenType.VARIABLE;
           }
 
