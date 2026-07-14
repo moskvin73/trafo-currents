@@ -326,7 +326,7 @@ export class MathLexer {
               this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));
               this.tokenEndLine = this.currentLine;
               this.tokenEndLineIdx = this.lineStartIdx;
-              return TokenType.TEXTokenType.BLOCK;
+              return TokenType.TEXT_BLOCK;
             }
             this.#readCodePointAndAdvance(); // закрывающая кавычка
             this.tokenEndLine = this.currentLine;
