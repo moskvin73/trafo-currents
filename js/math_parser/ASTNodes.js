@@ -505,26 +505,25 @@ export class VariableNode extends MathNode {
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends MathNode {
-  constructor(name, expression, loc) {
+  constructor(id_name, expression, loc) {
     super(loc);
-    this.name = name;
+    this.id_name = id_name;
     this.expression = expression;
   }
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
+  toString(context) { return `${context.getNameById(this.id_name)} = ${this.expression.toString(context)}`; }
 
   evaluate(context) {
     const value = this.expression.evaluate(context);
-    const sym = context.getSymbolByName(this.name);
+    const sym = context.getSymbolById(this.id_name);
     sym.value = value;
     sym.type = SYM_VARIABLE;
-    //context[this.name] = value;
     return value;
   }
   toTeX(context) {
-    return `${this.name} = ${this.expression.toTeX(context)}`;
+    return `${context.getNameById(this.id_name)} = ${this.expression.toTeX(context)}`;
   }
 }
 
