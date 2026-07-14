@@ -84,11 +84,11 @@ export class NumberNode extends MathNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString(context) { return this.value.toString(); }
+  toString(context) { return this.value.toString(context); }
 
   evaluate(context) { return this.value; }
 
-  toTeX(context) { return this.value.toRawTeX(); }
+  toTeX(context) { return this.value.toRawTeX(context); }
 }
 
 /**
