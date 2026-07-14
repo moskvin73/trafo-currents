@@ -59,24 +59,24 @@ export class TeXOutputFormatter {
    * @param {MathValue} resultValue - Атомарный объект-результат вычисления (.toRawTeX())
    * @returns {string} Строка TeX для рендеринга
    */
-  static format(inputTree, resultValue) {
+  static format(inputTree, resultValue, context) {
     // 1. Если это операция присваивания (например, U = 10 + 3i)
     if (inputTree instanceof AssignNode) {
       const varNameTeX = inputTree.name;
-      return `${varNameTeX} = ${this.format(inputTree.expression, resultValue)}`;
+      return `${varNameTeX} = ${this.format(inputTree.expression, resultValue, context)}`;
     }
 
     if (resultValue instanceof ComplexNumber && this._isStaticLiteralTreeComplex(inputTree)) {
-      return resultValue.toRawTeX();
+      return resultValue.toRawTeX(context.settings);
     }
 
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
     if (this._isStaticLiteralTree(inputTree)) {
-      return resultValue.toRawTeX(); // Гасим левую часть, выводим только ответ
+      return resultValue.toRawTeX(context.settings); // Гасим левую часть, выводим только ответ
     }
 
     // 3. Для полноценных вычислений выводим классическую цепочку (например, 2 * 5 = 10)
-    return `${inputTree.toTeX()} = ${resultValue.toRawTeX()}`;
+    return `${inputTree.toTeX(context)} = ${resultValue.toRawTeX(context.settings)}`;
   }
 
   /**
