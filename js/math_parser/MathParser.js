@@ -468,18 +468,19 @@ export class MathParser {
 
   #callFuncORVar() {
       const idToken = this.c_token;
+      token_loc = location;
       this.#consume();
 
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
-      if (this.c_token.type === TokenType.LPAREN) {
+      if (this.c_token === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
 
         const args = [];
         // Читаем список аргументов через запятую (например: pow(x, 3) или sin(x))
-        if (this.c_token.type !== TokenType.RPAREN) {
+        if (this.c_token !== TokenType.RPAREN) {
           args.push(this.#parseExpression());
           
-          while (this.c_token.type === TokenType.COMMA) {
+          while (this.c_token === TokenType.COMMA) {
             this.#consume(); // сожрали ','
             args.push(this.#parseExpression());
           }
@@ -488,11 +489,11 @@ export class MathParser {
         this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${idToken.value}"`);
         
         // Возвращаем универсальный узел вызова
-        return new CallNode(idToken.value, args, idToken.loc);
+        return new CallNode(idToken.value, args, token_loc);
       }
 
       // Если скобки нет — это обычное чтение переменной из памяти
-      return new VariableNode(idToken.value, idToken.loc);
+      return new VariableNode(idToken.value, token_loc);
   }
 
   #synchronize() {
