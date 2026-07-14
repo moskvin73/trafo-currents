@@ -475,7 +475,7 @@ export class MathParser {
   }
 
   #callFuncORVar() {
-      token_loc = this.location;
+      const token_loc = this.location;
       const id_name = this.lexer.stringValue();
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
