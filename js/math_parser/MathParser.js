@@ -196,7 +196,7 @@ export class MathParser {
     let exprNode = null;
 
     // 1. Парсим узел (это либо print, либо любое математическое выражение/присваивание)
-    if (this.c_token === TokenType.VARIABLE && this.lexer.stringValue() === 'print') {
+    if (this.c_token === TokenType.RW_PRINT) {
       exprNode = this.#parsePrintStatement();
     } else {
       exprNode = this.#parseExpression();
