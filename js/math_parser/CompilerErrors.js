@@ -13,7 +13,8 @@ export class CompilerError {
       line: location.line,
       endLine: location.endLine,
       column: location.column,
-      endColumn: location.endColumn
+      endColumn: location.endColumn,
+      isInLine() { return this._startLine === this._endLine; }
     };
   }
 
