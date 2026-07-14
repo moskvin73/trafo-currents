@@ -378,11 +378,11 @@ export class MathParser {
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
 
-      const sym_id = this.context.getSymbolByName(expr.name);
+      const sym_id = this.context.getSymbolById(expr.id_name);
       if (sym_id.type !== null)
       {
         // Возвращаем узел присваивания, забирая имя из VariableNode
-        return new AssignNode(expr.name, right, opToken_loc);
+        return new AssignNode(expr.id_name, right, opToken_loc);
       }
       else
       {
@@ -580,7 +580,7 @@ export class MathParser {
             return new NumberNode(new RealNumber(1), token_loc);
         } else {
           // Возвращаем универсальный узел вызова
-          return new CallNode(id_name, args, token_loc);
+          return new CallNode(id, args, token_loc);
         }
       }
 
@@ -593,7 +593,7 @@ export class MathParser {
       if (is_error) {
           return new NumberNode(new RealNumber(1), token_loc);
       } else {
-        return new VariableNode(id_name, token_loc);
+        return new VariableNode(id, token_loc);
       }
   }
 }
