@@ -537,7 +537,6 @@ export class MathParser {
       }
 
       // Если скобки нет — это обычное чтение переменной из памяти
-
       if (id.type !== SYM_VARIABLE) {
         this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
         is_error = true;
