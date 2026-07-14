@@ -478,22 +478,24 @@ export class PowNode extends BinaryOpNode {
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends MathNode {
-  constructor(name, loc) {
+  constructor(id_name, loc) {
     super(loc);
-    this.name = name;
+    this.id_name = id_name;
   }
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString(context) { return this.name; }
+  toString(context) { 
+    return context.getNameById(this.id_name); 
+  }
 
   evaluate(context) {
     // Ищем переменную в локальном контексте вызова
     //if (this.name in context) {
       //return context[this.name];
-      const sym = context.getSymbolByName(this.name);
+      const sym = context.getSymbolById(this.id_name);
       if (sym.type === SYM_UNDEFINED) {
-        throw new Error(`[AST]: Переменная "${this.name}" не инициализирована.`);
+        throw new Error(`[AST]: Переменная "${context.getNameById(this.id_name)}" не инициализирована.`);
       }
       else {
         return sym.value;
