@@ -260,7 +260,7 @@
 
                 try {
                     // Запускаем наш потоковый LL(1) компилятор
-                    const parser = new MathParser(rawCode);
+                    const parser = new MathParser(rawCode, globalScope);
                     const parseResult = parser.parse();
 
                     //echoBlock.textContent = parseResult.program.toString();
