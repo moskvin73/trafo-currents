@@ -189,8 +189,6 @@ export class MathParser {
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.location));
       }
-
-    //return { program, errors: this.errors };
   }
 
   toTex() {
