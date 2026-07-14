@@ -86,13 +86,11 @@
             outline: none;
             
             /* ИЗМЕНЕНИЯ ТУТ: */
-            max-height: 200px;         /* Опционально: максимальная высота, чтобы поле не заняло весь экран */
             resize: none;             /* Запрещаем ручное изменение размера */
             overflow-y: hidden;       /* Прячем вертикальную полосу прокрутки */
             box-sizing: border-box;   /* Гарантирует правильный расчет высоты с padding */
  
             field-sizing: content;     /* Браузер сам меняет высоту под текст */
-            min-height: 48px;         /* Стартовая высота пустого поля (подберите под себя) */
             
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -195,13 +193,13 @@
                 if (document.activeElement === terminalInput) {
                     terminalInput.scrollIntoView({
                         behavior: 'smooth', // Плавная прокрутка экрана
-                        block: 'nearest'    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
+                        block: 'end'    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
                     });
                 }                
             };
 
             terminalInput.addEventListener('focus', adjustHeight);
-            
+
             // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
             terminalInput.addEventListener('input', adjustHeight);
 
