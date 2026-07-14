@@ -460,7 +460,7 @@ export class MathParser {
          case TokenType.VARIABLE:
              return this.#callFuncORVar();
          default:
-          this.#error(`Ожидался операнд "${token.value}"`, token_loc);
+          this.#error(`Ожидался операнд "${this.lexer.stringValue()}"`, token_loc);
           while (true)
           {
             this.#consume();
@@ -493,7 +493,7 @@ export class MathParser {
           }
         }
 
-        this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${idToken.value}"`);
+        this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${id_name}"`);
         
         // Возвращаем универсальный узел вызова
         return new CallNode(id_name, args, token_loc);
