@@ -1,3 +1,5 @@
+import { COMPILER_REGISTRY } from './MathRegistry.js';
+
 export const SYM_UNDEFINED = 0; // Идентификатор объявлен, но значения еще нет
 export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
@@ -11,17 +13,25 @@ export class SymbolTableContext {
     };
 
     // Статическая часть
-    this.fixedNames = ['sin', 'cos', 'tan', 'sqrt', 'log', 'print'];
-    this.fixedSymbols = [
-      { type: SYM_BUILTIN, value: (x) => Math.sin(x) },
-      { type: SYM_BUILTIN, value: (x) => Math.cos(x) },
-      { type: SYM_BUILTIN, value: (x) => Math.tan(x) },
-      { type: SYM_BUILTIN, value: (x) => Math.sqrt(x) },
-      { type: SYM_BUILTIN, value: (x) => Math.log(x) },
-      { type: SYM_BUILTIN, value: (...args) => console.log(...args) }
-    ];
-    this.CD = this.fixedSymbols.length;
+    this.fixedNames = Array.from(COMPILER_REGISTRY.keys());
+    this.CD = this.fixedNames.length;
+    // Массив свойств встроенных функций
+    this.fixedSymbols = new Array(this.CD);
+    // Быстрый хэш без прототипов для парсера
+    this.fixedHash = Object.create(null);
 
+    for (let i = 0; i < this.CD; i++) {
+      const name = this.fixedNames[i];
+      const overloads = COMPILER_REGISTRY.get(name);
+
+      this.fixedSymbols[i] = {
+        type: SYM_BUILTIN,
+        overloads: overloads // Сохраняем массив перегрузок из вашего реестра
+      };
+
+      this.fixedHash[name] = i; // Связываем имя с числовым ID
+    }
+     
     // ЧЕСТНЫЙ ХЭШ БЕЗ ПРОТОТИПОВ (Скорость упирается в железо)
     this.fixedHash = Object.create(null);
     for (let i = 0; i < this.CD; i++) {
