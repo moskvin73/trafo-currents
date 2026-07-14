@@ -36,27 +36,38 @@
             --calc-color-danger: #dc3545;      /* Красный цвет для удаления/ошибок */
 
             /* --- РАЗМЕРЫ И ОТСТУПЫ --- */
-            --calc-main-margin-top: 40px;      
-            --calc-card-margin-bottom: 20px;   
-            --calc-echo-margin-bottom: 10px;   
-            --calc-row-margin-top: 8px;        
-            --calc-card-padding: 15px;         
-            --calc-echo-padding: 6px 12px;     
-            --calc-input-padding: 12px;        
-            --calc-btn-padding-desktop: 0 25px;
-            --calc-btn-padding-mobile: 12px;   
-            --calc-btn-delete-padding: 2px 6px;
-            --calc-font-size-echo: 15px;       
-            --calc-font-size-input: 15px;      
-            --calc-font-size-btn: 14px;        
-            --calc-font-size-delete: 18px;     
-            --calc-radius-card: 6px;           
-            --calc-radius-echo: 4px;           
-            --calc-radius-input: 6px;          
-            --calc-radius-btn: 6px;            
-            --calc-row-gap: 12px;              
-            --calc-btn-delete-top: 10px;       
-            --calc-btn-delete-right: 12px;     
+
+            /* --- Внешние отступы (Margins) --- */
+            --calc-main-margin-top: 40px;      /* Отступ всего калькулятора от верхнего контента */
+            --calc-card-margin-bottom: 20px;   /* Расстояние между архивными карточками в ленте */
+            --calc-echo-margin-bottom: 10px;   /* Отступ снизу от эхо-кода до результата внутри карточки */
+            --calc-row-margin-top: 8px;        /* Отступ сверху для строки ввода (отделяет от ленты) */
+
+            /* --- Внутренние отступы (Paddings) --- */
+            --calc-card-padding: 15px;         /* Внутренний отступ архивной карточки */
+            --calc-echo-padding: 6px 12px;     /* Внутренний отступ для блока с эхо-кодом (верх/низ и право/лево) */
+            --calc-input-padding: 12px;        /* Внутренний отступ в поле ввода (высота и простор текста) */
+            --calc-btn-padding-desktop: 0 25px;/* Отступы кнопки Enter на ПК (0 сверху/снизу, 25px по бокам) */
+            --calc-btn-padding-mobile: 12px;   /* Внутренний отступ кнопки Enter на смартфонах */
+            --calc-btn-delete-padding: 2px 6px;/* Область клика вокруг крестика [×] удаления карточки */
+
+            /* --- Размеры шрифтов (Font Sizes) --- */
+            --calc-font-size-echo: 15px;       /* Размер шрифта эхо-кода */
+            --calc-font-size-input: 15px;      /* Размер шрифта в поле ввода */
+            --calc-font-size-btn: 14px;        /* Размер шрифта на кнопке Enter */
+            --calc-font-size-delete: 18px;     /* Размер крестика [×] удаления карточки */
+
+            /* --- Скругление углов (Border Radius) --- */
+            --calc-radius-card: 6px;           /* Скругление архивной карточки */
+            --calc-radius-echo: 4px;           /* Скругление блока эхо-кода */
+            --calc-radius-input: 6px;          /* Скругление поля ввода */
+            --calc-radius-btn: 6px;            /* Скругление кнопки Enter */
+
+            /* --- Сетки и Позиционирование --- */
+            --calc-row-gap: 12px;              /* Расстояние между полем ввода и кнопкой Enter на ПК */
+            --calc-btn-delete-top: 10px;       /* Смещение крестика [×] от верхнего края карточки */
+            --calc-btn-delete-right: 12px;     /* Смещение крестика [×] от правого края карточки */
+            
         }
 
         /* --- ТЁМНАЯ ТЕМА --- */
