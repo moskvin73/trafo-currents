@@ -467,7 +467,6 @@ export class MathParser {
   }
 
   #callFuncORVar() {
-      const idToken = this.c_token;
       token_loc = location;
       this.#consume();
 
