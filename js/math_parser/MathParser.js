@@ -196,12 +196,12 @@ export class MathParser {
     {
       return this.#program.statements.forEach((stmt) => {
         const response = stmt.evaluate(globalScope);
-        if (stmt.isPrintCommand) return response.value;
+        if (stmt.isPrintCommand) return { kind: "string", value: response.value };
         else
         {
           const resultValue = response.value;
           const renderString = TeXOutputFormatter.format(stmt.node, resultValue);
-          return `$$${renderString}$$`;
+          return { kind: "formula",  value: `$$${renderString}$$`; }
         }
       });
     }
