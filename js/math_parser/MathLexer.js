@@ -15,7 +15,7 @@ const reservedWordsMap = {
   '%e':    TokenType.MATH_E,
   '%phi':  TokenType.MATH_PHI,
   '%inf':  TokenType.MATH_INF,
-  '%nan':  TokenType.MATH_NAN
+  '%nan':  TokenType.MATH_NAN,
   'print': TokenType.RW_PRINT,
 };
 
