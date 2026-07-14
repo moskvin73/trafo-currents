@@ -435,13 +435,13 @@ export class MathParser {
          {
             var value = this.lexer.numberValue();
             this.#consume();
-            return new NumberNode(new RealNumber(this.lexer.numberValue()), token_loc);
+            return new NumberNode(new RealNumber(value), token_loc);
          } 
          case TokenType.COMPLEX_NUMBER:
          {
              var value = this.lexer.numberValue();
              this.#consume();
-             return new NumberNode(new ComplexNumber(0, token.value), token_loc);
+             return new NumberNode(new ComplexNumber(0, value), token_loc);
          }
          case TokenType.LPAREN:
              this.#consume();
@@ -468,8 +468,8 @@ export class MathParser {
 
   #callFuncORVar() {
       token_loc = location;
+      const id_name = this.lexer.stringValue();
       this.#consume();
-
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
@@ -488,11 +488,11 @@ export class MathParser {
         this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${idToken.value}"`);
         
         // Возвращаем универсальный узел вызова
-        return new CallNode(idToken.value, args, token_loc);
+        return new CallNode(id_name, args, token_loc);
       }
 
       // Если скобки нет — это обычное чтение переменной из памяти
-      return new VariableNode(idToken.value, token_loc);
+      return new VariableNode(id_name, token_loc);
   }
 
   #synchronize() {
