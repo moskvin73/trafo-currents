@@ -494,12 +494,15 @@ export class MathParser {
     }
   }
 
+
   #callFuncORVar() {
       const token_loc = this.location;
       const id_name = this.lexer.stringValue();      
       const id = this.context.getSymbolByName(this.lexer.stringValue());
+      let is_error = false;
       if (id === null) {
         this.#error(`Неопределённый идентификатор "${id_name}"`, token_loc);
+        is_error = true;
       }
 
       this.#consume();
@@ -509,6 +512,7 @@ export class MathParser {
 
         if (id.type !== SYM_BUILTIN) {
             this.#error(`Идентификатор не является функцией "${id_name}"`, token_loc);
+            is_error = true;
         }
 
         const args = [];
@@ -524,14 +528,23 @@ export class MathParser {
 
         this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${id_name}"`);
         
-        // Возвращаем универсальный узел вызова
-        return new CallNode(id_name, args, token_loc);
+        if (is_error) {
+            return new NumberNode(new RealNumber(1), token_loc);
+        } else {
+          // Возвращаем универсальный узел вызова
+          return new CallNode(id_name, args, token_loc);
+        }
       }
 
       if (id.type !== SYM_VARIABLE) {
         this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
+        is_error = true;
       }
-      // Если скобки нет — это обычное чтение переменной из памяти
-      return new VariableNode(id_name, token_loc);
+      if (is_error) {
+          return new NumberNode(new RealNumber(1), token_loc);
+      } else {
+        // Если скобки нет — это обычное чтение переменной из памяти
+        return new VariableNode(id_name, token_loc);
+      }
   }
 }
