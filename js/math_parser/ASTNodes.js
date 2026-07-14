@@ -493,7 +493,7 @@ export class VariableNode extends MathNode {
       //return context[this.name];
       const sym = context.getSymbolByName(this.name);
       if (sym.type === SYM_UNDEFINED) {
-        throw new Error(`[AST]: Переменная "${this.name}" не идентифецирована в текущем контексте.`);
+        throw new Error(`[AST]: Переменная "${this.name}" не инициализирована.`);
       }
       else {
         return sym.value;
