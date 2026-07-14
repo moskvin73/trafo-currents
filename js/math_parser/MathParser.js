@@ -498,19 +498,21 @@ export class MathParser {
   #callFuncORVar() {
       const token_loc = this.location;
       const id_name = this.lexer.stringValue();      
-      const id = this.context.getSymbolByName(id_name);
+      const id = this.context.getIdByName(id_name);
       let is_error = false;
       if (id === null) {
         this.#error(`Неопределённый идентификатор "${id_name}"`, token_loc);
         is_error = true;
       }
 
+      const sym_id = this.context.getSymbolById(id);
+
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
 
-        if (id.type !== SYM_BUILTIN) {
+        if (sym_id.type !== SYM_BUILTIN) {
             this.#error(`Идентификатор не является функцией "${id_name}"`, token_loc);
             is_error = true;
         }
@@ -537,7 +539,7 @@ export class MathParser {
       }
 
       // Если скобки нет — это обычное чтение переменной из памяти
-      if (id.type !== SYM_VARIABLE) {
+      if (sym_id.type !== SYM_VARIABLE) {
         this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
         is_error = true;
       }
