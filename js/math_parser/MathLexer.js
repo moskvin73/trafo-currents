@@ -16,6 +16,7 @@ const constantMap = {
   '%phi':  TokenType.MATH_PHI,
   '%inf':  TokenType.MATH_INF,
   '%nan':  TokenType.MATH_NAN
+  'print': TokenType.RW_PRINT,
 };
 
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });

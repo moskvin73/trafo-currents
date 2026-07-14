@@ -46,6 +46,7 @@ const tokenNames = [
   'MATH_PHI',
   'MATH_INF',
   'MATH_NAN'
+  'RW_PRINT'
 ];
 
 // Создаем пустой объект перечисления
