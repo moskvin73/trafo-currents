@@ -211,13 +211,7 @@ export class MathParser {
   evaluate() {
       return this.#program.statements.forEach((stmt) => {
         const response = stmt.evaluate(globalScope);
-        if (stmt.isPrintCommand) return { kind: "mixed", value: response.value };
-        else
-        {
-          const resultValue = response.value;
-          const renderString = TeXOutputFormatter.format(stmt.node, resultValue);
-          return { kind: "formula",  value: response.value };
-        }
+        response.value;
       });
     return [];
   }
