@@ -236,10 +236,13 @@
 		</div>	
 	</div>
 
-    <button id="calc-fab-settings" class="floating-calc-btn" title="Настройки калькулятора" aria-label="Открыть настройки">
-        ⚙️
-    </button>
-	
+    <!-- Реляционное FAB-меню управления в строгом соответствии с вашим CSS -->
+    <div class="fab-container" id="fabContainer">
+        
+        <!-- Главная управляющая круглая кнопка -->
+        <button class="fab-main" onclick="toggleFabMenu()">⚙️</button>
+    </div>
+    
 	<script type="module">
 	    
         import { MathParser, TeXOutputFormatter } from './js/math_parser/MathParser.js';
