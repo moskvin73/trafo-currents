@@ -192,7 +192,12 @@
             // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
             terminalInput.addEventListener('input', adjustHeight);
 
-            window.addEventListener('resize', adjustHeight);
+            if (window.ResizeObserver) {
+                new ResizeObserver(adjustHeight).observe(terminalInput);
+            } else {
+                // Запасной вариант для совсем древних браузеров
+                window.addEventListener('resize', adjustHeight);
+            }
 
             // Первичный расчет (на случай, если в поле уже есть текст при загрузке страницы)
             adjustHeight();
