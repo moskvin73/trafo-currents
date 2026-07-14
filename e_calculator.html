@@ -280,7 +280,7 @@
 
                         parseResult.program.statements.forEach((stmt) => {
                             // Вычисляем инструкцию в текущем контексте памяти
-                            const response = stmt.evaluate(parser.context);// globalScope);
+                            const response = stmt.evaluate(globalScope);
 
                             // 1. ЕСЛИ ЭТО КОМАНДА ВЫВОДА PRINT
                             if (response.isPrintCommand) {
