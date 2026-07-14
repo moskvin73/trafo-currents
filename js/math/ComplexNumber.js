@@ -141,7 +141,7 @@ export default class ComplexNumber extends MathType {
     const absI = Math.abs(i); // Math.abs(-0) дает 0
     
     // Формируем мнимую часть: просто "j" или "j\cdotФОРМАТ_ЧИСЛА"
-    const jPart = absI === 1 ? 'j' : `j\\cdot${f(absI)}`;
+    const jPart = absI === 1 ? 'j' : `j${f(absI)}`;
 
     // Если действительная часть равна 0 (и не -0), выводим только мнимую
     if (r === 0 && !isNegativeZero(r)) {
