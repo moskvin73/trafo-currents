@@ -36,7 +36,7 @@ export default class MathType {
    * @returns {string}
    */
   toTeX(settings, displayMode = 'inline', locale = new Intl.NumberFormat().resolvedOptions().locale) {
-    const raw = this.toRawTeX();
+    const raw = this.toRawTeX(settings, locale);
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }
 
