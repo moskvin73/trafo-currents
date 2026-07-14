@@ -34,15 +34,15 @@ export default class ASTNode {
 
   getPriority() { throw new Error("Not implemented"); }
 
-  toString() { throw new Error("Not implemented"); }
+  toString(context) { throw new Error("Not implemented"); }
 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
-  evaluate(context = {}) {
+  evaluate(context) {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
 
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
-  toTeX() {
+  toTeX(context) {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
   }
 
@@ -84,11 +84,11 @@ export class NumberNode extends MathNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString() { return this.value.toString(); }
+  toString(context) { return this.value.toString(); }
 
   evaluate(context) { return this.value; }
 
-  toTeX() { return this.value.toRawTeX(); }
+  toTeX(context) { return this.value.toRawTeX(); }
 }
 
 /**
@@ -108,8 +108,8 @@ export class UnaryOpNode extends MathNode {
 
   getPriority() { return OpPriority.UNARY; }
 
-  toString() {
-      let innerCode = this.argument.toString();      
+  toString(context) {
+      let innerCode = this.argument.toString(context);      
       // Если у внутреннего выражения приоритет ниже, берем его в скобки
       if (this.argument.getPriority() < this.getPriority()) {
           innerCode = `(${innerCode})`;
@@ -118,14 +118,14 @@ export class UnaryOpNode extends MathNode {
       return `${this.operator}${innerCode}`;
   }  
 
-  toTeX() {
+  toTeX(context) {
     const signState = { minusCount: 0 };
     
     // Запускаем сборку знаков с текущего узла
     const coreNode = this._collapseUnaryChain(this, signState);
 
     // Получаем TeX-код для «чистого» центрального узла
-    let argTex = coreNode.toTeX();
+    let argTex = coreNode.toTeX(context);
     
     // Проверяем приоритет: если внутри унарной цепочки сидит выражение 
     // с низким приоритетом (например, сложение A+B), его нужно взять в скобки
@@ -195,9 +195,9 @@ export class BinaryOpNode extends MathNode {
     this.right = right;
   }
 
-  toString() {
-    let leftCode = this.left.toString();
-    let rightCode = this.right.toString();
+  toString(context) {
+    let leftCode = this.left.toString(context);
+    let rightCode = this.right.toString(context);
     const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
@@ -206,9 +206,9 @@ export class BinaryOpNode extends MathNode {
     return `${leftCode}${this.operator}${rightCode}`;
   }
 
-  toTeX() {
-    let leftCode = this.left.toTeX();
-    let rightCode = this.right.toTeX();
+  toTeX(context) {
+    let leftCode = this.left.toTeX(context);
+    let rightCode = this.right.toTeX(context);
     const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
@@ -221,7 +221,7 @@ export class BinaryOpNode extends MathNode {
    * Общий метод для красивого книжного рендеринга умножения и деления.
    * Дочерние классы (MulNode, DivNode) будут просто вызывать его.
    */
-  _renderFractionChain() {
+  _renderFractionChain(context) {
     const nums = [];
     const dens = [];
     const signState = { minusCount: 0 };
@@ -252,7 +252,7 @@ export class BinaryOpNode extends MathNode {
 
       for (let i = 0; i < nodes.length; i++) {
         const currentNode = nodes[i];
-        let currentTeX = currentNode.toTeX();
+        let currentTeX = currentNode.toTeX(context);
 
         // УМНОЕ ПРАВИЛО СКОБОК:
         // Мы ставим скобки, только если приоритет ниже умножения И выполняется одно из двух:
@@ -350,9 +350,9 @@ class StrictRightBinNode extends BinaryOpNode {
     super(left, operator, right, loc);
   }
 
-  toString() {
-    let leftCode = this.left.toString();
-    let rightCode = this.right.toString();
+  toString(context) {
+    let leftCode = this.left.toString(context);
+    let rightCode = this.right.toString(context);
     const currentPriority = this.getPriority();
 
     // Слева - строго меньше
@@ -364,10 +364,10 @@ class StrictRightBinNode extends BinaryOpNode {
     return `${leftCode}${this.operator}${rightCode}`;
   }
 
-  toTeX() {
-    let leftCode = this.left.toTeX();
+  toTeX(context) {
+    let leftCode = this.left.toTeX(context);
     let rightCode = this.right.toTeX();
-    const currentPriority = this.getPriority();
+    const currentPriority = this.getPriority(context);
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
     if (this.right.getPriority() <= currentPriority) rightCode = `\\left(${rightCode}\\right)`;
@@ -422,7 +422,7 @@ export class MulNode extends BinaryOpNode {
     return l.multiply(r);
   } 
 
-  toTeX() { return super._renderFractionChain(); }
+  toTeX(context) { return super._renderFractionChain(context); }
 }
 
 export class DivNode extends StrictRightBinNode {
@@ -437,7 +437,7 @@ export class DivNode extends StrictRightBinNode {
     return l.divide(r);
   } 
 
-  toTeX() { return super._renderFractionChain(); }
+  toTeX(context) { return super._renderFractionChain(context); }
 }
 
 export class PowNode extends BinaryOpNode {
@@ -447,9 +447,9 @@ export class PowNode extends BinaryOpNode {
 
   getPriority() { return OpPriority.POW; }
 
-  toString() {
-    let leftCode = this.left.toString();
-    let rightCode = this.right.toString();
+  toString(context) {
+    let leftCode = this.left.toString(context);
+    let rightCode = this.right.toString(context);
     const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `(${leftCode})`;
@@ -466,10 +466,10 @@ export class PowNode extends BinaryOpNode {
     return l.accuratePow(r);
   } 
 
-  toTeX() {
-    let l = this.left.toTeX();
+  toTeX(context) {
+    let l = this.left.toTeX(context);
     if (this.left.getPriority() < this.getPriority()) l = `\\left(${l}\\right)`;
-    const r = this.right.toTeX();
+    const r = this.right.toTeX(context);
     return `{${l}}^{${r}}`;
   }
 }
@@ -485,7 +485,7 @@ export class VariableNode extends MathNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString() { return this.name; }
+  toString(context) { return this.name; }
 
   evaluate(context) {
     // Ищем переменную в локальном контексте вызова
@@ -502,7 +502,7 @@ export class VariableNode extends MathNode {
     //throw new Error(`[AST]: Переменная "${this.name}" не определена в текущем контексте.`);
   }
 
-  toTeX() { return this.name; }
+  toTeX(context) { return this.name; }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
@@ -515,7 +515,7 @@ export class AssignNode extends MathNode {
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString() { return `${this.name} = ${this.expression.toString()}`; }
+  toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
 
   evaluate(context) {
     const value = this.expression.evaluate(context);
@@ -525,8 +525,8 @@ export class AssignNode extends MathNode {
     //context[this.name] = value;
     return value;
   }
-  toTeX() {
-    return `${this.name} = ${this.expression.toTeX()}`;
+  toTeX(context) {
+    return `${this.name} = ${this.expression.toTeX(context)}`;
   }
 }
 
@@ -539,9 +539,9 @@ export class ProgramNode {
     this.statements = [];
   }
 
-  toString() {
+  toString(context) {
     return this.statements
-          .map(statement => statement.toString())
+          .map(statement => statement.toString(context))
           .join('\n');
   }
 
@@ -573,10 +573,10 @@ export class PrintNode extends ASTNode {
     this.elements = elements;
   }
 
-  toString() {
+  toString(context) {
     return "print (" + this.elements.map(element => {
       if (element.type == 'TEXT_BLOCK') element.value;
-      return element.toString();
+      return element.toString(context);
     }).join(', ') + ")";
   }
 

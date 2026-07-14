@@ -18,7 +18,7 @@ export default class MathType {
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
    * @returns {string}
    */
-  toRawTeX(locale = new Intl.NumberFormat().resolvedOptions().locale) {
+  toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
     throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
   }
 
@@ -26,7 +26,7 @@ export default class MathType {
    * Возвращает стандартное текстовое представление объекта.
    * @returns {string}
    */
-  toString() {
+  toString(settings) {
     throw new Error(`[MathType]: Метод toString() не реализован в классе ${this.constructor.name}`);
   }
 
@@ -35,7 +35,7 @@ export default class MathType {
    * @param {string} displayMode - 'inline' ($...$) или 'block' ($$...$$)
    * @returns {string}
    */
-  toTeX(displayMode = 'inline', locale = new Intl.NumberFormat().resolvedOptions().locale) {
+  toTeX(settings, displayMode = 'inline', locale = new Intl.NumberFormat().resolvedOptions().locale) {
     const raw = this.toRawTeX();
     return displayMode === 'block' ? `$$${raw}$$` : `$${raw}$`;
   }
@@ -80,7 +80,7 @@ export default class MathType {
    * @param {string} [locale] - Код локали (по умолчанию определяется автоматически).
    * @returns {string} Строка в формате TeX.
    */
-  static formatNumberToTeX(num, locale = new Intl.NumberFormat().resolvedOptions().locale) {
+  static formatNumberToTeX(num, settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
     // 1. Обработка NaN (Not a Number) с подсветкой красным цветом
     if (Number.isNaN(num)) {
       return '\\color{red}{\\text{NaN}}';
