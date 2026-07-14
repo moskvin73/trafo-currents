@@ -507,10 +507,6 @@ export class MathParser {
       const id_name = this.lexer.stringValue();      
       const id = this.context.acquireId(id_name);
       let is_error = false;
-      if (id === null) {
-        this.#error(`Неопределённый идентификатор "${id_name}"`, token_loc);
-        is_error = true;
-      }
 
       const sym_id = this.context.getSymbolById(id);
 
