@@ -1,3 +1,7 @@
+export const SYM_UNDEFINED = 0; // Идентификатор объявлен, но значения еще нет
+export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
+export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
+
 export class SymbolTableContext {
   constructor() {
     this.settings = {
