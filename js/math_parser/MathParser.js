@@ -409,7 +409,7 @@ export class MathParser {
 
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
-    let token_loc = location;location;
+    let token_loc = location;
     while (true) switch (this.c_token) {
         case TokenType.MATH_PI:
             this.#consume();
@@ -432,31 +432,35 @@ export class MathParser {
             return new ConstantNode(TokenType.MATH_NAN, token_loc);
 
          case TokenType.NUMBER:
+         {
+            var value = this.lexer.numberValue();
             this.#consume();
-            return new NumberNode(new RealNumber(token.value), token_loc);
-
-        case TokenType.COMPLEX_NUMBER:
+            return new NumberNode(new RealNumber(this.lexer.numberValue()), token_loc);
+         } 
+         case TokenType.COMPLEX_NUMBER:
+         {
+             var value = this.lexer.numberValue();
              this.#consume();
-             return new NumberNode(new ComplexNumber(0, token.value), token.loc);
-
-        case TokenType.LPAREN:
+             return new NumberNode(new ComplexNumber(0, token.value), token_loc);
+         }
+         case TokenType.LPAREN:
              this.#consume();
              const expr = this.#parseExpression();
              this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
              return expr;
 
-        case TokenType.VARIABLE:
+         case TokenType.VARIABLE:
              return this.#callFuncORVar();
-        default:
+         default:
           this.#error(`Ожидался операнд "${token.value}"`, token.loc);
           while (true)
           {
             this.#consume();
-            token = this.c_token;
-            if (MathParser.Primary_FIRST.has(token.type)) break;
-            if (MathParser.Primary_FALLOW.has(token.type))
+            token_loc = location;
+            if (MathParser.Primary_FIRST.has(this.c_token)) break;
+            if (MathParser.Primary_FALLOW.has(this.c_token))
             {
-              return new NumberNode(new RealNumber(1), token.loc);
+              return new NumberNode(new RealNumber(1), token_loc);
             }
           }
     }
