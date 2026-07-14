@@ -129,7 +129,7 @@ export default class MathType {
     }
 
     // 5. Разбираем научную нотацию (например, 1e+5 или -2.5e-4)
-    const mantissa = str.slice(0, eIndex);
+    let mantissa = str.slice(0, eIndex);
     let exponent = str.slice(eIndex + 1);
 
     if (exponent.startsWith('+')) {
