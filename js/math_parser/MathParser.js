@@ -124,6 +124,7 @@ export class TeXOutputFormatter {
  * Финальный отказоустойчивый Парсер (Рекурсивный спуск)
  */
 export class MathParser {
+  #program;
   /**
    * Создает экземпляр парсера/анализатора выражений.
    * 
@@ -152,6 +153,7 @@ export class MathParser {
     this.c_token = TokenType.EOF;
     this.context = context;
     this.#consume();
+    this.#program = new ProgramNode();
   }
 
   // Возвращает положение текущий лексемы
@@ -179,18 +181,16 @@ export class MathParser {
    * Главный метод запуска LL(1) анализа
    */
   parse() {
-    const program = new ProgramNode();
-
     try {
         while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
-          if (stmt) program.statements.push(stmt);
+          if (stmt) this.#program.statements.push(stmt);
       }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.location));
       }
 
-    return { program, errors: this.errors };
+    //return { program, errors: this.errors };
   }
 
   static parseStatement_FALLOW = Object.freeze(new Set([
