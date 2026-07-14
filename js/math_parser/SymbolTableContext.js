@@ -31,13 +31,7 @@ export class SymbolTableContext {
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
     }
-     
-    // ЧЕСТНЫЙ ХЭШ БЕЗ ПРОТОТИПОВ (Скорость упирается в железо)
-    this.fixedHash = Object.create(null);
-    for (let i = 0; i < this.CD; i++) {
-      this.fixedHash[this.fixedNames[i]] = i;
-    }
-
+ 
     // Динамическая часть пользователя
     this.varNames = [];
     this.varSymbols = [];
