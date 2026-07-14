@@ -6,8 +6,15 @@ import { MathParser } from './MathParser.js';
 export class CompilerError {
   constructor(message, location, severity = 'error') {
     this.message = message;   // Текст ошибки
-    this.location = location; // Объект SourceLocation (строка, колонка)
     this.severity = severity; // Важность (error / warning)
+    this.location = {
+      start: location.start,
+      end: location.end,
+      line: location.line,
+      endLine: location.endLine,
+      column: location.column,
+      endColumn: location.endColumn
+    };
   }
 
   toString() {
