@@ -125,14 +125,32 @@ export class TeXOutputFormatter {
  */
 export class MathParser {
   /**
-   * @param {MathLexer} lexer - Потоковый лексер нового поколения
+   * Создает экземпляр парсера/анализатора выражений.
+   * 
+   * @param {string} input - Входная математическая строка или выражение для анализа (например, "2 + 2").
+   * @param {SymbolTableContext} context - Контекст таблицы символов, содержащий переменные, функции и константы.
+   * @param {number} [baseLine=1] - Начальный номер строки для корректного отслеживания позиций ошибок.
+   * 
+   * @throws {TypeError} Если `input` не является строкой.
+   * @throws {TypeError} Если `context` не является экземпляром SymbolTableContext.
    */
-  constructor(input, baseLine = 1) {
+  constructor(input, context, baseLine = 1) {
+    // 1. Валидация входной строки
+    if (typeof input !== 'string') {
+        throw new TypeError(`Ожидалась строка в параметре 'input', получено: ${typeof input}`);
+    }
+
+    // 2. Валидация контекста (замените SymbolTableContext на ваш реальный класс, если имя отличается)
+    if (!(context instanceof SymbolTableContext)) {
+        throw new TypeError("Параметр 'context' должен быть экземпляром SymbolTableContext");
+    }
+
     this.errors = [];
-    this.lexer = new MathLexer(input, this.errors, baseLine);
+    const startLine = Number(baseLine) || 1;
+    this.lexer = new MathLexer(input, this.errors, startLine);
+
     this.c_token = TokenType.EOF;
-    this.context = new SymbolTableContext();
-    // Инициализируем lookahead первым токеном из потока
+    this.context = context;
     this.#consume();
   }
 
