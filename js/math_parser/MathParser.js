@@ -20,7 +20,7 @@ import ASTNode, {
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { MathLexer } from './MathLexer.js';
-import { SymbolTableContext } from './SymbolTableContext.js';
+import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 
 /**
  * Единый узел для любой инструкции в коде
@@ -502,11 +502,14 @@ export class MathParser {
         this.#error(`Неопределённый идентификатор "${id_name}"`, token_loc);
       }
 
-
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
+
+        if (id.type !== SYM_BUILTIN) {
+            this.#error(`Идентификатор не является функцией "${id_name}"`, token_loc);
+        }
 
         const args = [];
         // Читаем список аргументов через запятую (например: pow(x, 3) или sin(x))
@@ -525,6 +528,9 @@ export class MathParser {
         return new CallNode(id_name, args, token_loc);
       }
 
+      if (id.type !== SYM_VARIABLE) {
+        this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
+      }
       // Если скобки нет — это обычное чтение переменной из памяти
       return new VariableNode(id_name, token_loc);
   }
