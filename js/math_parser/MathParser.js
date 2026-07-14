@@ -452,7 +452,7 @@ export class MathParser {
          case TokenType.VARIABLE:
              return this.#callFuncORVar();
          default:
-          this.#error(`Ожидался операнд "${token.value}"`, token.loc);
+          this.#error(`Ожидался операнд "${token.value}"`, token_loc);
           while (true)
           {
             this.#consume();
