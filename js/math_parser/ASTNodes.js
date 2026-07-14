@@ -596,7 +596,7 @@ export class PrintNode extends ASTNode {
       if (element.type !== 'TEXT_BLOCK') {
         const evaluatedValue = element.evaluate(context);
         // Математика всегда возвращается как инлайн-формула
-        return `$${evaluatedValue.toRawTeX()}$`;
+        return `$${evaluatedValue.toRawTeX(context.settings)}$`;
       }
  
       // 2. ОБРАБОТКА ТЕКСТОВЫХ БЛОКОВ С ВАЛИДАЦИЕЙ И ЭКРАНИРОВАНИЕМ
@@ -723,7 +723,7 @@ export class ConstantNode extends MathNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString() {
+  toString(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     return config ? config.str : "";
   }
@@ -736,7 +736,7 @@ export class ConstantNode extends MathNode {
     return config.instance;    
   }
 
-  toTeX() {
+  toTeX(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     return config ? config.tex : `\\text{unknown}`;
   }
@@ -824,8 +824,8 @@ export class CallNode extends MathNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString() {
-    const argsCode = this.args.map(arg => arg.toString()).join(", ");
+  toString(context) {
+    const argsCode = this.args.map(arg => arg.toString(context)).join(", ");
     return `${this.name}(${argsCode})`;
   }
 
@@ -838,9 +838,9 @@ export class CallNode extends MathNode {
     //return MathRegistry.execute(this.name, evaluatedArgs, this.loc);
   }
 
-  toTeX() {
+  toTeX(context) {
     // Рендерим аргументы узла в LaTeX-строки
-    const argsTexArray = this.args.map(arg => arg.toTeX());
+    const argsTexArray = this.args.map(arg => arg.toTeX(context));
     const config = TEX_FUNCTIONS_REGISTRY.get(this.name);
 
     // 1. Если задано сложное кастомное отображение (шаблон вроде pow, sqrt, floor, abs)
