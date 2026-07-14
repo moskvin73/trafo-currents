@@ -20,6 +20,7 @@ import ASTNode, {
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { MathLexer } from './MathLexer.js';
+import { SymbolTableContext } from './SymbolTableContext.js';
 
 /**
  * Единый узел для любой инструкции в коде
