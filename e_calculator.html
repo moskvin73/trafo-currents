@@ -190,6 +190,14 @@
                 //terminalInput.style.height = 'auto'; // Сбрасываем высоту для корректного перерасчета
                 terminalInput.style.height = '0px';
                 terminalInput.style.height = `${terminalInput.scrollHeight}px`; // Задаем высоту по контенту
+
+                // автоматически удерживаем вводимую строку в поле зрения
+                if (document.activeElement === terminalInput) {
+                    terminalInput.scrollIntoView({
+                        behavior: 'smooth', // Плавная прокрутка экрана
+                        block: 'nearest'    // Прокрутит ровно настолько, чтобы поле полностью влезло в экран
+                    });
+                }                
             };
 
             // Слушаем ввод текста (работает при Enter, Backspace, Ctrl+V и т.д.)
