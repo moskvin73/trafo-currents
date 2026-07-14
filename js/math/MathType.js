@@ -72,6 +72,28 @@ export default class MathType {
     throw new Error(`[MathType]: Метод negate() не реализован в классе ${this.constructor.name}`);
   }
 
+  static m_round(num, settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
+    // 1. Извлекаем и валидируем точность из настроек
+    const precision = (settings && typeof settings.precision === 'number') 
+      ? Math.max(0, Math.min(20, settings.precision)) // Максимум для Intl — 20 знаков
+      : null;
+
+    // 2. Конфигурируем параметры форматирования
+    const options = {
+      // Если precision не задан, Intl выведет число "как есть" (до 3 знаков по дефолту для дробной части)
+      ...(precision !== null && {
+        maximumFractionDigits: precision, // Округляет максимум до заданного знака
+        minimumFractionDigits: 0         // Прячет хвостовые нули и точку, если дробная часть зануляется
+      }),
+      useGrouping: false // Выключаем разделители тысяч (для TeX-формул пробелы и запятые в группах не нужны)
+    };
+
+    const formatter = new Intl.NumberFormat(locale, options);
+    
+    // 3. Форматируем число
+    return formatter.format(num);
+  }
+
   /**
    * Преобразует число в формат TeX с учетом системной локали и научной нотации.
    * Обрабатывает особые случаи: NaN и бесконечности.
@@ -99,13 +121,7 @@ export default class MathType {
     const parts = formatter.formatToParts(1.1);
     const separator = parts.find(part => part.type === 'decimal')?.value || '.';
 
-    let str;
-    if (settings && typeof settings.precision === 'number') {
-      // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
-      const precision = Math.max(0, Math.min(100, settings.precision));
-      str = num.toFixed(precision);
-    }
-    else str = num.toString();
+    const str = m_round(num, settings, locale);
 
     //const str = num.toString();
     const eIndex = str.indexOf('e');
