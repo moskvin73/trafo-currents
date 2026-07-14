@@ -285,7 +285,13 @@ export class MathParser {
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
   // =======================================================
 
-  #parseExpression() { return this.#parseAssignment(); }
+  #parseExpression() { 
+    const result = this.#parseAssignment();
+    if (MathParser.Expr_FIRST.has(this.c_token))
+    {
+        this.#error(`Ожидался опервнд "${this.lexer.stringValue()}"`, this.location);      
+    }
+  }
 
   /**
    * Присваивание (Самый низкий приоритет).
