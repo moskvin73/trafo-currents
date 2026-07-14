@@ -287,9 +287,10 @@ export class MathParser {
 
   #parseExpression() { 
     const result = this.#parseAssignment();
-    if (MathParser.Expr_FIRST.has(this.c_token))
+    while (MathParser.Expr_FIRST.has(this.c_token))
     {
-        this.#error(`Ожидался опервнд "${this.lexer.stringValue()}"`, this.location);      
+        this.#error(`Ожидался опервнд "${this.lexer.stringValue()}"`, this.location);
+        this.#parseAssignment();  
     }
     return result;
   }
