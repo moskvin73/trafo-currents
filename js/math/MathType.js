@@ -99,7 +99,15 @@ export default class MathType {
     const parts = formatter.formatToParts(1.1);
     const separator = parts.find(part => part.type === 'decimal')?.value || '.';
 
-    const str = num.toString();
+    let str;
+    if (settings && typeof settings.precision === 'number') {
+      // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
+      const precision = Math.max(0, Math.min(100, settings.precision));
+      return num.toFixed(precision);
+    }
+    else str = num.toString();
+
+    //const str = num.toString();
     const eIndex = str.indexOf('e');
     const localize = (val) => val.replace('.', separator);
 
