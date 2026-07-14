@@ -497,6 +497,9 @@ export class MathParser {
   #callFuncORVar() {
       const token_loc = this.location;
       const id_name = this.lexer.stringValue();
+      
+      this.context.getSymbolByName(this.lexer.stringValue());
+
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {

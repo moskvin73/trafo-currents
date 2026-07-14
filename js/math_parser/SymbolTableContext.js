@@ -65,6 +65,74 @@ export class SymbolTableContext {
     return newVarIdx + this.CD; // Возвращаем новый ID со смещением CD
   }
   
+  /**
+   * Чистый поиск ID по имени БЕЗ автоматической регистрации новой переменной.
+   * Нужен парсеру, чтобы просто проверить, существует ли уже такой идентификатор.
+   * @param {string} name - Имя для поиска
+   * @returns {number|null} ID символа или null, если не найден
+   */
+  getIdByName(name) {
+    // 1. Ищем в фиксированной части
+    const fixedIdx = this.fixedHash[name];
+    if (fixedIdx !== undefined) return fixedIdx;
+
+    // 2. Ищем в вариативной части
+    const varIdx = this.varHash[name];
+    if (varIdx !== undefined) return varIdx + this.CD;
+
+    return null; // Идентификатор вообще не зарегистрирован
+  }
+
+  /**
+   * Находит содержимое (свойства) символа напрямую по его текстовому имени.
+   * @param {string} name - Имя для поиска
+   * @returns {Object|null} Объект свойств символа ({type, value} или {type, overloads})
+   */
+  getSymbolByName(name) {
+    const id = this.getIdByName(name);
+    if (id !== null) {
+      return this.getSymbolById(id); // Использует сверхбыстрый доступ по ID
+    }
+    return null;
+  }
+
+  // ============================================================================
+  // ОБРАТНЫЙ ДОСТУП (ДЛЯ ДЕРЕВА И РАНТАЙМА): ID -> ИМЯ ИЛИ СОДЕРЖИМОЕ
+  // ============================================================================
+
+  /**
+   * Возвращает текстовое имя идентификатора по его числовому ID за O(1).
+   * @param {number} id - Числовой идентификатор
+   * @returns {string} Имя переменной или функции
+   */
+  getNameById(id) {
+    if (id < this.CD) {
+      return this.fixedNames[id];
+    }
+    const varIdx = id - this.CD;
+    if (varIdx >= this.varNames.length || varIdx < 0) {
+      return `[Неизвестный ID: ${id}]`;
+    }
+    return this.varNames[varIdx];
+  }
+
+  /**
+   * Возвращает всё содержимое (свойства), хранящееся под этим ID за O(1).
+   * Подходит как для извлечения значения переменной, так и для получения массива overloads функций.
+   * @param {number} id - Числовой идентификатор токена/символа
+   * @returns {Object} Объект свойств ({type, value} для переменных или {type, overloads} для функций)
+   */
+  getSymbolById(id) {
+    if (id < this.CD) {
+      return this.fixedSymbols[id];
+    }
+    const varIdx = id - this.CD;
+    if (varIdx >= this.varSymbols.length || varIdx < 0) {
+      throw new Error(`Внутренняя ошибка рантайма: Выход за границы таблицы по ID ${id}`);
+    }
+    return this.varSymbols[varIdx];
+  }
+    
   // ============================================================================
   // СИНХРОНИЗАЦИЯ С LOCALSTORAGE (Ультра-компактный формат)
   // ============================================================================
