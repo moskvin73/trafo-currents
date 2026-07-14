@@ -494,10 +494,4 @@ export class MathParser {
       // Если скобки нет — это обычное чтение переменной из памяти
       return new VariableNode(id_name, token_loc);
   }
-
-  #synchronize() {
-    // В потоковом LL(1) мы просто сдвигаем lookahead на один шаг вперед, 
-    // чтобы выйти из тупика и попытаться разобрать следующую инструкцию кода
-    this.#consume();
-  }
 }
