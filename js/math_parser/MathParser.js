@@ -195,7 +195,7 @@ export class MathParser {
     if (this.errors.length === 0)
     {
       return this.#program.statements.forEach((stmt) => {
-        const response = stmt.evaluate(globalScope);
+        const response = stmt.evaluate(this.context);
         if (stmt.isPrintCommand) return { mixed: true, isSilent: stmt.isSilent, value: response.value };
         else
         {
@@ -211,7 +211,7 @@ export class MathParser {
   evaluate() {
     if (this.errors.length === 0) {
       return this.#program.statements.forEach((stmt) => {
-        const response = stmt.evaluate(globalScope);
+        const response = stmt.evaluate(this.context);
         response.value;
       });
     }
