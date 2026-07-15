@@ -127,10 +127,10 @@ export default class ComplexNumber extends MathType {
     const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
 
+    const f = (num) => MathType.formatNumberToTeX(num, settings, locale);
+
     // Хелпер для проверки, является ли число положительным/отрицательным нулем
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
-
-    const f = (num) => MathType.formatNumberToTeX(num, settings, locale);
 
     // Мнимой части нет вообще (и она не является -0, который важен для отображения)
     if (i === 0 && !isNegativeZero(i)) return f(r);
