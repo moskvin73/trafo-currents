@@ -415,6 +415,45 @@
             width: 16px;
             height: 16px;
         }
+
+        /* ОБЩИЙ СТИЛЬ ДЛЯ ВЫПАДАЮЩИХ СПИСКОВ */
+        .modal-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--calc-color-border);
+            background: var(--calc-bg-card);
+            color: var(--calc-color-text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            box-sizing: border-box;
+            appearance: none; /* Убираем дефолтную стрелочку браузера для кастомизации */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px; /* Отступ справа, чтобы текст не налезал на стрелочку */
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* Эффект фокуса на селекте */
+        .modal-select:focus {
+            border-color: var(--calc-color-brand);
+            box-shadow: 0 0 0 2px var(--calc-brand-shadow);
+        }
+
+        /* Перекрашиваем выпадающие элементы (options) для темной темы */
+        .modal-select option {
+            background: var(--calc-bg-main);
+            color: var(--calc-color-text);
+        }
+
+        /* Динамическая смена цвета стрелочки в выпадающем списке для темной темы */
+        [data-theme="dark"] .modal-select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }        
     </style>
 </head>
 
@@ -470,46 +509,38 @@
             </div>
             
             <div class="modal-body">
-                <!-- 1. Формат комплексных чисел (Checkbox) -->
+                <!-- 1. Формат комплексных чисел (Выпадающий список) -->
                 <div class="modal-form-group">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="setting-complex-format">
-                        <span class="checkbox-label">Полярный формат комплексных чисел</span>
-                    </label>
-                    <small class="form-help">Если выключено — используется алгебраическая форма (a + bi)</small>
+                    <label for="setting-complex-format" class="group-title">Формат комплексных чисел:</label>
+                    <select id="setting-complex-format" class="modal-select">
+                        <option value="0">Алгебраическая форма (a + jb)</option>
+                        <option value="1">Полярная форма (M ∠ θ)</option>
+                        <option value="2">Экспоненциальная форма (M * e^(jθ))</option>
+                    </select>
+                    <small class="form-help" id="complex-help">Действительная и мнимая части через j (электротехника).</small>
                 </div>
 
-                <!-- 2. Режимы измерения углов (Radio) -->
+                <!-- 2. Режимы измерения углов (Выпадающий список) -->
                 <div class="modal-form-group">
-                    <label class="group-title">Измерение углов:</label>
-                    <div class="radio-tile-group">
-                        <label class="radio-container">
-                            <input type="radio" name="angleMode" value="0" checked>
-                            <span class="radio-label">Радианы (Rad)</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="angleMode" value="1">
-                            <span class="radio-label">Градусы (Deg)</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="angleMode" value="2">
-                            <span class="radio-label">Грады (Grad)</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="angleMode" value="3">
-                            <span class="radio-label">Обороты (Turn)</span>
-                        </label>
-                    </div>
+                    <label for="setting-angle-mode" class="group-title">Измерение и рендеринг углов (θ):</label>
+                    <select id="setting-angle-mode" class="modal-select">
+                        <option value="0">Радианы (стандартное число)</option>
+                        <option value="1">Градусы (0° – 360° / -180° – 180°)</option>
+                        <option value="2">Грады (метрические углы, прямой угол = 100g)</option>
+                        <option value="3">Обороты (доли круга от 0 до 1)</option>
+                        <option value="4">Аналитический режим (дробь с π, например 2*π/3)</option>
+                    </select>
+                    <small class="form-help" id="angle-help">Определяет расчет и вывод аргумента комплексного числа.</small>
                 </div>
 
-                <!-- 3. Точность вывода (Number input Up/Down) -->
+                <!-- 3. Точность вывода (Остается без изменений, в одну строку) -->
                 <div class="modal-form-group inline-group">
                     <label for="setting-precision" class="group-title">Знаков после запятой:</label>
                     <input type="number" id="setting-precision" min="0" max="20" step="1" value="4">
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 
 	<script type="module">
 	    
