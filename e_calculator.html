@@ -281,7 +281,17 @@
         /* Поддержка для старых версий браузеров на всякий случай */
         [data-theme="dark"] #calc-terminal-input::-webkit-input-placeholder { color: #0aecac !important; }
         [data-theme="dark"] #calc-terminal-input::-moz-placeholder          { color: #0aecac !important; }
-        [data-theme="dark"] #calc-terminal-input:-ms-input-placeholder       { color: #0aecac !important; }        
+        [data-theme="dark"] #calc-terminal-input:-ms-input-placeholder       { color: #0aecac !important; }      
+        
+        /* Заставляем все inline-формулы MathJax внутри калькулятора рендериться в крупном масштабе */
+        .command-line-calculator mjx-container[inline] {
+            font-size: 100% !important;
+        }
+
+        /* Для MathJax версий v2 (на всякий случай) */
+        .command-line-calculator .MathJax {
+            font-size: 100% !important;
+        }        
     </style>
 </head>
 
