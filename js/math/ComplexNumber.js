@@ -149,28 +149,34 @@ export default class ComplexNumber extends MathType {
         ? settings.angleMode
         : ANGLE_MODE.RADIANS;
 
-      // Конвертация угла в зависимости от выбранного режима
+      let unitSuffix = ''; // Переменная для хранения значка TeX
+
+      // Конвертация угла и определение значка единицы измерения
       switch (angleMode) {
         case ANGLE_MODE.DEGREES:
           angle = angle * (180 / Math.PI);
+          unitSuffix = '^\\circ'; // Знак градуса
           break;
         case ANGLE_MODE.GRADIANS:
-          angle = angle * (200 / Math.PI); // В полном круге 400 градиан
+          angle = angle * (200 / Math.PI);
+          unitSuffix = '^{\\text{g}}'; // Знак градиана
           break;
         case ANGLE_MODE.TURNS:
-          angle = angle / (2 * Math.PI);   // В полном круге 1 оборот
+          angle = angle / (2 * Math.PI);
+          unitSuffix = '^{\\text{tr}}'; // Знак оборота (turns)
           break;
         case ANGLE_MODE.RADIANS:
         default:
-          // Оставляем в радианах, ничего делать не нужно
+          // Оставляем в радианах, добавляем обозначение радиан по желанию
+          unitSuffix = '^{\\text{rad}}'; 
           break;
       }
 
       const roundedMag = this.#cleanRound(magnitude);
       const roundedAngle = this.#cleanRound(angle);
 
-      // Возвращаем в формате TeX: "модуль \angle угол"
-      return `${f(roundedMag)} \\angle ${f(roundedAngle)}`;
+      // Возвращаем в формате TeX: "модуль \angle угол ^значок"
+      return `${f(roundedMag)} \\angle ${f(roundedAngle)}${unitSuffix}`;
     }
 
     // ==========================================
