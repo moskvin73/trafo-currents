@@ -4,12 +4,18 @@ export const SYM_UNDEFINED = 0; // Идентификатор объявлен, 
 export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
+export const COPNPLEX_FMT_ALGEBRAIC = 0;
+export const COPNPLEX_FMT_PОLAR     = 1;
+
+export const ANGLE_MODE_RADIANS = 0;
+export const ANGLE_MODE_DEGREES = 0;
+
 export class SymbolTableContext {
   constructor() {
     this.settings = {
-      complexFormat: 'algebraic',
-      angleMode: 'radians',
-      precision: 4
+      complexFormat: COPNPLEX_FMT_ALGEBRAIC,
+      angleMode:     'radians',
+      precision:     4
     };
 
     // Статическая часть
