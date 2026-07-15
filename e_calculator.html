@@ -126,7 +126,7 @@
         }
 
         /* Эхо-вывод того кода, который ввёл пользователь */
-        .calc-card-echo {
+        /*.calc-card-echo {
             font-family: 'Fira Code', 'Courier New', monospace;
             font-size: var(--calc-font-size-echo);
             color: var(--calc-color-echo);
@@ -137,9 +137,66 @@
             white-space: pre-wrap;      
             word-break: break-word;     
             margin-bottom: var(--calc-echo-margin-bottom);
-            border-left: 2px solid var(--calc-color-brand); /* Использует акцентный цвет темы */
+            border-left: 2px solid var(--calc-color-brand); 
             transition: background 0.3s, color 0.3s, border-color 0.3s;
-        }
+        }*/
+
+.calc-card-echo {
+    /* Все ваши старые свойства без изменений */
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--calc-font-size-echo);
+    color: var(--calc-color-echo);
+    background: var(--calc-bg-echo);
+    padding: var(--calc-echo-padding);
+    border-radius: var(--calc-radius-echo);
+    display: inline-block;      
+    white-space: pre-wrap;      
+    word-break: break-word;     
+    margin-bottom: var(--calc-echo-margin-bottom);
+    border-left: 2px solid var(--calc-color-brand);
+    
+    /* Добавляем поддержку плавного скрытия */
+    max-height: 500px; /* Задаем заведомо большую высоту для анимации */
+    opacity: 1;
+    overflow: hidden;
+    transition: background 0.3s, color 0.3s, border-color 0.3s, 
+                max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;
+}
+
+/* КЛАСС СКРЫТИЯ ЭХО-БЛОКА (Плавное схлопывание) */
+.calc-card-echo.hidden {
+    max-height: 0px;
+    opacity: 0;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-left-width: 0px;
+}
+
+
+/* --- СТИЛИ ДЛЯ НОВОЙ КНОПКИ СВЕРТЫВАНИЯ [👁️] --- */
+.calc-card-toggle-echo {
+    position: absolute;
+    top: var(--calc-btn-delete-top);
+    
+    /* Сдвигаем кнопку левее крестика удаления. 
+       Так как у нас переменные, мы берем дефолтный отступ и добавляем ширину крестика */
+    right: calc(var(--calc-btn-delete-right) + 24px); 
+    
+    background: transparent;
+    border: none;
+    color: var(--calc-color-muted);
+    font-size: 16px; /* Чуть меньше крестика, чтобы смотрелось аккуратно */
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    padding: var(--calc-btn-delete-padding);
+}
+
+/* Эффект наведения на глаз */
+.calc-card-toggle-echo:hover {
+    color: var(--calc-color-brand); /* Подсвечивается вашим фирменным синим/зеленым цветом */
+    transform: scale(1.1);
+}        
 
         /* Кнопка удаления конкретной карточки [×] */
         .calc-card-delete {
@@ -615,7 +672,34 @@
                 deleteBtn.onclick = () => card.remove();
                 card.appendChild(deleteBtn);
 
-                // 3. Выводим «эхо» — исходный код, который написал пользователь
+                // НОВОЕ: Добавляем кнопку сворачивания эхо-кода [👁️]
+                const toggleEchoBtn = document.createElement("button");
+                toggleEchoBtn.className = "calc-card-toggle-echo";
+                toggleEchoBtn.innerHTML = "👁️"; // Первоначальное состояние — код виден
+                toggleEchoBtn.title = "Скрыть/Показать исходный код";
+
+    // Создаем эхо-блок заранее, чтобы кнопка имела к нему доступ через замыкание
+    const echoBlock = document.createElement("div");
+    echoBlock.className = "calc-card-echo";
+    echoBlock.textContent = rawCode;
+
+    toggleEchoBtn.onclick = () => {
+        const isHidden = echoBlock.classList.toggle("hidden");
+        // Меняем иконку в зависимости от состояния
+        toggleEchoBtn.innerHTML = isHidden ? "🙈" : "👁️";
+        toggleEchoBtn.title = isHidden ? "Показать исходный код" : "Скрыть исходный код";
+    };
+    card.appendChild(toggleEchoBtn);
+
+    // 3. Выводим «эхо» (блок уже создан выше, просто добавляем в карточку)
+    card.appendChild(echoBlock);
+
+    // 4. Создаем блок для вывода результата
+    const resultBlock = document.createElement("div");
+    resultBlock.className = "result-side"; // Используем ваш родной адаптивный класс оформления
+    card.appendChild(resultBlock);           
+           
+                /*// 3. Выводим «эхо» — исходный код, который написал пользователь
                 const echoBlock = document.createElement("div");
                 echoBlock.className = "calc-card-echo";
                 echoBlock.textContent = rawCode;
@@ -624,7 +708,7 @@
                 // 4. Создаем блок для вывода результата
                 const resultBlock = document.createElement("div");
                 resultBlock.className = "result-side"; // Используем ваш родной адаптивный класс оформления
-                card.appendChild(resultBlock);
+                card.appendChild(resultBlock);*/
 
                 try {
                     // Запускаем наш потоковый LL(1) компилятор
@@ -726,130 +810,130 @@
                 }
             });
 
-    const fabContainer = document.getElementById("calc-fab-container");
-    const fabMain = document.getElementById("calc-fab-main");
-    const themeButtons = document.querySelectorAll(".theme-toggle-btn");
-    
-    // Элементы модального окна
-    const openModalBtn = document.getElementById("calc-open-settings-modal");
-    const closeModalBtn = document.getElementById("calc-modal-close");
-    const overlay = document.getElementById("calc-settings-overlay");
-    
-
-        // --- 1. УПРАВЛЕНИЕ FAB-МЕНЮ (Ваша логика) ---
-        fabMain.addEventListener("click", (e) => {
-            e.stopPropagation();
-            fabContainer.classList.toggle("open");
-        });
-
-        document.addEventListener("click", () => {
-            fabContainer.classList.remove("open");
-        });
-
-        // --- 2. УПРАВЛЕНИЕ ТЕМАМИ (☀️ / 🌙) ---
-        const setTheme = (themeName) => {
-            document.documentElement.setAttribute("data-theme", themeName);
-            localStorage.setItem("calc-theme", themeName);
-
-            themeButtons.forEach(btn => {
-                if (btn.getAttribute("data-set-theme") === themeName) {
-                    btn.style.borderColor = "#2196F3"; 
-                    btn.style.backgroundColor = "#e3f2fd";
-                } else {
-                    btn.style.borderColor = "#ccc"; 
-                    btn.style.backgroundColor = "#ffffff";
-                }
-            });
-        };
-
-        themeButtons.forEach(button => {
-            button.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const theme = button.getAttribute("data-set-theme");
-                setTheme(theme);
-                fabContainer.classList.remove("open"); // Закрываем меню
-            });
-        });
-
-        // Инициализация темы при загрузке страницы
-        const savedTheme = localStorage.getItem("calc-theme") || "light";
-        setTheme(savedTheme);
-
-        const selectComplex = document.getElementById("setting-complex-format");
-        const selectAngle = document.getElementById("setting-angle-mode");
-        const numPrecision = document.getElementById("setting-precision");
-
-        // Блоки текстовых подсказок под списками
-        const complexHelp = document.getElementById("complex-help");
-        const angleHelp = document.getElementById("angle-help");
-
-        // Словари динамических подсказок для удобства инженера
-        const complexHints = {
-            0: "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
-            1: "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
-            2: "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
-        };
-
-        const angleHints = {
-            0: "Классические радианы. Вывод угла в виде стандартной дроби (например, 2.0944).",
-            1: "Инженерный режим. Понятное представление угла в градусах от 0° до 360°.",
-            2: "Метрические углы. Используются в геодезии и навигации (прямой угол = 100g).",
-            3: "Доли круга от 0 до 1. Удобно для расчета частот вращения валов.",
-            4: "Аналитический вывод. Авто-перевод хвоста в красивую дробь с числом π (2*π/3)."
-        };
-
-        // --- ОТКРЫТИЕ ОКНА И СИНХРОНИЗАЦИЯ С СЕССИЕЙ ---
-        openModalBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
+            const fabContainer = document.getElementById("calc-fab-container");
+            const fabMain = document.getElementById("calc-fab-main");
+            const themeButtons = document.querySelectorAll(".theme-toggle-btn");
             
-            // Читаем текущие числовые значения из globalScope.settings и выставляем их в форму
-            selectComplex.value = globalScope.settings.complexFormat;
-            selectAngle.value = globalScope.settings.angleMode;
-            numPrecision.value = globalScope.settings.precision;
-
-            // Инициализируем правильный текст подсказок при открытии
-            complexHelp.textContent = complexHints[globalScope.settings.complexFormat];
-            angleHelp.textContent = angleHints[globalScope.settings.angleMode];
-
-            overlay.classList.add("active");
-        });
-
-        // Закрытие окна
-        const closeModal = () => { overlay.classList.remove("active"); };
-        closeModalBtn.addEventListener("click", closeModal);
-        overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
-
-    // --- ЗАПИСЬ НАСТРОЕК В ПАМЯТЬ ПРИ ИЗМЕНЕНИИ ---
-
-        // Смена формата комплексных чисел
-        selectComplex.addEventListener("change", () => {
-            const value = parseInt(selectComplex.value);
-            globalScope.settings.complexFormat = value;
-            complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
-        });
-
-        // Смена режима измерения углов
-        selectAngle.addEventListener("change", () => {
-            const value = parseInt(selectAngle.value);
-            globalScope.settings.angleMode = value;
-            angleHelp.textContent = angleHints[value]; // Обновляем подсказку на лету
-        });
-
-        // Изменение точности (Number input Up/Down)
-        numPrecision.addEventListener("input", () => {
-            let val = parseInt(numPrecision.value);
-            if (isNaN(val) || val < 0) val = 0;
-            if (val > 20) val = 20;
+            // Элементы модального окна
+            const openModalBtn = document.getElementById("calc-open-settings-modal");
+            const closeModalBtn = document.getElementById("calc-modal-close");
+            const overlay = document.getElementById("calc-settings-overlay");
             
-            numPrecision.value = val;
-            globalScope.settings.precision = val;
-        });
 
-        numPrecision.addEventListener("keypress", (e) => {
-            if (e.key === "." || e.key === "," || e.key === "-") {
-                e.preventDefault();
-            }
-        });
+                // --- 1. УПРАВЛЕНИЕ FAB-МЕНЮ (Ваша логика) ---
+                fabMain.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    fabContainer.classList.toggle("open");
+                });
+
+                document.addEventListener("click", () => {
+                    fabContainer.classList.remove("open");
+                });
+
+                // --- 2. УПРАВЛЕНИЕ ТЕМАМИ (☀️ / 🌙) ---
+                const setTheme = (themeName) => {
+                    document.documentElement.setAttribute("data-theme", themeName);
+                    localStorage.setItem("calc-theme", themeName);
+
+                    themeButtons.forEach(btn => {
+                        if (btn.getAttribute("data-set-theme") === themeName) {
+                            btn.style.borderColor = "#2196F3"; 
+                            btn.style.backgroundColor = "#e3f2fd";
+                        } else {
+                            btn.style.borderColor = "#ccc"; 
+                            btn.style.backgroundColor = "#ffffff";
+                        }
+                    });
+                };
+
+                themeButtons.forEach(button => {
+                    button.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const theme = button.getAttribute("data-set-theme");
+                        setTheme(theme);
+                        fabContainer.classList.remove("open"); // Закрываем меню
+                    });
+                });
+
+                // Инициализация темы при загрузке страницы
+                const savedTheme = localStorage.getItem("calc-theme") || "light";
+                setTheme(savedTheme);
+
+                const selectComplex = document.getElementById("setting-complex-format");
+                const selectAngle = document.getElementById("setting-angle-mode");
+                const numPrecision = document.getElementById("setting-precision");
+
+                // Блоки текстовых подсказок под списками
+                const complexHelp = document.getElementById("complex-help");
+                const angleHelp = document.getElementById("angle-help");
+
+                // Словари динамических подсказок для удобства инженера
+                const complexHints = {
+                    0: "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
+                    1: "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
+                    2: "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
+                };
+
+                const angleHints = {
+                    0: "Классические радианы. Вывод угла в виде стандартной дроби (например, 2.0944).",
+                    1: "Инженерный режим. Понятное представление угла в градусах от 0° до 360°.",
+                    2: "Метрические углы. Используются в геодезии и навигации (прямой угол = 100g).",
+                    3: "Доли круга от 0 до 1. Удобно для расчета частот вращения валов.",
+                    4: "Аналитический вывод. Авто-перевод хвоста в красивую дробь с числом π (2*π/3)."
+                };
+
+                // --- ОТКРЫТИЕ ОКНА И СИНХРОНИЗАЦИЯ С СЕССИЕЙ ---
+                openModalBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    
+                    // Читаем текущие числовые значения из globalScope.settings и выставляем их в форму
+                    selectComplex.value = globalScope.settings.complexFormat;
+                    selectAngle.value = globalScope.settings.angleMode;
+                    numPrecision.value = globalScope.settings.precision;
+
+                    // Инициализируем правильный текст подсказок при открытии
+                    complexHelp.textContent = complexHints[globalScope.settings.complexFormat];
+                    angleHelp.textContent = angleHints[globalScope.settings.angleMode];
+
+                    overlay.classList.add("active");
+                });
+
+                // Закрытие окна
+                const closeModal = () => { overlay.classList.remove("active"); };
+                closeModalBtn.addEventListener("click", closeModal);
+                overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+
+            // --- ЗАПИСЬ НАСТРОЕК В ПАМЯТЬ ПРИ ИЗМЕНЕНИИ ---
+
+                // Смена формата комплексных чисел
+                selectComplex.addEventListener("change", () => {
+                    const value = parseInt(selectComplex.value);
+                    globalScope.settings.complexFormat = value;
+                    complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
+                });
+
+                // Смена режима измерения углов
+                selectAngle.addEventListener("change", () => {
+                    const value = parseInt(selectAngle.value);
+                    globalScope.settings.angleMode = value;
+                    angleHelp.textContent = angleHints[value]; // Обновляем подсказку на лету
+                });
+
+                // Изменение точности (Number input Up/Down)
+                numPrecision.addEventListener("input", () => {
+                    let val = parseInt(numPrecision.value);
+                    if (isNaN(val) || val < 0) val = 0;
+                    if (val > 20) val = 20;
+                    
+                    numPrecision.value = val;
+                    globalScope.settings.precision = val;
+                });
+
+                numPrecision.addEventListener("keypress", (e) => {
+                    if (e.key === "." || e.key === "," || e.key === "-") {
+                        e.preventDefault();
+                    }
+                });
             
         });  // addEventListener("DOMContentLoaded"
 	</script>
