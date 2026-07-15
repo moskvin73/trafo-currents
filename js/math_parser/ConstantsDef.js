@@ -11,4 +11,5 @@ export const ANGLE_MODE = {
   DEGREES:  1,
   GRADIANS: 2, 
   TURNS:    3,
+  RADIANS_PI: 4,
 };
