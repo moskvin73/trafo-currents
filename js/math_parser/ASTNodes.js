@@ -366,8 +366,8 @@ class StrictRightBinNode extends BinaryOpNode {
 
   toTeX(context) {
     let leftCode = this.left.toTeX(context);
-    let rightCode = this.right.toTeX();
-    const currentPriority = this.getPriority(context);
+    let rightCode = this.right.toTeX(context);
+    const currentPriority = this.getPriority();
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
     if (this.right.getPriority() <= currentPriority) rightCode = `\\left(${rightCode}\\right)`;
