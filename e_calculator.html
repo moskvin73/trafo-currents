@@ -236,6 +236,21 @@
         .fab-container.open .fab-main {
             transform: rotate(90deg);
             background-color: #f44336; /* Ваш красный цвет */
+        }
+
+        /* КЛЮЧЕВОЙ КЛЮЧ ДЛЯ MATHJAX: Управляем видимостью формул во всех режимах рендеринга */
+        .command-line-calculator mjx-container,
+        .command-line-calculator .MathJax,
+        .command-line-calculator .MathJax_Display,
+        .command-line-calculator mjx-math {
+            color: var(--calc-mathjax-color) !important;
+            fill: var(--calc-mathjax-color) !important; /* Для SVG-рендеринга MathJax */
+            transition: color 0.3s ease, fill 0.3s ease;
+        }
+
+        /* На всякий случай: если MathJax генерирует SVG-элементы напрямую */
+        .command-line-calculator svg path {
+            fill: currentColor; /* Заставляет SVG использовать текущий цвет текста (зелёный/чёрный) */
         }        
     </style>
 </head>
