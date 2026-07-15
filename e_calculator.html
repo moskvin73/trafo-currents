@@ -223,7 +223,13 @@
                 padding: var(--calc-btn-padding-mobile);
                 text-align: center;
             }
-        }	
+        }
+
+        /* Изменение иконки шестеренки на крестик при открытии меню */
+        .fab-container.open .fab-main {
+            transform: rotate(90deg);
+            background-color: #f44336; /* Ваш красный цвет */
+        }        
     </style>
 </head>
 
@@ -251,11 +257,20 @@
 		</div>	
 	</div>
 
-    <!-- Реляционное FAB-меню управления в строгом соответствии с вашим CSS -->
-    <div class="fab-container" id="fabContainer">
+    <!-- Контейнер группы кнопок по вашему стилю -->
+    <div class="fab-container" id="calc-fab-container">
         
-        <!-- Главная управляющая круглая кнопка -->
-        <button class="fab-main" onclick="toggleFabMenu()">⚙️</button>
+        <!-- Главная управляющая круглая кнопка (Шестеренка) -->
+        <button class="fab-main" id="calc-fab-main" title="Настройки калькулятора">⚙️</button>
+        
+        <!-- Блок с дочерними кнопками для смены тем -->
+        <div class="fab-subs">
+            <!-- Кнопка включения Светлой темы -->
+            <button class="fab-btn theme-toggle-btn" data-set-theme="light" data-tooltip="Светлая тема">☀️</button>
+            
+            <!-- Кнопка включения Тёмной темы -->
+            <button class="fab-btn theme-toggle-btn" data-set-theme="dark" data-tooltip="Тёмная тема">🌙</button>
+        </div>        
     </div>
 
 	<script type="module">
@@ -440,7 +455,54 @@
                     executeCurrentCommand();
                 }
             });
-        });   
+
+            // FAB Меню
+            const fabContainer = document.getElementById("calc-fab-container");
+            const fabMain = document.getElementById("calc-fab-main");
+            const themeButtons = document.querySelectorAll(".theme-toggle-btn");
+
+            // 1. Открытие и закрытие FAB меню при клике на шестеренку
+            fabMain.addEventListener("click", (e) => {
+                e.stopPropagation(); // Предотвращаем закрытие при клике на саму кнопку
+                fabContainer.classList.toggle("open");
+            });
+
+            // Закрываем меню, если кликнули в любую другую точку экрана
+            document.addEventListener("click", () => {
+                fabContainer.classList.remove("open");
+            });
+
+            // 2. Логика переключения тем через дочерние кнопки
+            const setTheme = (themeName) => {
+                document.documentElement.setAttribute("data-theme", themeName);
+                localStorage.setItem("calc-theme", themeName);
+
+                // Визуально подсвечиваем активную кнопку (опционально)
+                themeButtons.forEach(btn => {
+                    if (btn.getAttribute("data-set-theme") === themeName) {
+                        btn.style.borderColor = "#2196F3"; // Подсвечиваем синим вашу активную тему
+                        btn.style.backgroundColor = "#e3f2fd";
+                    } else {
+                        btn.style.borderColor = "#ccc"; // Сбрасываем остальные
+                        btn.style.backgroundColor = "#ffffff";
+                    }
+                });
+            };
+
+            // Вешаем обработчик клика на каждую дочернюю кнопку темы
+            themeButtons.forEach(button => {
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Чтобы меню не закрывалось раньше времени
+                    const theme = button.getAttribute("data-set-theme");
+                    setTheme(theme);
+                    fabContainer.classList.remove("open"); // Закрываем меню после выбора темы
+                });
+            });
+
+            // 3. Инициализация темы при первой загрузке страницы
+            const savedTheme = localStorage.getItem("calc-theme") || "light";
+            setTheme(savedTheme);                    
+        });  // addEventListener("DOMContentLoaded"
 	</script>
 </body>
 </html>
