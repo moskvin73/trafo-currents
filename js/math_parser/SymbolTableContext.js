@@ -1,11 +1,13 @@
 import { COMPILER_REGISTRY } from './MathRegistry.js';
+import { COMPLEX_FORMAT, ANGLE_MODE } from './ConstantsDef.js';
+
 
 export const SYM_UNDEFINED = 0; // Идентификатор объявлен, но значения еще нет
 export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 // Форматы вывода комплексных чисел
-export const COMPLEX_FORMAT = {
+/*export const COMPLEX_FORMAT = {
   ALGEBRAIC: 0,
   POLAR: 1,
 };
@@ -16,7 +18,7 @@ export const ANGLE_MODE = {
   DEGREES:  1,
   GRADIANS: 2, 
   TURNS:    3,
-};
+};*/
 
 export class SymbolTableContext {
   constructor() {
