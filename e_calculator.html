@@ -265,16 +265,14 @@
         }
 
         /* УВЕЛИЧИВАЕМ РАЗМЕР ВСЕХ ФОРМУЛ MATHJAX ВНУТРИ ЛЕНТЫ КАЛЬКУЛЯТОРА */
-        .command-line-calculator mjx-container {
-            /* 125% сделает формулы крупными и разборчивыми, как в режиме Block */
+        /*.command-line-calculator mjx-container {
             font-size: 125% !important; 
             
-            /* Убираем лишние внешние отступы, которые могут сломать строку вывода */
             margin: 4px 0 !important; 
             
             display: inline-block;
             vertical-align: middle;
-        }
+        }*/
         
         /* Заставляем все inline-формулы MathJax внутри калькулятора рендериться в крупном масштабе */
         .command-line-calculator mjx-container[inline] {
@@ -289,9 +287,6 @@
 
         /* Защита для мобильных телефонов: чтобы огромная дробь не вылезала за края карточки */
         @media (max-width: 768px) {
-            .command-line-calculator mjx-container {
-                font-size: 120% !important; /* На телефонах делаем чуть-чуть компактнее */
-            }
             .command-line-calculator mjx-container[inline] {
                 font-size: 120% !important;
             }
