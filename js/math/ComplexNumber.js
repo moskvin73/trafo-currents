@@ -129,6 +129,55 @@ export default class ComplexNumber extends MathType {
 
     const f = (num) => MathType.formatNumberToTeX(num, settings, locale);
 
+    // Безопасное извлечение формата (по умолчанию ALGEBRAIC, если настроек нет)
+    const complexFormat = (settings && typeof settings === 'object' && 'complexFormat' in settings)
+      ? settings.complexFormat
+      : COMPLEX_FORMAT.ALGEBRAIC;    
+
+    // ==========================================
+    // ЛОГИКА ДЛЯ ПОЛЯРНОГО ФОРМАТА (r ∠ θ)
+    // ==========================================
+    if (complexFormat === COMPLEX_FORMAT.POLAR) {
+      // Находим модуль (радиус) комплексного числа
+      const magnitude = Math.hypot(r, i);
+      
+      // Находим базовый аргумент (угол в радианах от -PI до PI)
+      let angle = Math.atan2(i, r);
+
+      // Безопасное извлечение режима углов (по умолчанию RADIANS)
+      const angleMode = (settings && typeof settings === 'object' && 'angleMode' in settings)
+        ? settings.angleMode
+        : ANGLE_MODE.RADIANS;
+
+      // Конвертация угла в зависимости от выбранного режима
+      switch (angleMode) {
+        case ANGLE_MODE.DEGREES:
+          angle = angle * (180 / Math.PI);
+          break;
+        case ANGLE_MODE.GRADIANS:
+          angle = angle * (200 / Math.PI); // В полном круге 400 градиан
+          break;
+        case ANGLE_MODE.TURNS:
+          angle = angle / (2 * Math.PI);   // В полном круге 1 оборот
+          break;
+        case ANGLE_MODE.RADIANS:
+        default:
+          // Оставляем в радианах, ничего делать не нужно
+          break;
+      }
+
+      const roundedMag = this.#cleanRound(magnitude);
+      const roundedAngle = this.#cleanRound(angle);
+
+      // Возвращаем в формате TeX: "модуль \angle угол"
+      return `${f(roundedMag)} \\angle ${f(roundedAngle)}`;
+    }
+
+    // ==========================================
+    // ЛОГИКА ДЛЯ АЛГЕБРАИЧЕСКОГО ФОРМАТА (a + bj)
+    // ==========================================
+
+
     // Хелпер для проверки, является ли число положительным/отрицательным нулем
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
 
