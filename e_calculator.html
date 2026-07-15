@@ -21,7 +21,7 @@
             /* Запасной классический вариант для старых браузеров (всегда показывает полосу) */
             overflow-y: scroll; 
         }
-        
+
         /* ==========================================================================
         ГЛОБАЛЬНЫЕ НАСТРОЙКИ И ЦВЕТОВЫЕ ТЕМЫ
         ========================================================================== */
@@ -149,62 +149,62 @@
             transition: background 0.3s, color 0.3s, border-color 0.3s;
         }*/
 
-.calc-card-echo {
-    /* Все ваши старые свойства без изменений */
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: var(--calc-font-size-echo);
-    color: var(--calc-color-echo);
-    background: var(--calc-bg-echo);
-    padding: var(--calc-echo-padding);
-    border-radius: var(--calc-radius-echo);
-    display: inline-block;      
-    white-space: pre-wrap;      
-    word-break: break-word;     
-    margin-bottom: var(--calc-echo-margin-bottom);
-    border-left: 2px solid var(--calc-color-brand);
-    
-    /* Добавляем поддержку плавного скрытия */
-    max-height: 500px; /* Задаем заведомо большую высоту для анимации */
-    opacity: 1;
-    overflow: hidden;
-    transition: background 0.3s, color 0.3s, border-color 0.3s, 
-                max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;
-}
+        .calc-card-echo {
+            /* Все ваши старые свойства без изменений */
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: var(--calc-font-size-echo);
+            color: var(--calc-color-echo);
+            background: var(--calc-bg-echo);
+            padding: var(--calc-echo-padding);
+            border-radius: var(--calc-radius-echo);
+            display: inline-block;      
+            white-space: pre-wrap;      
+            word-break: break-word;     
+            margin-bottom: var(--calc-echo-margin-bottom);
+            border-left: 2px solid var(--calc-color-brand);
+            
+            /* Добавляем поддержку плавного скрытия */
+            max-height: 500px; /* Задаем заведомо большую высоту для анимации */
+            opacity: 1;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s, border-color 0.3s, 
+                        max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;
+        }
 
-/* КЛАСС СКРЫТИЯ ЭХО-БЛОКА (Плавное схлопывание) */
-.calc-card-echo.hidden {
-    max-height: 0px;
-    opacity: 0;
-    margin-bottom: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    border-left-width: 0px;
-}
+        /* КЛАСС СКРЫТИЯ ЭХО-БЛОКА (Плавное схлопывание) */
+        .calc-card-echo.hidden {
+            max-height: 0px;
+            opacity: 0;
+            margin-bottom: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            border-left-width: 0px;
+        }
 
 
-/* --- СТИЛИ ДЛЯ НОВОЙ КНОПКИ СВЕРТЫВАНИЯ [👁️] --- */
-.calc-card-toggle-echo {
-    position: absolute;
-    top: var(--calc-btn-delete-top);
-    
-    /* Сдвигаем кнопку левее крестика удаления. 
-       Так как у нас переменные, мы берем дефолтный отступ и добавляем ширину крестика */
-    right: calc(var(--calc-btn-delete-right) + 24px); 
-    
-    background: transparent;
-    border: none;
-    color: var(--calc-color-muted);
-    font-size: 16px; /* Чуть меньше крестика, чтобы смотрелось аккуратно */
-    cursor: pointer;
-    transition: color 0.2s, transform 0.2s;
-    padding: var(--calc-btn-delete-padding);
-}
+        /* --- СТИЛИ ДЛЯ НОВОЙ КНОПКИ СВЕРТЫВАНИЯ [👁️] --- */
+        .calc-card-toggle-echo {
+            position: absolute;
+            top: var(--calc-btn-delete-top);
+            
+            /* Сдвигаем кнопку левее крестика удаления. 
+            Так как у нас переменные, мы берем дефолтный отступ и добавляем ширину крестика */
+            right: calc(var(--calc-btn-delete-right) + 24px); 
+            
+            background: transparent;
+            border: none;
+            color: var(--calc-color-muted);
+            font-size: 16px; /* Чуть меньше крестика, чтобы смотрелось аккуратно */
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            padding: var(--calc-btn-delete-padding);
+        }
 
-/* Эффект наведения на глаз */
-.calc-card-toggle-echo:hover {
-    color: var(--calc-color-brand); /* Подсвечивается вашим фирменным синим/зеленым цветом */
-    transform: scale(1.1);
-}        
+        /* Эффект наведения на глаз */
+        .calc-card-toggle-echo:hover {
+            color: var(--calc-color-brand); /* Подсвечивается вашим фирменным синим/зеленым цветом */
+            transform: scale(1.1);
+        }        
 
         /* Кнопка удаления конкретной карточки [×] */
         .calc-card-delete {
