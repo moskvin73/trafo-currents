@@ -1,6 +1,6 @@
 import MathType from './MathType.js';
 import RealNumber from './RealNumber.js';
-import { COMPLEX_FORMAT, ANGLE_MODE } from './SymbolTableContext.js';
+import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/SymbolTableContext.js';
 
 /**
  * Класс для работы с комплексными числами (a + bi).
