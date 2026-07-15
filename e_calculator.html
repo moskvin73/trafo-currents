@@ -713,7 +713,47 @@
                 const card = document.createElement("div");
                 card.className = "calc-card";
 
-                // 2. Добавляем кнопку удаления этой карточки [×]
+// НОВОЕ: Создаем единый контейнер для кнопок управления в углу
+const actionsContainer = document.createElement("div");
+actionsContainer.className = "calc-card-actions";
+
+// 2. Добавляем кнопку удаления этой карточки [×]
+const deleteBtn = document.createElement("button");
+deleteBtn.className = "calc-card-delete";
+deleteBtn.innerHTML = "&times;";
+deleteBtn.title = "Удалить этот расчет";
+deleteBtn.onclick = () => card.remove();
+
+// 3. Добавляем кнопку сворачивания эхо-кода [👁️]
+const toggleEchoBtn = document.createElement("button");
+toggleEchoBtn.className = "calc-card-toggle-echo";
+toggleEchoBtn.innerHTML = "👁️";
+toggleEchoBtn.title = "Скрыть/Показать исходный код";
+
+const echoBlock = document.createElement("div");
+echoBlock.className = "calc-card-echo";
+echoBlock.textContent = rawCode;
+
+toggleEchoBtn.onclick = () => {
+    const isHidden = echoBlock.classList.toggle("hidden");
+    toggleEchoBtn.innerHTML = isHidden ? "🙈" : "👁️";
+    toggleEchoBtn.title = isHidden ? "Показать исходный код" : "Скрыть исходный код";
+};
+
+// Сначала складываем кнопки в контейнер действий
+actionsContainer.appendChild(toggleEchoBtn);
+actionsContainer.appendChild(deleteBtn);
+
+// Затем сам контейнер действий добавляем в карточку
+card.appendChild(actionsContainer);
+
+// 4. Выводим «эхо» и результат
+card.appendChild(echoBlock);
+const resultBlock = document.createElement("div");
+resultBlock.className = "result-side";
+card.appendChild(resultBlock);                
+
+                /*// 2. Добавляем кнопку удаления этой карточки [×]
                 const deleteBtn = document.createElement("button");
                 deleteBtn.className = "calc-card-delete";
                 deleteBtn.innerHTML = "&times;";
@@ -746,7 +786,7 @@
     // 4. Создаем блок для вывода результата
     const resultBlock = document.createElement("div");
     resultBlock.className = "result-side"; // Используем ваш родной адаптивный класс оформления
-    card.appendChild(resultBlock);           
+    card.appendChild(resultBlock);     */      
            
                 /*// 3. Выводим «эхо» — исходный код, который написал пользователь
                 const echoBlock = document.createElement("div");
