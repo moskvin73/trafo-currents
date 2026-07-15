@@ -256,13 +256,32 @@
         .command-line-calculator svg path {
             fill: currentColor; /* Заставляет SVG использовать текущий цвет текста (зелёный/чёрный) */
         }
-        
+
         /* Перекрашиваем глобальный заголовок в зелёный только внутри тёмного калькулятора */
         [data-theme="dark"] .command-line-calculator .step-heading,
         [data-theme="dark"] .step-heading {
             color: var(--calc-color-text) !important;
             transition: color 0.3s ease;
-        }        
+        }
+
+        /* --- СТИЛИ ДЛЯ ПЛЕЙСХОЛДЕРА В ЗАВИСИМОСТИ ОТ ТЕМЫ --- */
+
+        /* В светлой теме оставляем стандартный мягкий серый цвет */
+        #calc-terminal-input::placeholder {
+            color: #94a3b8;
+            opacity: 1; /* Сбрасываем стандартную браузерную прозрачность во всех Firefox/Safari */
+        }
+
+        /* В тёмной теме делаем его читаемым тёмно-зелёным (чтобы отличался от яркого вводимого текста) */
+        [data-theme="dark"] #calc-terminal-input::placeholder {
+            color: #047857 !important; /* Насыщенный изумрудно-зелёный */
+            opacity: 1 !important;
+        }
+
+        /* Поддержка для старых версий браузеров на всякий случай */
+        [data-theme="dark"] #calc-terminal-input::-webkit-input-placeholder { color: #047857 !important; }
+        [data-theme="dark"] #calc-terminal-input::-moz-placeholder          { color: #047857 !important; }
+        [data-theme="dark"] #calc-terminal-input:-ms-input-placeholder       { color: #047857 !important; }        
     </style>
 </head>
 
