@@ -129,45 +129,44 @@ export default class ComplexNumber extends MathType {
 
     const f = (num) => MathType.formatNumberToTeX(num, settings, locale);
 
-    // Безопасное извлечение формата (по умолчанию ALGEBRAIC, если настроек нет)
+    // Безопасное извлечение формата
     const complexFormat = (settings && typeof settings === 'object' && 'complexFormat' in settings)
       ? settings.complexFormat
-      : COMPLEX_FORMAT.ALGEBRAIC;    
+      : COMPLEX_FORMAT.ALGEBRAIC;
 
     // ==========================================
-    // ЛОГИКА ДЛЯ ПОЛЯРНОГО ФОРМАТА (r ∠ θ)
+    // ЛОГИКА ДЛЯ ПОЛЯРНОГО И ПОКАЗАТЕЛЬНОГО ФОРМАТОВ
     // ==========================================
-    if (complexFormat === COMPLEX_FORMAT.POLAR) {
+    if (complexFormat === COMPLEX_FORMAT.POLAR || complexFormat === COMPLEX_FORMAT.EXPONENTIAL) {
       // Находим модуль (радиус) комплексного числа
       const magnitude = Math.hypot(r, i);
       
       // Находим базовый аргумент (угол в радианах от -PI до PI)
       let angle = Math.atan2(i, r);
 
-      // Безопасное извлечение режима углов (по умолчанию RADIANS)
+      // Безопасное извлечение режима углов
       const angleMode = (settings && typeof settings === 'object' && 'angleMode' in settings)
         ? settings.angleMode
         : ANGLE_MODE.RADIANS;
 
-      let unitSuffix = ''; // Переменная для хранения значка TeX
+      let unitSuffix = ''; 
 
       // Конвертация угла и определение значка единицы измерения
       switch (angleMode) {
         case ANGLE_MODE.DEGREES:
           angle = angle * (180 / Math.PI);
-          unitSuffix = '^\\circ'; // Знак градуса
+          unitSuffix = '^\\circ'; 
           break;
         case ANGLE_MODE.GRADIANS:
           angle = angle * (200 / Math.PI);
-          unitSuffix = '^{\\text{g}}'; // Знак градиана
+          unitSuffix = '^{\\text{g}}'; 
           break;
         case ANGLE_MODE.TURNS:
           angle = angle / (2 * Math.PI);
-          unitSuffix = '^{\\text{tr}}'; // Знак оборота (turns)
+          unitSuffix = '^{\\text{tr}}'; 
           break;
         case ANGLE_MODE.RADIANS:
         default:
-          // Оставляем в радианах, добавляем обозначение радиан по желанию
           unitSuffix = '^{\\text{rad}}'; 
           break;
       }
@@ -175,8 +174,31 @@ export default class ComplexNumber extends MathType {
       const roundedMag = this.#cleanRound(magnitude);
       const roundedAngle = this.#cleanRound(angle);
 
-      // Возвращаем в формате TeX: "модуль \angle угол ^значок"
-      return `${f(roundedMag)} \\angle ${f(roundedAngle)}${unitSuffix}`;
+      // --- ВЕТВЛЕНИЕ НА ДВА ВИДА ВЫВОДА ---
+      
+      // 1. Классический полярный вид: 1 \angle 2.094^{\text{rad}}
+      if (complexFormat === COMPLEX_FORMAT.POLAR) {
+        return `${f(roundedMag)} \\angle ${f(roundedAngle)}${unitSuffix}`;
+      }
+      
+      // 2. Показательный вид: 1 \cdot {e}^{j 2.094^{\text{rad}}}
+      // Если модуль равен 1, то "1 \cdot" обычно опускают для красоты: {e}^{j...}
+      const magPart = roundedMag === 1 ? '' : `${f(roundedMag)} \\cdot `;
+      
+      // Формируем показатель степени. Если угол равен 0, то просто {e}^{0} = 1 (или модуль)
+      let exponent = '';
+      if (roundedAngle === 0) {
+        exponent = '0';
+      } else {
+        // Если угол отрицательный, выносим минус вперед: -j 2.094
+        const isAngleNeg = roundedAngle < 0 || (roundedAngle === 0 && 1 / roundedAngle === -Infinity);
+        const jSign = isAngleNeg ? '-' : '';
+        const absAngle = Math.abs(roundedAngle);
+        
+        exponent = `${jSign} j ${f(absAngle)}${unitSuffix}`;
+      }
+
+      return `${magPart}{e}^{${exponent}}`;
     }
 
     // ==========================================
