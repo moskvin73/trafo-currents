@@ -471,8 +471,61 @@
             
             <!-- Кнопка включения Тёмной темы -->
             <button class="fab-btn theme-toggle-btn" data-set-theme="dark" data-tooltip="Тёмная тема">🌙</button>
+
+            <!-- Открывает модальное окно настроек математики -->
+            <button class="fab-btn" id="calc-open-settings-modal" data-tooltip="Параметры сессии">🛠️</button>
         </div>        
     </div>
+
+    <!-- Модальное окно математических настроек -->
+    <div id="calc-settings-overlay">
+        <div id="calc-settings-modal">
+            <div class="modal-header">
+                <h3>Параметры сессии</h3>
+                <button id="calc-modal-close">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 1. Формат комплексных чисел (Checkbox) -->
+                <div class="modal-form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="setting-complex-format">
+                        <span class="checkbox-label">Полярный формат комплексных чисел</span>
+                    </label>
+                    <small class="form-help">Если выключено — используется алгебраическая форма (a + bi)</small>
+                </div>
+
+                <!-- 2. Режимы измерения углов (Radio) -->
+                <div class="modal-form-group">
+                    <label class="group-title">Измерение углов:</label>
+                    <div class="radio-tile-group">
+                        <label class="radio-container">
+                            <input type="radio" name="angleMode" value="0" checked>
+                            <span class="radio-label">Радианы (Rad)</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="angleMode" value="1">
+                            <span class="radio-label">Градусы (Deg)</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="angleMode" value="2">
+                            <span class="radio-label">Грады (Grad)</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="angleMode" value="3">
+                            <span class="radio-label">Обороты (Turn)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3. Точность вывода (Number input Up/Down) -->
+                <div class="modal-form-group inline-group">
+                    <label for="setting-precision" class="group-title">Знаков после запятой:</label>
+                    <input type="number" id="setting-precision" min="0" max="20" step="1" value="4">
+                </div>
+            </div>
+        </div>
+    </div>    
 
 	<script type="module">
 	    
