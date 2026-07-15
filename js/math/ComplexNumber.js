@@ -118,6 +118,53 @@ export default class ComplexNumber extends MathType {
   }
 
   /**
+   * Преобразует десятичное число в числитель и знаменатель дроби с заданной точностью
+   */
+  #toFraction(decimal, tolerance = 1e-5) {
+    const sign = decimal < 0 ? -1 : 1;
+    const absDec = Math.abs(decimal);
+    
+    let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+    let b = absDec;
+    
+    do {
+      const a = Math.floor(b);
+      const aux = h1; h1 = a * h1 + h2; h2 = aux;
+      const aux2 = k1; k1 = a * k1 + k2; k2 = aux2;
+      b = 1 / (b - a);
+    } while (Math.abs(absDec - h1 / k1) > absDec * tolerance && isFinite(b));
+
+    return { num: h1 * sign, den: k1 };
+  }
+
+  #formatPiAngle(angleInRadians, settings, locale) {
+    // Вычисляем долю от PI (угол / Math.PI)
+    const piFactor = angleInRadians / Math.PI;
+    const roundedFactor = this.#cleanRound(piFactor);
+
+    if (roundedFactor === 0) return '0';
+
+    // Ищем числитель и знаменатель для доли
+    const { num, den } = this.#toFraction(roundedFactor);
+
+    // Хелпер для форматирования через MathType (для учета локали/округления)
+    const f = (n) => MathType.formatNumberToTeX(Math.abs(n), settings, locale);
+
+    const sign = num < 0 ? '-' : '';
+    const absNum = Math.abs(num);
+
+    // Случай 1: Число целое (знаменатель 1)
+    if (den === 1) {
+      if (absNum === 1) return `${sign}\\pi`; // \pi или -\pi
+      return `${sign}${f(absNum)}\\pi`;       // 2\pi или -2\pi
+    }
+
+    // Случай 2: Обыкновенная дробь (например, 2/3 или 1/4)
+    const top = absNum === 1 ? '\\pi' : `${f(absNum)}\\pi`; // убираем 1 перед \pi
+    return `${sign}\\frac{${top}}{${f(den)}}`;
+  }    
+
+  /**
    * Реализация базового метода: возвращает TeX БЕЗ знаков доллара
    */
   toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
@@ -138,64 +185,69 @@ export default class ComplexNumber extends MathType {
     // ЛОГИКА ДЛЯ ПОЛЯРНОГО И ПОКАЗАТЕЛЬНОГО ФОРМАТОВ
     // ==========================================
     if (complexFormat === COMPLEX_FORMAT.POLAR || complexFormat === COMPLEX_FORMAT.EXPONENTIAL) {
-      // Находим модуль (радиус) комплексного числа
       const magnitude = Math.hypot(r, i);
-      
-      // Находим базовый аргумент (угол в радианах от -PI до PI)
-      let angle = Math.atan2(i, r);
+      const rawAngleInRadians = Math.atan2(i, r); // Храним точный угол без округления
 
-      // Безопасное извлечение режима углов
       const angleMode = (settings && typeof settings === 'object' && 'angleMode' in settings)
         ? settings.angleMode
         : ANGLE_MODE.RADIANS;
 
-      let unitSuffix = ''; 
+      let angleTeX = '';
 
-      // Конвертация угла и определение значка единицы измерения
-      switch (angleMode) {
-        case ANGLE_MODE.DEGREES:
-          angle = angle * (180 / Math.PI);
-          unitSuffix = '^\\circ'; 
-          break;
-        case ANGLE_MODE.GRADIANS:
-          angle = angle * (200 / Math.PI);
-          unitSuffix = '^{\\text{g}}'; 
-          break;
-        case ANGLE_MODE.TURNS:
-          angle = angle / (2 * Math.PI);
-          unitSuffix = '^{\\text{tr}}'; 
-          break;
-        case ANGLE_MODE.RADIANS:
-        default:
-          unitSuffix = '^{\\text{rad}}'; 
-          break;
+      if (angleMode === ANGLE_MODE.RADIANS_PI) {
+        // Вызываем особый рендер для долей Пи
+        angleTeX = this.#formatPiAngle(rawAngleInRadians, settings, locale);
+      } else {
+        // Стандартная логика для остальных режимов
+        let angle = rawAngleInRadians;
+        let unitSuffix = '';
+
+        switch (angleMode) {
+          case ANGLE_MODE.DEGREES:
+            angle = angle * (180 / Math.PI);
+            unitSuffix = '^\\circ';
+            break;
+          case ANGLE_MODE.GRADIANS:
+            angle = angle * (200 / Math.PI);
+            unitSuffix = '^{\\text{g}}';
+            break;
+          case ANGLE_MODE.TURNS:
+            angle = angle / (2 * Math.PI);
+            unitSuffix = '^{\\text{tr}}';
+            break;
+          case ANGLE_MODE.RADIANS:
+          default:
+            unitSuffix = '^{\\text{rad}}';
+            break;
+        }
+        const roundedAngle = this.#cleanRound(angle);
+        angleTeX = `${f(roundedAngle)}${unitSuffix}`;
       }
 
       const roundedMag = this.#cleanRound(magnitude);
-      const roundedAngle = this.#cleanRound(angle);
 
-      // --- ВЕТВЛЕНИЕ НА ДВА ВИДА ВЫВОДА ---
+      // --- ВЫВОД РЕЗУЛЬТАТА ---
       
-      // 1. Классический полярный вид: 1 \angle 2.094^{\text{rad}}
+      // 1. Полярный формат
       if (complexFormat === COMPLEX_FORMAT.POLAR) {
-        return `${f(roundedMag)} \\angle ${f(roundedAngle)}${unitSuffix}`;
+        return `${f(roundedMag)} \\angle ${angleTeX}`;
       }
       
-      // 2. Показательный вид: 1 \cdot {e}^{j 2.094^{\text{rad}}}
-      // Если модуль равен 1, то "1 \cdot" обычно опускают для красоты: {e}^{j...}
+      // 2. Экспоненциальный формат
       const magPart = roundedMag === 1 ? '' : `${f(roundedMag)} \\cdot `;
       
-      // Формируем показатель степени. Если угол равен 0, то просто {e}^{0} = 1 (или модуль)
       let exponent = '';
-      if (roundedAngle === 0) {
+      if (angleTeX === '0') {
         exponent = '0';
       } else {
-        // Если угол отрицательный, выносим минус вперед: -j 2.094
-        const isAngleNeg = roundedAngle < 0 || (roundedAngle === 0 && 1 / roundedAngle === -Infinity);
-        const jSign = isAngleNeg ? '-' : '';
-        const absAngle = Math.abs(roundedAngle);
+        // Проверяем, начинается ли сформированный TeX угла с минуса
+        const isNeg = angleTeX.startsWith('-');
+        const jSign = isNeg ? '-' : '';
+        // Если был минус, убираем его из строки угла, так как мы вынесли его перед j
+        const cleanAngleTeX = isNeg ? angleTeX.substring(1) : angleTeX;
         
-        exponent = `${jSign} j ${f(absAngle)}${unitSuffix}`;
+        // Для красивых дробей в степени убираем лишние пробелы: {e}^{-j\frac{\pi}{3}}
+        exponent = `${jSign}j ${cleanAngleTeX}`;
       }
 
       return `${magPart}{e}^{${exponent}}`;
