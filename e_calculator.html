@@ -513,8 +513,9 @@
 
 	<script type="module">
 	    
-        import { MathParser, TeXOutputFormatter } from './js/math_parser/MathParser.js';
-        import { SymbolTableContext, COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/SymbolTableContext.js';
+        import { MathParser } from './js/math_parser/MathParser.js';
+        import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
+        import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
         
         const terminalInput = document.getElementById('calc-terminal-input');
 
