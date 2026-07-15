@@ -8,13 +8,13 @@ export const COPNPLEX_FMT_ALGEBRAIC = 0;
 export const COPNPLEX_FMT_PОLAR     = 1;
 
 export const ANGLE_MODE_RADIANS = 0;
-export const ANGLE_MODE_DEGREES = 0;
+export const ANGLE_MODE_DEGREES = 1;
 
 export class SymbolTableContext {
   constructor() {
     this.settings = {
       complexFormat: COPNPLEX_FMT_ALGEBRAIC,
-      angleMode:     'radians',
+      angleMode:     NGLE_MODE_RADIANS,
       precision:     4
     };
 
