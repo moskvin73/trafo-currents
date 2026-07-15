@@ -181,33 +181,74 @@
             border-left-width: 0px;
         }
 
+/* ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КНОПОК УПРАВЛЕНИЯ В КАРТОЧКЕ */
+.calc-card-actions {
+    position: absolute;
+    top: var(--calc-btn-delete-top);
+    right: var(--calc-btn-delete-right);
+    display: flex;
+    align-items: center; /* Идеальное выравнивание глаза и крестика по горизонтальной оси */
+    gap: 12px; /* Фиксированное расстояние между кнопками */
+}
+
+/* Базовый сброс для обеих кнопок в панели */
+.calc-card-delete,
+.calc-card-toggle-echo {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--calc-btn-delete-padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1; /* Обнуляем высоту строки, чтобы шрифты не смещались вверх/вниз */
+}
+
+/* Специфичные стили крестика [×] */
+.calc-card-delete {
+    color: var(--calc-color-muted);
+    font-size: var(--calc-font-size-delete);
+    font-weight: bold;
+    transition: color 0.2s;
+}
+.calc-card-delete:hover {
+    color: var(--calc-color-danger);
+}
+
+/* Специфичные стили глаза [👁️] */
+.calc-card-toggle-echo {
+    color: var(--calc-color-muted);
+    font-size: 16px; /* Размер иконки глаза */
+    transition: color 0.2s, transform 0.2s;
+}
+.calc-card-toggle-echo:hover {
+    color: var(--calc-color-brand);
+    transform: scale(1.1);
+}
 
         /* --- СТИЛИ ДЛЯ НОВОЙ КНОПКИ СВЕРТЫВАНИЯ [👁️] --- */
-        .calc-card-toggle-echo {
+        /*.calc-card-toggle-echo {
             position: absolute;
             top: var(--calc-btn-delete-top);
-            
-            /* Сдвигаем кнопку левее крестика удаления. 
-            Так как у нас переменные, мы берем дефолтный отступ и добавляем ширину крестика */
             right: calc(var(--calc-btn-delete-right) + 24px); 
             
             background: transparent;
             border: none;
             color: var(--calc-color-muted);
-            font-size: 16px; /* Чуть меньше крестика, чтобы смотрелось аккуратно */
+            font-size: 16px; 
             cursor: pointer;
             transition: color 0.2s, transform 0.2s;
             padding: var(--calc-btn-delete-padding);
         }
 
         /* Эффект наведения на глаз */
-        .calc-card-toggle-echo:hover {
-            color: var(--calc-color-brand); /* Подсвечивается вашим фирменным синим/зеленым цветом */
+        /*.calc-card-toggle-echo:hover {
+            color: var(--calc-color-brand); 
             transform: scale(1.1);
-        }        
+        }  */      
 
         /* Кнопка удаления конкретной карточки [×] */
-        .calc-card-delete {
+        /*.calc-card-delete {
             position: absolute;
             top: var(--calc-btn-delete-top);
             right: var(--calc-btn-delete-right);
@@ -222,7 +263,7 @@
         }
         .calc-card-delete:hover {
             color: var(--calc-color-danger);
-        }
+        }*/
 
         /* Контейнер активной строки ввода */
         .input-row-container {
