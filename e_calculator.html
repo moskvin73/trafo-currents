@@ -886,120 +886,120 @@
             const overlay = document.getElementById("calc-settings-overlay");
             
 
-                // --- 1. УПРАВЛЕНИЕ FAB-МЕНЮ (Ваша логика) ---
-                fabMain.addEventListener("click", (e) => {
+            // --- 1. УПРАВЛЕНИЕ FAB-МЕНЮ (Ваша логика) ---
+            fabMain.addEventListener("click", (e) => {
+                e.stopPropagation();
+                fabContainer.classList.toggle("open");
+            });
+
+            document.addEventListener("click", () => {
+                fabContainer.classList.remove("open");
+            });
+
+            // --- 2. УПРАВЛЕНИЕ ТЕМАМИ (☀️ / 🌙) ---
+            const setTheme = (themeName) => {
+                document.documentElement.setAttribute("data-theme", themeName);
+                localStorage.setItem("calc-theme", themeName);
+
+                themeButtons.forEach(btn => {
+                    if (btn.getAttribute("data-set-theme") === themeName) {
+                        btn.style.borderColor = "#2196F3"; 
+                        btn.style.backgroundColor = "#e3f2fd";
+                    } else {
+                        btn.style.borderColor = "#ccc"; 
+                        btn.style.backgroundColor = "#ffffff";
+                    }
+                });
+            };
+
+            themeButtons.forEach(button => {
+                button.addEventListener("click", (e) => {
                     e.stopPropagation();
-                    fabContainer.classList.toggle("open");
+                    const theme = button.getAttribute("data-set-theme");
+                    setTheme(theme);
+                    fabContainer.classList.remove("open"); // Закрываем меню
                 });
+            });
 
-                document.addEventListener("click", () => {
-                    fabContainer.classList.remove("open");
-                });
+            // Инициализация темы при загрузке страницы
+            const savedTheme = localStorage.getItem("calc-theme") || "light";
+            setTheme(savedTheme);
 
-                // --- 2. УПРАВЛЕНИЕ ТЕМАМИ (☀️ / 🌙) ---
-                const setTheme = (themeName) => {
-                    document.documentElement.setAttribute("data-theme", themeName);
-                    localStorage.setItem("calc-theme", themeName);
+            const selectComplex = document.getElementById("setting-complex-format");
+            const selectAngle = document.getElementById("setting-angle-mode");
+            const numPrecision = document.getElementById("setting-precision");
 
-                    themeButtons.forEach(btn => {
-                        if (btn.getAttribute("data-set-theme") === themeName) {
-                            btn.style.borderColor = "#2196F3"; 
-                            btn.style.backgroundColor = "#e3f2fd";
-                        } else {
-                            btn.style.borderColor = "#ccc"; 
-                            btn.style.backgroundColor = "#ffffff";
-                        }
-                    });
-                };
+            // Блоки текстовых подсказок под списками
+            const complexHelp = document.getElementById("complex-help");
+            const angleHelp = document.getElementById("angle-help");
 
-                themeButtons.forEach(button => {
-                    button.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        const theme = button.getAttribute("data-set-theme");
-                        setTheme(theme);
-                        fabContainer.classList.remove("open"); // Закрываем меню
-                    });
-                });
+            // Словари динамических подсказок для удобства инженера
+            const complexHints = {
+                0: "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
+                1: "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
+                2: "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
+            };
 
-                // Инициализация темы при загрузке страницы
-                const savedTheme = localStorage.getItem("calc-theme") || "light";
-                setTheme(savedTheme);
+            const angleHints = {
+                0: "Классические радианы. Вывод угла в виде стандартной дроби (например, 2.0944).",
+                1: "Инженерный режим. Понятное представление угла в градусах от 0° до 360°.",
+                2: "Метрические углы. Используются в геодезии и навигации (прямой угол = 100g).",
+                3: "Доли круга от 0 до 1. Удобно для расчета частот вращения валов.",
+                4: "Аналитический вывод. Авто-перевод хвоста в красивую дробь с числом π (2*π/3)."
+            };
 
-                const selectComplex = document.getElementById("setting-complex-format");
-                const selectAngle = document.getElementById("setting-angle-mode");
-                const numPrecision = document.getElementById("setting-precision");
+            // --- ОТКРЫТИЕ ОКНА И СИНХРОНИЗАЦИЯ С СЕССИЕЙ ---
+            openModalBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                
+                // Читаем текущие числовые значения из globalScope.settings и выставляем их в форму
+                selectComplex.value = globalScope.settings.complexFormat;
+                selectAngle.value = globalScope.settings.angleMode;
+                numPrecision.value = globalScope.settings.precision;
 
-                // Блоки текстовых подсказок под списками
-                const complexHelp = document.getElementById("complex-help");
-                const angleHelp = document.getElementById("angle-help");
+                // Инициализируем правильный текст подсказок при открытии
+                complexHelp.textContent = complexHints[globalScope.settings.complexFormat];
+                angleHelp.textContent = angleHints[globalScope.settings.angleMode];
 
-                // Словари динамических подсказок для удобства инженера
-                const complexHints = {
-                    0: "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
-                    1: "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
-                    2: "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
-                };
+                overlay.classList.add("active");
+            });
 
-                const angleHints = {
-                    0: "Классические радианы. Вывод угла в виде стандартной дроби (например, 2.0944).",
-                    1: "Инженерный режим. Понятное представление угла в градусах от 0° до 360°.",
-                    2: "Метрические углы. Используются в геодезии и навигации (прямой угол = 100g).",
-                    3: "Доли круга от 0 до 1. Удобно для расчета частот вращения валов.",
-                    4: "Аналитический вывод. Авто-перевод хвоста в красивую дробь с числом π (2*π/3)."
-                };
-
-                // --- ОТКРЫТИЕ ОКНА И СИНХРОНИЗАЦИЯ С СЕССИЕЙ ---
-                openModalBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    
-                    // Читаем текущие числовые значения из globalScope.settings и выставляем их в форму
-                    selectComplex.value = globalScope.settings.complexFormat;
-                    selectAngle.value = globalScope.settings.angleMode;
-                    numPrecision.value = globalScope.settings.precision;
-
-                    // Инициализируем правильный текст подсказок при открытии
-                    complexHelp.textContent = complexHints[globalScope.settings.complexFormat];
-                    angleHelp.textContent = angleHints[globalScope.settings.angleMode];
-
-                    overlay.classList.add("active");
-                });
-
-                // Закрытие окна
-                const closeModal = () => { overlay.classList.remove("active"); };
-                closeModalBtn.addEventListener("click", closeModal);
-                overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+            // Закрытие окна
+            const closeModal = () => { overlay.classList.remove("active"); };
+            closeModalBtn.addEventListener("click", closeModal);
+            overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
 
             // --- ЗАПИСЬ НАСТРОЕК В ПАМЯТЬ ПРИ ИЗМЕНЕНИИ ---
 
-                // Смена формата комплексных чисел
-                selectComplex.addEventListener("change", () => {
-                    const value = parseInt(selectComplex.value);
-                    globalScope.settings.complexFormat = value;
-                    complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
-                });
+            // Смена формата комплексных чисел
+            selectComplex.addEventListener("change", () => {
+                const value = parseInt(selectComplex.value);
+                globalScope.settings.complexFormat = value;
+                complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
+            });
 
-                // Смена режима измерения углов
-                selectAngle.addEventListener("change", () => {
-                    const value = parseInt(selectAngle.value);
-                    globalScope.settings.angleMode = value;
-                    angleHelp.textContent = angleHints[value]; // Обновляем подсказку на лету
-                });
+            // Смена режима измерения углов
+            selectAngle.addEventListener("change", () => {
+                const value = parseInt(selectAngle.value);
+                globalScope.settings.angleMode = value;
+                angleHelp.textContent = angleHints[value]; // Обновляем подсказку на лету
+            });
 
-                // Изменение точности (Number input Up/Down)
-                numPrecision.addEventListener("input", () => {
-                    let val = parseInt(numPrecision.value);
-                    if (isNaN(val) || val < 0) val = 0;
-                    if (val > 20) val = 20;
-                    
-                    numPrecision.value = val;
-                    globalScope.settings.precision = val;
-                });
+            // Изменение точности (Number input Up/Down)
+            numPrecision.addEventListener("input", () => {
+                let val = parseInt(numPrecision.value);
+                if (isNaN(val) || val < 0) val = 0;
+                if (val > 20) val = 20;
+                
+                numPrecision.value = val;
+                globalScope.settings.precision = val;
+            });
 
-                numPrecision.addEventListener("keypress", (e) => {
-                    if (e.key === "." || e.key === "," || e.key === "-") {
-                        e.preventDefault();
-                    }
-                });
+            numPrecision.addEventListener("keypress", (e) => {
+                if (e.key === "." || e.key === "," || e.key === "-") {
+                    e.preventDefault();
+                }
+            });
             
     const textarea = document.getElementById('calc-terminal-input');
     const lineNumbersEle = document.getElementById('calc-line-numbers');
