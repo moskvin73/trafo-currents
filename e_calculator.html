@@ -133,22 +133,6 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* Эхо-вывод того кода, который ввёл пользователь */
-        /*.calc-card-echo {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: var(--calc-font-size-echo);
-            color: var(--calc-color-echo);
-            background: var(--calc-bg-echo);
-            padding: var(--calc-echo-padding);
-            border-radius: var(--calc-radius-echo);
-            display: inline-block;      
-            white-space: pre-wrap;      
-            word-break: break-word;     
-            margin-bottom: var(--calc-echo-margin-bottom);
-            border-left: 2px solid var(--calc-color-brand); 
-            transition: background 0.3s, color 0.3s, border-color 0.3s;
-        }*/
-
         .calc-card-echo {
             /* Все ваши старые свойства без изменений */
             font-family: 'Fira Code', 'Courier New', monospace;
@@ -181,89 +165,50 @@
             border-left-width: 0px;
         }
 
-/* ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КНОПОК УПРАВЛЕНИЯ В КАРТОЧКЕ */
-.calc-card-actions {
-    position: absolute;
-    top: var(--calc-btn-delete-top);
-    right: var(--calc-btn-delete-right);
-    display: flex;
-    align-items: center; /* Идеальное выравнивание глаза и крестика по горизонтальной оси */
-    gap: 12px; /* Фиксированное расстояние между кнопками */
-}
-
-/* Базовый сброс для обеих кнопок в панели */
-.calc-card-delete,
-.calc-card-toggle-echo {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: var(--calc-btn-delete-padding);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1; /* Обнуляем высоту строки, чтобы шрифты не смещались вверх/вниз */
-}
-
-/* Специфичные стили крестика [×] */
-.calc-card-delete {
-    color: var(--calc-color-muted);
-    font-size: var(--calc-font-size-delete);
-    font-weight: bold;
-    transition: color 0.2s;
-}
-.calc-card-delete:hover {
-    color: var(--calc-color-danger);
-}
-
-/* Специфичные стили глаза [👁️] */
-.calc-card-toggle-echo {
-    color: var(--calc-color-muted);
-    font-size: 16px; /* Размер иконки глаза */
-    transition: color 0.2s, transform 0.2s;
-}
-.calc-card-toggle-echo:hover {
-    color: var(--calc-color-brand);
-    transform: scale(1.1);
-}
-
-        /* --- СТИЛИ ДЛЯ НОВОЙ КНОПКИ СВЕРТЫВАНИЯ [👁️] --- */
-        /*.calc-card-toggle-echo {
-            position: absolute;
-            top: var(--calc-btn-delete-top);
-            right: calc(var(--calc-btn-delete-right) + 24px); 
-            
-            background: transparent;
-            border: none;
-            color: var(--calc-color-muted);
-            font-size: 16px; 
-            cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
-            padding: var(--calc-btn-delete-padding);
-        }
-
-        /* Эффект наведения на глаз */
-        /*.calc-card-toggle-echo:hover {
-            color: var(--calc-color-brand); 
-            transform: scale(1.1);
-        }  */      
-
-        /* Кнопка удаления конкретной карточки [×] */
-        /*.calc-card-delete {
+        /* ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КНОПОК УПРАВЛЕНИЯ В КАРТОЧКЕ */
+        .calc-card-actions {
             position: absolute;
             top: var(--calc-btn-delete-top);
             right: var(--calc-btn-delete-right);
+            display: flex;
+            align-items: center; /* Идеальное выравнивание глаза и крестика по горизонтальной оси */
+            gap: 12px; /* Фиксированное расстояние между кнопками */
+        }
+
+        /* Базовый сброс для обеих кнопок в панели */
+        .calc-card-delete,
+        .calc-card-toggle-echo {
             background: transparent;
             border: none;
+            cursor: pointer;
+            padding: var(--calc-btn-delete-padding);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1; /* Обнуляем высоту строки, чтобы шрифты не смещались вверх/вниз */
+        }
+
+        /* Специфичные стили крестика [×] */
+        .calc-card-delete {
             color: var(--calc-color-muted);
             font-size: var(--calc-font-size-delete);
-            cursor: pointer;
             font-weight: bold;
             transition: color 0.2s;
-            padding: var(--calc-btn-delete-padding);
         }
         .calc-card-delete:hover {
             color: var(--calc-color-danger);
-        }*/
+        }
+
+        /* Специфичные стили глаза [👁️] */
+        .calc-card-toggle-echo {
+            color: var(--calc-color-muted);
+            font-size: 16px; /* Размер иконки глаза */
+            transition: color 0.2s, transform 0.2s;
+        }
+        .calc-card-toggle-echo:hover {
+            color: var(--calc-color-brand);
+            transform: scale(1.1);
+        }
 
         /* Контейнер активной строки ввода */
         .input-row-container {
@@ -592,7 +537,7 @@
                         <!-- Индикатор положения курсора (Строка:Колонка) -->
                         <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
                     </div>		
-                    			
+
 					<!-- Кнопка отправки команды на выполнение -->
 					<button id="calc-submit-btn" type="button">Enter</button>
 				</div>
