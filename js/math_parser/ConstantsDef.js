@@ -2,6 +2,7 @@
 export const COMPLEX_FORMAT = {
   ALGEBRAIC: 0,
   POLAR: 1,
+  EXPONENTIAL: 2,
 };
 
 // Режимы измерения углов
