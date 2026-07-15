@@ -218,13 +218,78 @@
             margin-top: var(--calc-row-margin-top);
         }
 
+
+/* ОБЕРТКА ДЛЯ ВСЕГО БЛОКА ВВОДА С ИНДИКАТОРОМ */
+.textarea-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* КОНТЕЙНЕР ДЛЯ НУМЕРАЦИИ И TEXTAREA */
+.textarea-with-lines {
+    display: flex;
+    background: var(--calc-bg-input);
+    border: 1px solid var(--calc-color-border);
+    border-radius: var(--calc-radius-input);
+    overflow: hidden; /* Чтобы скругления углов работали корректно */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Если textarea в фокусе, подсвечиваем всю общую рамку */
+.textarea-with-lines:focus-within {
+    border-color: var(--calc-color-brand);
+    box-shadow: 0 0 0 3px var(--calc-brand-shadow);
+}
+
+/* БЛОК НОМЕРОВ СТРОК */
+.line-numbers {
+    background: var(--calc-bg-card);
+    color: var(--calc-color-muted);
+    padding: 12px 8px 12px 12px; /* Верхний/нижний padding строго равен padding у textarea */
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--calc-font-size-input);
+    line-height: 1.5; /* Должна быть идентична line-height у textarea */
+    text-align: right;
+    user-select: none;
+    border-right: 1px solid var(--calc-color-border);
+    min-width: 25px;
+}        
+
+#calc-terminal-input {
+    flex: 1;
+    background: transparent !important; /* Фон теперь берет родительский */
+    color: var(--calc-color-text);
+    border: none !important; /* Убираем рамку, так как она теперь у общего контейнера */
+    box-shadow: none !important; /* Убираем дефолтную тень фокуса */
+    padding: 12px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--calc-font-size-input);
+    line-height: 1.5;
+    outline: none;
+    resize: none;             
+    overflow-y: hidden;       
+    box-sizing: border-box;   
+    field-sizing: content;     
+    caret-color: var(--calc-color-text);
+}
+
+/* СТИЛИ ДЛЯ ИНДИКАТОРА ПОЛОЖЕНИЯ КАРЕТКИ */
+.cursor-position {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--calc-color-echo);
+    text-align: right;
+    padding-right: 6px;
+    user-select: none;
+}
         /* Поле ввода активного терминала */
-        #calc-terminal-input {
+        /*#calc-terminal-input {
             flex: 1;
             background: var(--calc-bg-input);
             color: var(--calc-color-text);
 
-            /* Добавляем цвет мигающего курсора, чтобы он подстраивался под тему */
             caret-color: var(--calc-color-text); 
 
             border: 1px solid var(--calc-color-border);
@@ -239,7 +304,7 @@
             box-sizing: border-box;   
             field-sizing: content;     
             transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
-        }
+        }*/
 
         #calc-terminal-input:focus {
             border-color: var(--calc-color-brand);
