@@ -12,9 +12,10 @@ export const COMPLEX_FORMAT = {
 
 // Режимы измерения углов
 export const ANGLE_MODE = {
-  RADIANS: 0,
-  DEGREES: 1,
-  GRADIANS: 2, // Опционально
+  RADIANS:  0,
+  DEGREES:  1,
+  GRADIANS: 2, 
+  TURNS:    3,
 };
 
 export class SymbolTableContext {
