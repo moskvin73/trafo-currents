@@ -579,18 +579,20 @@
 				<div class="input-row-container">
 					<!-- Поле ввода. На смартфонах textarea удобнее, так как поддерживает перенос длинных строк -->
 				<!--	<textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea> -->
-    <!-- Контейнер для поля ввода и номеров строк -->
-    <div class="textarea-wrapper">
-        <div class="textarea-with-lines">
-            <!-- Блок, куда JS будет динамически рендерить номера строк -->
-            <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-            
-            <!-- Ваше поле ввода -->
-            <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
-        </div>
-        <!-- Индикатор положения курсора (Строка:Колонка) -->
-        <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
-    </div>					
+                    
+                    <!-- Контейнер для поля ввода и номеров строк -->
+                    <div class="textarea-wrapper">
+                        <div class="textarea-with-lines">
+                            <!-- Блок, куда JS будет динамически рендерить номера строк -->
+                            <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
+                            
+                            <!-- Ваше поле ввода -->
+                            <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
+                        </div>
+                        <!-- Индикатор положения курсора (Строка:Колонка) -->
+                        <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
+                    </div>		
+                    			
 					<!-- Кнопка отправки команды на выполнение -->
 					<button id="calc-submit-btn" type="button">Enter</button>
 				</div>
