@@ -695,7 +695,7 @@
             });
 
             // FAB Меню
-            const fabContainer = document.getElementById("calc-fab-container");
+            /*const fabContainer = document.getElementById("calc-fab-container");
             const fabMain = document.getElementById("calc-fab-main");
             const themeButtons = document.querySelectorAll(".theme-toggle-btn");
 
@@ -739,7 +739,121 @@
 
             // 3. Инициализация темы при первой загрузке страницы
             const savedTheme = localStorage.getItem("calc-theme") || "light";
-            setTheme(savedTheme);                    
+            setTheme(savedTheme);*/ 
+            
+    const fabContainer = document.getElementById("calc-fab-container");
+    const fabMain = document.getElementById("calc-fab-main");
+    const themeButtons = document.querySelectorAll(".theme-toggle-btn");
+    
+    // Элементы модального окна
+    const openModalBtn = document.getElementById("calc-open-settings-modal");
+    const closeModalBtn = document.getElementById("calc-modal-close");
+    const overlay = document.getElementById("calc-settings-overlay");
+    
+    // Поля формы внутри окна
+    const chkComplex = document.getElementById("setting-complex-format");
+    const radAngles = document.getElementsByName("angleMode");
+    const numPrecision = document.getElementById("setting-precision");
+
+    // --- 1. УПРАВЛЕНИЕ FAB-МЕНЮ (Ваша логика) ---
+    fabMain.addEventListener("click", (e) => {
+        e.stopPropagation();
+        fabContainer.classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => {
+        fabContainer.classList.remove("open");
+    });
+
+    // --- 2. УПРАВЛЕНИЕ ТЕМАМИ (☀️ / 🌙) ---
+    const setTheme = (themeName) => {
+        document.documentElement.setAttribute("data-theme", themeName);
+        localStorage.setItem("calc-theme", themeName);
+
+        themeButtons.forEach(btn => {
+            if (btn.getAttribute("data-set-theme") === themeName) {
+                btn.style.borderColor = "#2196F3"; 
+                btn.style.backgroundColor = "#e3f2fd";
+            } else {
+                btn.style.borderColor = "#ccc"; 
+                btn.style.backgroundColor = "#ffffff";
+            }
+        });
+    };
+
+    themeButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const theme = button.getAttribute("data-set-theme");
+            setTheme(theme);
+            fabContainer.classList.remove("open"); // Закрываем меню
+        });
+    });
+
+    // Инициализация темы при загрузке страницы
+    const savedTheme = localStorage.getItem("calc-theme") || "light";
+    setTheme(savedTheme);
+
+
+    // --- 3. УПРАВЛЕНИЕ МОДАЛЬНЫМ ОКНОМ НАСТРОЕК СЕССИИ ---
+    
+    // Открытие окна
+    openModalBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Чтобы событие не улетело на закрытие FAB
+        fabContainer.classList.remove("open"); // Закрываем меню FAB, чтобы не мешалось
+
+        // Загружаем актуальные данные из памяти globalScope в поля формы
+        chkComplex.checked = globalScope.settings.complexFormat === 1; // 1 = POLAR
+        
+        radAngles.forEach(radio => {
+            if (parseInt(radio.value) === globalScope.settings.angleMode) {
+                radio.checked = true;
+            }
+        });
+        
+        numPrecision.value = globalScope.settings.precision;
+
+        overlay.classList.add("active"); // Показываем окно
+    });
+
+    // Закрытие окна
+    const closeModal = () => { overlay.classList.remove("active"); };
+    closeModalBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+
+    // --- 4. ЗАПИСЬ ДАННЫХ ИЗ ФОРМЫ В globalScope НА ЛЕТУ ---
+
+    // Изменение формата комплексных чисел (Чекбокс)
+    chkComplex.addEventListener("change", () => {
+        globalScope.settings.complexFormat = chkComplex.checked ? 1 : 0;
+    });
+
+    // Изменение режима углов (Радио-кнопки)
+    radAngles.forEach(radio => {
+        radio.addEventListener("change", () => {
+            if (radio.checked) {
+                globalScope.settings.angleMode = parseInt(radio.value);
+            }
+        });
+    });
+
+    // Изменение точности (Поле Up/Down)
+    numPrecision.addEventListener("input", () => {
+        let val = parseInt(numPrecision.value);
+        if (isNaN(val) || val < 0) val = 0;
+        if (val > 20) val = 20; // Ограничение на количество знаков
+        
+        numPrecision.value = val;
+        globalScope.settings.precision = val;
+    });
+
+    // Блокировка ввода точки, запятой или минуса в поле точности
+    numPrecision.addEventListener("keypress", (e) => {
+        if (e.key === "." || e.key === "," || e.key === "-") {
+            e.preventDefault();
+        }
+    });
+            
         });  // addEventListener("DOMContentLoaded"
 	</script>
 </body>
