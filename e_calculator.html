@@ -257,13 +257,6 @@
             fill: currentColor; /* Заставляет SVG использовать текущий цвет текста (зелёный/чёрный) */
         }
 
-        /* Перекрашиваем глобальный заголовок в зелёный только внутри тёмного калькулятора */
-        [data-theme="dark"] .command-line-calculator .step-heading,
-        [data-theme="dark"] .step-heading {
-            color: var(--calc-color-text) !important;
-            transition: color 0.3s ease;
-        }
-
         /* УВЕЛИЧИВАЕМ РАЗМЕР ВСЕХ ФОРМУЛ MATHJAX ВНУТРИ ЛЕНТЫ КАЛЬКУЛЯТОРА */
         .command-line-calculator mjx-container {
             font-size: 100% !important; 
@@ -285,6 +278,14 @@
                 font-size: 120% !important;
             }
         }
+
+        /* Перекрашиваем глобальный заголовок в зелёный только внутри тёмного калькулятора */
+        [data-theme="dark"] .command-line-calculator .step-heading,
+        [data-theme="dark"] .step-heading {
+            color: var(--calc-color-text) !important;
+            transition: color 0.3s ease;
+        }
+
 
         /* --- СТИЛИ ДЛЯ ПЛЕЙСХОЛДЕРА В ЗАВИСИМОСТИ ОТ ТЕМЫ --- */
 
