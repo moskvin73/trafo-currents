@@ -35,14 +35,19 @@ export class SourceLocation {
 
 export class IndependentSourceLocation {
   constructor(location) {
+    // Проверяем, что передан именно объект класса SourceLocation
+    if (!(location instanceof SourceLocation)) {
+      throw new TypeError("Ожидался объект класса SourceLocation");
+    }
+        
     this.start = location.start;
     this.end = location.end;
     this._startLine = location.startLine;
     this.startLineIdx = location.startLineIdx;
     this._endLine = location.endLine;
     this.endLineIdx = location.endLineIdx;
-    this.column = location.column,
-    this.endColumn = location.endColumn,
+    this.column = location.column;
+    this.endColumn = location.endColumn;
   }
 
   isInLine() { return this._startLine === this._endLine; }
