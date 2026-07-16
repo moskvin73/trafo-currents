@@ -42,9 +42,9 @@ export class IndependentSourceLocation {
 
     this.start = location.start;
     this.end = location.end;
-    this._startLine = location.startLine;
+    this._startLine = location._startLine;
     this.startLineIdx = location.startLineIdx;
-    this._endLine = location.endLine;
+    this._endLine = location._endLine;
     this.endLineIdx = location.endLineIdx;
     this.column = location.column;
     this.endColumn = location.endColumn;
