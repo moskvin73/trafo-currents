@@ -38,7 +38,7 @@ export default class ASTNode {
 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
-    throw new Error("[ASTNode]: Метод [_internalEval]() не реализован.");
+    throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
 
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
@@ -86,7 +86,7 @@ export class NumberNode extends MathNode {
 
   toString(context) { return this.value.toString(context); }
 
-  [_internalEval](context) { return this.value; }
+  evaluate(context) { return this.value; }
 
   toTeX(context) { return this.value.toRawTeX(context); }
 }
@@ -163,7 +163,7 @@ export class UnaryOpNodePlus extends UnaryOpNode {
     super('+', argument, loc);
   }
 
-  [_internalEval](context) { return this.argument.[_internalEval](context); }
+  evaluate(context) { return this.argument.evaluate(context); }
 }
 
 export class UnaryOpNodeMinus extends UnaryOpNode {
@@ -175,8 +175,8 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
     super('-', argument, loc);
   }
 
-  [_internalEval](context) { 
-    const argVal = this.argument.[_internalEval](context);
+  evaluate(context) { 
+    const argVal = this.argument.evaluate(context);
     return argVal.negate();
   }
 }
@@ -367,7 +367,7 @@ class StrictRightBinNode extends BinaryOpNode {
   toTeX(context) {
     let leftCode = this.left.toTeX(context);
     let rightCode = this.right.toTeX(context);
-    const currentPriority = this.getPriority();
+    const currentPriority = this.getPriority(context);
 
     if (this.left.getPriority() < currentPriority) leftCode = `\\left(${leftCode}\\right)`;
     if (this.right.getPriority() <= currentPriority) rightCode = `\\left(${rightCode}\\right)`;
@@ -383,8 +383,8 @@ export class AddNode extends BinaryOpNode {
 
   getPriority() { return OpPriority.ADD_SUB; }
 
-  [_internalEval](context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.[_internalEval](context), this.right.[_internalEval](context));
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.add(r);
   }
 
@@ -400,8 +400,8 @@ export class SubNode extends StrictRightBinNode {
 
   getPriority() { return OpPriority.ADD_SUB; }
 
-  [_internalEval](context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.[_internalEval](context), this.right.[_internalEval](context));
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.subtract(r);
   }
 
@@ -417,8 +417,8 @@ export class MulNode extends BinaryOpNode {
 
   getPriority() { return OpPriority.MUL_DIV; }
 
-  [_internalEval](context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.[_internalEval](context), this.right.[_internalEval](context));
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.multiply(r);
   } 
 
@@ -432,8 +432,8 @@ export class DivNode extends StrictRightBinNode {
 
   getPriority() { return OpPriority.MUL_DIV; }
 
-  [_internalEval](context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.[_internalEval](context), this.right.[_internalEval](context));
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.divide(r);
   } 
 
@@ -461,8 +461,8 @@ export class PowNode extends BinaryOpNode {
     return `${leftCode}${this.operator}${rightCode}`;
   }
 
-  [_internalEval](context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.[_internalEval](context), this.right.[_internalEval](context));
+  evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.evaluate(context), this.right.evaluate(context));
     return l.accuratePow(r);
   } 
 
@@ -489,7 +489,7 @@ export class VariableNode extends MathNode {
     return context.getNameById(this.id_name); 
   }
 
-  [_internalEval](context) {
+  evaluate(context) {
     // Ищем переменную в локальном контексте вызова
     const sym = context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
@@ -515,8 +515,8 @@ export class AssignNode extends MathNode {
 
   toString(context) { return `${context.getNameById(this.id_name)} = ${this.expression.toString(context)}`; }
 
-  [_internalEval](context) {
-    const value = this.expression.[_internalEval](context);
+  evaluate(context) {
+    const value = this.expression.evaluate(context);
     const sym = context.getSymbolById(this.id_name);
     sym.value = value;
     sym.type = SYM_VARIABLE;
@@ -542,11 +542,11 @@ export class ProgramNode {
           .join('\n');
   }
 
-  [_internalEval](context = {}) {
+  evaluate(context = {}) {
     let outputHTML = "";
     for (const stmt of this.statements) {
       // Каждую строчку вычисляем и оборачиваем в div для вывода
-      outputHTML += `<div>${stmt.[_internalEval](context)}</div>`;
+      outputHTML += `<div>${stmt.evaluate(context)}</div>`;
     }
     return outputHTML;
   }
@@ -587,11 +587,11 @@ export class PrintNode extends ASTNode {
     });
   }  
 
-  [_internalEval](context) {
+  evaluate(context) {
     return this.elements.map(element => {
       // 1. ОБРАБОТКА МАТЕМАТИЧЕСКИХ ВЫРАЖЕНИЙ
       if (element.type !== 'TEXT_BLOCK') {
-        const evaluatedValue = element.[_internalEval](context);
+        const evaluatedValue = element.evaluate(context);
         // Математика всегда возвращается как инлайн-формула
         return `$${evaluatedValue.toRawTeX(context.settings)}$`;
       }
@@ -725,7 +725,7 @@ export class ConstantNode extends MathNode {
     return config ? config.str : "";
   }
 
-  [_internalEval](context) {
+  evaluate(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
       throw new Error(`[AST Error]: Неизвестный тип константы (Token ID: ${this.#tokenType}) на ${this.loc}`);
@@ -827,9 +827,9 @@ export class CallNode extends MathNode {
     return `${name}(${argsCode})`;
   }
 
-  [_internalEval](context) {
+  evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
-    const evaluatedArgs = this.args.map(arg => arg.[_internalEval](context));
+    const evaluatedArgs = this.args.map(arg => arg.evaluate(context));
     const sym = context.getSymbolById(this.id_name);
     return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
   }
