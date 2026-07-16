@@ -26,9 +26,11 @@ import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './
  * Единый узел для любой инструкции в коде
  */
 export class StatementNode {
-  constructor(node, isSilent) {
+  constructor(node, value, isSilent) {
     this.node = node;
+    this.value = value;
     this.isSilent = isSilent;
+    isPrintCommand = this.node instanceof PrintNode;
   }
 
   collectMathExpressions(list) {
@@ -40,15 +42,6 @@ export class StatementNode {
 
   toString() { return this.node.toString(); }
   
-  evaluate(context) {
-    const result = this.node.evaluate(context);
-    return {
-      value: result,
-      isSilent: this.isSilent,
-      isPrintCommand: this.node instanceof PrintNode
-    };
-  }
-
   toTeX() { return this.node.toTeX(); }
 }
 
