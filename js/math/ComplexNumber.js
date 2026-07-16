@@ -17,15 +17,9 @@ export default class ComplexNumber extends MathType {
    */
   constructor(real = 0, imaginary = 0) {
     super();
-    this.#validateNumber(real, 'constructor (real)');
-    this.#validateNumber(imaginary, 'constructor (imaginary)');
-
-      // Проверяем устойчивый к сжатию флаг isRealNumber
-    const r = (real && real.isRealNumber) ? real.value : real;
-    const i = (imaginary && imaginary.isRealNumber) ? imaginary.value : imaginary;
-
-    this.#real = r;
-    this.#imaginary = i;
+    // Метод валидирует входящие данные и сразу возвращает чистое JS-число
+    this.#real = this.#validateAndExtract(real, 'constructor (real)');
+    this.#imaginary = this.#validateAndExtract(imaginary, 'constructor (imaginary)');
   }
 
    get isComplexNumber() { return true; }
@@ -35,14 +29,34 @@ export default class ComplexNumber extends MathType {
   // ==========================================
   
   #validateNumber(value, context) {
-    const isPrimitiveNumber = typeof value === 'number';
-    // Проверяем флаг вместо constructor.name
-    const isRealNumberObject = value && value.isRealNumber === true;
-
-    if (!isPrimitiveNumber && !isRealNumberObject) {
-      throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом или RealNumber.`);
+    // 1. Если это обычное JS-число (number)
+    if (typeof value === 'number') {
+      return value;
     }
+    
+    // 2. Если это объект RealNumber (проверка флага, устойчивого к сжатию кода)
+    if (value && value.isRealNumber === true) {
+      return value.value;
+    }
+
+    // 3. Если тип не подошел — выбрасываем ошибку
+    throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом или RealNumber.`);
   }
+
+  #validateAndExtract(value, context) {
+    // 1. Если это обычное JS-число (number)
+    if (typeof value === 'number') {
+      return value;
+    }
+    
+    // 2. Если это объект RealNumber (проверка флага, устойчивого к сжатию кода)
+    if (value && value.isRealNumber === true) {
+      return value.value;
+    }
+
+    // 3. Если тип не подошел — выбрасываем ошибку
+    throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом или RealNumber.`);
+  }  
 
   // ==========================================
   // ГЕТТЕРЫ И СЕТТЕРЫ (Свойства)
