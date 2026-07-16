@@ -288,9 +288,12 @@ export default class VectorDiagram {
             // Запускаем асинхронный рендеринг формул во всем слое подписей
             await window.MathJax.typesetPromise([this.labelsLayer]);
 
+            // Перед расчетом создадим карту занятых координат, чтобы метки не садились друг на друга
+            const occupiedPositions = [];
+
             // MathJax отработал, теперь браузер знает физический размер BBox каждого элемента
             foreignObjects.forEach(obj => {
-                const rect = obj.wrapperDiv.getBoundingClientRect();
+                /*const rect = obj.wrapperDiv.getBoundingClientRect();
                 const W = rect.width;
                 const H = rect.height;
 
@@ -320,7 +323,61 @@ export default class VectorDiagram {
                 obj.element.setAttribute("y", obj.ptEnd.y + offsetY);
                 
                 // Делаем элемент плавно видимым
-                obj.element.setAttribute("opacity", "1");
+                obj.element.setAttribute("opacity", "1");*/
+
+   const rect = obj.wrapperDiv.getBoundingClientRect();
+    const W = rect.width || 60;
+    const H = rect.height || 20;
+
+    obj.element.setAttribute("width", W);
+    obj.element.setAttribute("height", H);
+
+    // Базовый вынос от острия стрелки (на 12 пикселей наружу)
+    const padding = 12;
+    let offsetX = Math.cos(obj.angle) * padding;
+    let offsetY = -Math.sin(obj.angle) * padding;
+
+    // --- ИНТЕЛЛЕКТУАЛЬНОЕ ВЫРАВНИВАНИЕ ОТНОСИТЕЛЬНО ОСТРИЯ ---
+    // Плавное смещение X: если вектор смотрит влево (cos < 0),offsetX плавно уменьшается на ширину W
+    offsetX += (-0.5 * (1 - Math.cos(obj.angle))) * W;
+    
+    // Плавное смещение Y: аналогично для высоты текста
+    offsetY += (-0.5 * (1 + Math.sin(obj.angle))) * H;
+
+    // Финальные пиксельные координаты для этой метки
+    let finalX = obj.ptEnd.x + offsetX;
+    let finalY = obj.ptEnd.y + offsetY;
+
+    // --- АНТИКОЛЛИЗИЯ (Защита от наложения меток друг на друга) ---
+    // Проверяем, не слишком ли близко эта метка к уже размещенным
+    let attempts = 0;
+    let collision = true;
+    
+    while (collision && attempts < 4) {
+        collision = false;
+        for (let pos of occupiedPositions) {
+            // Проверяем пересечение прямоугольников (Bounding Boxes) меток
+            const dX = Math.abs(finalX - pos.x);
+            const dY = Math.abs(finalY - pos.y);
+            
+            // Если метки перекрывают друг друга ближе чем на 80% ширины и высоту
+            if (dX < W * 0.8 && dY < H * 0.9) {
+                collision = true;
+                // Расталкиваем метки: сдвигаем текущую метку чуть выше или ниже в зависимости от угла
+                finalY += (obj.angle > 0) ? -H : H; 
+                finalX += (Math.cos(obj.angle) > 0) ? W * 0.2 : -W * 0.2;
+                break;
+            }
+        }
+        attempts++;
+    }
+
+    // Сохраняем координаты в реестр занятых мест
+    occupiedPositions.push({ x: finalX, y: finalY, w: W, h: H });
+
+    // Применяем скорректированные координаты к SVG
+    obj.element.setAttribute("x", finalX);
+    obj.element.setAttribute("y", finalY);                
             });
         } else {
             console.warn("MathJax v3/v4 не обнаружен на странице. Формулы отображены как обычный текст.");
