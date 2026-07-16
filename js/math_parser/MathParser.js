@@ -210,8 +210,9 @@ export class MathParser {
   toTex() {
     if (this.errors.length === 0)
     {
+      const evl_context = this.#create_evl_context();
       return this.#program.statements.map((stmt) => {
-        const response = stmt.evaluate(this.context);
+        const response = stmt.evaluate(evl_context);
         if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
         else
         {
