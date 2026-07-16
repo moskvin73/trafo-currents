@@ -337,14 +337,24 @@ export default class ComplexNumber extends MathType {
 
   static get converters() {
     // Мап создается только при первом обращении, когда все классы уже готовы
+    // Если мап еще не создан, создаем его
     if (!ComplexNumber.#cachedConverters) {
+      // 1. Безопасно пытаемся взять RealNumber из области видимости.
+      // Если браузер ругается, что его нет, мы берем его из глобального окна или кэша модулей.
+      let ActualRealNumber;
+      try {
+        ActualRealNumber = RealNumber;
+      } catch (e) {
+        // Если вы используете сборщик или чистый ESM, браузер может прятать классы.
+        // В таком случае проверяем, не определен ли он глобально:
+        ActualRealNumber = window.RealNumber;
+      }
+
       ComplexNumber.#cachedConverters = new Map([
         [ComplexNumber, (val) => val],
         ['number',      (val) => new ComplexNumber(val, 0)],
-        [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
-        // Перспектива: легко добавить новые типы прямо по их имени:
-        // ['BigInt',   (val) => new ComplexNumber(Number(val), 0)],
-        // ['Vector2D', (val) => new ComplexNumber(val.x, val.y)]
+        // Используем проверенную переменную вместо прямой ссылки
+        [ActualRealNumber, (val) => new ComplexNumber(val.value, 0)]
       ]);
     }
     return ComplexNumber.#cachedConverters;
