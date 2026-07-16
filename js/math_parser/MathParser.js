@@ -120,6 +120,18 @@ export class TeXOutputFormatter {
   }
 }
 
+class out_errors
+{
+  constructor(errors) {
+    this.errors = errors;
+  }
+
+  error(message, loc) {
+    const err = new CompilerError(message, loc);
+    this.errors.push(err);
+  }
+}
+
 /**
  * Финальный отказоустойчивый Парсер (Рекурсивный спуск)
  */
