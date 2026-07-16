@@ -51,12 +51,6 @@ export default class ComplexNumber extends MathType {
     return this.#real;
   }
 
-  showReal() {
-    const r = this.#cleanRound(this.#real);
-    if (r === 0 && !(r === 0 && (1 / r === -Infinity))) return false;
-    return true;
-  }
-
   set real(value) {
     this.#real = #validateAndExtract(value, 'set real');
   }
@@ -67,12 +61,6 @@ export default class ComplexNumber extends MathType {
 
   set imaginary(value) {
     this.#imaginary = #validateAndExtract(value, 'set real');
-  }
-
-  showImaginary() {
-    const i = this.#cleanRound(this.#imaginary);
-    if (i === 0 && !(i === 0 && (1 / i === -Infinity))) return false;
-    return true;
   }
 
   /**
