@@ -38,7 +38,14 @@ export default class ASTNode {
 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
-    return this.internal_evaluate(context);
+    try
+    {
+      return this.internal_evaluate(context);
+    }
+    catch(err)
+    {
+      context.scope_context.error(`[AST Evaluation Error]: ${err}`, this.loc);
+    }
   }
 
   /** Внутренний метод вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
