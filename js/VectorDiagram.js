@@ -377,7 +377,8 @@ export default class VectorDiagram {
 
     // Применяем скорректированные координаты к SVG
     obj.element.setAttribute("x", finalX);
-    obj.element.setAttribute("y", finalY);                
+    obj.element.setAttribute("y", finalY);
+    obj.element.setAttribute("opacity", "1");                
             });
         } else {
             console.warn("MathJax v3/v4 не обнаружен на странице. Формулы отображены как обычный текст.");
