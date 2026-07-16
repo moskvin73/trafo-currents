@@ -30,7 +30,7 @@ export class StatementNode {
     this.node = node;
     this.value = value;
     this.isSilent = isSilent;
-    isPrintCommand = this.node instanceof PrintNode;
+    this.isPrintCommand = this.node instanceof PrintNode;
   }
 
   collectMathExpressions(list) {
