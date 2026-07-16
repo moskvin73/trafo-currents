@@ -19,17 +19,28 @@ export default class ComplexNumber extends MathType {
     super();
     this.#validateNumber(real, 'constructor (real)');
     this.#validateNumber(imaginary, 'constructor (imaginary)');
-    this.#real = real;
-    this.#imaginary = imaginary;
+
+      // Проверяем устойчивый к сжатию флаг isRealNumber
+    const r = (real && real.isRealNumber) ? real.value : real;
+    const i = (imaginary && imaginary.isRealNumber) ? imaginary.value : imaginary;
+
+    this.#real = r;
+    this.#imaginary = i;
   }
+
+   get isComplexNumber() { return true; }
 
   // ==========================================
   // ВНУТРЕННЯЯ ВАЛИДАЦИЯ
   // ==========================================
   
   #validateNumber(value, context) {
-    if (typeof value !== 'number') {
-      throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом.`);
+    const isPrimitiveNumber = typeof value === 'number';
+    // Проверяем флаг вместо constructor.name
+    const isRealNumberObject = value && value.isRealNumber === true;
+
+    if (!isPrimitiveNumber && !isRealNumberObject) {
+      throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом или RealNumber.`);
     }
   }
 

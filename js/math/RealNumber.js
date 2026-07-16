@@ -20,6 +20,8 @@ export default class RealNumber extends MathType {
     this.#value = value;
   }
 
+   get isRealNumber() { return true; }
+   
   /**
    * Геттер для получения значения примитива
    */
