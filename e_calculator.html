@@ -661,6 +661,9 @@
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
         
+        // Единая изолированная область памяти (контекст сессии калькулятора)
+        // Переменные живут здесь, пока пользователь не обновит страницу
+        const globalScope = new SymbolTableContext();
         
         const terminalInput = document.getElementById('calc-terminal-input');
 
@@ -697,10 +700,6 @@
             // Первичный расчет (на случай, если в поле уже есть текст при загрузке страницы)
             adjustHeight();
         }
-
-        // Единая изолированная область памяти (контекст сессии калькулятора)
-        // Переменные живут здесь, пока пользователь не обновит страницу
-        const globalScope = new SymbolTableContext();
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputArea = document.getElementById("calc-terminal-input");
