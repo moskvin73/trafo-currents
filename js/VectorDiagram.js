@@ -379,11 +379,18 @@ export default class VectorDiagram {
             const dX = Math.abs(finalX - pos.x);
             const dY = Math.abs(finalY - pos.y);
             
+            // Если прямоугольники меток действительно перекрываются
             if (dX < W * 0.85 && dY < H * 0.95) {
                 collision = true;
-                // Если столкнулись, плавно отодвигаем по вертикали наружу
-                finalY += (finalY > this.y0) ? H * 0.5 : -H * 0.5;
-                finalX += (finalX > this.x0) ? W * 0.2 : -W * 0.2;
+                
+                // Расталкиваем строго по вертикали (Y), чтобы сохранить центрирование по X
+                // Если метка находится в верхней полуплоскости — двигаем чуть выше (-Y), если в нижней — ниже (+Y)
+                finalY += (finalY < this.y0) ? -H * 0.5 : H * 0.5;
+                
+                // Минимальный сдвиг по X делаем только для фазных векторов (если они не линейные)
+                if (!vec.origin || vec.origin.type !== 'vector') {
+                    finalX += (finalX > this.x0) ? 5 : -5;
+                }
                 break;
             }
         }
