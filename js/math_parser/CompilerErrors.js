@@ -44,6 +44,7 @@ export class SourceLocation {
 
   // Строки отдаются мгновенно за O(1)
   get line() { return this._startLine; }
+
   get endLine() { return this._endLine; }
 
   // Расчет колонок делегируется лексеру
@@ -58,4 +59,19 @@ export class SourceLocation {
   toString() {
     return `строка ${this.line}, позиция ${this.column}`;
   }
+}
+
+export class Independent {
+  constructor(location) {
+    this.start = location.start;
+    this.end = location.end;
+    this._startLine = location.startLine;
+    this.startLineIdx = location.startLineIdx;
+    this._endLine = location.endLine;
+    this.endLineIdx = location.endLineIdx;
+    this.column = location.column,
+    this.endColumn = location.endColumn,
+  }
+
+  isInLine() { return this._startLine === this._endLine; }
 }
