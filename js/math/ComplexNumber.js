@@ -33,12 +33,6 @@ export default class ComplexNumber extends MathType {
     }
   }
 
-  #validateComplex(instance, context) {
-    if (!(instance instanceof ComplexNumber)) {
-      throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть экземпляром класса ComplexNumber.`);
-    }
-  }
-
   // ==========================================
   // ГЕТТЕРЫ И СЕТТЕРЫ (Свойства)
   // ==========================================
