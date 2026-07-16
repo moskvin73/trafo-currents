@@ -1,12 +1,11 @@
 // Импортируем наш базовый математический тип, чтобы использовать в проверках, 
 // если потребуется расширение, или для явного понимания типов
-import MathType from '../math/MathType.js';
-import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import { MathRegistry } from './MathRegistry.js';
 import SemanticDispatcher from './SemanticDispatcher.js';
 import { TokenType } from './TokenTypes.js';
-import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
+import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
+import { SourceLocation, IndependentSourceLocation } from './CompilerError.js';
 
 const OpPriority = { 
     ASSIGN: 1,       // '='
@@ -28,8 +27,17 @@ export default class ASTNode {
     // 1. Защита от прямого создания экземпляра Base класса
     if (this.constructor === ASTNode) {
       throw new TypeError("[ASTNode]: Нельзя создать экземпляр абстрактного базового класса.");
-    }    
-    this.loc = loc;
+    }
+     // Проверяем тип локации и инициализируемthis.location
+    if (loc instanceof IndependentSourceLocation) {
+      this.loc = loc;
+    } else if (loc instanceof SourceLocation) {
+      this.loc = new IndependentSourceLocation(loc);
+    } else {
+      throw new TypeError(
+        "Параметр location должен быть экземпляром SourceLocation или IndependentSourceLocation"
+      );
+    }       
   }
 
   getPriority() { throw new Error("Not implemented"); }
