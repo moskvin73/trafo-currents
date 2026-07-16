@@ -54,7 +54,7 @@ export default class ASTNode {
     }
     catch(err)
     {
-      context.error(`[AST Evaluation Error]: ${err}`, this.loc);
+      context.error(`${err}`, this.loc, "AST");
       this.errorValue();
     }
   }

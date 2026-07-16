@@ -120,8 +120,8 @@ class out_errors
     this.scope_context = scope_context;
   }
 
-  error(message, loc) {
-    const err = new CompilerError(message, loc);
+  error(message, loc, severity = 'error') {
+    const err = new CompilerError(message, loc, severity);
     this.errors.push(err);
   }
 }
