@@ -206,20 +206,21 @@ export class MathParser {
   }
 
   toTex() {
-    if (this.errors.length === 0)
-    {
-      return this.#program.statements.map((stmt) => {
-        if (!smt.isSilent) {
-          if (response.isPrintCommand) { 
-            return { mixed: true, value: stmt.value }; 
-          } else {
-            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-            return { mixed: false, value: `$$${renderString}$$` };
-          }
-        }
-      });
+    if (this.errors.length > 0) {
+      return [];
     }
-    return [];
+
+    return this.#program.statements
+      .filter((stmt) => !stmt.isSilent) // Сразу убираем скрытые команды
+      .map((stmt) => {
+        // Исправлено: берем isPrintCommand из текущего stmt
+        if (stmt.isPrintCommand) { 
+          return { mixed: true, value: stmt.value };
+        }
+
+        const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+        return { mixed: false, value: `$$${renderString}$$` };
+      });
   }
 
   static parseStatement_FALLOW = Object.freeze(new Set([
