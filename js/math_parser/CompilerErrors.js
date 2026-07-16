@@ -39,7 +39,7 @@ export class IndependentSourceLocation {
     if (!(location instanceof SourceLocation)) {
       throw new TypeError("Ожидался объект класса SourceLocation");
     }
-        
+
     this.start = location.start;
     this.end = location.end;
     this._startLine = location.startLine;
@@ -60,15 +60,17 @@ export class CompilerError {
   constructor(message, location, severity = 'error') {
     this.message = message;   // Текст ошибки
     this.severity = severity; // Важность (error / warning)
-    this.location = {
-      start: location.start,
-      end: location.end,
-      line: location.line,
-      endLine: location.endLine,
-      column: location.column,
-      endColumn: location.endColumn,
-      isInLine() { return this._startLine === this._endLine; }
-    };
+
+    // Проверяем тип локации и инициализируемthis.location
+    if (location instanceof IndependentSourceLocation) {
+      this.location = location;
+    } else if (location instanceof SourceLocation) {
+      this.location = new IndependentSourceLocation(location);
+    } else {
+      throw new TypeError(
+        "Параметр location должен быть экземпляром SourceLocation или IndependentSourceLocation"
+      );
+    }    
   }
 
   toString() {
