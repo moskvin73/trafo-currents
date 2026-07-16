@@ -122,8 +122,9 @@ export class TeXOutputFormatter {
 
 class out_errors
 {
-  constructor(errors) {
+  constructor(scope_context, errors) {
     this.errors = errors;
+    this.scope_context = scope_context;
   }
 
   error(message, loc) {
