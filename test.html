@@ -19,9 +19,27 @@
 
     <script type="module">
 
-        import { MathParser } from './js/VectorDiagram.js';
+        import VectorDiagram from './js/VectorDiagram.js';
 
-        
+        // Тот самый JSON, который вернет ваш AST-нод калькулятора
+        const astOutputJson = {
+        "config": { "mode": "three-phase", "width": 600, "height": 600 },
+        "layers": {
+            "voltage": { "color": "#d9534f", "strokeWidth": 2.5, "markerId": "u-arrow" },
+            "current": { "color": "#0275d8", "strokeWidth": 2, "markerId": "i-arrow" }
+        },
+        "vectors": [
+            { "id": "U_A", "layer": "voltage", "label": "\\dot{U}_A", "origin": { "type": "center" }, "value": { "re": 0, "im": 220 } },
+            { "id": "U_B", "layer": "voltage", "label": "\\dot{U}_B", "origin": { "type": "center" }, "value": { "re": 190.5, "im": -110 } },
+            { "id": "U_AB", "layer": "voltage", "label": "\\dot{U}_{AB}", "origin": { "type": "vector", "id": "U_B" }, "value": { "re": -190.5, "im": 330 } },
+            { "id": "I_A", "layer": "current", "label": "\\dot{I}_A^{(*)}", "origin": { "type": "center" }, "value": { "re": 4.33, "im": 2.5 } }
+        ]
+        };
+
+        // Вызов отрисовщика при загрузке или обновлении данных калькулятора
+        window.addEventListener('load', () => {
+            const diagram = new VectorDiagram("#diagram-container", astOutputJson);
+        });        
 
     </script>
 
