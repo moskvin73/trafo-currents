@@ -1,5 +1,5 @@
 import MathType from './MathType.js';
-import RealNumber from './RealNumber.js';
+//import RealNumber from './RealNumber.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/ConstantsDef.js';
 
 /**
@@ -321,7 +321,7 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   // Универсальная таблица приведения по имени типа
-  static #localConverters = new Map([
+  /*static #localConverters = new Map([
     [ComplexNumber, (val) => val],
     ['number',        (val) => new ComplexNumber(val, 0)],
     [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
@@ -330,7 +330,26 @@ export default class ComplexNumber extends MathType {
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
   ]);
 
-  static get converters() { return ComplexNumber.#localConverters; }
+  static get converters() { return ComplexNumber.#localConverters; }*/
+
+  // Переменная для кэширования таблицы конвертеров
+  static #cachedConverters = null;
+
+  static get converters() {
+    // Мап создается только при первом обращении, когда все классы уже готовы
+    if (!ComplexNumber.#cachedConverters) {
+      ComplexNumber.#cachedConverters = new Map([
+        [ComplexNumber, (val) => val],
+        ['number',      (val) => new ComplexNumber(val, 0)],
+        [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
+        // Перспектива: легко добавить новые типы прямо по их имени:
+        // ['BigInt',   (val) => new ComplexNumber(Number(val), 0)],
+        // ['Vector2D', (val) => new ComplexNumber(val.x, val.y)]
+      ]);
+    }
+    return ComplexNumber.#cachedConverters;
+  }
+
   /** 
    * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
    * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
