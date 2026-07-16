@@ -1114,16 +1114,14 @@
                 }
             });
             
-    const textarea = document.getElementById('calc-terminal-input');
+     const textarea = document.getElementById('calc-terminal-input');
     const lineNumbersEle = document.getElementById('calc-line-numbers');
     const cursorIndicator = document.getElementById('calc-cursor-position');
 
     if (!textarea || !lineNumbersEle) return;
 
-    // --- 1. СОЗДАНИЕ ТЕНЕВОГО ЗЕРКАЛА ДЛЯ РАСЧЕТА ВЫСОТЫ СТРОК ---
+    // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
     const mirrorEle = document.createElement('div');
-    
-    // Копируем все стили, влияющие на перенос текста и геометрию
     const textareaStyle = window.getComputedStyle(textarea);
     mirrorEle.style.position = 'absolute';
     mirrorEle.style.visibility = 'hidden';
@@ -1136,60 +1134,39 @@
     mirrorEle.style.boxSizing = textareaStyle.boxSizing;
     document.body.appendChild(mirrorEle);
 
-    // Функция обновления номеров строк
     const updateLineNumbers = () => {
-        // Задаем зеркалу ту же ширину, что и у textarea прямо сейчас
         mirrorEle.style.width = `${textarea.clientWidth}px`;
-        
         const text = textarea.value;
         const lines = text.split('\n');
-        
-        // Очищаем зеркало
         mirrorEle.innerHTML = '';
         
-        // Обертываем каждую логическую строку в span, чтобы замерить ее физическую высоту в браузере
         lines.forEach((line) => {
             const span = document.createElement('span');
             span.style.display = 'block';
-            // Если строка пустая, добавляем невидимый пробел, чтобы span имел высоту
             span.textContent = line === '' ? ' ' : line;
             mirrorEle.appendChild(span);
         });
 
-        // Считываем высоту каждого span и вычисляем, сколько физических строк он занял
         const spans = mirrorEle.querySelectorAll('span');
         let lineNumbersHtml = '';
-        
-        // Базовая высота одной строки (из стилей line-height * font-size ≈ 22.5px)
         const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
 
         spans.forEach((span, index) => {
             const spanHeight = span.getBoundingClientRect().height;
-            // Узнаем, сколько физических строк (из-за автопереноса) заняла эта логическая строка
             const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-            
-            // Выводим номер строки
             lineNumbersHtml += `<div>${index + 1}</div>`;
-            
-            // Если строка перенеслась, добавляем пустые невидимые заглушки для номеров,
-            // чтобы выровнять нумерацию по вертикали
             for (let i = 1; i < subLinesCount; i++) {
                 lineNumbersHtml += `<div>&nbsp;</div>`;
             }
         });
-
         lineNumbersEle.innerHTML = lineNumbersHtml;
     };
 
-    // --- 2. ЛОГИКА ОТСЛЕЖИВАНИЯ ПОЛОЖЕНИЯ КАРЕТКИ ---
     const updateCursorPosition = () => {
         const selectionStart = textarea.selectionStart;
         const text = textarea.value;
-
-        // Берем текст от начала до позиции курсора
         const textBeforeCursor = text.substring(0, selectionStart);
         const lines = textBeforeCursor.split('\n');
-
         const currentLine = lines.length;
         const currentColumn = lines[lines.length - 1].length + 1;
 
@@ -1198,24 +1175,39 @@
         }
     };
 
-    // Связываем обработчики событий
+    // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
+    // Переопределяем стандартный дескриптор свойства value для этого конкретного textarea
+    const rawPrototype = Object.getPrototypeOf(textarea);
+    const valueDescriptor = Object.getOwnPropertyDescriptor(rawPrototype, 'value');
+
+    Object.defineProperty(textarea, 'value', {
+        get() {
+            return valueDescriptor.get.call(this);
+        },
+        set(newValue) {
+            valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
+            // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
+            updateLineNumbers();
+            updateCursorPosition();
+        },
+        configurable: true
+    });
+
+    // Стандартные слушатели для действий пользователя
     textarea.addEventListener('input', () => {
         updateLineNumbers();
         updateCursorPosition();
     });
- 
-    // Положение каретки меняется при кликах мышкой или стрелочками клавиатуры
     textarea.addEventListener('keyup', updateCursorPosition);
     textarea.addEventListener('click', updateCursorPosition);
     textarea.addEventListener('focus', updateCursorPosition);
 
-    // Дополнительно вешаем на ResizeObserver родителя, чтобы при изменении размеров экрана номера пересчитывались
     if (window.ResizeObserver) {
         new ResizeObserver(updateLineNumbers).observe(textarea);
     }
 
-    // Первичный запуск при загрузке страницы
     updateLineNumbers();
+    updateCursorPosition();
 
         });  // addEventListener("DOMContentLoaded"
 	</script>
