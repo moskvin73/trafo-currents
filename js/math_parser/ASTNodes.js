@@ -62,9 +62,8 @@ export default class ASTNode {
     }
     catch(err)
     {
-      this.error(context, );
-      context.error(err.toString(), this.loc, "AST");
-      this.errorValue();
+      this.error(context, err.toString());
+      return this.errorValue();
     }
   }
 
@@ -586,7 +585,7 @@ export class VariableNode extends IdentifierNode {
     // Ищем переменную в локальном контексте вызова
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
-      this.error(`Переменная "${getNameID(context.scope_context)}" не инициализирована.`);
+      this.error(context, `Переменная "${this.getNameID(context.scope_context)}" не инициализирована.`);
       return this.errorValue();
     }
     else {
