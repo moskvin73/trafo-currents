@@ -36,6 +36,10 @@ export default class ASTNode {
 
   toString(context) { throw new Error("Not implemented"); }
 
+  evaluate(context) {
+    internal_evaluate(context);
+  }
+
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   internal_evaluate(context) {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
