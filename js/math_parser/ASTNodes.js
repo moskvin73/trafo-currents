@@ -571,6 +571,10 @@ export class VariableNode extends MathNode {
     }
   }
 
+  getTexName() {
+    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
+  }
+
   toTeX(context) { return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name)); }
 }
 
@@ -593,6 +597,11 @@ export class AssignNode extends MathNode {
     sym.type = SYM_VARIABLE;
     return value;
   }
+
+  getTexName() {
+    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
+  }
+
   toTeX(context) {
     return `${ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name))} = ${this.expression.toTeX(context)}`;
   }
