@@ -46,12 +46,8 @@ export default class ASTNode {
 
   errorValue() { return new RealNumber(0); }
 
-  error(context, msg) {
-    context.error(msg, this.loc, "AST");
-  }
-
   error(context, msg, loc) {
-    context.error(msg, loc, "AST");
+    context.error(msg, loc ?? this.loc, "AST");
   }
  
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
@@ -559,7 +555,7 @@ export class IdentifierNode extends MathNode {
   }
 
   getNameID(context) {
-    context.getNameById(this.id_name);
+    retrun context.getNameById(this.id_name);
   }
 
   getTexName(context) {
