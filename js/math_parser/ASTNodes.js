@@ -571,7 +571,7 @@ export class VariableNode extends MathNode {
     }
   }
 
-  getTexName() {
+  getTexName(context) {
     return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
   }
 
@@ -598,7 +598,7 @@ export class AssignNode extends MathNode {
     return value;
   }
 
-  getTexName() {
+  getTexName(context) {
     return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
   }
 
