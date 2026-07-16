@@ -36,6 +36,7 @@ export default class ASTNode {
 
   toString(context) { throw new Error("Not implemented"); }
 
+  /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
     internal_evaluate(context);
   }
