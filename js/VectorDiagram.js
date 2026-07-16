@@ -320,8 +320,7 @@ export default class VectorDiagram {
                 obj.element.setAttribute("y", obj.ptEnd.y + offsetY);
                 
                 // Делаем элемент плавно видимым
-                obj.element.style.transition = "opacity 0.2s ease";
-                obj.element.style.opacity = "1";
+                obj.element.setAttribute("opacity", "1");
             });
         } else {
             console.warn("MathJax v3/v4 не обнаружен на странице. Формулы отображены как обычный текст.");
