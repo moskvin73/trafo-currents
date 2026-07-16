@@ -215,8 +215,7 @@ export class MathParser {
       let errors_c = 0;
       return this.#program.statements.map((stmt) => {
         const response = stmt.evaluate(evl_context);
-        if (errors_c == this.errors.length)
-        {
+        if (errors_c === this.errors.length) {
           if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
           else
           {
