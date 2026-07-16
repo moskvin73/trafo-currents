@@ -45,7 +45,7 @@ export default class ASTNode {
     catch(err)
     {
       context.error(`[AST Evaluation Error]: ${err}`, this.loc);
-      return new NumberNode(new RealNumber(0), loc);
+      return new NumberNode(new RealNumber(0), this.loc);
     }
   }
 
@@ -103,7 +103,7 @@ export class NumberNode extends MathNode {
 
   toTeX(context) { return this.value.toRawTeX(context); }
 
-  static defaultValue() {
+  static defaultValue(loc) {
     return new NumberNode(new RealNumber(0), loc);
   }
 }
@@ -511,7 +511,7 @@ export class VariableNode extends MathNode {
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
       context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, this.loc);
-      return NumberNode.defaultValue();
+      return NumberNode.defaultValue(this.loc);
     }
     else {
       return sym.value;
