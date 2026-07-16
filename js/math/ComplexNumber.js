@@ -1,5 +1,4 @@
 import MathType from './MathType.js';
-//import RealNumber from './RealNumber.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/ConstantsDef.js';
 
 /**
@@ -257,7 +256,6 @@ export default class ComplexNumber extends MathType {
     // ЛОГИКА ДЛЯ АЛГЕБРАИЧЕСКОГО ФОРМАТА (a + bj)
     // ==========================================
 
-
     // Хелпер для проверки, является ли число положительным/отрицательным нулем
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
 
@@ -320,18 +318,6 @@ export default class ComplexNumber extends MathType {
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
 
-  // Универсальная таблица приведения по имени типа
-  /*static #localConverters = new Map([
-    [ComplexNumber, (val) => val],
-    ['number',        (val) => new ComplexNumber(val, 0)],
-    [RealNumber,    (val) => new ComplexNumber(val.value, 0)]
-    // Перспектива: легко добавить новые типы прямо по их имени:
-    // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
-    // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
-  ]);
-
-  static get converters() { return ComplexNumber.#localConverters; }*/
-
   // Переменная для кэширования таблицы конвертеров
   static #cachedConverters = null;
 
@@ -359,33 +345,6 @@ export default class ComplexNumber extends MathType {
     }
     return ComplexNumber.#cachedConverters;
   }
-
-  /** 
-   * Приводит переданный аргумент (число или ComplexNumber) к типу ComplexNumber.
-   * Позволяет методам прозрачно работать и со скалярами, и с комплексными числами.
-   * @param {ComplexNumber|number|RealNumber} value 
-   * @returns {ComplexNumber}
-   */
-  /*static from(value) {
-    // 1. Защита от null/undefined, чтобы безопасно читать свойства
-    if (value === null || value === undefined) {
-      throw new TypeError(`[ComplexNumber]: Невозможно привести ${value} к комплексному числу.`);
-    }
-
-    // 2. Определяем имя типа (строку) для поиска в Map
-    //const typeKey = typeof value === 'object' ? value.constructor.name : typeof value;
-    const typeKey = typeof value === 'object' ? value.constructor : typeof value;
-
-    // 3. Ищем конвертер в таблице
-    const convert = this.#converters.get(typeKey);
-
-    // 4. Если типа нет в таблице — сразу выбрасываем ошибку
-    if (!convert) {
-      const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
-      throw new TypeError(`[ComplexNumber]: Тип "${typeName}" не поддерживается для приведения.`);
-    }
-    return convert(value);
-  }*/
 
   // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
   // ==========================================
