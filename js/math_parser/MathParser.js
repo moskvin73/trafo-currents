@@ -211,24 +211,13 @@ export class MathParser {
       return this.#program.statements.map((stmt) => {
         if (!smt.isSilent) {
           if (response.isPrintCommand) { 
-            return { mixed: true, value: response.value }; 
+            return { mixed: true, value: stmt.value }; 
           } else {
             const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
             return { mixed: false, value: `$$${renderString}$$` };
           }
         }
       });
-    return [];
-  }
-
-  evaluate() {
-    if (this.errors.length === 0) {
-      const evl_context = this.#create_evl_context();
-      return this.#program.statements.forEach((stmt) => {
-        const response = stmt.evaluate(evl_context);
-        response.value;
-      });
-    }
     return [];
   }
 
