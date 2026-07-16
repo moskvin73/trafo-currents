@@ -218,184 +218,53 @@
             margin-top: var(--calc-row-margin-top);
         }
 
-
-/* ОБЕРТКА ДЛЯ ВСЕГО БЛОКА ВВОДА С ИНДИКАТОРОМ */
-/*.textarea-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}*/
-
-/* КОНТЕЙНЕР ДЛЯ НУМЕРАЦИИ И TEXTAREA */
-/*.textarea-with-lines {
-    display: flex;
-    background: var(--calc-bg-input);
-    border: 1px solid var(--calc-color-border);
-    border-radius: var(--calc-radius-input);
-    overflow: hidden; 
-    transition: border-color 0.2s, box-shadow 0.2s;
-}*/
-
-/* Если textarea в фокусе, подсвечиваем всю общую рамку */
-/*.textarea-with-lines:focus-within {
-    border-color: var(--calc-color-brand);
-    box-shadow: 0 0 0 3px var(--calc-brand-shadow);
-}*/
-
-/* БЛОК НОМЕРОВ СТРОК */
-/*.line-numbers {
-    background: var(--calc-bg-card);
-    color: var(--calc-color-muted);
-    padding: 12px 8px 12px 12px; 
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: var(--calc-font-size-input);
-    line-height: 1.5; 
-    text-align: right;
-    user-select: none;
-    border-right: 1px solid var(--calc-color-border);
-    min-width: 25px;
-}*/        
-
-/*#calc-terminal-input {
-    flex: 1;
-    background: transparent !important; 
-    color: var(--calc-color-text);
-    border: none !important;
-    box-shadow: none !important; 
-    padding: 12px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: var(--calc-font-size-input);
-    line-height: 1.5;
-    outline: none;
-    resize: none;             
-    overflow-y: hidden;       
-    box-sizing: border-box;   
-    field-sizing: content;     
-    caret-color: var(--calc-color-text);
-}*/
-
-/* СТИЛИ ДЛЯ ИНДИКАТОРА ПОЛОЖЕНИЯ КАРЕТКИ */
-/*.cursor-position {
-    font-family: 'Fira Code', monospace;
-    font-size: 11px;
-    color: var(--calc-color-echo);
-    text-align: right;
-    padding-right: 6px;
-    user-select: none;
-}*/
-
-
-
-/* ЕДИНЫЙ КОНТЕЙНЕР ТЕРМИНАЛА */
-.terminal-editor-block {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--calc-color-border);
-    border-radius: var(--calc-radius-input);
-    background: var(--calc-bg-input);
-    overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-/* Эффект фокуса на всем блоке, когда пользователь внутри textarea */
-.terminal-editor-block:focus-within {
-    border-color: var(--calc-color-brand);
-    box-shadow: 0 0 0 3px var(--calc-brand-shadow);
-}
-
-/* РАБОЧАЯ ЗОНА ВВОДА */
-.textarea-with-lines {
-    display: flex;
-    background: transparent;
-    border: none; /* Убираем старую рамку */
-}
-
-/* БЛОК НОМЕРОВ СТРОК */
-.line-numbers {
-    background: var(--calc-bg-card);
-    color: var(--calc-color-muted);
-    padding: 12px 8px 12px 12px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: var(--calc-font-size-input);
-    line-height: 1.5;
-    text-align: right;
-    user-select: none;
-    border-right: 1px solid var(--calc-color-border);
-    min-width: 25px;
-}
-
-/* ПОЛЕ ВВОДА */
-#calc-terminal-input {
-    flex: 1;
-    background: transparent !important;
-    color: var(--calc-color-text);
-    border: none !important;
-    box-shadow: none !important;
-    padding: 12px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: var(--calc-font-size-input);
-    line-height: 1.5;
-    outline: none;
-    resize: none;             
-    overflow-y: hidden;       
-    box-sizing: border-box;   
-    field-sizing: content;     
-    caret-color: var(--calc-color-text);
-}
-
-/* СТИЛИ ФИКСИРОВАННОЙ ПАНЕЛИ СТАТУСА */
-.terminal-status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--calc-bg-card);
-    border-top: 1px solid var(--calc-color-border);
-    padding: 6px 12px;
-    user-select: none;
-}
-
-/* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
-#calc-submit-btn {
-    background: var(--calc-color-brand);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 14px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-#calc-submit-btn:hover { background: var(--calc-color-brand-hover); }
-#calc-submit-btn:active { transform: scale(0.97); }
-
-/* ИНДИКАТОР КУРСОРA */
-.cursor-position {
-    font-family: 'Fira Code', monospace;
-    font-size: 12px;
-    color: var(--calc-color-echo);
-}
-
-/* Убираем старую адаптивность медиа-запроса, так как панель теперь всегда строчная и красивая */
-@media (max-width: 768px) {
-    .input-row-container { flex-direction: column; }
-}
-        /* Поле ввода активного терминала */
-        /*#calc-terminal-input {
+        /* ЕДИНЫЙ КОНТЕЙНЕР ТЕРМИНАЛА */
+        .terminal-editor-block {
             flex: 1;
-            background: var(--calc-bg-input);
-            color: var(--calc-color-text);
-
-            caret-color: var(--calc-color-text); 
-
+            display: flex;
+            flex-direction: column;
             border: 1px solid var(--calc-color-border);
             border-radius: var(--calc-radius-input);
-            padding: var(--calc-input-padding);
+            background: var(--calc-bg-input);
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* Эффект фокуса на всем блоке, когда пользователь внутри textarea */
+        .terminal-editor-block:focus-within {
+            border-color: var(--calc-color-brand);
+            box-shadow: 0 0 0 3px var(--calc-brand-shadow);
+        }
+
+        /* РАБОЧАЯ ЗОНА ВВОДА */
+        .textarea-with-lines {
+            display: flex;
+            background: transparent;
+            border: none; /* Убираем старую рамку */
+        }
+
+        /* БЛОК НОМЕРОВ СТРОК */
+        .line-numbers {
+            background: var(--calc-bg-card);
+            color: var(--calc-color-muted);
+            padding: 12px 8px 12px 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: var(--calc-font-size-input);
+            line-height: 1.5;
+            text-align: right;
+            user-select: none;
+            border-right: 1px solid var(--calc-color-border);
+            min-width: 25px;
+        }
+
+        /* ПОЛЕ ВВОДА */
+        #calc-terminal-input {
+            flex: 1;
+            background: transparent !important;
+            color: var(--calc-color-text);
+            border: none !important;
+            box-shadow: none !important;
+            padding: 12px;
             font-family: 'Fira Code', 'Courier New', monospace;
             font-size: var(--calc-font-size-input);
             line-height: 1.5;
@@ -404,32 +273,54 @@
             overflow-y: hidden;       
             box-sizing: border-box;   
             field-sizing: content;     
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
-        }*/
+            caret-color: var(--calc-color-text);
+        }
+
+        /* СТИЛИ ФИКСИРОВАННОЙ ПАНЕЛИ СТАТУСА */
+        .terminal-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--calc-bg-card);
+            border-top: 1px solid var(--calc-color-border);
+            padding: 6px 12px;
+            user-select: none;
+        }
+
+        /* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
+        #calc-submit-btn {
+            background: var(--calc-color-brand);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #calc-submit-btn:hover { background: var(--calc-color-brand-hover); }
+        #calc-submit-btn:active { transform: scale(0.97); }
+
+        /* ИНДИКАТОР КУРСОРA */
+        .cursor-position {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--calc-color-echo);
+        }
+
+        /* Убираем старую адаптивность медиа-запроса, так как панель теперь всегда строчная и красивая */
+        @media (max-width: 768px) {
+            .input-row-container { flex-direction: column; }
+        }
 
         #calc-terminal-input:focus {
             border-color: var(--calc-color-brand);
             box-shadow: 0 0 0 3px var(--calc-brand-shadow);
         }
-
-        /* Кнопка Enter */
-        /*#calc-submit-btn {
-            background: var(--calc-color-brand);
-            color: var(--calc-bg-main);
-            border: none;
-            border-radius: var(--calc-radius-btn);
-            padding: var(--calc-btn-padding-desktop);
-            font-size: var(--calc-font-size-btn);
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-        #calc-submit-btn:hover {
-            background: var(--calc-color-brand-hover);
-        }
-        #calc-submit-btn:active {
-            transform: scale(0.97);
-        }*/
 
         .result-side {
             flex: 1;
@@ -442,16 +333,6 @@
             font-size: var(--calc-font-size-result);
             text-align: center;
         }
-
-       /* @media (max-width: 768px) {
-            .input-row-container {
-                flex-direction: column;
-            }
-            #calc-submit-btn {
-                padding: var(--calc-btn-padding-mobile);
-                text-align: center;
-            }
-        }*/
 
         /* Изменение иконки шестеренки на крестик при открытии меню */
         .fab-container.open .fab-main {
@@ -687,37 +568,27 @@
 			<div class="active-input-block">
 				<div class="step-heading">Новое математическое выражение или команда print():</div>
 
-<div class="input-row-container">
-    <!-- Единый монолитный блок терминала -->
-    <div class="terminal-editor-block">
-        
-        <!-- Рабочая зона: Номера строк + Ввод -->
-        <div class="textarea-with-lines">
-            <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-            <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
-        </div>
-
-        <!-- ФИКСИРОВАННАЯ ПАНЕЛЬ СТАТУСА (Status Bar) -->
-        <div class="terminal-status-bar">
-            <!-- Кнопка запуска слева (теперь она аккуратная и встроенная) -->
-            <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
-            
-            <!-- Индикатор положения курсора справа -->
-            <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
-        </div>
-
-    </div>
-</div>                
-			<!--	<div class="input-row-container">
-                    <div class="textarea-wrapper">
+                <div class="input-row-container">
+                    <!-- Единый монолитный блок терминала -->
+                    <div class="terminal-editor-block">
+                        
+                        <!-- Рабочая зона: Номера строк + Ввод -->
                         <div class="textarea-with-lines">
                             <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
                             <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                         </div>
-                        <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
-                    </div>		
-					<button id="calc-submit-btn" type="button">Enter</button>
-				</div> -->
+
+                        <!-- ФИКСИРОВАННАЯ ПАНЕЛЬ СТАТУСА (Status Bar) -->
+                        <div class="terminal-status-bar">
+                            <!-- Кнопка запуска слева (теперь она аккуратная и встроенная) -->
+                            <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
+                            
+                            <!-- Индикатор положения курсора справа -->
+                            <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
+                        </div>
+
+                    </div>
+                </div>
 
 			</div>
 		</div>	
