@@ -212,14 +212,18 @@ export class MathParser {
     if (this.errors.length === 0)
     {
       const evl_context = this.#create_evl_context();
+      let errors_c = 0;
       return this.#program.statements.map((stmt) => {
         const response = stmt.evaluate(evl_context);
-        if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
-        else
+        if (errors_c == this.errors.length)
         {
-          const resultValue = response.value;
-          const renderString = TeXOutputFormatter.format(stmt.node, resultValue, this.context);
-          return { mixed: false,  isSilent: response.isSilent, value: `$$${renderString}$$` };
+          if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
+          else
+          {
+            const resultValue = response.value;
+            const renderString = TeXOutputFormatter.format(stmt.node, resultValue, this.context);
+            return { mixed: false,  isSilent: response.isSilent, value: `$$${renderString}$$` };
+          }
         }
       });
     }
