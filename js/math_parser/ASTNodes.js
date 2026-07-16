@@ -102,6 +102,10 @@ export class NumberNode extends MathNode {
   internal_evaluate(context) { return this.value; }
 
   toTeX(context) { return this.value.toRawTeX(context); }
+
+  static defaultValue() {
+    return new NumberNode(new RealNumber(0), loc);
+  }
 }
 
 /**
@@ -507,7 +511,7 @@ export class VariableNode extends MathNode {
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
       context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, this.loc);
-      //throw new Error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`);
+      return NumberNode.defaultValue();
     }
     else {
       return sym.value;
