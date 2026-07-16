@@ -214,6 +214,27 @@ export default class VectorDiagram {
         this.labelsLayer.setAttribute("id", "mathjax-labels-layer");
         this.svg.appendChild(this.labelsLayer);
 
+        // НАПОЛНЯЕМ СЛОЙ ПОДПИСЯМИ (Важное исправление!)
+        this.calculated.forEach(vec => {
+            const fo = document.createElementNS(svgNS, "foreignObject");
+            fo.setAttribute("id", `label-fo-${vec.id}`);
+            fo.setAttribute("width", "200"); // Задаем временный большой размер, чтобы текст поместился
+            fo.setAttribute("height", "100");
+            fo.setAttribute("overflow", "visible");
+            // Изначально прячем элементы через opacity, чтобы они не мерцали в левом верхнем углу (0,0)
+            fo.setAttribute("opacity", "0"); 
+
+            const div = document.createElement("div");
+            div.style.display = "inline-block";
+            div.style.whiteSpace = "nowrap";
+            div.style.fontFamily = "MathJax_Main, sans-serif";
+            div.style.lineHeight = "1";
+            div.innerHTML = `\\(${vec.label}\\)`; // Инлайновые разделители MathJax
+
+            fo.appendChild(div);
+            this.labelsLayer.appendChild(fo);
+        });
+
         // Встраиваем готовый SVG в контейнер страницы
         this.container.innerHTML = "";
         this.container.appendChild(this.svg);
@@ -248,17 +269,21 @@ export default class VectorDiagram {
     async renderAndPositionLabels() {
         const svgNS = "http://www.w3.org/2000/svg";
         
-        // Сначала заставим MathJax отрендерить формулы в их текущем положении,
-        // чтобы браузер просчитал и отдал нам реальные размеры BBox (W и H)
+        // ХАК ДЛЯ БРАУЗЕРА: На мгновение делаем все подписи видимыми, 
+        // иначе getBoundingClientRect() вернет нули для скрытых элементов!
+        this.calculated.forEach(vec => {
+            const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`);
+            if (fo) fo.setAttribute("opacity", "1");
+        });
+
+        // Запускаем рендеринг MathJax
         if (window.MathJax && window.MathJax.typesetPromise) {
             await window.MathJax.typesetPromise([this.labelsLayer]);
         }
 
-        // Собираем массив метаданных обо всех метках
+        // Собираем массив метаданных обо всех метках (Ваш текущий код без изменений)
         const labelItems = this.calculated.map(vec => {
-            // Ищем соответствующий foreignObject на холсте
-            // (Для этого при рендере SVG мы должны были сохранить связь или искать по индексу/ID)
-            const fo = this.labelsLayer.children[this.calculated.indexOf(vec)]; 
+            const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`); 
             const div = fo ? fo.querySelector("div") : null;
             const rect = div ? div.getBoundingClientRect() : { width: 60, height: 20 };
             
