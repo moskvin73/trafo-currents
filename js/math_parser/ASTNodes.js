@@ -555,7 +555,7 @@ export class IdentifierNode extends MathNode {
   }
 
   getNameID(context) {
-    retrun context.getNameById(this.id_name);
+    return context.getNameById(this.id_name);
   }
 
   getTexName(context) {
