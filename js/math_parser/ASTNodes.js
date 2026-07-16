@@ -550,7 +550,7 @@ export class ProgramNode {
     let outputHTML = "";
     for (const stmt of this.statements) {
       // Каждую строчку вычисляем и оборачиваем в div для вывода
-      outputHTML += `<div>${stmt.internal_evaluate(context)}</div>`;
+      outputHTML += `<div>${stmt.evaluate(context)}</div>`;
     }
     return outputHTML;
   }
