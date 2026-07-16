@@ -496,9 +496,10 @@ export class VariableNode extends MathNode {
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
-    const sym = context.getSymbolById(this.id_name);
+    const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
-      throw new Error(`[AST]: Переменная "${context.getNameById(this.id_name)}" не инициализирована.`);
+      context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, loc);
+      //throw new Error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`);
     }
     else {
       return sym.value;
@@ -522,7 +523,7 @@ export class AssignNode extends MathNode {
 
   internal_evaluate(context) {
     const value = this.expression.internal_evaluate(context);
-    const sym = context.getSymbolById(this.id_name);
+    const sym = context.scope_context.getSymbolById(this.id_name);
     sym.value = value;
     sym.type = SYM_VARIABLE;
     return value;
