@@ -224,6 +224,9 @@ export class MathParser {
             return { mixed: false,  isSilent: response.isSilent, value: `$$${renderString}$$` };
           }
         }
+        else {
+          errors_c = this.errors.length;
+        }
       });
     }
     return [];
