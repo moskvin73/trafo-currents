@@ -284,6 +284,45 @@
     padding-right: 6px;
     user-select: none;
 }
+
+/* ЕДИНЫЙ КОНТЕЙНЕР ТЕРМИНАЛА */
+.terminal-editor-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--calc-color-border);
+    border-radius: var(--calc-radius-input);
+    background: var(--calc-bg-input);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Эффект фокуса на всем блоке, когда пользователь внутри textarea */
+.terminal-editor-block:focus-within {
+    border-color: var(--calc-color-brand);
+    box-shadow: 0 0 0 3px var(--calc-brand-shadow);
+}
+
+/* РАБОЧАЯ ЗОНА ВВОДА */
+.textarea-with-lines {
+    display: flex;
+    background: transparent;
+    border: none; /* Убираем старую рамку */
+}
+
+/* БЛОК НОМЕРОВ СТРОК */
+.line-numbers {
+    background: var(--calc-bg-card);
+    color: var(--calc-color-muted);
+    padding: 12px 8px 12px 12px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--calc-font-size-input);
+    line-height: 1.5;
+    text-align: right;
+    user-select: none;
+    border-right: 1px solid var(--calc-color-border);
+    min-width: 25px;
+}
         /* Поле ввода активного терминала */
         /*#calc-terminal-input {
             flex: 1;
