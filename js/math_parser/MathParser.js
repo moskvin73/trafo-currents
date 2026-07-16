@@ -201,7 +201,10 @@ export class MathParser {
     try {
         while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
-          if (stmt) this.#program.statements.push(stmt);
+          if (stmt) {
+             const response = stmt.evaluate(evl_context);
+             this.#program.statements.push(stmt);
+          }
       }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
