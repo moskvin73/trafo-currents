@@ -246,7 +246,7 @@ export default class VectorDiagram {
      * Этап 4: Отрисовка MathJax, замер BBox элементов и их прецизионное выравнивание
      */
     async renderAndPositionLabels() {
-        const svgNS = "http://w3.org";
+        const svgNS = "http://www.w3.org/2000/svg";
         const foreignObjects = [];
 
         this.calculated.forEach(vec => {
