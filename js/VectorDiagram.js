@@ -325,57 +325,75 @@ export default class VectorDiagram {
                 // Делаем элемент плавно видимым
                 obj.element.setAttribute("opacity", "1");*/
 
-   const rect = obj.wrapperDiv.getBoundingClientRect();
+    const rect = obj.wrapperDiv.getBoundingClientRect();
     const W = rect.width || 60;
     const H = rect.height || 20;
 
     obj.element.setAttribute("width", W);
     obj.element.setAttribute("height", H);
 
-    // Базовый вынос от острия стрелки (на 12 пикселей наружу)
-    const padding = 12;
-    let offsetX = Math.cos(obj.angle) * padding;
-    let offsetY = -Math.sin(obj.angle) * padding;
-
-    // --- ИНТЕЛЛЕКТУАЛЬНОЕ ВЫРАВНИВАНИЕ ОТНОСИТЕЛЬНО ОСТРИЯ ---
-    // Плавное смещение X: если вектор смотрит влево (cos < 0),offsetX плавно уменьшается на ширину W
-    offsetX += (-0.5 * (1 - Math.cos(obj.angle))) * W;
+    // Ищем оригинальный вектор в рассчитанных данных по совпадению координат конца
+    const vec = this.calculated.find(v => this.projectCoordinates(v.xEnd, v.yEnd, v.layer).x === obj.ptEnd.x);
     
-    // Плавное смещение Y: аналогично для высоты текста
-    offsetY += (-0.5 * (1 + Math.sin(obj.angle))) * H;
+    let finalX = obj.ptEnd.x;
+    let finalY = obj.ptEnd.y;
+    let currentAngle = obj.angle;
 
-    // Финальные пиксельные координаты для этой метки
-    let finalX = obj.ptEnd.x + offsetX;
-    let finalY = obj.ptEnd.y + offsetY;
+    // --- ИНТЕЛЛЕКТУАЛЬНЫЙ ВЫБОР ТОЧКИ ПРИВЯЗКИ ---
+    if (vec && vec.origin && vec.origin.type === 'vector') {
+        // Сценарий А: Линейное напряжение (U_AB, U_BC и т.д.)
+        // Ставим метку ровно ПОСЕРЕДИНЕ линии вектора
+        const ptStart = this.projectCoordinates(vec.xStart, vec.yStart, vec.layer);
+        const midX = (ptStart.x + obj.ptEnd.x) / 2;
+        const midY = (ptStart.y + obj.ptEnd.y) / 2;
 
-    // --- АНТИКОЛЛИЗИЯ (Защита от наложения меток друг на друга) ---
-    // Проверяем, не слишком ли близко эта метка к уже размещенным
+        // Выталкиваем метку перпендикулярно линии вектора на 15 пикселей вверх/вправо
+        const perpAngle = obj.angle + Math.PI / 2;
+        finalX = midX + Math.cos(perpAngle) * 15 - W / 2;
+        finalY = midY - Math.sin(perpAngle) * 15 - H / 2;
+    } else {
+        // Сценарий Б: Фазные векторы (U_A, U_B, I_A и т.д.), идущие от центра
+        // Вычисляем угол выноса радиально от центра холста (X0, Y0) наружу
+        const radialAngle = Math.atan2(this.y0 - obj.ptEnd.y, obj.ptEnd.x - this.x0);
+        
+        // Отступаем 15 пикселей от острия стрелки
+        const padding = 15;
+        let offsetX = Math.cos(radialAngle) * padding;
+        let offsetY = -Math.sin(radialAngle) * padding;
+
+        // Плавное центрирование BBox формулы
+        offsetX += (-0.5 * (1 - Math.cos(radialAngle))) * W;
+        offsetY += (-0.5 * (1 + Math.sin(radialAngle))) * H;
+
+        finalX = obj.ptEnd.x + offsetX;
+        finalY = obj.ptEnd.y + offsetY;
+        currentAngle = radialAngle;
+    }
+
+    // --- АНТИКОЛЛИЗИЯ (Защита от наложения) ---
     let attempts = 0;
     let collision = true;
-    
-    while (collision && attempts < 4) {
+    while (collision && attempts < 5) {
         collision = false;
         for (let pos of occupiedPositions) {
-            // Проверяем пересечение прямоугольников (Bounding Boxes) меток
             const dX = Math.abs(finalX - pos.x);
             const dY = Math.abs(finalY - pos.y);
             
-            // Если метки перекрывают друг друга ближе чем на 80% ширины и высоту
-            if (dX < W * 0.8 && dY < H * 0.9) {
+            if (dX < W * 0.85 && dY < H * 0.95) {
                 collision = true;
-                // Расталкиваем метки: сдвигаем текущую метку чуть выше или ниже в зависимости от угла
-                finalY += (obj.angle > 0) ? -H : H; 
-                finalX += (Math.cos(obj.angle) > 0) ? W * 0.2 : -W * 0.2;
+                // Если столкнулись, плавно отодвигаем по вертикали наружу
+                finalY += (finalY > this.y0) ? H * 0.5 : -H * 0.5;
+                finalX += (finalX > this.x0) ? W * 0.2 : -W * 0.2;
                 break;
             }
         }
         attempts++;
     }
 
-    // Сохраняем координаты в реестр занятых мест
+    // Сохраняем позицию в реестр занятых мест
     occupiedPositions.push({ x: finalX, y: finalY, w: W, h: H });
 
-    // Применяем скорректированные координаты к SVG
+    // Устанавливаем итоговые координаты
     obj.element.setAttribute("x", finalX);
     obj.element.setAttribute("y", finalY);
     obj.element.setAttribute("opacity", "1");                
