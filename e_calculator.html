@@ -985,100 +985,100 @@
                 }
             });
             
-    const textarea = document.getElementById('calc-terminal-input');
-    const lineNumbersEle = document.getElementById('calc-line-numbers');
-    const cursorIndicator = document.getElementById('calc-cursor-position');
+            const textarea = document.getElementById('calc-terminal-input');
+            const lineNumbersEle = document.getElementById('calc-line-numbers');
+            const cursorIndicator = document.getElementById('calc-cursor-position');
 
-    if (!textarea || !lineNumbersEle) return;
+            if (!textarea || !lineNumbersEle) return;
 
-    // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
-    const mirrorEle = document.createElement('div');
-    const textareaStyle = window.getComputedStyle(textarea);
-    mirrorEle.style.position = 'absolute';
-    mirrorEle.style.visibility = 'hidden';
-    mirrorEle.style.whiteSpace = textareaStyle.whiteSpace;
-    mirrorEle.style.wordBreak = textareaStyle.wordBreak;
-    mirrorEle.style.fontFamily = textareaStyle.fontFamily;
-    mirrorEle.style.fontSize = textareaStyle.fontSize;
-    mirrorEle.style.lineHeight = textareaStyle.lineHeight;
-    mirrorEle.style.padding = textareaStyle.padding;
-    mirrorEle.style.boxSizing = textareaStyle.boxSizing;
-    document.body.appendChild(mirrorEle);
+            // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
+            const mirrorEle = document.createElement('div');
+            const textareaStyle = window.getComputedStyle(textarea);
+            mirrorEle.style.position = 'absolute';
+            mirrorEle.style.visibility = 'hidden';
+            mirrorEle.style.whiteSpace = textareaStyle.whiteSpace;
+            mirrorEle.style.wordBreak = textareaStyle.wordBreak;
+            mirrorEle.style.fontFamily = textareaStyle.fontFamily;
+            mirrorEle.style.fontSize = textareaStyle.fontSize;
+            mirrorEle.style.lineHeight = textareaStyle.lineHeight;
+            mirrorEle.style.padding = textareaStyle.padding;
+            mirrorEle.style.boxSizing = textareaStyle.boxSizing;
+            document.body.appendChild(mirrorEle);
 
-    const updateLineNumbers = () => {
-        mirrorEle.style.width = `${textarea.clientWidth}px`;
-        const text = textarea.value;
-        const lines = text.split('\n');
-        mirrorEle.innerHTML = '';
-        
-        lines.forEach((line) => {
-            const span = document.createElement('span');
-            span.style.display = 'block';
-            span.textContent = line === '' ? ' ' : line;
-            mirrorEle.appendChild(span);
-        });
+            const updateLineNumbers = () => {
+                mirrorEle.style.width = `${textarea.clientWidth}px`;
+                const text = textarea.value;
+                const lines = text.split('\n');
+                mirrorEle.innerHTML = '';
+                
+                lines.forEach((line) => {
+                    const span = document.createElement('span');
+                    span.style.display = 'block';
+                    span.textContent = line === '' ? ' ' : line;
+                    mirrorEle.appendChild(span);
+                });
 
-        const spans = mirrorEle.querySelectorAll('span');
-        let lineNumbersHtml = '';
-        const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
+                const spans = mirrorEle.querySelectorAll('span');
+                let lineNumbersHtml = '';
+                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
 
-        spans.forEach((span, index) => {
-            const spanHeight = span.getBoundingClientRect().height;
-            const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-            lineNumbersHtml += `<div>${index + 1}</div>`;
-            for (let i = 1; i < subLinesCount; i++) {
-                lineNumbersHtml += `<div>&nbsp;</div>`;
+                spans.forEach((span, index) => {
+                    const spanHeight = span.getBoundingClientRect().height;
+                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
+                    lineNumbersHtml += `<div>${index + 1}</div>`;
+                    for (let i = 1; i < subLinesCount; i++) {
+                        lineNumbersHtml += `<div>&nbsp;</div>`;
+                    }
+                });
+                lineNumbersEle.innerHTML = lineNumbersHtml;
+            };
+
+            const updateCursorPosition = () => {
+                const selectionStart = textarea.selectionStart;
+                const text = textarea.value;
+                const textBeforeCursor = text.substring(0, selectionStart);
+                const lines = textBeforeCursor.split('\n');
+                const currentLine = lines.length;
+                const currentColumn = lines[lines.length - 1].length + 1;
+
+                if (cursorIndicator) {
+                    cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
+                }
+            };
+
+            // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
+            // Переопределяем стандартный дескриптор свойства value для этого конкретного textarea
+            const rawPrototype = Object.getPrototypeOf(textarea);
+            const valueDescriptor = Object.getOwnPropertyDescriptor(rawPrototype, 'value');
+
+            Object.defineProperty(textarea, 'value', {
+                get() {
+                    return valueDescriptor.get.call(this);
+                },
+                set(newValue) {
+                    valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
+                    // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
+                    updateLineNumbers();
+                    updateCursorPosition();
+                },
+                configurable: true
+            });
+
+            // Стандартные слушатели для действий пользователя
+            textarea.addEventListener('input', () => {
+                updateLineNumbers();
+                updateCursorPosition();
+            });
+            textarea.addEventListener('keyup', updateCursorPosition);
+            textarea.addEventListener('click', updateCursorPosition);
+            textarea.addEventListener('focus', updateCursorPosition);
+
+            if (window.ResizeObserver) {
+                new ResizeObserver(updateLineNumbers).observe(textarea);
             }
-        });
-        lineNumbersEle.innerHTML = lineNumbersHtml;
-    };
 
-    const updateCursorPosition = () => {
-        const selectionStart = textarea.selectionStart;
-        const text = textarea.value;
-        const textBeforeCursor = text.substring(0, selectionStart);
-        const lines = textBeforeCursor.split('\n');
-        const currentLine = lines.length;
-        const currentColumn = lines[lines.length - 1].length + 1;
-
-        if (cursorIndicator) {
-            cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
-        }
-    };
-
-    // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
-    // Переопределяем стандартный дескриптор свойства value для этого конкретного textarea
-    const rawPrototype = Object.getPrototypeOf(textarea);
-    const valueDescriptor = Object.getOwnPropertyDescriptor(rawPrototype, 'value');
-
-    Object.defineProperty(textarea, 'value', {
-        get() {
-            return valueDescriptor.get.call(this);
-        },
-        set(newValue) {
-            valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
-            // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
             updateLineNumbers();
             updateCursorPosition();
-        },
-        configurable: true
-    });
-
-    // Стандартные слушатели для действий пользователя
-    textarea.addEventListener('input', () => {
-        updateLineNumbers();
-        updateCursorPosition();
-    });
-    textarea.addEventListener('keyup', updateCursorPosition);
-    textarea.addEventListener('click', updateCursorPosition);
-    textarea.addEventListener('focus', updateCursorPosition);
-
-    if (window.ResizeObserver) {
-        new ResizeObserver(updateLineNumbers).observe(textarea);
-    }
-
-    updateLineNumbers();
-    updateCursorPosition();
 
         });  // addEventListener("DOMContentLoaded"
 	</script>
