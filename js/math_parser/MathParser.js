@@ -218,6 +218,7 @@ export class MathParser {
           }
         }
       });
+    }
     return [];
   }
 
