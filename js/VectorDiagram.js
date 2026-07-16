@@ -141,7 +141,7 @@ export default class VectorDiagram {
      */
     renderSVG() {
         // Создаем элемент SVG
-        const svgNS = "http://w3.org";
+        const svgNS = "http://www.w3.org/2000/svg";
         this.svg = document.createElementNS(svgNS, "svg");
         this.svg.setAttribute("width", this.width);
         this.svg.setAttribute("height", this.height);
