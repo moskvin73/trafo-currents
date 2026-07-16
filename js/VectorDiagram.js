@@ -259,8 +259,8 @@ export default class VectorDiagram {
             fo.setAttribute("height", "80");
             fo.setAttribute("x", ptEnd.x);
             fo.setAttribute("y", ptEnd.y);
-            fo.style.opacity = "0";
-            fo.style.overflow = "visible";
+            fo.setAttribute("opacity", "0");          // Надёжный SVG-атрибут прозрачности
+            fo.setAttribute("overflow", "visible");   // Надёжный SVG-атрибут переполнения
 
             // Контейнер для MathJax сбросит стили SVG и заставит текст не переноситься
             const div = document.createElement("div");
