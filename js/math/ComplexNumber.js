@@ -28,21 +28,6 @@ export default class ComplexNumber extends MathType {
   // ВНУТРЕННЯЯ ВАЛИДАЦИЯ
   // ==========================================
   
-  #validateNumber(value, context) {
-    // 1. Если это обычное JS-число (number)
-    if (typeof value === 'number') {
-      return value;
-    }
-    
-    // 2. Если это объект RealNumber (проверка флага, устойчивого к сжатию кода)
-    if (value && value.isRealNumber === true) {
-      return value.value;
-    }
-
-    // 3. Если тип не подошел — выбрасываем ошибку
-    throw new TypeError(`[ComplexNumber]: Аргумент в "${context}" должен быть валидным числом или RealNumber.`);
-  }
-
   #validateAndExtract(value, context) {
     // 1. Если это обычное JS-число (number)
     if (typeof value === 'number') {
@@ -73,8 +58,7 @@ export default class ComplexNumber extends MathType {
   }
 
   set real(value) {
-    this.#validateNumber(value, 'set real');
-    this.#real = value;
+    this.#real = #validateAndExtract(value, 'set real');
   }
 
   get imaginary() {
@@ -82,8 +66,7 @@ export default class ComplexNumber extends MathType {
   }
 
   set imaginary(value) {
-    this.#validateNumber(value, 'set imaginary');
-    this.#imaginary = value;
+    this.#imaginary = #validateAndExtract(value, 'set real');
   }
 
   showImaginary() {
