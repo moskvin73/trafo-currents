@@ -45,6 +45,7 @@ export default class ASTNode {
     catch(err)
     {
       context.scope_context.error(`[AST Evaluation Error]: ${err}`, this.loc);
+      return new NumberNode(new RealNumber(0), loc);
     }
   }
 
