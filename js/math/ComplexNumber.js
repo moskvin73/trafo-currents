@@ -52,7 +52,7 @@ export default class ComplexNumber extends MathType {
   }
 
   set real(value) {
-    this.#real = #validateAndExtract(value, 'set real');
+    this.#real = this.#validateAndExtract(value, 'set real');
   }
 
   get imaginary() {
@@ -60,7 +60,7 @@ export default class ComplexNumber extends MathType {
   }
 
   set imaginary(value) {
-    this.#imaginary = #validateAndExtract(value, 'set real');
+    this.#imaginary = this.#validateAndExtract(value, 'set real');
   }
 
   /**
