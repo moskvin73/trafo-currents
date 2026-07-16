@@ -208,24 +208,16 @@ export class MathParser {
   toTex() {
     if (this.errors.length === 0)
     {
-      const evl_context = this.#create_evl_context();
-      let errors_c = 0;
       return this.#program.statements.map((stmt) => {
-        const response = stmt.evaluate(evl_context);
-        if (errors_c === this.errors.length) {
-          if (response.isPrintCommand) return { mixed: true, isSilent: response.isSilent, value: response.value };
-          else
-          {
-            const resultValue = response.value;
-            const renderString = TeXOutputFormatter.format(stmt.node, resultValue, this.context);
-            return { mixed: false,  isSilent: response.isSilent, value: `$$${renderString}$$` };
+        if (!smt.isSilent) {
+          if (response.isPrintCommand) { 
+            return { mixed: true, value: response.value }; 
+          } else {
+            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+            return { mixed: false, value: `$$${renderString}$$` };
           }
         }
-        else {
-          errors_c = this.errors.length;
-        }
       });
-    }
     return [];
   }
 
