@@ -544,19 +544,33 @@ export class PowNode extends BinaryOpNode {
   }
 }
 
-/**
- * Узел чтения переменной (например, использование 'x' в выражении)
- */
-export class VariableNode extends MathNode {
+export class IdentifierNode extends MathNode {
   constructor(id_name, loc) {
     super(loc);
     this.id_name = id_name;
   }
 
+  getNameID(context) {
+    context.getNameById(this.id_name);
+  }
+
+  getTexName(context) {
+    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
+  }
+}
+
+/**
+ * Узел чтения переменной (например, использование 'x' в выражении)
+ */
+export class VariableNode extends IdentifierNode {
+  constructor(id_name, loc) {
+    super(id_name, loc);
+  }
+
   getPriority() { return OpPriority.PRIMARY; }
 
   toString(context) { 
-    return context.getNameById(this.id_name); 
+    return this.getNameID(context); 
   }
 
   internal_evaluate(context) {
@@ -571,24 +585,19 @@ export class VariableNode extends MathNode {
     }
   }
 
-  getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
-  }
-
-  toTeX(context) { return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name)); }
+  toTeX(context) { return this.getTexName(context); }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
-export class AssignNode extends MathNode {
+export class AssignNode extends IdentifierNode {
   constructor(id_name, expression, loc) {
-    super(loc);
-    this.id_name = id_name;
+    super(id_name, loc);
     this.expression = expression;
   }
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString(context) { return `${context.getNameById(this.id_name)} = ${this.expression.toString(context)}`; }
+  toString(context) { return `${this.getNameID(context)} = ${this.expression.toString(context)}`; }
 
   internal_evaluate(context) {
     const value = this.expression.internal_evaluate(context);
@@ -598,12 +607,8 @@ export class AssignNode extends MathNode {
     return value;
   }
 
-  getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
-  }
-
   toTeX(context) {
-    return `${ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name))} = ${this.expression.toTeX(context)}`;
+    return `${this.getTexName(context)} = ${this.expression.toTeX(context)}`;
   }
 }
 
