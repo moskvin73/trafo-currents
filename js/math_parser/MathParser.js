@@ -191,7 +191,7 @@ export class MathParser {
   }
 
   #create_evl_context() {
-    return new out_errors(this.errors);
+    return new out_errors(this.context, this.errors);
   }
 
   /**
