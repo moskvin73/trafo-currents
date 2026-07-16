@@ -70,6 +70,53 @@ export default class ASTNode {
   }
 
   /**
+   * Статический метод для форматирования идентификаторов в TeX код для MathJax
+   * @param {string} name - Имя идентификатора (например, "U_max", "user_profile_id")
+   * @returns {string} - Валидный TeX код
+   */
+  static formatIdentifierToTeX(name) {
+      if (!name) return '';
+
+      // Функция для оборачивания национальных символов в \text{...}
+      // Оставляет чистую латиницу [a-zA-Z] как есть, а кириллицу/другие языки изолирует
+      const wrapNationalText = (text) => {
+          return text.replace(/([^\x00-\x7F\s]+|[\p{L}\p{N}&&\s]+)/gu, (match) => {
+              // Если блок состоит только из латинских букв или цифр ASCII, не трогаем
+              if (/^[a-zA-Z0-9]+$/.test(match)) return match;
+              return `\\text{${match}}`;
+          });
+      };
+
+      // Считаем количество подчеркиваний
+      const underscoreCount = (name.match(/_/g) || []).length;
+      
+      // Определяем стратегию: Snake_Case (много '_') или системное имя (начинается с '_')
+      const isSnakeCase = underscoreCount > 1 || name.startsWith('_');
+
+      if (isSnakeCase) {
+          // Сценарий 1: Много '_ ' или ведущее '_' (например, ХХХ_ХХХ_ХХХ или _ХХХ)
+          // Экранируем все подчеркивания, чтобы MathJax не воспринял их как индексы
+          let processed = name.replace(/_/g, '\\_');
+          return wrapNationalText(processed);
+      } else if (underscoreCount === 1) {
+          // Сценарий 2: Ровно одно подчеркивание (например, U_a, Скорость_базовая)
+          // Разделяем строку на основу и будущий нижний индекс
+          const [base, index] = name.split('_');
+          
+          const cleanBase = wrapNationalText(base);
+          const cleanIndex = wrapNationalText(index);
+          
+          // Если в индексе больше 1 символа, обязательно группируем его в скобки _{...}
+          const formattedIndex = index.length > 1 ? `{${cleanIndex}}` : cleanIndex;
+          
+          return `${cleanBase}_${formattedIndex}`;
+      } else {
+          // Сценарий 3: Подчеркиваний нет вообще
+          return wrapNationalText(name);
+      }
+  }
+
+  /**
    * Чисто виртуальный метод. ДОЛЖЕН быть реализован во всех дочерних классах.
    * @param {MathNode[]} list 
    */
