@@ -227,8 +227,9 @@ export class MathParser {
 
   evaluate() {
     if (this.errors.length === 0) {
+      const evl_context = this.#create_evl_context();
       return this.#program.statements.forEach((stmt) => {
-        const response = stmt.evaluate(this.context);
+        const response = stmt.evaluate(evl_context);
         response.value;
       });
     }
