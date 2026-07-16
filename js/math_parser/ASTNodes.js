@@ -41,7 +41,7 @@ export default class ASTNode {
     internal_evaluate(context);
   }
 
-  /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
+  /** Внутренний метод вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   internal_evaluate(context) {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
