@@ -498,7 +498,7 @@ export class VariableNode extends MathNode {
     // Ищем переменную в локальном контексте вызова
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
-      context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, loc);
+      context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, this.loc);
       //throw new Error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`);
     }
     else {
