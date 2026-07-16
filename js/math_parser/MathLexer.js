@@ -1,13 +1,13 @@
 import { TokenType } from './TokenTypes.js';
 import { SourceLocation, CompilerError } from './CompilerErrors.js'; // перенесем типы ошибок в один служебный файл
 
-export class Token {
+/*export class Token {
   constructor(type, value, loc) {
     this.type = type;   // Числовой код из TokenType
     this.value = value; // Значение (число или строка)
     this.loc = loc;     // Объект SourceLocation
   }
-}
+}*/
 
 // Карта быстрого сопоставления с типами токенов
 const reservedWordsMap = {
@@ -19,7 +19,7 @@ const reservedWordsMap = {
   'print': TokenType.RW_PRINT,
 };
 
-const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+// const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 /**
  * Превращает невидимые, управляющие или битые символы в строку вида U+XXXX,
