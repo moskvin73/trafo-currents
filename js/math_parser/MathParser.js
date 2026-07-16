@@ -189,6 +189,10 @@ export class MathParser {
     this.errors.push(err);
   }
 
+  #create_evl_context() {
+    return new out_errors(this.errors);
+  }
+
   /**
    * Главный метод запуска LL(1) анализа
    */
