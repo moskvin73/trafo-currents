@@ -147,7 +147,7 @@ export default class VectorDiagram {
         this.svg.setAttribute("height", this.height);
         this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
         this.svg.style.backgroundColor = "#fafafa";
-        this.svg.style.overflow = "visible";
+        this.svg.style.overflow = "visible"
         
         // 3.1 Генерация маркеров-стрелок в <defs>
         const defs = document.createElementNS(svgNS, "defs");
