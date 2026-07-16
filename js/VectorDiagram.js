@@ -247,168 +247,185 @@ export default class VectorDiagram {
      */
     async renderAndPositionLabels() {
         const svgNS = "http://www.w3.org/2000/svg";
-        const foreignObjects = [];
+        
+        // Сначала заставим MathJax отрендерить формулы в их текущем положении,
+        // чтобы браузер просчитал и отдал нам реальные размеры BBox (W и H)
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            await window.MathJax.typesetPromise([this.labelsLayer]);
+        }
 
-        this.calculated.forEach(vec => {
-            // Вычисляем экранную пиксельную точку острия стрелки
-            const ptEnd = this.projectCoordinates(vec.xEnd, vec.yEnd, vec.layer);
+        // Собираем массив метаданных обо всех метках
+        const labelItems = this.calculated.map(vec => {
+            // Ищем соответствующий foreignObject на холсте
+            // (Для этого при рендере SVG мы должны были сохранить связь или искать по индексу/ID)
+            const fo = this.labelsLayer.children[this.calculated.indexOf(vec)]; 
+            const div = fo ? fo.querySelector("div") : null;
+            const rect = div ? div.getBoundingClientRect() : { width: 60, height: 20 };
             
-            // Создаем foreignObject. Изначально ставим opacity: 0 и делаем его заведомо большим
-            const fo = document.createElementNS(svgNS, "foreignObject");
-            fo.setAttribute("width", "150");
-            fo.setAttribute("height", "80");
-            fo.setAttribute("x", ptEnd.x);
-            fo.setAttribute("y", ptEnd.y);
-            fo.setAttribute("opacity", "0");          // Надёжный SVG-атрибут прозрачности
-            fo.setAttribute("overflow", "visible");   // Надёжный SVG-атрибут переполнения
-
-            // Контейнер для MathJax сбросит стили SVG и заставит текст не переноситься
-            const div = document.createElement("div");
-            div.style.display = "inline-block";
-            div.style.whiteSpace = "nowrap";
-            div.style.fontFamily = "MathJax_Main, sans-serif";
-            div.style.lineHeight = "1";
-            div.innerHTML = `\\(${vec.label}\\)`; // Используем инлайновые разделители \( \)
-
-            fo.appendChild(div);
-            this.labelsLayer.appendChild(fo);
-
-            // Сохраняем метаданные для последующего сдвига после рендеринга MathJax
-            foreignObjects.push({
+            return {
+                vec: vec,
                 element: fo,
                 wrapperDiv: div,
-                // Считаем угол направления вектора в радианах (математический), чтобы знать в какую сторону сдвигать текст
-                angle: Math.atan2(vec.value.im, vec.value.re),
-                ptEnd: ptEnd
+                w: rect.width || 60,
+                h: rect.height || 20,
+                ptEnd: this.projectCoordinates(vec.xEnd, vec.yEnd, vec.layer)
+            };
+        });
+
+        // Разделяем метки на два типа: центральные лучи и соединительные хорды
+        const centralLabels = [];
+        const chordLabels = [];
+
+        labelItems.forEach(item => {
+            if (item.element) {
+                // Задаем точные размеры foreignObject на основе замеров MathJax
+                item.element.setAttribute("width", item.w);
+                item.element.setAttribute("height", item.h);
+                
+                if (item.vec.origin && item.vec.origin.type === 'vector') {
+                    chordLabels.push(item);
+                } else {
+                    centralLabels.push(item);
+                }
+            }
+        });
+
+        // =====================================================================
+        // ЧАСТЬ 1: ГРУППИРОВКА ЦЕНТРАЛЬНЫХ ЛУЧЕЙ В ПУЧКИ (КЛАСТЕРИЗАЦИЯ)
+        // =====================================================================
+        const bundles = []; // Массив пучков векторов
+        const ANGLE_THRESHOLD = 0.08; // Порог совпадения фаз (~4.5 градуса)
+
+        centralLabels.forEach(item => {
+            // Считаем чистый математический угол вектора в радианах
+            let angle = Math.atan2(item.vec.value.im, item.vec.value.re);
+            // Нормализуем угол в диапазон [0, 2*PI)
+            if (angle < 0) angle += 2 * Math.PI;
+
+            // Ищем, есть ли уже существующий пучок с похожим углом
+            let foundBundle = bundles.find(b => {
+                let diff = Math.abs(b.baseAngle - angle);
+                // Учитываем переход через 0 / 2*PI
+                if (diff > Math.PI) diff = 2 * Math.PI - diff;
+                return diff < ANGLE_THRESHOLD;
+            });
+
+            if (foundBundle) {
+                foundBundle.items.push(item);
+            } else {
+                bundles.push({
+                    baseAngle: angle,
+                    items: [item]
+                });
+            }
+        });
+
+        // =====================================================================
+        // ЧАСТЬ 2: РАСПРЕДЕЛЕНИЕ МЕТОК ВНУТРИ ПУЧКОВ (ПРАВИЛО ОЧЕРЕДИ И НОРМАЛЕЙ)
+        // =====================================================================
+        bundles.forEach(bundle => {
+            const alpha = bundle.baseAngle;
+            
+            // Находим максимальное удаление (остриё самого длинного вектора в этом пучке)
+            let maxPtEnd = bundle.items[0].ptEnd;
+            let maxDist = 0;
+            bundle.items.forEach(item => {
+                const dist = Math.hypot(item.ptEnd.x - this.x0, item.ptEnd.y - this.y0);
+                if (dist > maxDist) {
+                    maxDist = dist;
+                    maxPtEnd = item.ptEnd;
+                }
+            });
+
+            // Сортируем элементы в пучке по имени или слою, чтобы распределение было детерминированным
+            bundle.items.sort((a, b) => a.vec.layer.localeCompare(b.vec.layer));
+
+            // Проходим по всем элементам пучка и выстраиваем их по очереди
+            bundle.items.forEach((item, index) => {
+                let finalX = maxPtEnd.x;
+                let finalY = maxPtEnd.y;
+                
+                // Базовый отступ от острия самого длинного вектора вдоль луча
+                const indent = 20; 
+
+                if (index === 0) {
+                    // Элемент 0: Строго на продолжении луча наружу
+                    // Переводим математический угол в экранные координаты (в SVG ось Y инвертирована)
+                    finalX += Math.cos(alpha) * indent;
+                    finalY -= Math.sin(alpha) * indent;
+
+                    // Корректируем центр масс прямоугольника формулы, чтобы линия луча проходила через его центр
+                    finalX += (-0.5 * (1 - Math.cos(alpha))) * item.w;
+                    finalY += (-0.5 * (1 + Math.sin(alpha))) * item.h;
+
+                } else {
+                    // Элементы 1, 2, 3...: Вынос по нормалям в стороны
+                    // Определяем знак нормали: индекс 1 -> +90° (вверх/влево), индекс 2 -> -90° (вниз/вправо) и т.д.
+                    const isPositiveNormal = (index % 2 !== 0);
+                    // Шаг сдвига увеличивается для каждого следующего яруса векторов в пучке
+                    const stepMultiplier = Math.ceil(index / 2);
+                    
+                    // Угол нормали: либо +90 градусов (PI/2), либо -90 градусов
+                    const normalAngle = isPositiveNormal ? (alpha + Math.PI / 2) : (alpha - Math.PI / 2);
+                    
+                    // Величина перпендикулярного сдвига зависит от габаритов формулы
+                    // Если вектор скорее горизонтальный — сдвигаем по высоте формулы, если вертикальный — по ширине
+                    const sideShift = Math.abs(Math.cos(alpha)) > 0.7 ? item.h * 1.2 : item.w * 0.7;
+                    const totalShift = sideShift * stepMultiplier;
+
+                    // Сначала выносим метку на базовый уровень за остриё вектора
+                    finalX += Math.cos(alpha) * (indent * 0.5);
+                    finalY -= Math.sin(alpha) * (indent * 0.5);
+
+                    // Затем смещаем строго по нормали вбок
+                    finalX += Math.cos(normalAngle) * totalShift;
+                    finalY -= Math.sin(normalAngle) * totalShift;
+
+                    // Базовое центрирование относительно точки сдвига
+                    finalX -= item.w / 2;
+                    finalY -= item.h / 2;
+                }
+
+                // Применяем рассчитанные координаты к SVG-элементу
+                item.element.setAttribute("x", finalX);
+                item.element.setAttribute("y", finalY);
+                item.element.setAttribute("opacity", "1");
             });
         });
 
-        // Проверяем наличие MathJax в глобальной области видимости
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            // Запускаем асинхронный рендеринг формул во всем слое подписей
-            await window.MathJax.typesetPromise([this.labelsLayer]);
-
-            // Перед расчетом создадим карту занятых координат, чтобы метки не садились друг на друга
-            const occupiedPositions = [];
-
-            // MathJax отработал, теперь браузер знает физический размер BBox каждого элемента
-            foreignObjects.forEach(obj => {
-                /*const rect = obj.wrapperDiv.getBoundingClientRect();
-                const W = rect.width;
-                const H = rect.height;
-
-                // Устанавливаем точные размеры контейнера под размер формулы
-                obj.element.setAttribute("width", W);
-                obj.element.setAttribute("height", H);
-
-                // Вычисляем смещение, чтобы формула не накладывалась на стрелку
-                // Выталкиваем текст наружу по направлению вектора + добавляем отступ 8px
-                let offsetX = Math.cos(obj.angle) * 8;
-                let offsetY = -Math.sin(obj.angle) * 8; // минус, т.к. Y в пикселях идет вниз
-
-                // Дополнительная корректировка центра масс (Bounding Box alignment)
-                // Если вектор направлен влево, сдвигаем X влево на всю ширину формулы
-                if (Math.cos(obj.angle) < -0.1) offsetX -= W;
-                // Если вектор по центру, центрируем формулу по оси X
-                else if (Math.abs(Math.cos(obj.angle)) <= 0.1) offsetX -= W / 2;
-
-                // Если вектор направлен вниз, сдвигаем Y вниз (в пикселях это плюс)
-                if (-Math.sin(obj.angle) > 0.1) offsetY += 0; 
-                // Если вверх — поднимаем на всю высоту формулы
-                else if (-Math.sin(obj.angle) < -0.1) offsetY -= H;
-                else offsetY -= H / 2;
-
-                // Применяем финальные скорректированные пиксельные координаты
-                obj.element.setAttribute("x", obj.ptEnd.x + offsetX);
-                obj.element.setAttribute("y", obj.ptEnd.y + offsetY);
-                
-                // Делаем элемент плавно видимым
-                obj.element.setAttribute("opacity", "1");*/
-
-    const rect = obj.wrapperDiv.getBoundingClientRect();
-    const W = rect.width || 60;
-    const H = rect.height || 20;
-
-    obj.element.setAttribute("width", W);
-    obj.element.setAttribute("height", H);
-
-    // Ищем оригинальный вектор в рассчитанных данных по совпадению координат конца
-    const vec = this.calculated.find(v => this.projectCoordinates(v.xEnd, v.yEnd, v.layer).x === obj.ptEnd.x);
-    
-    let finalX = obj.ptEnd.x;
-    let finalY = obj.ptEnd.y;
-    let currentAngle = obj.angle;
-
-    // --- ИНТЕЛЛЕКТУАЛЬНЫЙ ВЫБОР ТОЧКИ ПРИВЯЗКИ ---
-    if (vec && vec.origin && vec.origin.type === 'vector') {
-        // Сценарий А: Линейное напряжение (U_AB, U_BC и т.д.)
-        // Ставим метку ровно ПОСЕРЕДИНЕ линии вектора
-        const ptStart = this.projectCoordinates(vec.xStart, vec.yStart, vec.layer);
-        const midX = (ptStart.x + obj.ptEnd.x) / 2;
-        const midY = (ptStart.y + obj.ptEnd.y) / 2;
-
-        // Выталкиваем метку перпендикулярно линии вектора на 15 пикселей вверх/вправо
-        const perpAngle = obj.angle + Math.PI / 2;
-        finalX = midX + Math.cos(perpAngle) * 15 - W / 2;
-        finalY = midY - Math.sin(perpAngle) * 15 - H / 2;
-    } else {
-        // Сценарий Б: Фазные векторы (U_A, U_B, I_A и т.д.), идущие от центра
-        // Вычисляем угол выноса радиально от центра холста (X0, Y0) наружу
-        const radialAngle = Math.atan2(this.y0 - obj.ptEnd.y, obj.ptEnd.x - this.x0);
-        
-        // Отступаем 15 пикселей от острия стрелки
-        const padding = 15;
-        let offsetX = Math.cos(radialAngle) * padding;
-        let offsetY = -Math.sin(radialAngle) * padding;
-
-        // Плавное центрирование BBox формулы
-        offsetX += (-0.5 * (1 - Math.cos(radialAngle))) * W;
-        offsetY += (-0.5 * (1 + Math.sin(radialAngle))) * H;
-
-        finalX = obj.ptEnd.x + offsetX;
-        finalY = obj.ptEnd.y + offsetY;
-        currentAngle = radialAngle;
-    }
-
-    // --- АНТИКОЛЛИЗИЯ (Защита от наложения) ---
-    let attempts = 0;
-    let collision = true;
-    while (collision && attempts < 5) {
-        collision = false;
-        for (let pos of occupiedPositions) {
-            const dX = Math.abs(finalX - pos.x);
-            const dY = Math.abs(finalY - pos.y);
+        // =====================================================================
+        // ЧАСТЬ 3: РАЗМЕЩЕНИЕ СОЕДИНИТЕЛЬНЫХ ВЕКТОРОВ (ХОРД, НАПРИМЕР U_AB)
+        // =====================================================================
+        chordLabels.forEach(item => {
+            const ptStart = this.projectCoordinates(item.vec.xStart, item.vec.yStart, item.vec.layer);
             
-            // Если прямоугольники меток действительно перекрываются
-            if (dX < W * 0.85 && dY < H * 0.95) {
-                collision = true;
-                
-                // Расталкиваем строго по вертикали (Y), чтобы сохранить центрирование по X
-                // Если метка находится в верхней полуплоскости — двигаем чуть выше (-Y), если в нижней — ниже (+Y)
-                finalY += (finalY < this.y0) ? -H * 0.5 : H * 0.5;
-                
-                // Минимальный сдвиг по X делаем только для фазных векторов (если они не линейные)
-                if (!vec.origin || vec.origin.type !== 'vector') {
-                    finalX += (finalX > this.x0) ? 5 : -5;
-                }
-                break;
-            }
-        }
-        attempts++;
-    }
+            // Находим геометрический центр отрезка (середину хорды)
+            const midX = (ptStart.x + item.ptEnd.x) / 2;
+            const midY = (ptStart.y + item.ptEnd.y) / 2;
 
-    // Сохраняем позицию в реестр занятых мест
-    occupiedPositions.push({ x: finalX, y: finalY, w: W, h: H });
+            // Направление самого соединительного вектора
+            const chordAngle = Math.atan2(item.vec.value.im, item.vec.value.re);
+            
+            // Строим перпендикуляр к хорде
+            const perpAngle = chordAngle + Math.PI / 2;
 
-    // Устанавливаем итоговые координаты
-    obj.element.setAttribute("x", finalX);
-    obj.element.setAttribute("y", finalY);
-    obj.element.setAttribute("opacity", "1");                
-            });
-        } else {
-            console.warn("MathJax v3/v4 не обнаружен на странице. Формулы отображены как обычный текст.");
-            // На случай отсутствия MathJax просто делаем текст видимым
-            foreignObjects.forEach(obj => obj.element.style.opacity = "1");
-        }
+            // Вычисляем, в какую сторону от хорды находится центр холста (X0, Y0)
+            // Чтобы гарантированно вытолкнуть метку НАРУЖУ треугольника, а не внутрь цепи
+            const toCenterAngle = Math.atan2(this.y0 - midY, midX - this.x0);
+            let diff = perpAngle - toCenterAngle;
+            // Нормализуем разность углов
+            diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+
+            // Если перпендикуляр смотрит «внутрь» к центру холста, разворачиваем его на 180 градусов наружу
+            const finalPerpAngle = Math.abs(diff) < Math.PI / 2 ? (perpAngle + Math.PI) : perpAngle;
+
+            // Смещаем координату от середины линии наружу на 15 пикселей
+            let finalX = midX + Math.cos(finalPerpAngle) * 15 - item.w / 2;
+            let finalY = midY - Math.sin(finalPerpAngle) * 15 - item.h / 2;
+
+            item.element.setAttribute("x", finalX);
+            item.element.setAttribute("y", finalY);
+            item.element.setAttribute("opacity", "1");
+        });
     }
 }
