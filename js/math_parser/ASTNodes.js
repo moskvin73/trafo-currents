@@ -21,7 +21,7 @@ const OpPriority = {
  */
 export default class ASTNode {
   /**
-   * @param {SourceLocation} loc - Координаты токена в исходном коде
+   * @param {SourceLocation|IndependentSourceLocation} loc - Координаты токена в исходном коде
    */
   constructor(loc) {
     // 1. Защита от прямого создания экземпляра Base класса
