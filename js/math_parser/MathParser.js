@@ -203,7 +203,7 @@ export class MathParser {
           const stmt = this.#parseStatement();
           if (stmt) {
              const evl_context = this.#create_evl_context();
-             const response = stmt.evaluate(evl_context);
+             const response = stmt.node.evaluate(evl_context);
              this.#program.statements.push(stmt);
           }
       }
