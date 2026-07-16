@@ -964,9 +964,12 @@
 
             // Смена формата комплексных чисел
             selectComplex.addEventListener("change", () => {
-                const value = parseInt(selectComplex.value);
-                globalScope.settings.complexFormat = value;
-                complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
+                const numericValue = getComplexFormat(rawValue);
+                //const value = parseInt(selectComplex.value);
+                globalScope.settings.complexFormat = numericValue;
+                const safeKey = rawValue in COMPLEX_FORMAT ? rawValue : "ALGEBRAIC";
+                complexHelp.textContent = complexHints[safeKey];
+                //complexHelp.textContent = complexHints[value]; // Обновляем подсказку на лету
             });
 
             // Смена режима измерения углов
