@@ -571,7 +571,7 @@ export class VariableNode extends MathNode {
     }
   }
 
-  toTeX(context) { return context.getNameById(this.id_name); }
+  toTeX(context) { return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name)); }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
@@ -594,7 +594,7 @@ export class AssignNode extends MathNode {
     return value;
   }
   toTeX(context) {
-    return `${context.getNameById(this.id_name)} = ${this.expression.toTeX(context)}`;
+    return `${ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name))} = ${this.expression.toTeX(context)}`;
   }
 }
 
