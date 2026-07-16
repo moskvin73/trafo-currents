@@ -46,6 +46,14 @@ export default class ASTNode {
 
   errorValue() { return new RealNumber(0); }
 
+  error(context, msg) {
+    context.error(msg, this.loc, "AST");
+  }
+
+  error(context, msg, loc) {
+    context.error(msg, loc, "AST");
+  }
+ 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
     try
@@ -54,7 +62,8 @@ export default class ASTNode {
     }
     catch(err)
     {
-      context.error(`${err}`, this.loc, "AST");
+      this.error(context, );
+      context.error(err.toString(), this.loc, "AST");
       this.errorValue();
     }
   }
