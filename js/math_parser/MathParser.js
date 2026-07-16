@@ -202,6 +202,7 @@ export class MathParser {
         while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) {
+             const evl_context = this.#create_evl_context();
              const response = stmt.evaluate(evl_context);
              this.#program.statements.push(stmt);
           }
