@@ -197,7 +197,7 @@ export class MathParser {
           if (stmt) {
              const evl_context = this.#create_evl_context();
              const value = stmt.node.evaluate(evl_context);
-             this.#program.statements.push(new StatementNode(stmt.node, value, stmt.isSilent);
+             this.#program.statements.push(new StatementNode(stmt.node, value, stmt.isSilent));
           }
       }
       } catch (error) {
