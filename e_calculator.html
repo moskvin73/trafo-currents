@@ -325,6 +325,66 @@
     border-right: 1px solid var(--calc-color-border);
     min-width: 25px;
 }
+
+/* ПОЛЕ ВВОДА */
+#calc-terminal-input {
+    flex: 1;
+    background: transparent !important;
+    color: var(--calc-color-text);
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--calc-font-size-input);
+    line-height: 1.5;
+    outline: none;
+    resize: none;             
+    overflow-y: hidden;       
+    box-sizing: border-box;   
+    field-sizing: content;     
+    caret-color: var(--calc-color-text);
+}
+
+/* СТИЛИ ФИКСИРОВАННОЙ ПАНЕЛИ СТАТУСА */
+.terminal-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--calc-bg-card);
+    border-top: 1px solid var(--calc-color-border);
+    padding: 6px 12px;
+    user-select: none;
+}
+
+/* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
+#calc-submit-btn {
+    background: var(--calc-color-brand);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+#calc-submit-btn:hover { background: var(--calc-color-brand-hover); }
+#calc-submit-btn:active { transform: scale(0.97); }
+
+/* ИНДИКАТОР КУРСОРA */
+.cursor-position {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--calc-color-echo);
+}
+
+/* Убираем старую адаптивность медиа-запроса, так как панель теперь всегда строчная и красивая */
+@media (max-width: 768px) {
+    .input-row-container { flex-direction: column; }
+}
         /* Поле ввода активного терминала */
         /*#calc-terminal-input {
             flex: 1;
