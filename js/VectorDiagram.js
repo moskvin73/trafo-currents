@@ -349,9 +349,7 @@ export default class VectorDiagram {
         // ЧАСТЬ 2: РАСПРЕДЕЛЕНИЕ МЕТОК ВНУТРИ ПУЧКОВ (ПРАВИЛО ОЧЕРЕДИ И НОРМАЛЕЙ)
         // =====================================================================
         bundles.forEach(bundle => {
-            const alpha = bundle.baseAngle;
-            
-            // Находим максимальное удаление (остриё самого длинного вектора в этом пучке)
+            // 1. Находим остриё самого длинного вектора в пучке
             let maxPtEnd = bundle.items[0].ptEnd;
             let maxDist = 0;
             bundle.items.forEach(item => {
@@ -362,56 +360,51 @@ export default class VectorDiagram {
                 }
             });
 
-            // Сортируем элементы в пучке по имени или слою, чтобы распределение было детерминированным
+            // 2. Считаем угол луча НА ЭКРАНЕ (в пикселях от центра SVG)
+            // Везервация инверсии оси Y в SVG: экранный Y растет вниз, поэтому знак минус перед дельтой Y
+            const screenAngle = Math.atan2(this.y0 - maxPtEnd.y, maxPtEnd.x - this.x0);
+
+            // Сортируем элементы пучка по слоям
             bundle.items.sort((a, b) => a.vec.layer.localeCompare(b.vec.layer));
 
-            // Проходим по всем элементам пучка и выстраиваем их по очереди
             bundle.items.forEach((item, index) => {
                 let finalX = maxPtEnd.x;
                 let finalY = maxPtEnd.y;
                 
-                // Базовый отступ от острия самого длинного вектора вдоль луча
-                const indent = 20; 
+                const indent = 25; // Отступ от острия в пикселях
 
                 if (index === 0) {
-                    // Элемент 0: Строго на продолжении луча наружу
-                    // Переводим математический угол в экранные координаты (в SVG ось Y инвертирована)
-                    finalX += Math.cos(alpha) * indent;
-                    finalY -= Math.sin(alpha) * indent;
+                    // Элемент 0: СТРОГО НА ПРОДОЛЖЕНИИ ЛУЧА НА ЭКРАНЕ
+                    finalX += Math.cos(screenAngle) * indent;
+                    finalY -= Math.sin(screenAngle) * indent;
 
-                    // Корректируем центр масс прямоугольника формулы, чтобы линия луча проходила через его центр
-                    finalX += (-0.5 * (1 - Math.cos(alpha))) * item.w;
-                    finalY += (-0.5 * (1 + Math.sin(alpha))) * item.h;
+                    // Корректируем центр масс прямоугольника MathJax, 
+                    // чтобы линия луча визуально протыкала формулу ровно по центру
+                    finalX += (-0.5 * (1 - Math.cos(screenAngle))) * item.w;
+                    finalY += (-0.5 * (1 + Math.sin(screenAngle))) * item.h;
 
                 } else {
-                    // Элементы 1, 2, 3...: Вынос по нормалям в стороны
-                    // Определяем знак нормали: индекс 1 -> +90° (вверх/влево), индекс 2 -> -90° (вниз/вправо) и т.д.
+                    // Элементы 1, 2...: Вынос по перпендикулярам к экранному лучу
                     const isPositiveNormal = (index % 2 !== 0);
-                    // Шаг сдвига увеличивается для каждого следующего яруса векторов в пучке
                     const stepMultiplier = Math.ceil(index / 2);
                     
-                    // Угол нормали: либо +90 градусов (PI/2), либо -90 градусов
-                    const normalAngle = isPositiveNormal ? (alpha + Math.PI / 2) : (alpha - Math.PI / 2);
+                    // Угол перпендикуляра на экране
+                    const normalAngle = isPositiveNormal ? (screenAngle + Math.PI / 2) : (screenAngle - Math.PI / 2);
                     
-                    // Величина перпендикулярного сдвига зависит от габаритов формулы
-                    // Если вектор скорее горизонтальный — сдвигаем по высоте формулы, если вертикальный — по ширине
-                    const sideShift = Math.abs(Math.cos(alpha)) > 0.7 ? item.h * 1.2 : item.w * 0.7;
+                    // Шаг сдвига вбок в зависимости от наклона (по высоте или ширине формулы)
+                    const sideShift = Math.abs(Math.cos(screenAngle)) > 0.7 ? item.h * 1.2 : item.w * 0.8;
                     const totalShift = sideShift * stepMultiplier;
 
-                    // Сначала выносим метку на базовый уровень за остриё вектора
-                    finalX += Math.cos(alpha) * (indent * 0.5);
-                    finalY -= Math.sin(alpha) * (indent * 0.5);
+                    // Чуть-чуть выдвигаем за остриё и смещаем строго вбок по перпендикуляру
+                    finalX += Math.cos(screenAngle) * (indent * 0.4) + Math.cos(normalAngle) * totalShift;
+                    finalY -= Math.sin(screenAngle) * (indent * 0.4) + Math.sin(normalAngle) * totalShift;
 
-                    // Затем смещаем строго по нормали вбок
-                    finalX += Math.cos(normalAngle) * totalShift;
-                    finalY -= Math.sin(normalAngle) * totalShift;
-
-                    // Базовое центрирование относительно точки сдвига
+                    // Центрируем коробку текста относительно точки сдвига
                     finalX -= item.w / 2;
                     finalY -= item.h / 2;
                 }
 
-                // Применяем рассчитанные координаты к SVG-элементу
+                // Применяем выверенные экранные координаты
                 item.element.setAttribute("x", finalX);
                 item.element.setAttribute("y", finalY);
                 item.element.setAttribute("opacity", "1");
