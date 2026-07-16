@@ -599,7 +599,7 @@ export class PrintNode extends ASTNode {
       if (element.type !== 'TEXT_BLOCK') {
         const evaluatedValue = element.internal_evaluate(context);
         // Математика всегда возвращается как инлайн-формула
-        return `$${evaluatedValue.toRawTeX(context.settings)}$`;
+        return `$${evaluatedValue.toRawTeX(context.scope_context.settings)}$`;
       }
  
       // 2. ОБРАБОТКА ТЕКСТОВЫХ БЛОКОВ С ВАЛИДАЦИЕЙ И ЭКРАНИРОВАНИЕМ
@@ -836,7 +836,7 @@ export class CallNode extends MathNode {
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-    const sym = context.getSymbolById(this.id_name);
+    const sym = context.scope_context.getSymbolById(this.id_name);
     return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
   }
 
