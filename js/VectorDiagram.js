@@ -1,7 +1,7 @@
 /**
  * Класс для интерактивного рендеринга векторных диаграмм в SVG с поддержкой MathJax v3/v4
  */
-class VectorDiagram {
+export default class VectorDiagram {
     /**
      * @param {string|HTMLElement} container - Селектор или DOM-элемент, куда вставить SVG
      * @param {Object} data - Специфицированный JSON-пакет данных
