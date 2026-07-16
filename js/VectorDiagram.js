@@ -415,32 +415,27 @@ export default class VectorDiagram {
         // ЧАСТЬ 3: РАЗМЕЩЕНИЕ СОЕДИНИТЕЛЬНЫХ ВЕКТОРОВ (ХОРД, НАПРИМЕР U_AB)
         // =====================================================================
         chordLabels.forEach(item => {
+            // Находим пиксельную точку начала вектора на экране
             const ptStart = this.projectCoordinates(item.vec.xStart, item.vec.yStart, item.vec.layer);
             
-            // Находим геометрический центр отрезка (середину хорды)
+            // Находим геометрический центр отрезка (середину хорды на экране)
             const midX = (ptStart.x + item.ptEnd.x) / 2;
             const midY = (ptStart.y + item.ptEnd.y) / 2;
 
-            // Направление самого соединительного вектора
-            const chordAngle = Math.atan2(item.vec.value.im, item.vec.value.re);
-            
-            // Строим перпендикуляр к хорде
-            const perpAngle = chordAngle + Math.PI / 2;
+            // Вычисляем угол направления из НАЧАЛА координат холста (this.x0, this.y0)
+            // строго ЧЕРЕЗ середину этой хорды (midX, midY) наружу
+            const outwardAngle = Math.atan2(this.y0 - midY, midX - this.x0);
 
-            // Вычисляем, в какую сторону от хорды находится центр холста (X0, Y0)
-            // Чтобы гарантированно вытолкнуть метку НАРУЖУ треугольника, а не внутрь цепи
-            const toCenterAngle = Math.atan2(this.y0 - midY, midX - this.x0);
-            let diff = perpAngle - toCenterAngle;
-            // Нормализуем разность углов
-            diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+            // Выталкиваем метку наружу вдоль этого радиального угла на 20 пикселей
+            const extPadding = 20;
+            let finalX = midX + Math.cos(outwardAngle) * extPadding;
+            let finalY = midY - Math.sin(outwardAngle) * extPadding;
 
-            // Если перпендикуляр смотрит «внутрь» к центру холста, разворачиваем его на 180 градусов наружу
-            const finalPerpAngle = Math.abs(diff) < Math.PI / 2 ? (perpAngle + Math.PI) : perpAngle;
+            // Центрируем габариты прямоугольника MathJax относительно вынесенной точки
+            finalX -= item.w / 2;
+            finalY -= item.h / 2;
 
-            // Смещаем координату от середины линии наружу на 15 пикселей
-            let finalX = midX + Math.cos(finalPerpAngle) * 15 - item.w / 2;
-            let finalY = midY - Math.sin(finalPerpAngle) * 15 - item.h / 2;
-
+            // Применяем итоговые координаты к SVG
             item.element.setAttribute("x", finalX);
             item.element.setAttribute("y", finalY);
             item.element.setAttribute("opacity", "1");
