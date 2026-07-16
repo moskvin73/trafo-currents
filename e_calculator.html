@@ -660,6 +660,13 @@
         import { MathParser } from './js/math_parser/MathParser.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
+        import * as utils from './js/utils.js';
+
+        const getComplexFormat = utils.createEnumReader(
+            COMPLEX_FORMAT, 
+            COMPLEX_FORMAT.ALGEBRAIC, 
+            'COMPLEX_FORMAT'
+        );
         
         const terminalInput = document.getElementById('calc-terminal-input');
 
