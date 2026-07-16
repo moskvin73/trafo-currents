@@ -38,7 +38,7 @@ export default class ASTNode {
 
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
-    internal_evaluate(context);
+    this.internal_evaluate(context);
   }
 
   /** Внутренний метод вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
