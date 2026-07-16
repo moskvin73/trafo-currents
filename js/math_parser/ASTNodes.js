@@ -36,6 +36,8 @@ export default class ASTNode {
 
   toString(context) { throw new Error("Not implemented"); }
 
+  errorValue() { return new RealNumber(0); }
+
   /** Вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
   evaluate(context) {
     try
@@ -45,7 +47,7 @@ export default class ASTNode {
     catch(err)
     {
       context.error(`[AST Evaluation Error]: ${err}`, this.loc);
-      return new NumberNode(new RealNumber(0), this.loc);
+      this.errorValue();
     }
   }
 
@@ -102,10 +104,6 @@ export class NumberNode extends MathNode {
   internal_evaluate(context) { return this.value; }
 
   toTeX(context) { return this.value.toRawTeX(context); }
-
-  static defaultValue(loc) {
-    return new NumberNode(new RealNumber(0), loc);
-  }
 }
 
 /**
@@ -511,7 +509,7 @@ export class VariableNode extends MathNode {
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym.type === SYM_UNDEFINED) {
       context.error(`[AST]: Переменная "${context.scope_context.getNameById(this.id_name)}" не инициализирована.`, this.loc);
-      return NumberNode.defaultValue(this.loc);
+      return this.errorValue();
     }
     else {
       return sym.value;
