@@ -1,31 +1,3 @@
-import { MathParser } from './MathParser.js';
-
-/**
- * Класс, описывающий структуру лексической или синтаксической ошибки.
- */
-export class CompilerError {
-  constructor(message, location, severity = 'error') {
-    this.message = message;   // Текст ошибки
-    this.severity = severity; // Важность (error / warning)
-    this.location = {
-      start: location.start,
-      end: location.end,
-      line: location.line,
-      endLine: location.endLine,
-      column: location.column,
-      endColumn: location.endColumn,
-      isInLine() { return this._startLine === this._endLine; }
-    };
-  }
-
-  toString() {
-    if (this.location.isInLine())
-      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:${this.location.endColumn})`;
-    else
-      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:строка ${this.location.endLine}, позиция ${this.location.endColumn})`;
-  }
-}
-
 /**
  * Класс, описывающий точную координату в исходном коде.
  */
@@ -61,7 +33,7 @@ export class SourceLocation {
   }
 }
 
-export class Independent {
+export class IndependentSourceLocation {
   constructor(location) {
     this.start = location.start;
     this.end = location.end;
@@ -74,4 +46,30 @@ export class Independent {
   }
 
   isInLine() { return this._startLine === this._endLine; }
+}
+
+/**
+ * Класс, описывающий структуру лексической или синтаксической ошибки.
+ */
+export class CompilerError {
+  constructor(message, location, severity = 'error') {
+    this.message = message;   // Текст ошибки
+    this.severity = severity; // Важность (error / warning)
+    this.location = {
+      start: location.start,
+      end: location.end,
+      line: location.line,
+      endLine: location.endLine,
+      column: location.column,
+      endColumn: location.endColumn,
+      isInLine() { return this._startLine === this._endLine; }
+    };
+  }
+
+  toString() {
+    if (this.location.isInLine())
+      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:${this.location.endColumn})`;
+    else
+      return `[${this.severity.toUpperCase()}] ${this.message} (строка ${this.location.line}, позиция ${this.location.column}:строка ${this.location.endLine}, позиция ${this.location.endColumn})`;
+  }
 }
