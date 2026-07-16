@@ -626,9 +626,9 @@
                 <div class="modal-form-group">
                     <label for="setting-complex-format" class="group-title">Формат комплексных чисел:</label>
                     <select id="setting-complex-format" class="modal-select">
-                        <option value="0">Алгебраическая форма (a + jb)</option>
-                        <option value="1">Полярная форма (M ∠ θ)</option>
-                        <option value="2">Экспоненциальная форма (M * e^(jθ))</option>
+                        <option value="ALGEBRAIC">Алгебраическая форма (a + jb)</option>
+                        <option value="POLAR">Полярная форма (M ∠ θ)</option>
+                        <option value="EXPONENTIAL">Экспоненциальная форма (M * e^(jθ))</option>
                     </select>
                     <small class="form-help" id="complex-help">Действительная и мнимая части через j (электротехника).</small>
                 </div>
@@ -926,9 +926,9 @@
 
             // Словари динамических подсказок для удобства инженера
             const complexHints = {
-                0: "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
-                1: "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
-                2: "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
+                ALGEBRAIC:      "Стандартный режим (a + jb). Сумма действительной и мнимой частей.",
+                POLAR:          "Геометрический режим (M ∠ θ). Представление в виде векторов (амплитуда и угол).",
+                EXPONENTIAL:    "Экспоненциальная форма (M * e^(jθ)). Идеально для цепей переменного тока."
             };
 
             const angleHints = {
