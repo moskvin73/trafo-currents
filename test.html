@@ -36,12 +36,10 @@
         ]
         };
 
-        // Переменная для хранения текущей диаграммы
-        window.myDiagram = null;
 
         // Вызов отрисовщика при загрузке или обновлении данных калькулятора
         window.addEventListener('load', () => {
-            window.myDiagram = new VectorDiagram("#diagram-container", astOutputJson);
+            new VectorDiagram("#diagram-container", astOutputJson);
         });        
 
     </script>
