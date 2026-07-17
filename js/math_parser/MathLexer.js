@@ -17,6 +17,14 @@ const reservedWordsMap = {
   '%inf':  TokenType.MATH_INF,
   '%nan':  TokenType.MATH_NAN,
   'print': TokenType.RW_PRINT,
+  'true': TokenType.RW_TRUE,
+  'false': TokenType.RW_FALSE,
+  'plot_init': TokenType.RW_PLOT_INIT,
+  'plot_config': TokenType.RW_PLOT_CONFIG,
+  'plot_layer': TokenType.RW_PLOT_LAYER,
+  'plot_vector': TokenType.RW_PLOT_VECTOR,
+  'plot_chord': TokenType.RW_PLOT_CHORD,
+
 };
 
 // const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
