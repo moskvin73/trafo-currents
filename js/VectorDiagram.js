@@ -186,11 +186,21 @@ export default class VectorDiagram {
         // Создаем элемент SVG
         const svgNS = "http://www.w3.org/2000/svg";
         this.svg = document.createElementNS(svgNS, "svg");
-        this.svg.setAttribute("width", this.width);
+   
+        // ВАЖНО: Вместо жестких width/height задаем viewBox
+        this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+        
+        // Делаем SVG адаптивным через CSS стили
+        this.svg.style.width = "100%";
+        this.svg.style.height = "100%";
+        this.svg.style.display = "block"; 
+        this.svg.style.backgroundColor = "#fafafa";
+        this.svg.style.overflow = "visible";        
+        /*this.svg.setAttribute("width", this.width);
         this.svg.setAttribute("height", this.height);
         this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
         this.svg.style.backgroundColor = "#fafafa";
-        this.svg.style.overflow = "visible"
+        this.svg.style.overflow = "visible"*/
         
         // 3.1 Генерация маркеров-стрелок в <defs>
         const defs = document.createElementNS(svgNS, "defs");
