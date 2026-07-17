@@ -46,7 +46,7 @@ export class PlotDataNode extends ASTNode {
     this.diagramId = diagramId;
   }
 
-  getDiagram() {
+  getDiagram(context) {
     const symbol = context.scope_context.getSymbolByName(this.diagramId);
     if (!symbol || symbol.value.type !== "DiagramState") {
         this.error(context, `Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
@@ -66,7 +66,7 @@ export class PlotConfigNode extends PlotDataNode {
   internal_evaluate(context) {
     try
     {
-        const descriptor = this.getDiagram();
+        const descriptor = this.getDiagram(context);
         if (descriptor)
         {
             const computedValue = this.valueNode.internal_evaluate(context);
@@ -95,7 +95,7 @@ export class PlotLayerNode extends PlotDataNode {
     internal_evaluate(context) {
         try
         {
-            const descriptor = this.getDiagram();
+            const descriptor = this.getDiagram(context);
             let computedStroke = 2;
             if (this.strokeWidthNode) {
                 computedStroke = this.strokeWidthNode.internal_evaluate(context);
@@ -123,7 +123,7 @@ export class PlotVectorNode extends PlotDataNode {
         {
             if (variableNode instanceof VariableNode)
             {
-                const descriptor = this.getDiagram();
+                const descriptor = this.getDiagram(context);
                 const vector_id = this.variableNode.name;
                 const texLabel = ASTNode.formatIdentifierToTeX(vector_id);
                 const value = this.variableNode.internal_evaluate(context);
