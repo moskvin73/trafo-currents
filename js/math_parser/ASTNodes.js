@@ -5,6 +5,7 @@ import { MathRegistry } from './MathRegistry.js';
 import SemanticDispatcher from './SemanticDispatcher.js';
 import { TokenType } from './TokenTypes.js';
 import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
+import { TYPE_UNIT } from './ConstantsDef.js';
  
 const OpPriority = { 
     ASSIGN: 1,       // '='
