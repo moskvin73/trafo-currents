@@ -191,13 +191,12 @@ export default class VectorDiagram {
     projectCoordinates(x, y, layer) {
         const S = this.scales[layer];
         if (this.data.config.mode === 'three-phase') {
-            // Электротехника (+90 град): Re -> вверх (-Y_svg), Im -> вправо (+X_svg)
+            // Изменили знак плюс на минус перед мнимой частью (y), чтобы подписи тоже уходили влево
             return {
-                x: this.x0 + y * S,
+                x: this.x0 - y * S, 
                 y: this.y0 - x * S
             };
         } else {
-            // Математический базис: Re -> вправо (+X_svg), Im -> вверх (-Y_svg)
             return {
                 x: this.x0 + x * S,
                 y: this.y0 - y * S
