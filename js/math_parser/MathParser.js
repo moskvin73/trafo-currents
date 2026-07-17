@@ -519,11 +519,11 @@ export class MathParser {
 
          case TokenType.RW_TRUE:
             this.#consume();
-            return true;
+            return new ConstantNode(TokenType.RW_TRUE, token_loc);
 
          case TokenType.RW_FALSE:
             this.#consume();
-            return false;
+            return new ConstantNode(TokenType.RW_FALSE, token_loc);
             
          case TokenType.NUMBER:
          {

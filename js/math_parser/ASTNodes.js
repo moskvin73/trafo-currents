@@ -767,7 +767,9 @@ const PRECOMPUTED_CONSTANTS = {
   E:   new RealNumber(Math.E),
   PHI: new RealNumber((1 + Math.sqrt(5)) / 2),
   INF: new RealNumber(Infinity),
-  NAN: new RealNumber(NaN)
+  NAN: new RealNumber(NaN),
+  TRUE: true,
+  FALSE: false,
 };
 
 // 2. Декларативная таблица, использующая TokenType напрямую в роли ключей
@@ -796,7 +798,17 @@ export const CONSTANTS_AST_REGISTRY = new Map([
     instance: PRECOMPUTED_CONSTANTS.NAN,
     tex: '\\color{red}\\text{NaN}',
     str: '%nan'
-  }]
+  }],
+  [TokenType.RW_TRUE, {
+    instance: PRECOMPUTED_CONSTANTS.TRUE,
+    tex: '\\text{true}',
+    str: 'true'
+  }],
+  [TokenType.RW_FALSE, {
+    instance: PRECOMPUTED_CONSTANTS.FALSE,
+    tex: '\\text{false}',
+    str: 'false'
+  }],
 ])
 
 export class ConstantNode extends MathNode {
