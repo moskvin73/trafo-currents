@@ -303,11 +303,14 @@ export class MathParser {
         exprNode = this.#parsePrintStatement();
         break;
       case TokenType.RW_PLOT_INIT:
+        exprNode = this.#parsePlotInit();
         break;
       //case TokenType.RW_PLOT_CHORD:
       case TokenType.RW_PLOT_CONFIG:
+        exprNode = this.#parsePlotConfig();
         break;
       case TokenType.RW_PLOT_LAYER:
+        exprNode = this.#parsePlotLayer();
         break;
       case TokenType.RW_PLOT_VECTOR:
         break;
@@ -393,6 +396,22 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
     }
     return new PrintNode(elements, print_loc);
+  }
+
+  #parsePlotInit() {
+
+  }
+
+  #parsePlotConfig() {
+
+  }
+
+  #parsePlotLayer() {
+
+  }
+
+  #parsePlotVector() {
+
   }
 
   // =======================================================
