@@ -22,6 +22,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import { MathLexer } from './MathLexer.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
+import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
 
 /**
  * Единый узел для любой инструкции в коде
