@@ -3,7 +3,7 @@ import ASTNode,  from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM },  from '../views/util.js';
 
 export class PlotInitNode extends ASTNode {
-  constructor(name, mode, viewType, loc) {
+  constructor(name, mode, loc, viewType = "inline") {
     super(loc);
     this.diagramId = diagramId;
     this.mode = mode;
