@@ -97,7 +97,7 @@ export class PlotLayerNode extends PlotDataNode {
             const descriptor = this.getDiagram();
             let computedStroke = 2;
             if (this.strokeWidthNode) {
-                computedStroke = this.strokeWidthNode.evaluate(evl_context);
+                computedStroke = this.strokeWidthNode.internal_evaluate(context);
             }
             descriptor.addLayer(this.layerId, this.color, computedStroke);
         } catch(err) { this.error(context, err); }
