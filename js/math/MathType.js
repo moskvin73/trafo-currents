@@ -177,7 +177,9 @@ export default class MathType {
     }
 
     // 1. Извлекаем ключ: для объектов — ссылка на класс-конструктор, для примитивов — typeof строка
-    const typeKey = typeof value === 'object' ? value.constructor : typeof value;
+    //const typeKey = typeof value === 'object' ? value.constructor : typeof value;
+
+    const typeKey = typeof value === 'object' ? (value.constructor.typeId || value.constructor) : typeof value;
 
     // 2. Ищем таблицу конвертеров текущего класса-наследника через полиморфный контекст 'this'
     const convertersMap = this.converters;
