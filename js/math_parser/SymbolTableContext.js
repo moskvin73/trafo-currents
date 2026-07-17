@@ -58,6 +58,12 @@ export class SymbolTableContext {
    * Честная сложность O(1), полностью защищенная от системных имен JS.
    */
   acquireId(name) {
+    // Валидация: имя должно быть строкой и не должно быть пустым
+    if (typeof name !== 'string' || name.trim() === '') {
+      throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой. Получено: ${String(name)}`);
+    }
+
+
     // 1. Ищем в предопределенной части через быстрое сравнение с undefined
     const fixedIdx = this.fixedHash[name];
     if (fixedIdx !== undefined) {
