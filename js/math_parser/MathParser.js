@@ -250,6 +250,13 @@ export class MathParser {
   ]));
 
   static parseStatement_FIRST = Object.freeze(new Set([
+    TokenType.RW_PLOT_INIT,
+    TokenType.RW_PLOT_CHORD,
+    TokenType.RW_PLOT_CONFIG,
+    TokenType.RW_PLOT_LAYER,
+    TokenType.RW_PLOT_VECTOR,
+    TokenType.RW_TRUE,
+    TokenType.RW_FALSE,
     TokenType.RW_PRINT,
     TokenType.MATH_PI,
     TokenType.MATH_E,
@@ -266,6 +273,8 @@ export class MathParser {
 
 
   static Expr_FIRST = Object.freeze(new Set([
+    TokenType.RW_TRUE,
+    TokenType.RW_FALSE,
     TokenType.MATH_PI,
     TokenType.MATH_E,
     TokenType.MATH_PHI,
@@ -287,6 +296,24 @@ export class MathParser {
       exprNode = this.#parsePrintStatement();
     } else {
       exprNode = this.#parseExpression();
+    }
+    switch(this.c_token)
+    {
+      case TokenType.RW_PRINT:
+        exprNode = this.#parsePrintStatement();
+        break;
+      case TokenType.RW_PLOT_INIT:
+        break;
+      //case TokenType.RW_PLOT_CHORD:
+      case TokenType.RW_PLOT_CONFIG:
+        break;
+      case TokenType.RW_PLOT_LAYER:
+        break;
+      case TokenType.RW_PLOT_VECTOR:
+        break;
+      default:
+        exprNode = this.#parseExpression();
+        break;
     }
     
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
