@@ -554,17 +554,17 @@ export class PowNode extends BinaryOpNode {
 }
 
 export class IdentifierNode extends MathNode {
-  constructor(id_name, loc) {
+  constructor(name, loc) {
     super(loc);
-    this.id_name = id_name;
+    this.name = name;
   }
 
   getNameID(context) {
-    return context.getNameById(this.id_name);
+    return this.name;
   }
 
   getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
+    return ASTNode.formatIdentifierToTeX(name);
   }
 }
 
@@ -572,21 +572,26 @@ export class IdentifierNode extends MathNode {
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends IdentifierNode {
-  constructor(id_name, loc) {
-    super(id_name, loc);
+  constructor(name, loc) {
+    super(name, loc);
   }
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString(context) { 
-    return this.getNameID(context); 
-  }
+  toString(context) {  return this.name; }
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
-    const sym = context.scope_context.getSymbolById(this.id_name);
-    if (sym.type === SYM_UNDEFINED) {
-      this.error(context, `Переменная "${this.getNameID(context.scope_context)}" не инициализирована.`);
+    const sym = context.scope_context.getSymbolByName(this.name);
+    if (sym === null) {
+      this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+    }
+    else if (sym.type === SYM_UNDEFINED) {
+      this.error(context, `Переменная "${this.name}" не инициализирована.`);
+      return this.errorValue();
+    }
+    else if (sym.type !== SYM_VARIABLE) {
+      this.error(context, `Идентификатор "${this.name}" не является переменной.`);
       return this.errorValue();
     }
     else {
