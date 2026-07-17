@@ -90,48 +90,65 @@ export default class VectorDiagram {
      * Этап 2: Расчет индивидуального масштаба (S) для каждой субдиаграммы (слоя)
      */
     calculateScales() {
-        if (this.calculated.length === 0) return;
-
-        // 1. Находим экстремумы (границы) всех точек в математических координатах
-        let minX = 0, maxX = 0, minY = 0, maxY = 0;
-
-        this.calculated.forEach(vec => {
-            minX = Math.min(minX, vec.xStart, vec.xEnd);
-            maxX = Math.max(maxX, vec.xStart, vec.xEnd);
-            minY = Math.min(minY, vec.yStart, vec.yEnd);
-            maxY = Math.max(maxY, vec.yStart, vec.yEnd);
-        });
-
-        // 2. Считаем математическую ширину и высоту всего графа векторов
-        const graphWidth = maxX - minX;
-        const graphHeight = maxY - minY;
-        const maxGraphDim = Math.max(graphWidth, graphHeight, 0.001);
-
-        // 3. Вычисляем ЕДИНЫЙ масштаб для ВСЕХ слоев (чтобы сохранить пропорции)
-        // Оставляем 20% (умножаем на 0.8) на поля под стрелочки и выносные подписи MathJax
-        const availablePixels = Math.min(this.width, this.height) * 0.8;
-        const globalScale = availablePixels / maxGraphDim;
-
-        // Записываем масштаб во все слои
-        Object.keys(this.data.layers).forEach(layerName => {
-            this.scales[layerName] = globalScale;
-        });
-
-        // 4. ДИНАМИЧЕСКОЕ ЦЕНТРИРОВАНИЕ
-        // Находим геометрический центр векторов в математических координатах
-        const graphCenterX = (minX + maxX) / 2;
-        const graphCenterY = (minY + maxY) / 2;
-
-        // Сдвигаем экранный центр (x0, y0) так, чтобы математический центр совпал с центром SVG-холста
-        if (this.data.config.mode === 'three-phase') {
-            // Электротехника: Re -> вверх (-Y), Im -> вправо (+X)
-            this.x0 = (this.width / 2) - (graphCenterY * globalScale);
-            this.y0 = (this.height / 2) + (graphCenterX * globalScale);
-        } else {
-            // Математика: Re -> вправо (+X), Im -> вверх (-Y)
-            this.x0 = (this.width / 2) - (graphCenterX * globalScale);
-            this.y0 = (this.height / 2) + (graphCenterY * globalScale);
+    const layerMaxMagnitudes = {};
+    
+    // 1. Инициализируем слои
+    Object.keys(this.data.layers).forEach(layerName => {
+        layerMaxMagnitudes[layerName] = 0.001; 
+    });
+    
+    // 2. Ищем максимальный вылет вектора (maxR) индивидуально в каждом слое
+    this.calculated.forEach(vec => {
+        if (layerMaxMagnitudes[vec.layer] !== undefined) {
+            if (vec.maxR > layerMaxMagnitudes[vec.layer]) {
+                layerMaxMagnitudes[vec.layer] = vec.maxR;
+            }
         }
+    });
+    
+    // 3. Считаем индивидуальный масштаб для каждого слоя отдельно!
+    // Каждый слой теперь занимает свой максимум в пределах доступного maxRadius
+    Object.keys(layerMaxMagnitudes).forEach(layerName => {
+        this.scales[layerName] = this.maxRadius / layerMaxMagnitudes[layerName];
+    });
+
+    // 4. УМНОЕ ЦЕНТРИРОВАНИЕ (Bounding Box) с учетом разных масштабов
+    // Переводим математические экстремумы в пиксельные границы холста относительно локального нуля
+    let minPixX = 0, maxPixX = 0, minPixY = 0, maxPixY = 0;
+
+    this.calculated.forEach(vec => {
+        const S = this.scales[vec.layer];
+        
+        // Считаем координаты точек в пикселях без учета сдвига (относительно нуля)
+        let xStartPix, yStartPix, xEndPix, yEndPix;
+        
+        if (this.data.config.mode === 'three-phase') {
+            // Электротехника базис: Re -> вверх (-Y), Im -> вправо (+X)
+            xStartPix = vec.yStart * S;
+            yStartPix = -vec.xStart * S;
+            xEndPix = vec.yEnd * S;
+            yEndPix = -vec.xEnd * S;
+        } else {
+            // Математический базис: Re -> вправо (+X), Im -> вверх (-Y)
+            xStartPix = vec.xStart * S;
+            yStartPix = -vec.yStart * S;
+            xEndPix = vec.xEnd * S;
+            yEndPix = -vec.yEnd * S;
+        }
+
+        minPixX = Math.min(minPixX, xStartPix, xEndPix);
+        maxPixX = Math.max(maxPixX, xStartPix, xEndPix);
+        minPixY = Math.min(minPixY, yStartPix, yEndPix);
+        maxPixY = Math.max(maxPixY, yStartPix, yEndPix);
+    });
+
+    // Находим пиксельный центр геометрии векторов
+    const pixCenterX = (minPixX + maxPixX) / 2;
+    const pixCenterY = (minPixY + maxPixY) / 2;
+
+    // Сдвигаем (x0, y0) холста так, чтобы компенсировать пустые поля
+    this.x0 = (this.width / 2) - pixCenterX;
+    this.y0 = (this.height / 2) - pixCenterY;
        
        /* const layerMaxMagnitudes = {};
         
