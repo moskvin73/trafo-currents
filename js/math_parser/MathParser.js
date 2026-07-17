@@ -63,6 +63,7 @@ export class TeXOutputFormatter {
       return `${varNameTeX} = ${this.format(inputTree.expression, resultValue, context)}`;
     }
 
+
     if (resultValue instanceof ComplexNumber && this._isStaticLiteralTreeComplex(inputTree)) {
       return resultValue.toRawTeX(context.settings);
     }
@@ -74,6 +75,11 @@ export class TeXOutputFormatter {
       }
       return resultValue.toRawTeX(context.settings); // Гасим левую часть, выводим только ответ
     }
+
+    if (typeof resultValue === 'boolean') {
+      resultValue = `\\mathrm{${resultValue}}`
+    }
+    else resultValue = resultValue.toRawTeX(context.settings);
 
     // 3. Для полноценных вычислений выводим классическую цепочку (например, 2 * 5 = 10)
     return `${inputTree.toTeX(context)} = ${resultValue.toRawTeX(context.settings)}`;
