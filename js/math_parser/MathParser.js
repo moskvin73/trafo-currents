@@ -82,7 +82,7 @@ export class TeXOutputFormatter {
     else resultValue = resultValue.toRawTeX(context.settings);
 
     // 3. Для полноценных вычислений выводим классическую цепочку (например, 2 * 5 = 10)
-    return `${inputTree.toTeX(context)} = ${resultValue.toRawTeX(context.settings)}`;
+    return `${inputTree.toTeX(context)} = ${resultValue}`;
   }
 
   /**
