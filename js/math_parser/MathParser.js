@@ -393,20 +393,9 @@ export class MathParser {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`,  opToken_loc);
       }
 
-
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-
-      const sym_id = this.context.getSymbolById(expr.id_name);
-      if (sym_id.type !== null)
-      {
-        // Возвращаем узел присваивания, забирая имя из VariableNode
-        return new AssignNode(expr.id_name, right, opToken_loc);
-      }
-      else
-      {
-        this.#error(`[Semantic Error]: Неопредилённый идентификатор.`,  opToken_loc);
-      }
+      return new AssignNode(expr.name, right, opToken_loc);
     }
     return expr;
   }
