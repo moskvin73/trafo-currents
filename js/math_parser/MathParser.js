@@ -313,6 +313,7 @@ export class MathParser {
         exprNode = this.#parsePlotLayer();
         break;
       case TokenType.RW_PLOT_VECTOR:
+        exprNode = this.#parsePlotVector();
         break;
       default:
         exprNode = this.#parseExpression();
