@@ -444,7 +444,7 @@ export default class VectorDiagram {
 
         // ДОБАВИТЬ СТРОКУ: Делаем видимыми наименования осей
         this.labelsLayer.querySelectorAll("[id^='axis-label-']").forEach(fo => fo.setAttribute("opacity", "1"));
-            
+
         // Запускаем рендеринг MathJax
         if (window.MathJax && window.MathJax.typesetPromise) {
             await window.MathJax.typesetPromise([this.labelsLayer]);
@@ -609,4 +609,123 @@ export default class VectorDiagram {
             item.element.setAttribute("opacity", "1");
         });
     }
+
+    /**
+     * Сборка чистого SVG-строкового кода со всеми стилями и MathJax
+     */
+    getSVGString() {
+        // Клонируем SVG, чтобы не испортить текущий на экране
+        const clonedSvg = this.svg.cloneNode(true);
+        
+        // Нам нужно вытащить отрендеренный MathJax CSS, иначе в скачанном файле формулы превратятся в кашу
+        const mathJaxStyles = document.getElementById("MathJax_SVG_styles") || 
+                              document.querySelector("style[id^='MathJax']") || 
+                              document.querySelector("style");
+        
+        if (mathJaxStyles) {
+            const styleElement = document.createElementNS("http://w3.org", "style");
+            styleElement.textContent = mathJaxStyles.textContent;
+            clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
+        }
+        
+        // Сериализуем в XML строку
+        const serializer = new XMLSerializer();
+        return serializer.serializeToString(clonedSvg);
+    }
+
+    /**
+     * Функция 1: Скачивание диаграммы в формате SVG
+     */
+    downloadSVG(filename = 'vector-diagram.svg') {
+        const svgString = this.getSVGString();
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    /**
+     * Вспомогательный метод для рендеринга SVG на скрытый Canvas (нужен для PNG)
+     */
+    async renderToCanvas(scaleFactor = 2) { // scaleFactor = 2 для высокой четкости (Retina/Печать)
+        return new Promise((resolve, reject) => {
+            const svgString = this.getSVGString();
+            const canvas = document.createElement('canvas');
+            
+            // Увеличиваем размер холста в 2 раза для супер-чёткости в Word
+            canvas.width = this.width * scaleFactor;
+            canvas.height = this.height * scaleFactor;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.scale(scaleFactor, scaleFactor);
+
+            const img = new Image();
+            // Кодируем SVG строку в Base64 для передачи в Image
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, this.width, this.height);
+                URL.revokeObjectURL(url);
+                resolve(canvas);
+            };
+            img.onerror = (err) => reject(err);
+            img.src = url;
+        });
+    }
+
+    /**
+     * Функция 2: Скачивание диаграммы в формате PNG (высокое разрешение для Word)
+     */
+    async downloadPNG(filename = 'vector-diagram.png') {
+        try {
+            const canvas = await this.renderToCanvas(2); // 2х разрешение
+            const url = canvas.toDataURL('image/png');
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            console.error('Ошибка генерации PNG:', err);
+        }
+    }
+
+    /**
+     * Функция 3: Копирование PNG прямо в буфер обмена (для Ctrl+V в Word 2010)
+     */
+    async copyPNGToClipboard() {
+        try {
+            // Современный Clipboard API требует Async/Await и безопасное окружение (localhost или HTTPS)
+            if (!navigator.clipboard || !window.ClipboardItem) {
+                alert("Ваш браузер не поддерживает копирование картинок в буфер обмена. Используйте скачивание PNG.");
+                return;
+            }
+
+            const canvas = await this.renderToCanvas(2);
+            
+            canvas.toBlob(async (blob) => {
+                try {
+                    const item = new ClipboardItem({ "image/png": blob });
+                    await navigator.clipboard.write([item]);
+                    
+                    // Небольшое красивое уведомление (можно заменить на всплывашку в калькуляторе)
+                    alert("Диаграмма успешно скопирована в буфер обмена! Теперь её можно вставить в Word через Ctrl+V.");
+                } catch (e) {
+                    console.error("Не удалось записать в буфер:", e);
+                }
+            }, 'image/png');
+            
+        } catch (err) {
+            console.error('Ошибка копирования:', err);
+        }
+    }    
 }
