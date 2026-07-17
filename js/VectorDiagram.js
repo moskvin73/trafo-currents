@@ -133,9 +133,9 @@ export default class VectorDiagram {
             
             if (this.data.config.mode === 'three-phase') {
                 // Электротехника базис: Re -> вверх (-Y), Im -> вправо (+X)
-                xStartPix = vec.yStart * S;
-                yStartPix = -vec.xStart * S;
-                xEndPix = vec.yEnd * S;
+                xStartPix = -vec.yStart * S; // Im уходит влево
+                yStartPix = -vec.xStart * S; // Re уходит вверх
+                xEndPix = -vec.yEnd * S;
                 yEndPix = -vec.xEnd * S;
             } else {
                 // Математический базис: Re -> вправо (+X), Im -> вверх (-Y)
