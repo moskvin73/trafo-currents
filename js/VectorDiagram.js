@@ -318,7 +318,7 @@ export default class VectorDiagram {
      * Отрисовка базовых осей
      */
     renderGrid(svgNS) {
-        const axes = document.createElementNS(svgNS, "g");
+         const axes = document.createElementNS(svgNS, "g");
         axes.setAttribute("stroke", "#ccc");
         axes.setAttribute("stroke-width", "1");
         axes.setAttribute("stroke-dasharray", "4 4");
@@ -342,23 +342,22 @@ export default class VectorDiagram {
         const padding = 15; // Отступ от краев осей в пикселях
 
         if (this.data.config.mode === 'three-phase') {
-            // Электротехника: Вверх -> +1, Вправо -> +j
+            // ЭЛЕКТРОТЕХНИКА: Вверх -> +1, Влево -> +j (поворот против часовой стрелки на 90 градусов)
             axisLabels = [
-                { text: '+1', x: this.x0 + 8, y: padding }, // Сверху
-                { text: '+j', x: this.width - padding - 20, y: this.y0 + 5 } // Справа
+                { text: '+1', x: this.x0 + 8, y: padding }, // Сверху на вертикальной оси
+                { text: '+j', x: padding, y: this.y0 - 22 }  // Слева на горизонтальной оси (над линией)
             ];
         } else {
-            // Математика: Вправо -> +1, Вверх -> +j
+            // СТАНДАРТНАЯ МАТЕМАТИКА: Вправо -> +1, Вверх -> +j
             axisLabels = [
-                { text: '+j', x: this.x0 + 8, y: padding }, // Сверху
-                { text: '+1', x: this.width - padding - 20, y: this.y0 + 5 } // Справа
+                { text: '+j', x: this.x0 + 8, y: padding }, // Сверху на вертикальной оси
+                { text: '+1', x: this.width - padding - 20, y: this.y0 + 5 } // Справа на горизонтальной оси
             ];
         }
 
-        // Рендерим подписи осей через foreignObject, чтобы MathJax их обработал
+        // Рендерим подписи осей через foreignObject для MathJax
         axisLabels.forEach((axis, index) => {
             const fo = document.createElementNS(svgNS, "foreignObject");
-            // Уникальный ID для осей, чтобы не пересекаться с векторами
             fo.setAttribute("id", `axis-label-${index}`);
             fo.setAttribute("width", "40");
             fo.setAttribute("height", "30");
@@ -372,22 +371,19 @@ export default class VectorDiagram {
             div.style.whiteSpace = "nowrap";
             div.style.fontFamily = "MathJax_Main, sans-serif";
             div.style.fontSize = "14px";
-            div.style.color = "#666"; // Сделаем цвет осей чуть помягче (серым)
+            div.style.color = "#666"; 
             div.innerHTML = `\\(${axis.text}\\)`;
 
             fo.appendChild(div);
             
-            // Важно: складываем в labelsLayer, который вы создаете чуть позже в renderSVG!
-            // Чтобы этот код сработал, убедитесь, что в renderSVG метод this.renderGrid(svgNS) 
-            // вызывается ПОСЛЕ того, как создан и добавлен на холст this.labelsLayer.
+            // Если labelsLayer еще не создан в renderSVG, подстрахуемся
             if (!this.labelsLayer) {
                 this.labelsLayer = document.createElementNS(svgNS, "g");
                 this.labelsLayer.setAttribute("id", "mathjax-labels-layer");
                 this.svg.appendChild(this.labelsLayer);
             }
             this.labelsLayer.appendChild(fo);
-        });        
-        /*const axes = document.createElementNS(svgNS, "g");
+        });        /*const axes = document.createElementNS(svgNS, "g");
         axes.setAttribute("stroke", "#ccc");
         axes.setAttribute("stroke-width", "1");
         axes.setAttribute("stroke-dasharray", "4 4");
