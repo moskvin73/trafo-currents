@@ -266,7 +266,7 @@ export default class VectorDiagram {
         this.svg.appendChild(defs);
 
         // 3.2 Отрисовка координатной сетки (необязательно, но полезно)
-        this.renderGrid(svgNS);
+        //this.renderGrid(svgNS);
 
         // 3.3 Создание трансформируемых групп графики для каждого слоя
         const layerGroups = {};
@@ -308,6 +308,8 @@ export default class VectorDiagram {
         this.labelsLayer = document.createElementNS(svgNS, "g");
         this.labelsLayer.setAttribute("id", "mathjax-labels-layer");
         this.svg.appendChild(this.labelsLayer);
+
+        this.renderGrid(svgNS);
 
         // НАПОЛНЯЕМ СЛОЙ ПОДПИСЯМИ (Важное исправление!)
         this.calculated.forEach(vec => {
