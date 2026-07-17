@@ -350,40 +350,6 @@ export default class VectorDiagram {
         if (window.MathJax && window.MathJax.typesetPromise) {
             await window.MathJax.typesetPromise([this.labelsLayer]);
         }
-
-        /*const svgElement = this.svg;
-        const labelItems = this.calculated.map(vec => {
-            const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`); 
-            const div = fo ? fo.querySelector("div") : null;
-            
-            let rect = { width: 60, height: 20 };
-            if (div) {
-                const clientRect = div.getBoundingClientRect();
-                
-                // Пересчитываем экранные пиксели окна во внутренние единицы viewBox SVG
-                const point = svgElement.createSVGPoint();
-                point.x = clientRect.width;
-                point.y = clientRect.height;
-                
-                const svgMatrix = svgElement.getScreenCTM().invert();
-                const transformedSize = point.matrixTransform(svgMatrix);
-                
-                const zeroPoint = svgElement.createSVGPoint();
-                const transformedZero = zeroPoint.matrixTransform(svgMatrix);
-                
-                rect.width = Math.abs(transformedSize.x - transformedZero.x);
-                rect.height = Math.abs(transformedSize.y - transformedZero.y);
-            }
-            
-            return {
-                vec: vec,
-                element: fo,
-                wrapperDiv: div,
-                w: rect.width || 60,
-                h: rect.height || 20,
-                ptEnd: this.projectCoordinates(vec.xEnd, vec.yEnd, vec.layer)
-            };
-        });*/        
         // Собираем массив метаданных обо всех метках (Ваш текущий код без изменений)
         const labelItems = this.calculated.map(vec => {
             const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`); 
