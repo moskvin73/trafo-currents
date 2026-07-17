@@ -423,7 +423,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const diagram_id = this.#unconIdent();;
+    const diagram_id = this.#unconIdent();
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
