@@ -46,6 +46,8 @@ export default class ASTNode {
 
   errorValue() { return new RealNumber(0); }
 
+  get type() { throw new Error("Not implemented"); }
+
   error(context, msg, loc) {
     context.error(msg, loc ?? this.loc, "AST");
   }
