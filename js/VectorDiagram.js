@@ -378,23 +378,7 @@ export default class VectorDiagram {
                 this.svg.appendChild(this.labelsLayer);
             }
             this.labelsLayer.appendChild(fo);
-        });        /*const axes = document.createElementNS(svgNS, "g");
-        axes.setAttribute("stroke", "#ccc");
-        axes.setAttribute("stroke-width", "1");
-        axes.setAttribute("stroke-dasharray", "4 4");
-
-        // Горизонтальная ось
-        const hLine = document.createElementNS(svgNS, "line");
-        hLine.setAttribute("x1", "0"); hLine.setAttribute("y1", this.y0);
-        hLine.setAttribute("x2", this.width); hLine.setAttribute("y2", this.y0);
-        // Вертикальная ось
-        const vLine = document.createElementNS(svgNS, "line");
-        vLine.setAttribute("x1", this.x0); vLine.setAttribute("y1", "0");
-        vLine.setAttribute("x2", this.x0); vLine.setAttribute("y2", this.height);
-
-        axes.appendChild(hLine);
-        axes.appendChild(vLine);
-        this.svg.appendChild(axes);*/
+        }); 
     }
 	
     /**
