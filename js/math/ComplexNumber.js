@@ -10,6 +10,8 @@ export default class ComplexNumber extends MathType {
   #real;
   #imaginary;
 
+  static typeId = Symbol.for('Math.ComplexNumber');
+
   /**
    * Создает экземпляр комплексного числа.
    * @param {number} real - Действительная часть (Re)

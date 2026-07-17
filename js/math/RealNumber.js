@@ -9,6 +9,8 @@ export default class RealNumber extends MathType {
   // Приватное поле для хранения вещественного значения
   #value;
 
+  static typeId = Symbol.for('Math.RealNumber');
+  
   /**
    * @param {number} value - Вещественное число
    */
