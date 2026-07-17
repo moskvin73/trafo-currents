@@ -348,6 +348,7 @@ export default class VectorDiagram {
         const hLine = document.createElementNS(svgNS, "line");
         hLine.setAttribute("x1", "0"); hLine.setAttribute("y1", this.y0);
         hLine.setAttribute("x2", this.width); hLine.setAttribute("y2", this.y0);
+        
         // Вертикальная ось
         const vLine = document.createElementNS(svgNS, "line");
         vLine.setAttribute("x1", this.x0); vLine.setAttribute("y1", "0");
@@ -356,6 +357,74 @@ export default class VectorDiagram {
         axes.appendChild(hLine);
         axes.appendChild(vLine);
         this.svg.appendChild(axes);
+
+        // Определяем текст и координаты подписей в зависимости от режима
+        let axisLabels = [];
+        const padding = 15; // Отступ от краев осей в пикселях
+
+        if (this.data.config.mode === 'three-phase') {
+            // Электротехника: Вверх -> +1, Вправо -> +j
+            axisLabels = [
+                { text: '+1', x: this.x0 + 8, y: padding }, // Сверху
+                { text: '+j', x: this.width - padding - 20, y: this.y0 + 5 } // Справа
+            ];
+        } else {
+            // Математика: Вправо -> +1, Вверх -> +j
+            axisLabels = [
+                { text: '+j', x: this.x0 + 8, y: padding }, // Сверху
+                { text: '+1', x: this.width - padding - 20, y: this.y0 + 5 } // Справа
+            ];
+        }
+
+        // Рендерим подписи осей через foreignObject, чтобы MathJax их обработал
+        axisLabels.forEach((axis, index) => {
+            const fo = document.createElementNS(svgNS, "foreignObject");
+            // Уникальный ID для осей, чтобы не пересекаться с векторами
+            fo.setAttribute("id", `axis-label-${index}`);
+            fo.setAttribute("width", "40");
+            fo.setAttribute("height", "30");
+            fo.setAttribute("x", axis.x);
+            fo.setAttribute("y", axis.y);
+            fo.setAttribute("overflow", "visible");
+            fo.setAttribute("opacity", "0"); // Изначально скрываем для хака с MathJax
+
+            const div = document.createElement("div");
+            div.style.display = "inline-block";
+            div.style.whiteSpace = "nowrap";
+            div.style.fontFamily = "MathJax_Main, sans-serif";
+            div.style.fontSize = "14px";
+            div.style.color = "#666"; // Сделаем цвет осей чуть помягче (серым)
+            div.innerHTML = `\\(${axis.text}\\)`;
+
+            fo.appendChild(div);
+            
+            // Важно: складываем в labelsLayer, который вы создаете чуть позже в renderSVG!
+            // Чтобы этот код сработал, убедитесь, что в renderSVG метод this.renderGrid(svgNS) 
+            // вызывается ПОСЛЕ того, как создан и добавлен на холст this.labelsLayer.
+            if (!this.labelsLayer) {
+                this.labelsLayer = document.createElementNS(svgNS, "g");
+                this.labelsLayer.setAttribute("id", "mathjax-labels-layer");
+                this.svg.appendChild(this.labelsLayer);
+            }
+            this.labelsLayer.appendChild(fo);
+        });        
+        /*const axes = document.createElementNS(svgNS, "g");
+        axes.setAttribute("stroke", "#ccc");
+        axes.setAttribute("stroke-width", "1");
+        axes.setAttribute("stroke-dasharray", "4 4");
+
+        // Горизонтальная ось
+        const hLine = document.createElementNS(svgNS, "line");
+        hLine.setAttribute("x1", "0"); hLine.setAttribute("y1", this.y0);
+        hLine.setAttribute("x2", this.width); hLine.setAttribute("y2", this.y0);
+        // Вертикальная ось
+        const vLine = document.createElementNS(svgNS, "line");
+        vLine.setAttribute("x1", this.x0); vLine.setAttribute("y1", "0");
+        vLine.setAttribute("x2", this.x0); vLine.setAttribute("y2", this.height);
+
+        axes.appendChild(hLine);
+        axes.appendChild(vLine);
+        this.svg.appendChild(axes);*/
     }
 	
     /**
