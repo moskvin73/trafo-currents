@@ -432,7 +432,7 @@ export class MathParser {
     else this.#consume();
 
     const mode = this.#unconIdent();;
-    if (!diagram_id) return error_value();
+    if (!mode) return error_value();
 
     let view_type = null;
     if (this.c_token !== TokenType.COMMA) {
@@ -440,7 +440,8 @@ export class MathParser {
     }
     else { 
       this.#consume();
-      view_type = this.#unconIdent();;
+      view_type = this.#unconIdent();
+      if (!view_type) return error_value();
     }
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
@@ -467,7 +468,7 @@ export class MathParser {
     else this.#consume();
 
     const key = this.#unconIdent();;
-    if (!diagram_id) return error_value();
+    if (!key) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
       this.#error("Пропущена ','", this.#location);
