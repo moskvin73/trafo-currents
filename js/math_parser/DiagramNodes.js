@@ -44,11 +44,14 @@ export class PlotConfigNode extends ASTNode {
   internal_evaluate(context) {
     const symbol = context.scope_context.getSymbolByName(this.diagramId);
     if (!symbol || symbol.value.type !== "DiagramState") {
-        throw new Error(`Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
+        this.error(context, `Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
     }
-    const descriptor = symbol.value;
-    const computedValue = this.valueNode.internal_evaluate(context);
-    descriptor.setConfig(this.key, computedValue);
-    return null;  
+    else
+    {
+        const descriptor = symbol.value;
+        const computedValue = this.valueNode.internal_evaluate(context);
+        descriptor.setConfig(this.key, computedValue);
+    }
+    return null;
   }
 }
