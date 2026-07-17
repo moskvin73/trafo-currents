@@ -604,8 +604,8 @@ export class VariableNode extends IdentifierNode {
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends IdentifierNode {
-  constructor(id_name, expression, loc) {
-    super(id_name, loc);
+  constructor(name, expression, loc) {
+    super(name, loc);
     this.expression = expression;
   }
 
