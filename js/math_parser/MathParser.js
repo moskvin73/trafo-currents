@@ -225,7 +225,7 @@ export class MathParser {
     }
 
     return this.#program.statements
-      .filter((stmt) => !stmt.isSilent) // Сразу убираем скрытые команды
+      .filter((stmt) => !stmt.isSilent)
       .map((stmt) => {
         if (stmt.type_unit === TYPE_UNIT.PRINT) { 
           return { mixed: true, value: stmt.value };
