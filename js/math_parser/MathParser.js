@@ -293,7 +293,6 @@ export class MathParser {
       case TokenType.SILENT:
         this.#consume();
         return { node: exprNode, isSilent: exprNode instanceof AssignNode };
-        //return new StatementNode(exprNode, exprNode instanceof AssignNode);
       default:
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
@@ -302,7 +301,6 @@ export class MathParser {
         {
           if (MathParser.parseStatement_FIRST.has(this.c_token)) {
             return { node: exprNode, isSilent: false };
-            //return new StatementNode(exprNode, false);
           }
           this.#consume();
           if (MathParser.parseStatement_FALLOW.has(this.c_token)) break;
