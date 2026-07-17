@@ -54,3 +54,8 @@ export const ANGLE_MODE = {
    */
   RADIANS_PI: 4,
 };
+
+export const TYPE_UNIT = {
+  PRINT: 0,
+  EXPR: 1,
+};
