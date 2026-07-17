@@ -399,8 +399,60 @@ export class MathParser {
     return new PrintNode(elements, print_loc);
   }
 
-  #parsePlotInit() {
+  #unconIdent(errorMessage = 'Ожидался идентификатор') {
+    if (this.c_token !== TokenType.VARIABLE) {
+      this.#error(errorMessage, this.#location);
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return null;
+    }
+    const varable = this.lexer.stringValue();
+    this.#consume();
+    return varable;
+  }
 
+  #possibleIdent() {
+    if (this.c_token !== TokenType.VARIABLE) {
+      return null;
+    }
+    const varable = this.lexer.stringValue();
+    this.#consume();
+    return varable;
+  }
+
+
+  #parsePlotInit() {
+    const token_loc = this.#location;
+    const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
+    this.#consume();
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    const diagram_id = unconIdent();
+    if (!diagram_id) return error_value();
+
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const mode = unconIdent();
+    if (!diagram_id) return error_value();
+
+    let view_type = null;
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else { 
+      this.#consume();
+      view_type = unconIdent();
+    }
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    return new PlotInitNode(diagram_id, mode, view_type, token_loc);
   }
 
   #parsePlotConfig() {
