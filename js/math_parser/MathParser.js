@@ -26,9 +26,9 @@ import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './
  * Единый узел для любой инструкции в коде
  */
 export class StatementNode {
-  constructor(node, value, isSilent) {
+  constructor(node, isSilent) {
     this.node = node;
-    this.value = value;
+    this.value = null;
     this.isSilent = isSilent;
     this.isPrintCommand = this.node instanceof PrintNode;
   }
@@ -44,7 +44,7 @@ export class StatementNode {
 
 
   toString() { return this.node.toString(); }
-  
+
   
   toTeX() { return this.node.toTeX(); }
 }
@@ -203,7 +203,7 @@ export class MathParser {
         while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) {
-             statements.push(new StatementNode(stmt.node, null, stmt.isSilent));
+             statements.push(new StatementNode(stmt.node, stmt.isSilent));
           }
       }
       if (this.errors.length === 0) {
