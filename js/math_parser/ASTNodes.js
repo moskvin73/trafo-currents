@@ -578,7 +578,7 @@ export class VariableNode extends IdentifierNode {
 
   getPriority() { return OpPriority.PRIMARY; }
 
-  toString(context) {  return this.name; }
+  toString(context) { return this.name; }
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
@@ -611,11 +611,16 @@ export class AssignNode extends IdentifierNode {
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString(context) { return `${this.getNameID(context)} = ${this.expression.toString(context)}`; }
+  toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
 
   internal_evaluate(context) {
+    const id = context.scope_context.acquireId(name);
+    if (id < context.scope_context.CD) {
+       this.error(context, `Идентификатор "${this.name}" является зарезервированным.`);
+       return this.errorValue();
+    }
+    const sym = context.scope_context.getSymbolById(id);
     const value = this.expression.internal_evaluate(context);
-    const sym = context.scope_context.getSymbolById(this.id_name);
     sym.value = value;
     sym.type = SYM_VARIABLE;
     return value;
