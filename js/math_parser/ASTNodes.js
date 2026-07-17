@@ -47,7 +47,7 @@ export default class ASTNode {
 
   errorValue() { return new RealNumber(0); }
 
-  get type() { throw new Error("Not implemented"); }
+  get type_unit() { throw new Error("Not implemented"); }
 
   error(context, msg, loc) {
     context.error(msg, loc ?? this.loc, "AST");
@@ -144,7 +144,7 @@ export class MathNode extends ASTNode {
     }
   }
 
-  get type() { return TYPE_UNIT.EXPR; }
+  get type_unit() { return TYPE_UNIT.EXPR; }
 
   /**
    * Добавляет себя в список и останавливает погружение.
@@ -664,7 +664,7 @@ export class PrintNode extends ASTNode {
     this.elements = elements;
   }
 
-  get type() { return TYPE_UNIT.PRINT; }
+  get type_unit() { return TYPE_UNIT.PRINT; }
 
   toString(context) {
     return "print (" + this.elements.map(element => {
