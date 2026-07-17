@@ -534,7 +534,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new PlotLayerNode(diagram_id, layer_id, color, stroke_width);    
+    return new PlotLayerNode(diagram_id, layer_id, color, stroke_width, token_loc);    
   }
 
   #parsePlotVector() {
@@ -553,6 +553,22 @@ export class MathParser {
     }
     else this.#consume();
 
+    const variable = this.#parseExpression();
+
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const layer_id = unconIdent();
+    if (!layer_id) return error_value();
+
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    return new PlotVectorNode(diagram_id, variable, layer_id, token_loc);       
   }
 
   // =======================================================
