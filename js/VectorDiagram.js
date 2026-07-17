@@ -42,7 +42,6 @@ export default class VectorDiagram {
         this.calculateScales();
         this.renderSVG();
         await this.renderAndPositionLabels();
-
         this.initContextMenu();
     }
 
