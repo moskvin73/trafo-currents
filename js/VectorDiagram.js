@@ -442,6 +442,9 @@ export default class VectorDiagram {
             if (fo) fo.setAttribute("opacity", "1");
         });
 
+        // ДОБАВИТЬ СТРОКУ: Делаем видимыми наименования осей
+        this.labelsLayer.querySelectorAll("[id^='axis-label-']").forEach(fo => fo.setAttribute("opacity", "1"));
+            
         // Запускаем рендеринг MathJax
         if (window.MathJax && window.MathJax.typesetPromise) {
             await window.MathJax.typesetPromise([this.labelsLayer]);
