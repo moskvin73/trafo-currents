@@ -254,7 +254,7 @@ export default class VectorDiagram {
             const S = this.scales[layerName];
             let matrix = "";
             if (this.data.config.mode === 'three-phase') {
-                matrix = `matrix(0, ${-S}, ${S}, 0, ${this.x0}, ${this.y0})`;
+                matrix = `matrix(0, ${-S}, ${-S}, 0, ${this.x0}, ${this.y0})`;
             } else {
                 matrix = `matrix(${S}, 0, 0, ${-S}, ${this.x0}, ${this.y0})`;
             }
