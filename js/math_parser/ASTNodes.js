@@ -145,7 +145,7 @@ export class MathNode extends ASTNode {
   }
 
   get type() { return TYPE_UNIT.EXPR; }
-  
+
   /**
    * Добавляет себя в список и останавливает погружение.
    */
@@ -663,6 +663,8 @@ export class PrintNode extends ASTNode {
     super(loc);
     this.elements = elements;
   }
+
+  get type() { return TYPE_UNIT.PRINT; }
 
   toString(context) {
     return "print (" + this.elements.map(element => {
