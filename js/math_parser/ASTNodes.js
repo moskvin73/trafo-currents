@@ -611,15 +611,18 @@ export class AssignNode extends IdentifierNode {
 
   internal_evaluate(context) {
     const id = context.scope_context.acquireId(name);
-    if (id < context.scope_context.CD) {
+    if (id > context.scope_context.CD) {
+      const sym = context.scope_context.getSymbolById(id);
+      const value = this.expression.internal_evaluate(context);
+      sym.value = value;
+      sym.type = SYM_VARIABLE;
+      return value;
+    }
+    else
+    {
        this.error(context, `Идентификатор "${this.name}" является зарезервированным.`);
        return this.errorValue();
     }
-    const sym = context.scope_context.getSymbolById(id);
-    const value = this.expression.internal_evaluate(context);
-    sym.value = value;
-    sym.type = SYM_VARIABLE;
-    return value;
   }
 
   toTeX(context) {
