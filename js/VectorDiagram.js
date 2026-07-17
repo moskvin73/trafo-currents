@@ -759,15 +759,16 @@ export default class VectorDiagram {
      * Инициализация кастомного контекстного меню по правому клику
      */
     initContextMenu() {
-        // Создаем элемент меню, если его еще нет на странице
-        let menu = document.getElementById('vector-diagram-context-menu');
+        // Создаем уникальное меню для конкретного контейнера этой диаграммы
+        let menu = this.container.querySelector('.vector-diagram-context-menu');
+        
         if (!menu) {
             menu = document.createElement('div');
-            menu.id = 'vector-diagram-context-menu';
+            menu.className = 'vector-diagram-context-menu'; // Используем класс вместо ID
             
-            // Стилизуем меню в инженерном/минималистичном стиле (похожем на MathJax)
+            // Стили меню
             Object.assign(menu.style, {
-                position: 'absolute',
+                position: 'fixed', // Используем fixed, чтобы не зависеть от scroll
                 backgroundColor: '#ffffff',
                 border: '1px solid #cccccc',
                 boxShadow: '2px 2px 8px rgba(0,0,0,0.15)',
@@ -780,49 +781,62 @@ export default class VectorDiagram {
                 minWidth: '210px'
             });
 
-            // Наполняем пунктами меню
-            menu.innerHTML = `
-                <div class="v-menu-item" onclick="window.myDiagram.copyPNGToClipboard()" style="padding: 6px 14px; cursor: pointer; color: #333;">Копировать PNG (для Word)</div>
-                <div class="v-menu-item" onclick="window.myDiagram.downloadPNG()" style="padding: 6px 14px; cursor: pointer; color: #333;">Скачать как PNG-рисунок</div>
-                <div class="v-menu-item" onclick="window.myDiagram.downloadSVG()" style="padding: 6px 14px; cursor: pointer; color: #333;">Скачать как векторный SVG</div>
-                <div style="border-top: 1px solid #eeeeee; margin: 4px 0;"></div>
-                <div style="padding: 4px 14px; color: #999; font-size: 11px; font-style: italic;">Векторная диаграмма v1.0</div>
-            `;
+            // Создаем пункты меню как DOM-элементы, чтобы привязать контекст (this)
+            const items = [
+                { text: 'Копировать PNG (для Word)', action: () => this.copyPNGToClipboard() },
+                { text: 'Скачать как PNG-рисунок', action: () => this.downloadPNG() },
+                { text: 'Скачать как векторный SVG', action: () => this.downloadSVG() }
+            ];
 
-            // Эффект наведения мыши (подсветка пунктов)
-            menu.addEventListener('mouseover', (e) => {
-                if (e.target.classList.contains('v-menu-item')) {
-                    e.target.style.backgroundColor = '#f0f0f0';
-                }
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'v-menu-item';
+                div.textContent = item.text;
+                Object.assign(div.style, {
+                    padding: '6px 14px',
+                    cursor: 'pointer',
+                    color: '#333'
+                });
+
+                // Привязываем действие напрямую к текущему экземпляру (this) через стрелочную функцию
+                div.addEventListener('click', () => {
+                    item.action();
+                    menu.style.display = 'none';
+                });
+
+                // Эффекты наведения
+                div.addEventListener('mouseover', () => div.style.backgroundColor = '#f0f0f0');
+                div.addEventListener('mouseout', () => div.style.backgroundColor = 'transparent');
+                
+                menu.appendChild(div);
             });
-            menu.addEventListener('mouseout', (e) => {
-                if (e.target.classList.contains('v-menu-item')) {
-                    e.target.style.backgroundColor = 'transparent';
-                }
-            });
+
+            // Линия-разделитель и подпись версии
+            const hr = document.createElement('div');
+            Object.assign(hr.style, { borderTop: '1px solid #eeeeee', margin: '4px 0' });
+            menu.appendChild(hr);
+
+            const footer = document.createElement('div');
+            footer.textContent = 'Векторная диаграмма v1.1';
+            Object.assign(footer.style, { padding: '4px 14px', color: '#999', fontSize: '11px', fontStyle: 'italic' });
+            menu.appendChild(footer);
 
             document.body.appendChild(menu);
         }
 
         // Вешаем событие правого клика мыши на контейнер диаграммы
         this.container.addEventListener('contextmenu', (e) => {
-            e.preventDefault(); // Запрещаем стандартное меню браузера
-            e.stopPropagation(); // Не пускаем клик к MathJax (чтобы не открывалось его меню)
+            e.preventDefault(); 
+            e.stopPropagation(); 
 
-            // Показываем наше меню точно под курсором мыши
-            menu.style.left = `${e.pageX}px`;
-            menu.style.top = `${e.pageY}px`;
+            // Поскольку мы используем position: 'fixed', берем clientX и clientY вместо pageX
+            menu.style.left = `${e.clientX}px`;
+            menu.style.top = `${e.clientY}px`;
             menu.style.display = 'block';
         });
 
         // Скрываем меню при клике в любое другое место экрана
-        document.addEventListener('click', () => {
-            menu.style.display = 'none';
-        });
-        
-        // Скрываем меню при прокрутке страницы
-        document.addEventListener('scroll', () => {
-            menu.style.display = 'none';
-        });
-    }    
+        document.addEventListener('click', () => menu.style.display = 'none');
+        document.addEventListener('scroll', () => menu.style.display = 'none');
+    }   
 }
