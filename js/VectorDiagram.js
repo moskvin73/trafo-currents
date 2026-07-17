@@ -33,7 +33,7 @@ export default class VectorDiagram {
         this.svg = null;
         this.init();        
     }
-
+    
     /**
      * Инициализация процесса построения
      */
@@ -44,6 +44,23 @@ export default class VectorDiagram {
         await this.renderAndPositionLabels();
         this.initContextMenu();
     }
+
+    /**
+     * Динамическое обновление данных диаграммы (для реактивного калькулятора)
+     */
+    async updateData(newData) {
+        this.data = newData;
+        
+        // Сбрасываем старые расчеты
+        this.scales = {};
+        this.calculated = [];
+        
+        // Запускаем конвейер пересчета заново
+        this.calculateGeometry();
+        this.calculateScales();
+        this.renderSVG(); // Перерисовывает сетку и линии векторов
+        await this.renderAndPositionLabels(); // Запускает MathJax и расставляет подписи
+    }   
 
     /**
      * Этап 1: Перевод относительных связей векторов в абсолютные математические координаты
