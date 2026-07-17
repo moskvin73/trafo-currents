@@ -28,7 +28,13 @@ export class SymbolTableContext {
 
       this.fixedSymbols[i] = {
         type: SYM_BUILTIN,
-        overloads: overloads // Сохраняем массив перегрузок из вашего реестра
+        overloads: overloads,
+        get value() { 
+          return overloads; 
+        },
+        set value(val) {
+          throw new Error(`Идентификатор "${name}" является зарезервированным.`);
+        }
       };
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
@@ -58,10 +64,26 @@ export class SymbolTableContext {
       return varIdx + this.CD; // Возвращаем индекс со смещением CD
     }
 
+    const state = {
+      type: SYM_UNDEFINED,
+      value: 0
+    };
+
+    const userSymbol = {
+      get type() { return state.type; },
+      set type(t) { state.type = t; },
+      
+      get value() { return state.value; },
+      set value(v) {
+        state.value = v;
+        state.type = SYM_VARIABLE; // Авто-смена типа
+      }
+    };
+    
     // 3. Если имени нет — регистрируем как новую неопределенную переменную
     const newVarIdx = this.varNames.length;
     this.varNames.push(name);
-    this.varSymbols.push({ type: SYM_UNDEFINED, value: 0 });
+    this.varSymbols.push(userSymbol);
     this.varHash[name] = newVarIdx;
 
     return newVarIdx + this.CD; // Возвращаем новый ID со смещением CD
