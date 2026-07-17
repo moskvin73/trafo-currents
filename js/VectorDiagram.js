@@ -655,12 +655,21 @@ export default class VectorDiagram {
     /**
      * Вспомогательный метод для рендеринга SVG на скрытый Canvas (нужен для PNG)
      */
-    async renderToCanvas(scaleFactor = 2) { // scaleFactor = 2 для высокой четкости (Retina/Печать)
+    /**
+     * Вспомогательный метод для рендеринга SVG на скрытый Canvas с защитой от Tainted Canvas
+     */
+    async renderToCanvas(scaleFactor = 2) {
         return new Promise((resolve, reject) => {
-            const svgString = this.getSVGString();
-            const canvas = document.createElement('canvas');
+            let svgString = this.getSVGString();
             
-            // Увеличиваем размер холста в 2 раза для супер-чёткости в Word
+            // ХАК ДЛЯ СТАРОГО WORD И БРАУЗЕРА: 
+            // Если MathJax подтягивает внешние шрифты по URL (например, cdnjs),
+            // Canvas заблокирует экспорт. Удалим внешние ссылки @import/@font-face из стилей для Canvas,
+            // так как системных шрифтов в импортируемом SVG браузеру будет достаточно для отрисовки картинки.
+            svgString = svgString.replace(/@font-face\s*{[^}]*}/g, '');
+            svgString = svgString.replace(/@import\s*url\([^)]*\);/g, '');
+
+            const canvas = document.createElement('canvas');
             canvas.width = this.width * scaleFactor;
             canvas.height = this.height * scaleFactor;
             
@@ -668,16 +677,29 @@ export default class VectorDiagram {
             ctx.scale(scaleFactor, scaleFactor);
 
             const img = new Image();
-            // Кодируем SVG строку в Base64 для передачи в Image
+            
+            // КРИТИЧЕСКИ ВАЖНО ДЛЯ КОРРЕКТНОГО CORS:
+            img.crossOrigin = "anonymous"; 
+
+            // Используем современный и безопасный метод URL.createObjectURL
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
 
             img.onload = () => {
+                // Заполняем фон белым цветом (иначе в Word 2010 картинка будет на черном или прозрачном фоне)
+                ctx.fillStyle = "#fafafa";
+                ctx.fillRect(0, 0, this.width, this.height);
+                
                 ctx.drawImage(img, 0, 0, this.width, this.height);
                 URL.revokeObjectURL(url);
                 resolve(canvas);
             };
-            img.onerror = (err) => reject(err);
+            
+            img.onerror = (err) => {
+                URL.revokeObjectURL(url);
+                reject(new Error("Браузер заблокировал рендеринг SVG в PNG из-за безопасности шрифтов."));
+            };
+            
             img.src = url;
         });
     }
