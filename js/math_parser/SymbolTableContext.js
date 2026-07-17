@@ -32,7 +32,7 @@ export class SymbolTableContext {
 
         set type(t) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
-        }
+        },
 
         get value() { 
           return overloads; 
