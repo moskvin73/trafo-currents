@@ -441,7 +441,7 @@ export class MathLexer {
             this.tokenEndLineIdx = this.lineStartIdx;
 
             const idLength = this.i - startIdx;
-            if (idLength > 1 && idLength < 10) {
+            if (idLength > 1 && idLength < 20) {
               const text = src.slice(startIdx, this.i);
               const matchedType = reservedWordsMap[text];
               if (matchedType !== undefined) {
