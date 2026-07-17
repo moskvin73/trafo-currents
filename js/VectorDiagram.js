@@ -351,7 +351,7 @@ export default class VectorDiagram {
             await window.MathJax.typesetPromise([this.labelsLayer]);
         }
 
-        const svgElement = this.svg;
+        /*const svgElement = this.svg;
         const labelItems = this.calculated.map(vec => {
             const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`); 
             const div = fo ? fo.querySelector("div") : null;
@@ -383,9 +383,9 @@ export default class VectorDiagram {
                 h: rect.height || 20,
                 ptEnd: this.projectCoordinates(vec.xEnd, vec.yEnd, vec.layer)
             };
-        });        
+        });*/        
         // Собираем массив метаданных обо всех метках (Ваш текущий код без изменений)
-        /*const labelItems = this.calculated.map(vec => {
+        const labelItems = this.calculated.map(vec => {
             const fo = this.labelsLayer.querySelector(`#label-fo-${vec.id}`); 
             const div = fo ? fo.querySelector("div") : null;
             const rect = div ? div.getBoundingClientRect() : { width: 60, height: 20 };
@@ -398,7 +398,7 @@ export default class VectorDiagram {
                 h: rect.height || 20,
                 ptEnd: this.projectCoordinates(vec.xEnd, vec.yEnd, vec.layer)
             };
-        });*/
+        });
 
         // Разделяем метки на два типа: центральные лучи и соединительные хорды
         const centralLabels = [];
