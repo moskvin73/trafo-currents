@@ -559,10 +559,6 @@ export class IdentifierNode extends MathNode {
     this.name = name;
   }
 
-  getNameID(context) {
-    return this.name;
-  }
-
   getTexName(context) {
     return ASTNode.formatIdentifierToTeX(name);
   }
@@ -931,9 +927,9 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 ]);
 
 export class CallNode extends MathNode {
-  constructor(id_name, args, loc) {
+  constructor(name, args, loc) {
     super(loc); 
-    this.id_name = id_name; // Имя функции (строка)
+    this.name = name; // Имя функции (строка)
     this.args = args; // Массив дочерних узлов ASTNode
   }
 
@@ -941,22 +937,32 @@ export class CallNode extends MathNode {
 
   toString(context) {
     const argsCode = this.args.map(arg => arg.toString(context)).join(", ");
-    const name = context.getNameById(this.id_name);
-    return `${name}(${argsCode})`;
+    return `${this.name}(${argsCode})`;
   }
 
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
-    const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-    const sym = context.scope_context.getSymbolById(this.id_name);
-    return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
+    const sym = context.scope_context.getSymbolByName(this.name);
+    if (sym === null) {
+      this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+    }
+    else if (sym.type === SYM_UNDEFINED) {
+      this.error(context, `Переменная "${this.name}" не инициализирована.`);
+      return this.errorValue();
+    }
+    else if (sym.type !== SYM_BUILTINE) {
+      this.error(context, `Идентификатор "${this.name}" не является функцией.`);
+      return this.errorValue();
+    } else {
+      const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
+      return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
+    }
   }
 
   toTeX(context) {
     // Рендерим аргументы узла в LaTeX-строки
     const argsTexArray = this.args.map(arg => arg.toTeX(context));
-    const name = context.getNameById(this.id_name);
-    const config = TEX_FUNCTIONS_REGISTRY.get(name);
+    const config = TEX_FUNCTIONS_REGISTRY.get(this.name);
 
     // 1. Если задано сложное кастомное отображение (шаблон вроде pow, sqrt, floor, abs)
     if (config?.render) {
