@@ -956,7 +956,7 @@ export class CallNode extends MathNode {
       return this.errorValue();
     } else {
       const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-      return MathRegistry.execute(sym.overloads, evaluatedArgs, this.loc);
+      return MathRegistry.execute(sym.value, evaluatedArgs, this.loc);
     }
   }
 
