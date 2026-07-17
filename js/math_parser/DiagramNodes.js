@@ -123,7 +123,11 @@ export class PlotVectorNode extends PlotDataNode {
         try
         {
             const descriptor = this.getDiagram();
-            descriptor.addVector(this.variableName, texLabel, this.layerId, varSymbol.value);
+            if (variableNode instanceof VariableNode)
+            {
+                const texLabel = ASTNode.formatIdentifierToTeX(variableNode.name);
+                descriptor.addVector(this.variableName, texLabel, this.layerId, varSymbol.value);
+            }
         } catch(err) { this.error(context, err); }
         return this.errorValue();
     }
