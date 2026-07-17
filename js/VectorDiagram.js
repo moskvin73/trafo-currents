@@ -824,18 +824,26 @@ export default class VectorDiagram {
             document.body.appendChild(menu);
         }
 
-        // Вешаем событие правого клика мыши на контейнер диаграммы
-        this.container.addEventListener('contextmenu', (e) => {
-            e.preventDefault(); 
-            e.stopPropagation(); 
+        // 1. БЛОКИРОВКА МЕНЮ MATHJAX: перехватываем правый клик на этапе погружения (true)
+        // Мы вешаем слушатель на labelsLayer, где и живут формулы MathJax
+        if (this.labelsLayer) {
+            this.labelsLayer.addEventListener('contextmenu', (e) => {
+                e.stopPropagation(); // Критично! Останавливает событие, не давая MathJax узнать о клике
+            }, true); // Флаг true активирует этап погружения (Capture Phase)
+        }
 
-            // Поскольку мы используем position: 'fixed', берем clientX и clientY вместо pageX
+        // 2. ОТКРЫТИЕ НАШЕГО КАСТОМНОГО МЕНЮ
+        this.container.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Отключаем стандартное меню браузера
+            e.stopPropagation(); // Защита от всплытия выше
+
+            // Показываем меню точно под курсором
             menu.style.left = `${e.clientX}px`;
             menu.style.top = `${e.clientY}px`;
             menu.style.display = 'block';
         });
 
-        // Скрываем меню при клике в любое другое место экрана
+        // Скрываем меню при клике или скролле
         document.addEventListener('click', () => menu.style.display = 'none');
         document.addEventListener('scroll', () => menu.style.display = 'none');
     }   
