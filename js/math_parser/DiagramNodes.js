@@ -127,7 +127,7 @@ export class PlotVectorNode extends PlotDataNode {
                 const descriptor = this.getDiagram(context);
                 const vector_id = this.variableNode.name;
                 const texLabel = ASTNode.formatIdentifierToTeX(vector_id);
-                const value = ComplexNumber.from(this.variableNode.internal_evaluate(context));
+                const value = this.variableNode.internal_evaluate(context);
                 descriptor.addVector(vector_id, texLabel, this.layerId, value);
             } else {
                 this.error(context, "Недопустимый узел значение вектора");
