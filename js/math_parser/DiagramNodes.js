@@ -1,6 +1,7 @@
 import ASTNode, { VariableNode } from './ASTNodes.js';
-import DiagramDescriptor  from '../views/DiagramDescriptor.js';
+import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM }  from '../util.js';
+import VectorDiagram from '../VectorDiagram.js';
 
 export class PlotInitNode extends ASTNode {
   constructor(diagramId, mode, viewType, loc) {
