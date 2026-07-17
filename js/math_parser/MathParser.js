@@ -41,9 +41,10 @@ export class StatementNode {
   }
 
   get type_unit() { return node.type_unit; }
-  
+
 
   toString() { return this.node.toString(); }
+  
   
   toTeX() { return this.node.toTeX(); }
 }
