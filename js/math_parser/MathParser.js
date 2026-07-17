@@ -31,7 +31,6 @@ export class StatementNode {
     this.node = node;
     this.value = null;
     this.isSilent = isSilent;
-    this.isPrintCommand = this.node instanceof PrintNode;
   }
 
   collectMathExpressions(list) {
@@ -228,8 +227,7 @@ export class MathParser {
     return this.#program.statements
       .filter((stmt) => !stmt.isSilent) // Сразу убираем скрытые команды
       .map((stmt) => {
-        // Исправлено: берем isPrintCommand из текущего stmt
-        if (stmt.isPrintCommand) { 
+        if (stmt.type_unit === TYPE_UNIT.PRINT) { 
           return { mixed: true, value: stmt.value };
         }
 
