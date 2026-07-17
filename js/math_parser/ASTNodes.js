@@ -950,7 +950,7 @@ export class CallNode extends MathNode {
       this.error(context, `Переменная "${this.name}" не инициализирована.`);
       return this.errorValue();
     }
-    else if (sym.type !== SYM_BUILTINE) {
+    else if (sym.type !== SYM_BUILTIN) {
       this.error(context, `Идентификатор "${this.name}" не является функцией.`);
       return this.errorValue();
     } else {
