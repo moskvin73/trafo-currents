@@ -27,11 +27,17 @@ export class SymbolTableContext {
       const overloads = COMPILER_REGISTRY.get(name);
 
       this.fixedSymbols[i] = {
-        type: SYM_BUILTIN,
-        overloads: overloads,
+
+        get type() { return SYM_BUILTIN; },
+
+        set type(t) {
+          throw new Error(`Идентификатор "${name}" является зарезервированным.`);
+        }
+
         get value() { 
           return overloads; 
         },
+
         set value(val) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
         }
