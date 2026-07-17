@@ -129,9 +129,7 @@ export class PlotVectorNode extends PlotDataNode {
                 const texLabel = ASTNode.formatIdentifierToTeX(vector_id);
                 const value = this.variableNode.internal_evaluate(context);
                 descriptor.addVector(vector_id, texLabel, this.layerId, value);
-            }
-            else
-            {
+            } else {
                 this.error(context, "Недопустимый узел значение вектора");
             }
         } catch(err) { this.error(context, err); }
