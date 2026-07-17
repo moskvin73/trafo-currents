@@ -50,7 +50,7 @@ export default class DiagramDescriptor {
         // Если диаграмма уже отрендерена на экране, отправляем ее на пересчет
         this.reactiveUpdate();
     }
-       
+
     /**
      * Регистрация или обновление слоя
      */
@@ -82,7 +82,7 @@ export default class DiagramDescriptor {
             id: vectorId,
             label: labelTex,
             layer: layerId,
-            value: { re: complexValue.re, im: complexValue.im },
+            value: { re: complexValue.real, im: complexValue.imaginary },
             origin: { type: "center" }
         };
 
