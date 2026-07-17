@@ -112,9 +112,9 @@ export class PlotVectorNode extends PlotDataNode {
      * @param {string} variableNode - Имя слоя как строка/идентификатор ("voltages")
      * @param {string} layerId - Имя слоя как строка/идентификатор ("voltages")
      */
-    constructor(diagramId, variableName, layerId, loc) {
+    constructor(diagramId, variableNode, layerId, loc) {
         super(diagramId, loc);
-        this.variableNode;
+        this.variableNode = variableNode;
         this.layerId = layerId;
     }
 
