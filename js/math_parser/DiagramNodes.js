@@ -41,6 +41,10 @@ export class PlotConfigNode extends ASTNode {
         this.valueNode = valueNode;
   }
 
-  internal_evaluate(context) { 
+  internal_evaluate(context) {
+    const symbol = context.scope_context.getSymbolByName(this.diagramId);
+    if (!symbol || symbol.value.type !== "DiagramState") {
+        throw new Error(`Runtime Error: Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
+    }    
   }
 }
