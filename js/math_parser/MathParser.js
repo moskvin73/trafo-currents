@@ -23,6 +23,7 @@ import { MathLexer } from './MathLexer.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
 import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
+import { isValidCSSColor },  from '../views/util.js';
 
 /**
  * Единый узел для любой инструкции в коде
@@ -490,10 +491,67 @@ export class MathParser {
   }
 
   #parsePlotLayer() {
+    const token_loc = this.#location;
+    const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
+    this.#consume();
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '('")) {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    const diagram_id = unconIdent();
+    if (!diagram_id) return error_value();
 
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const layer_id = unconIdent();
+    if (!layer_id) return error_value();
+
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    let color = '#000000';
+    if (this.c_token === TokenType.TEXT_BLOCK)
+    {
+      const t_color = this.lexer.stringValue();
+      if (isValidCSSColor(color)) color = t_color;
+      else this.#error(`Неверно заданный цвет ${t_color}`, this.#location); 
+      this.#consume();
+    }
+    else this.#error("Пропущен цвет", this.#location);
+
+    let stroke_width = null;
+    if (this.c_token === TokenType.COMMA) {
+      this.#consume();
+      stroke_width = this.#parseExpression();
+    }
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    return new PlotLayerNode(diagram_id, layer_id, color, stroke_width);    
   }
 
   #parsePlotVector() {
+    const token_loc = this.#location;
+    const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
+    this.#consume();
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '('")) {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    const diagram_id = unconIdent();
+    if (!diagram_id) return error_value();
+
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
 
   }
 

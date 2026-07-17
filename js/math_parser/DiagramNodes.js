@@ -84,7 +84,7 @@ export class PlotLayerNode extends PlotDataNode {
      * @param {string} color - валидная строки цвета (например, LiteralNode со значением "#FF0000")
      * @param {Object|null} strokeWidthNode - Опциональный AST-узел для толщины линии (число)
      */
-    constructor(diagramId, layerId, color, loc, strokeWidthNode = null) {
+    constructor(diagramId, layerId, color, strokeWidthNode, loc) {
         super(diagramId, loc);
         this.layerId = layerId;
         this.color = color;
