@@ -1,5 +1,5 @@
 import ASTNode { VariableNode },  from './ASTNodes.js';
-import ASTNode,  from '../views/DiagramDescriptor.js';
+import DiagramDescriptor,  from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM },  from '../views/util.js';
 
 export class PlotInitNode extends ASTNode {
