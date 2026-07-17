@@ -32,6 +32,14 @@ export class PlotInitNode extends ASTNode {
             const contentDiv = createFloatingWindowDOM(this.diagramId);
             
             descriptor.containerElement = contentDiv;
+
+            descriptor.data.config.width = 450;
+            descriptor.data.config.height = 450;
+            
+            // Также синхронизируем размеры в дескрипторе
+            descriptor.width = 450;
+            descriptor.height = 450;
+                        
             // 2. Инициализируем отрисовщик векторных диаграмм в этом окне
             descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
         }
