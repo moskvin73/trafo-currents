@@ -2,6 +2,7 @@ import ASTNode, { VariableNode } from './ASTNodes.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM }  from '../util.js';
 import VectorDiagram from '../VectorDiagram.js';
+import ComplexNumber from '../math/ComplexNumber.js';
 
 export class PlotInitNode extends ASTNode {
   constructor(diagramId, mode, viewType, loc) {
@@ -126,7 +127,7 @@ export class PlotVectorNode extends PlotDataNode {
                 const descriptor = this.getDiagram(context);
                 const vector_id = this.variableNode.name;
                 const texLabel = ASTNode.formatIdentifierToTeX(vector_id);
-                const value = this.variableNode.internal_evaluate(context);
+                const value = ComplexNumber.from(this.variableNode.internal_evaluate(context));
                 descriptor.addVector(vector_id, texLabel, this.layerId, value);
             } else {
                 this.error(context, "Недопустимый узел значение вектора");
