@@ -175,27 +175,6 @@ export default class VectorDiagram {
         // Сдвигаем (x0, y0) холста так, чтобы компенсировать пустые поля
         this.x0 = (this.width / 2) - pixCenterX;
         this.y0 = (this.height / 2) - pixCenterY;
-       
-       /* const layerMaxMagnitudes = {};
-        
-        // Инициализируем слои из конфига
-        Object.keys(this.data.layers).forEach(layerName => {
-            layerMaxMagnitudes[layerName] = 0.001; // Защита от деления на ноль
-        });
-        
-        // Ищем максимальный вылет вектора в каждом слое
-        this.calculated.forEach(vec => {
-            if (layerMaxMagnitudes[vec.layer] !== undefined) {
-                if (vec.maxR > layerMaxMagnitudes[vec.layer]) {
-                    layerMaxMagnitudes[vec.layer] = vec.maxR;
-                }
-            }
-        });
-        
-        // Вычисляем масштаб scale = пикселей на 1 ед. физической величины
-        Object.keys(layerMaxMagnitudes).forEach(layerName => {
-            this.scales[layerName] = this.maxRadius / layerMaxMagnitudes[layerName];
-        });*/
     }
 
     /**
