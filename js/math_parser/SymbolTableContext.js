@@ -6,20 +6,6 @@ export const SYM_UNDEFINED = 0; // Идентификатор объявлен, 
 export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
-// Форматы вывода комплексных чисел
-/*export const COMPLEX_FORMAT = {
-  ALGEBRAIC: 0,
-  POLAR: 1,
-};
-
-// Режимы измерения углов
-export const ANGLE_MODE = {
-  RADIANS:  0,
-  DEGREES:  1,
-  GRADIANS: 2, 
-  TURNS:    3,
-};*/
-
 export class SymbolTableContext {
   constructor() {
     this.settings = {
