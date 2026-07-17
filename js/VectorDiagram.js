@@ -256,7 +256,8 @@ export default class VectorDiagram {
             
             const config = this.data.layers[vec.layer];
             line.setAttribute("stroke", config.color);
-            line.setAttribute("stroke-width", (config.strokeWidth || 2) / this.scales[vec.layer]); // Компенсация масштаба для толщины линии
+            line.setAttribute("stroke-width", config.strokeWidth || 2);
+            //line.setAttribute("stroke-width", (config.strokeWidth || 2) / this.scales[vec.layer]); // Компенсация масштаба для толщины линии
             line.setAttribute("marker-end", `url(#${config.markerId})`);
             
             layerGroups[vec.layer].appendChild(line);
