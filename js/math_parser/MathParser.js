@@ -65,6 +65,9 @@ export class TeXOutputFormatter {
 
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
     if (this._isStaticLiteralTree(inputTree)) {
+      if (typeof resultValue === 'boolean') {
+        return inputTree.toTeX(context);
+      }
       return resultValue.toRawTeX(context.settings); // Гасим левую часть, выводим только ответ
     }
 
