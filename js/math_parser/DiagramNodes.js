@@ -3,6 +3,7 @@ import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM }  from '../util.js';
 import VectorDiagram from '../VectorDiagram.js';
 import ComplexNumber from '../math/ComplexNumber.js';
+import { TYPE_UNIT } from './ConstantsDef.js';
 
 export class PlotInitNode extends ASTNode {
   constructor(diagramId, mode, viewType, loc) {
@@ -11,6 +12,8 @@ export class PlotInitNode extends ASTNode {
     this.mode = mode;
     this.viewType = viewType;
   }
+
+  get type_unit() { return TYPE_UNIT.PLOT; }
 
   internal_evaluate(context) { 
     try
@@ -46,6 +49,8 @@ export class PlotDataNode extends ASTNode {
     super(loc);
     this.diagramId = diagramId;
   }
+
+  get type_unit() { return TYPE_UNIT.EMPTY; }
 
   getDiagram(context) {
     const symbol = context.scope_context.getSymbolByName(this.diagramId);

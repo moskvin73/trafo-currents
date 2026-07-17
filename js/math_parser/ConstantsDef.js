@@ -58,4 +58,6 @@ export const ANGLE_MODE = {
 export const TYPE_UNIT = {
   PRINT: 0,
   EXPR: 1,
+  PLOT: 2,
+  EMPTY: 3,
 };
