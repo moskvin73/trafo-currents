@@ -60,7 +60,7 @@ export default class VectorDiagram {
         this.renderSVG();
         await this.renderAndPositionLabels();
 
-        initContextMenu();
+        this.initContextMenu();
     }
 
     /**
