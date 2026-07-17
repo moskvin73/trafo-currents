@@ -1,4 +1,4 @@
-export class DiagramDescriptor {
+export default class DiagramDescriptor {
     /**
      * @param {string} mode - "three-phase" или "math"
      * @param {string} viewType - "inline" или "window"
