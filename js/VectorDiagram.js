@@ -90,69 +90,25 @@ export default class VectorDiagram {
      * Этап 2: Расчет индивидуального масштаба (S) для каждой субдиаграммы (слоя)
      */
     calculateScales() {
-        // Зазор в пикселях для полей под формулы MathJax по краям холста
-        const padding = 50; 
-        const usableWidth = this.width - padding * 2;
-        const usableHeight = this.height - padding * 2;
-
-        // Находим экстремумы (границы) графики для каждого слоя отдельно
-        const layerBounds = {};
+        const layerMaxMagnitudes = {};
         
+        // Инициализируем слои из конфига
         Object.keys(this.data.layers).forEach(layerName => {
-            // Точка (0,0) обязана быть на графике, чтобы оси пересекались в видимой зоне
-            layerBounds[layerName] = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+            layerMaxMagnitudes[layerName] = 0.001; // Защита от деления на ноль
         });
-
-        // Сканируем все рассчитанные точки векторов
+        
+        // Ищем максимальный вылет вектора в каждом слое
         this.calculated.forEach(vec => {
-            const b = layerBounds[vec.layer];
-            if (b) {
-                b.minX = Math.min(b.minX, vec.xStart, vec.xEnd);
-                b.maxX = Math.max(b.maxX, vec.xStart, vec.xEnd);
-                b.minY = Math.min(b.minY, vec.yStart, vec.yEnd);
-                b.maxY = Math.max(b.maxY, vec.yStart, vec.yEnd);
+            if (layerMaxMagnitudes[vec.layer] !== undefined) {
+                if (vec.maxR > layerMaxMagnitudes[vec.layer]) {
+                    layerMaxMagnitudes[vec.layer] = vec.maxR;
+                }
             }
         });
-
-        // Для простоты интеграции с общей сеткой и осями выберем один базовый слой для геометрии холста
-        // (Обычно это первый слой, например, напряжение)
-        const baseLayer = Object.keys(this.data.layers)[0];
-        const bounds = layerBounds[baseLayer];
-
-        // Математическая ширина и высота, занимаемая векторами
-        const mathW = bounds.maxX - bounds.minX || 1;
-        const mathH = bounds.maxY - bounds.minY || 1;
-
-        // Рассчитываем масштаб (пикселей на физ. единицу) отдельно по X и по Y
-        const scaleX = usableWidth / mathW;
-        const scaleY = usableHeight / mathH;
         
-        // Берем минимальный масштаб, чтобы диаграмма влезла целиком без искажения пропорций (круг остался кругом)
-        const S_base = Math.min(scaleX, scaleY);
-        this.scales[baseLayer] = S_base;
-
-        // Вычисляем, где должен быть центр осей (x0, y0) на экране, чтобы вся графика влезла
-        if (this.data.config.mode === 'three-phase') {
-            // Для трехфазного режима учитываем поворот базиса на 90 градусов при расчете центра
-            const midMathX = (bounds.minX + bounds.maxX) / 2;
-            const midMathY = (bounds.minY + bounds.maxY) / 2;
-            this.x0 = this.width / 2 - midMathY * S_base;
-            this.y0 = this.height / 2 + midMathX * S_base;
-        } else {
-            // Для стандартного математического режима
-            this.x0 = padding - bounds.minX * S_base + (usableWidth - mathW * S_base) / 2;
-            this.y0 = this.height - padding + bounds.minY * S_base - (usableHeight - mathH * S_base) / 2;
-        }
-
-        // Пересчитываем масштабы для остальных произвольных слоев относительно базового
-        Object.keys(this.data.layers).forEach(layerName => {
-            if (layerName !== baseLayer) {
-                const b = layerBounds[layerName];
-                const mW = b.maxX - b.minX || 1;
-                const mH = b.maxY - b.minY || 1;
-                // Рассчитываем масштаб слоя так, чтобы его экстремумы заняли ту же полезную площадь холста
-                this.scales[layerName] = Math.min(usableWidth / mW, usableHeight / mH);
-            }
+        // Вычисляем масштаб scale = пикселей на 1 ед. физической величины
+        Object.keys(layerMaxMagnitudes).forEach(layerName => {
+            this.scales[layerName] = this.maxRadius / layerMaxMagnitudes[layerName];
         });
     }
 
@@ -289,15 +245,15 @@ export default class VectorDiagram {
      */
     renderGrid(svgNS) {
         const axes = document.createElementNS(svgNS, "g");
-        axes.setAttribute("stroke", "#666");
+        axes.setAttribute("stroke", "#ccc");
         axes.setAttribute("stroke-width", "1");
+        axes.setAttribute("stroke-dasharray", "4 4");
 
-        // Горизонтальная ось (чертится через весь холст на высоте динамического y0)
+        // Горизонтальная ось
         const hLine = document.createElementNS(svgNS, "line");
         hLine.setAttribute("x1", "0"); hLine.setAttribute("y1", this.y0);
         hLine.setAttribute("x2", this.width); hLine.setAttribute("y2", this.y0);
-        
-        // Вертикальная ось (чертится на ширине динамического x0)
+        // Вертикальная ось
         const vLine = document.createElementNS(svgNS, "line");
         vLine.setAttribute("x1", this.x0); vLine.setAttribute("y1", "0");
         vLine.setAttribute("x2", this.x0); vLine.setAttribute("y2", this.height);
@@ -305,28 +261,6 @@ export default class VectorDiagram {
         axes.appendChild(hLine);
         axes.appendChild(vLine);
         this.svg.appendChild(axes);
-
-        // --- ДОБАВЛЕНИЕ ПОДПИСЕЙ ОСЕЙ (+1, +j) ---
-        // Определяем, какая подпись куда идет на основе режима ТОЭ
-        const isThreePhase = (this.data.config.mode === 'three-phase');
-        const textHorizontal = isThreePhase ? "+j" : "+1";
-        const textVertical = isThreePhase ? "+1" : "+j";
-
-        // Метка для правого края горизонтальной оси
-        const foH = document.createElementNS(svgNS, "foreignObject");
-        foH.setAttribute("width", "40"); foH.setAttribute("height", "25");
-        foH.setAttribute("x", this.width - 45); foH.setAttribute("y", this.y0 - 28);
-        foH.innerHTML = `<div style="font-family: MathJax_Main, sans-serif; font-size: 14px; text-align: right;">\\(${textHorizontal}\\)</div>`;
-
-        // Метка для верхнего края вертикальной оси
-        const foV = document.createElementNS(svgNS, "foreignObject");
-        foV.setAttribute("width", "40"); foV.setAttribute("height", "25");
-        foV.setAttribute("x", this.x0 + 8); foV.setAttribute("y", "5");
-        foV.innerHTML = `<div style="font-family: MathJax_Main, sans-serif; font-size: 14px;">\\(${textVertical}\\)</div>`;
-
-        // Добавляем их в слой подписей, чтобы MathJax подхватил их вместе с векторами
-        this.labelsLayer.appendChild(foH);
-        this.labelsLayer.appendChild(foV);
     }
 	
     /**
