@@ -610,8 +610,8 @@ export class AssignNode extends IdentifierNode {
   toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
 
   internal_evaluate(context) {
-    const id = context.scope_context.acquireId(name);
     try {
+      const id = context.scope_context.acquireId(name);
       const sym = context.scope_context.getSymbolById(id);
       const value = this.expression.internal_evaluate(context);
       sym.value = value;
