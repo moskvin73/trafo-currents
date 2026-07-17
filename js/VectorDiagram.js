@@ -289,15 +289,15 @@ export default class VectorDiagram {
      */
     renderGrid(svgNS) {
         const axes = document.createElementNS(svgNS, "g");
-        axes.setAttribute("stroke", "#ccc");
+        axes.setAttribute("stroke", "#666");
         axes.setAttribute("stroke-width", "1");
-        axes.setAttribute("stroke-dasharray", "4 4");
 
-        // Горизонтальная ось
+        // Горизонтальная ось (чертится через весь холст на высоте динамического y0)
         const hLine = document.createElementNS(svgNS, "line");
         hLine.setAttribute("x1", "0"); hLine.setAttribute("y1", this.y0);
         hLine.setAttribute("x2", this.width); hLine.setAttribute("y2", this.y0);
-        // Вертикальная ось
+        
+        // Вертикальная ось (чертится на ширине динамического x0)
         const vLine = document.createElementNS(svgNS, "line");
         vLine.setAttribute("x1", this.x0); vLine.setAttribute("y1", "0");
         vLine.setAttribute("x2", this.x0); vLine.setAttribute("y2", this.height);
@@ -305,6 +305,28 @@ export default class VectorDiagram {
         axes.appendChild(hLine);
         axes.appendChild(vLine);
         this.svg.appendChild(axes);
+
+        // --- ДОБАВЛЕНИЕ ПОДПИСЕЙ ОСЕЙ (+1, +j) ---
+        // Определяем, какая подпись куда идет на основе режима ТОЭ
+        const isThreePhase = (this.data.config.mode === 'three-phase');
+        const textHorizontal = isThreePhase ? "+j" : "+1";
+        const textVertical = isThreePhase ? "+1" : "+j";
+
+        // Метка для правого края горизонтальной оси
+        const foH = document.createElementNS(svgNS, "foreignObject");
+        foH.setAttribute("width", "40"); foH.setAttribute("height", "25");
+        foH.setAttribute("x", this.width - 45); foH.setAttribute("y", this.y0 - 28);
+        foH.innerHTML = `<div style="font-family: MathJax_Main, sans-serif; font-size: 14px; text-align: right;">\\(${textHorizontal}\\)</div>`;
+
+        // Метка для верхнего края вертикальной оси
+        const foV = document.createElementNS(svgNS, "foreignObject");
+        foV.setAttribute("width", "40"); foV.setAttribute("height", "25");
+        foV.setAttribute("x", this.x0 + 8); foV.setAttribute("y", "5");
+        foV.innerHTML = `<div style="font-family: MathJax_Main, sans-serif; font-size: 14px;">\\(${textVertical}\\)</div>`;
+
+        // Добавляем их в слой подписей, чтобы MathJax подхватил их вместе с векторами
+        this.labelsLayer.appendChild(foH);
+        this.labelsLayer.appendChild(foV);
     }
 	
     /**
