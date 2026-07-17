@@ -40,7 +40,7 @@ export class StatementNode {
     }
   }
 
-  get type_unit() { return node.type_unit; }
+  get type_unit() { return this.node.type_unit; }
 
 
   toString() { return this.node.toString(); }
