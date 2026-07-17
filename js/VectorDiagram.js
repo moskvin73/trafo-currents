@@ -234,7 +234,7 @@ export default class VectorDiagram {
         
         // Делаем SVG адаптивным через CSS стили
         this.svg.style.width = "100%";
-        this.svg.style.height = "100%";
+        this.svg.style.height = "auto";
         this.svg.style.display = "block"; 
         this.svg.style.backgroundColor = "#fafafa";
         this.svg.style.overflow = "visible";        
