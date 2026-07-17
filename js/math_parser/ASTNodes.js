@@ -801,12 +801,12 @@ export const CONSTANTS_AST_REGISTRY = new Map([
   }],
   [TokenType.RW_TRUE, {
     instance: PRECOMPUTED_CONSTANTS.TRUE,
-    tex: '\\text{true}',
+    tex: '\\mathrm{true}',
     str: 'true'
   }],
   [TokenType.RW_FALSE, {
     instance: PRECOMPUTED_CONSTANTS.FALSE,
-    tex: '\\text{false}',
+    tex: '\\mathrm{false}',
     str: 'false'
   }],
 ])
