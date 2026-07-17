@@ -90,25 +90,69 @@ export default class VectorDiagram {
      * Этап 2: Расчет индивидуального масштаба (S) для каждой субдиаграммы (слоя)
      */
     calculateScales() {
-        const layerMaxMagnitudes = {};
+        // Зазор в пикселях для полей под формулы MathJax по краям холста
+        const padding = 50; 
+        const usableWidth = this.width - padding * 2;
+        const usableHeight = this.height - padding * 2;
+
+        // Находим экстремумы (границы) графики для каждого слоя отдельно
+        const layerBounds = {};
         
-        // Инициализируем слои из конфига
         Object.keys(this.data.layers).forEach(layerName => {
-            layerMaxMagnitudes[layerName] = 0.001; // Защита от деления на ноль
+            // Точка (0,0) обязана быть на графике, чтобы оси пересекались в видимой зоне
+            layerBounds[layerName] = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
         });
-        
-        // Ищем максимальный вылет вектора в каждом слое
+
+        // Сканируем все рассчитанные точки векторов
         this.calculated.forEach(vec => {
-            if (layerMaxMagnitudes[vec.layer] !== undefined) {
-                if (vec.maxR > layerMaxMagnitudes[vec.layer]) {
-                    layerMaxMagnitudes[vec.layer] = vec.maxR;
-                }
+            const b = layerBounds[vec.layer];
+            if (b) {
+                b.minX = Math.min(b.minX, vec.xStart, vec.xEnd);
+                b.maxX = Math.max(b.maxX, vec.xStart, vec.xEnd);
+                b.minY = Math.min(b.minY, vec.yStart, vec.yEnd);
+                b.maxY = Math.max(b.maxY, vec.yStart, vec.yEnd);
             }
         });
+
+        // Для простоты интеграции с общей сеткой и осями выберем один базовый слой для геометрии холста
+        // (Обычно это первый слой, например, напряжение)
+        const baseLayer = Object.keys(this.data.layers)[0];
+        const bounds = layerBounds[baseLayer];
+
+        // Математическая ширина и высота, занимаемая векторами
+        const mathW = bounds.maxX - bounds.minX || 1;
+        const mathH = bounds.maxY - bounds.minY || 1;
+
+        // Рассчитываем масштаб (пикселей на физ. единицу) отдельно по X и по Y
+        const scaleX = usableWidth / mathW;
+        const scaleY = usableHeight / mathH;
         
-        // Вычисляем масштаб scale = пикселей на 1 ед. физической величины
-        Object.keys(layerMaxMagnitudes).forEach(layerName => {
-            this.scales[layerName] = this.maxRadius / layerMaxMagnitudes[layerName];
+        // Берем минимальный масштаб, чтобы диаграмма влезла целиком без искажения пропорций (круг остался кругом)
+        const S_base = Math.min(scaleX, scaleY);
+        this.scales[baseLayer] = S_base;
+
+        // Вычисляем, где должен быть центр осей (x0, y0) на экране, чтобы вся графика влезла
+        if (this.data.config.mode === 'three-phase') {
+            // Для трехфазного режима учитываем поворот базиса на 90 градусов при расчете центра
+            const midMathX = (bounds.minX + bounds.maxX) / 2;
+            const midMathY = (bounds.minY + bounds.maxY) / 2;
+            this.x0 = this.width / 2 - midMathY * S_base;
+            this.y0 = this.height / 2 + midMathX * S_base;
+        } else {
+            // Для стандартного математического режима
+            this.x0 = padding - bounds.minX * S_base + (usableWidth - mathW * S_base) / 2;
+            this.y0 = this.height - padding + bounds.minY * S_base - (usableHeight - mathH * S_base) / 2;
+        }
+
+        // Пересчитываем масштабы для остальных произвольных слоев относительно базового
+        Object.keys(this.data.layers).forEach(layerName => {
+            if (layerName !== baseLayer) {
+                const b = layerBounds[layerName];
+                const mW = b.maxX - b.minX || 1;
+                const mH = b.maxY - b.minY || 1;
+                // Рассчитываем масштаб слоя так, чтобы его экстремумы заняли ту же полезную площадь холста
+                this.scales[layerName] = Math.min(usableWidth / mW, usableHeight / mH);
+            }
         });
     }
 
