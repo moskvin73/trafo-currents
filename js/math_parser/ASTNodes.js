@@ -144,6 +144,8 @@ export class MathNode extends ASTNode {
     }
   }
 
+  get type() { return TYPE_UNIT.EXPR; }
+  
   /**
    * Добавляет себя в список и останавливает погружение.
    */
