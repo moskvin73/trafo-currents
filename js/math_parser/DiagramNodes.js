@@ -34,11 +34,13 @@ export class PlotInitNode extends ASTNode {
 }
 
 export class PlotConfigNode extends ASTNode {
-  constructor(diagramId, key, value, loc) {
+  constructor(diagramId, key, valueNode, loc) {
     super(loc);
-    this.diagramId = diagramId;
-    this.mode = mode;
-    this.viewType = viewType;
+        this.diagramId = diagramId;
+        this.key = key;
+        this.valueNode = valueNode;
   }
 
+  internal_evaluate(context) { 
+  }
 }
