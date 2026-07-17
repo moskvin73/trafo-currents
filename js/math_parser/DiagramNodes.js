@@ -1,4 +1,4 @@
-import ASTNode { VariableNode } from './ASTNodes.js';
+import ASTNode, { VariableNode } from './ASTNodes.js';
 import DiagramDescriptor  from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM }  from '../util.js';
 
