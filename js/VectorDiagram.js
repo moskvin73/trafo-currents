@@ -90,7 +90,50 @@ export default class VectorDiagram {
      * Этап 2: Расчет индивидуального масштаба (S) для каждой субдиаграммы (слоя)
      */
     calculateScales() {
-        const layerMaxMagnitudes = {};
+        if (this.calculated.length === 0) return;
+
+        // 1. Находим экстремумы (границы) всех точек в математических координатах
+        let minX = 0, maxX = 0, minY = 0, maxY = 0;
+
+        this.calculated.forEach(vec => {
+            minX = Math.min(minX, vec.xStart, vec.xEnd);
+            maxX = Math.max(maxX, vec.xStart, vec.xEnd);
+            minY = Math.min(minY, vec.yStart, vec.yEnd);
+            maxY = Math.max(maxY, vec.yStart, vec.yEnd);
+        });
+
+        // 2. Считаем математическую ширину и высоту всего графа векторов
+        const graphWidth = maxX - minX;
+        const graphHeight = maxY - minY;
+        const maxGraphDim = Math.max(graphWidth, graphHeight, 0.001);
+
+        // 3. Вычисляем ЕДИНЫЙ масштаб для ВСЕХ слоев (чтобы сохранить пропорции)
+        // Оставляем 20% (умножаем на 0.8) на поля под стрелочки и выносные подписи MathJax
+        const availablePixels = Math.min(this.width, this.height) * 0.8;
+        const globalScale = availablePixels / maxGraphDim;
+
+        // Записываем масштаб во все слои
+        Object.keys(this.data.layers).forEach(layerName => {
+            this.scales[layerName] = globalScale;
+        });
+
+        // 4. ДИНАМИЧЕСКОЕ ЦЕНТРИРОВАНИЕ
+        // Находим геометрический центр векторов в математических координатах
+        const graphCenterX = (minX + maxX) / 2;
+        const graphCenterY = (minY + maxY) / 2;
+
+        // Сдвигаем экранный центр (x0, y0) так, чтобы математический центр совпал с центром SVG-холста
+        if (this.data.config.mode === 'three-phase') {
+            // Электротехника: Re -> вверх (-Y), Im -> вправо (+X)
+            this.x0 = (this.width / 2) - (graphCenterY * globalScale);
+            this.y0 = (this.height / 2) + (graphCenterX * globalScale);
+        } else {
+            // Математика: Re -> вправо (+X), Im -> вверх (-Y)
+            this.x0 = (this.width / 2) - (graphCenterX * globalScale);
+            this.y0 = (this.height / 2) + (graphCenterY * globalScale);
+        }
+       
+       /* const layerMaxMagnitudes = {};
         
         // Инициализируем слои из конфига
         Object.keys(this.data.layers).forEach(layerName => {
@@ -109,7 +152,7 @@ export default class VectorDiagram {
         // Вычисляем масштаб scale = пикселей на 1 ед. физической величины
         Object.keys(layerMaxMagnitudes).forEach(layerName => {
             this.scales[layerName] = this.maxRadius / layerMaxMagnitudes[layerName];
-        });
+        });*/
     }
 
     /**
