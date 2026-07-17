@@ -7,48 +7,31 @@ export default class VectorDiagram {
      * @param {Object} data - Специфицированный JSON-пакет данных
      */
     constructor(container, data) {
-    this.container = typeof container === 'string' ? document.querySelector(container) : container;
-    this.data = data;
-    
-    // 1. Динамически считываем ширину контейнера, в который нас вставили.
-    // Если калькулятор создал div шириной 300px или 800px, мы адаптируемся под него.
-    const rect = this.container.getBoundingClientRect();
-    
-    // Берем ширину контейнера. Если он скрыт или равен 0, то берем значение из конфига или 600
-    this.width = rect.width || this.data.config.width || 600;
-    
-    // Чтобы диаграмма была квадратной, делаем высоту равной ширине 
-    // (для векторных диаграмм это обычно оптимально)
-    this.height = this.data.config.height || this.width;
-    
-    this.x0 = this.width / 2;
-    this.y0 = this.height / 2;
-    
-    // Оставляем прежний ваш расчет радиуса, но теперь он отталкивается от реального размера
-    this.maxRadius = Math.min(this.width, this.height) / 2 * 0.8;
-    
-    this.scales = {};       
-    this.calculated = [];   
-    
-    this.svg = null;
-    this.init();        
-        /*this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.container = typeof container === 'string' ? document.querySelector(container) : container;
         this.data = data;
         
-        // Размеры и центр холста
-        this.width = this.data.config.width || 600;
-        this.height = this.data.config.height || 600;
+        // 1. Динамически считываем ширину контейнера, в который нас вставили.
+        // Если калькулятор создал div шириной 300px или 800px, мы адаптируемся под него.
+        const rect = this.container.getBoundingClientRect();
+        
+        // Берем ширину контейнера. Если он скрыт или равен 0, то берем значение из конфига или 600
+        this.width = rect.width || this.data.config.width || 600;
+        
+        // Чтобы диаграмма была квадратной, делаем высоту равной ширине 
+        // (для векторных диаграмм это обычно оптимально)
+        this.height = this.data.config.height || this.width;
+        
         this.x0 = this.width / 2;
         this.y0 = this.height / 2;
         
-        // Допустимый радиус для векторов (80% от минимального полуразмера осей, 20% под поля)
+        // Оставляем прежний ваш расчет радиуса, но теперь он отталкивается от реального размера
         this.maxRadius = Math.min(this.width, this.height) / 2 * 0.8;
         
-        this.scales = {};       // Масштабы для каждого слоя
-        this.calculated = [];   // Геометрически рассчитанные векторы
+        this.scales = {};       
+        this.calculated = [];   
         
         this.svg = null;
-        this.init();*/
+        this.init();        
     }
 
     /**
@@ -240,11 +223,6 @@ export default class VectorDiagram {
         this.svg.style.display = "block"; 
         this.svg.style.backgroundColor = "#fafafa";
         this.svg.style.overflow = "visible";        
-        /*this.svg.setAttribute("width", this.width);
-        this.svg.setAttribute("height", this.height);
-        this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
-        this.svg.style.backgroundColor = "#fafafa";
-        this.svg.style.overflow = "visible"*/
         
         // 3.1 Генерация маркеров-стрелок в <defs>
         const defs = document.createElementNS(svgNS, "defs");
@@ -266,9 +244,6 @@ export default class VectorDiagram {
             defs.appendChild(marker);
         });
         this.svg.appendChild(defs);
-
-        // 3.2 Отрисовка координатной сетки (необязательно, но полезно)
-        //this.renderGrid(svgNS);
 
         // 3.3 Создание трансформируемых групп графики для каждого слоя
         const layerGroups = {};
@@ -311,6 +286,7 @@ export default class VectorDiagram {
         this.labelsLayer.setAttribute("id", "mathjax-labels-layer");
         this.svg.appendChild(this.labelsLayer);
 
+        // 3.2 Отрисовка координатной сетки (необязательно, но полезно)
         this.renderGrid(svgNS);
 
         // НАПОЛНЯЕМ СЛОЙ ПОДПИСЯМИ (Важное исправление!)
