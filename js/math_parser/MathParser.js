@@ -423,7 +423,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const diagram_id = this.unconIdent();
+    const diagram_id = this.#unconIdent();;
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -431,7 +431,7 @@ export class MathParser {
     }
     else this.#consume();
 
-    const mode = this.unconIdent();
+    const mode = this.#unconIdent();;
     if (!diagram_id) return error_value();
 
     let view_type = null;
@@ -440,7 +440,7 @@ export class MathParser {
     }
     else { 
       this.#consume();
-      view_type = this.unconIdent();
+      view_type = this.#unconIdent();;
     }
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
@@ -458,7 +458,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const diagram_id = this.unconIdent();
+    const diagram_id = this.#unconIdent();
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -466,7 +466,7 @@ export class MathParser {
     }
     else this.#consume();
 
-    const key = this.unconIdent();
+    const key = this.#unconIdent();;
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -492,7 +492,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const diagram_id = this.unconIdent();
+    const diagram_id = this.#unconIdent();
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -500,7 +500,7 @@ export class MathParser {
     }
     else this.#consume();
 
-    const layer_id = this.unconIdent();
+    const layer_id = this.#unconIdent();
     if (!layer_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -539,7 +539,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const diagram_id = this.unconIdent();
+    const diagram_id = this.#unconIdent();
     if (!diagram_id) return error_value();
 
     if (this.c_token !== TokenType.COMMA) {
@@ -554,7 +554,7 @@ export class MathParser {
     }
     else this.#consume();
 
-    const layer_id = this.unconIdent();
+    const layer_id = this.#unconIdent();
     if (!layer_id) return error_value();
 
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
