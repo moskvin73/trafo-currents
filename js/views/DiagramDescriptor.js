@@ -71,7 +71,7 @@ export default class DiagramDescriptor {
      * Добавление базового вектора от центра координат
      */
     addVector(vectorId, labelTex, layerId, complexValue) {
-        if (!complexValue.isComplexNumber()) {
+        if (!complexValue.isComplexNumber) {
             throw new TypeError(`Ожидалось комплексное число в параметре 'complexValue', получено: ${typeof complexValue}`);
         }
         // Если слоя не существует, создаем дефолтный, чтобы не падало
