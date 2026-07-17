@@ -72,9 +72,7 @@ export class PlotConfigNode extends PlotDataNode {
             descriptor.setConfig(this.key, computedValue);
         }
     }
-    catch(err) {
-        this.error(context, err);
-    }
+    catch(err) { this.error(context, err); }
     return this.errorValue();
   }
 }
@@ -83,36 +81,26 @@ export class PlotLayerNode extends PlotDataNode {
     /**
      * @param {string} diagramId - Имя переменной диаграммы ("d1")
      * @param {string} layerId - Имя слоя как строка/идентификатор ("voltages")
-     * @param {Object} colorNode - AST-узел для строки цвета (например, LiteralNode со значением "#FF0000")
+     * @param {string} color - AST-узел для строки цвета (например, LiteralNode со значением "#FF0000")
      * @param {Object|null} strokeWidthNode - Опциональный AST-узел для толщины линии (число)
      */
-    constructor(diagramId, layerId, colorNode, loc, strokeWidthNode = null) {
+    constructor(diagramId, layerId, color, loc, strokeWidthNode = null) {
         super(diagramId, loc);
         this.layerId = layerId;
-        this.colorNode = colorNode;
+        this.color = color;
         this.strokeWidthNode = strokeWidthNode;
     }
 
     internal_evaluate(context) {
-        // 1. Ищем дескриптор диаграммы в таблице символов
-        const symbol = evl_context.getSymbolByName(this.diagramId);
-        if (!symbol || symbol.value.type !== "DiagramState") {
-            throw new Error(`Runtime Error: Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
-        }
-        const descriptor = symbol.value;
-
-        // 2. Вычисляем значение цвета (извлекаем строку)
-        const computedColor = this.colorNode.evaluate(evl_context);
-
-        // 3. Вычисляем толщину линии, если узел передан, иначе оставляем по умолчанию (например, 2)
-        let computedStroke = 2;
-        if (this.strokeWidthNode) {
-            computedStroke = this.strokeWidthNode.evaluate(evl_context);
-        }
-
-        // 4. Передаем управление в дескриптор, который сам выполнит валидацию CSS-цвета
-        descriptor.addLayer(this.layerId, computedColor, computedStroke);
-
-        return null; // Функция настройки слоя возвращает void (null)
+        try
+        {
+            const descriptor = this.getDiagram();
+            let computedStroke = 2;
+            if (this.strokeWidthNode) {
+                computedStroke = this.strokeWidthNode.evaluate(evl_context);
+            }
+            descriptor.addLayer(this.layerId, this.color, computedStroke);
+        } catch(err) { this.error(context, err); }
+        return this.errorValue();
     }
 }
