@@ -59,6 +59,8 @@ export default class VectorDiagram {
         this.calculateScales();
         this.renderSVG();
         await this.renderAndPositionLabels();
+
+        initContextMenu();
     }
 
     /**
@@ -727,5 +729,76 @@ export default class VectorDiagram {
         } catch (err) {
             console.error('Ошибка копирования:', err);
         }
+    }
+
+    /**
+     * Инициализация кастомного контекстного меню по правому клику
+     */
+    initContextMenu() {
+        // Создаем элемент меню, если его еще нет на странице
+        let menu = document.getElementById('vector-diagram-context-menu');
+        if (!menu) {
+            menu = document.createElement('div');
+            menu.id = 'vector-diagram-context-menu';
+            
+            // Стилизуем меню в инженерном/минималистичном стиле (похожем на MathJax)
+            Object.assign(menu.style, {
+                position: 'absolute',
+                backgroundColor: '#ffffff',
+                border: '1px solid #cccccc',
+                boxShadow: '2px 2px 8px rgba(0,0,0,0.15)',
+                padding: '4px 0',
+                borderRadius: '4px',
+                zIndex: '10000',
+                display: 'none',
+                fontFamily: 'sans-serif',
+                fontSize: '13px',
+                minWidth: '210px'
+            });
+
+            // Наполняем пунктами меню
+            menu.innerHTML = `
+                <div class="v-menu-item" onclick="window.myDiagram.copyPNGToClipboard()" style="padding: 6px 14px; cursor: pointer; color: #333;">Копировать PNG (для Word)</div>
+                <div class="v-menu-item" onclick="window.myDiagram.downloadPNG()" style="padding: 6px 14px; cursor: pointer; color: #333;">Скачать как PNG-рисунок</div>
+                <div class="v-menu-item" onclick="window.myDiagram.downloadSVG()" style="padding: 6px 14px; cursor: pointer; color: #333;">Скачать как векторный SVG</div>
+                <div style="border-top: 1px solid #eeeeee; margin: 4px 0;"></div>
+                <div style="padding: 4px 14px; color: #999; font-size: 11px; font-style: italic;">Векторная диаграмма v1.0</div>
+            `;
+
+            // Эффект наведения мыши (подсветка пунктов)
+            menu.addEventListener('mouseover', (e) => {
+                if (e.target.classList.contains('v-menu-item')) {
+                    e.target.style.backgroundColor = '#f0f0f0';
+                }
+            });
+            menu.addEventListener('mouseout', (e) => {
+                if (e.target.classList.contains('v-menu-item')) {
+                    e.target.style.backgroundColor = 'transparent';
+                }
+            });
+
+            document.body.appendChild(menu);
+        }
+
+        // Вешаем событие правого клика мыши на контейнер диаграммы
+        this.container.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Запрещаем стандартное меню браузера
+            e.stopPropagation(); // Не пускаем клик к MathJax (чтобы не открывалось его меню)
+
+            // Показываем наше меню точно под курсором мыши
+            menu.style.left = `${e.pageX}px`;
+            menu.style.top = `${e.pageY}px`;
+            menu.style.display = 'block';
+        });
+
+        // Скрываем меню при клике в любое другое место экрана
+        document.addEventListener('click', () => {
+            menu.style.display = 'none';
+        });
+        
+        // Скрываем меню при прокрутке страницы
+        document.addEventListener('scroll', () => {
+            menu.style.display = 'none';
+        });
     }    
 }
