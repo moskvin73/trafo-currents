@@ -121,7 +121,7 @@ export class PlotVectorNode extends PlotDataNode {
     internal_evaluate(context) {
         try
         {
-            if (variableNode instanceof VariableNode)
+            if (this.variableNode instanceof VariableNode)
             {
                 const descriptor = this.getDiagram(context);
                 const vector_id = this.variableNode.name;
