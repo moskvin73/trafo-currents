@@ -560,7 +560,7 @@ export class IdentifierNode extends MathNode {
   }
 
   getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(name);
+    return ASTNode.formatIdentifierToTeX(this.name);
   }
 }
 
