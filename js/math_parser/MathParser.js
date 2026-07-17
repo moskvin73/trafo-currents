@@ -471,6 +471,22 @@ export class MathParser {
     }
     else this.#consume();
 
+    const key = unconIdent();
+    if (!diagram_id) return error_value();
+
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const valueNode = this.#parseExpression();
+
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    return new PlotConfigNode(diagram_id, key, valueNode, token_loc);    
   }
 
   #parsePlotLayer() {
