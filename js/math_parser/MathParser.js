@@ -517,6 +517,14 @@ export class MathParser {
             this.#consume();
             return new ConstantNode(TokenType.MATH_NAN, token_loc);
 
+         case TokenType.RW_TRUE:
+            this.#consume();
+            return true;
+
+         case TokenType.RW_FALSE:
+            this.#consume();
+            return false;
+            
          case TokenType.NUMBER:
          {
             var value = this.lexer.numberValue();
