@@ -311,7 +311,19 @@ export default class ComplexNumber extends MathType {
   // ==========================================
 
   // Переменная для кэширования таблицы конвертеров
-  static #cachedConverters = null;
+  static #localConverters = new Map([
+    [Symbol.for('Math.ComplexNumber'), (val) => val],
+    ['number',        (val) => new RealNumber(val)],
+    [Symbol.for('Math.RealNumber'),    (val) => new ComplexNumber(val.value, 0)]
+    // Перспектива: легко добавить новые типы прямо по их имени:
+    // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
+    // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
+  ]);
+
+  static get converters() { return ComplexNumber.#localConverters; }
+
+
+  /*static #cachedConverters = null;
 
   static get converters() {
     // Мап создается только при первом обращении, когда все классы уже готовы
@@ -336,7 +348,7 @@ export default class ComplexNumber extends MathType {
       ]);
     }
     return ComplexNumber.#cachedConverters;
-  }
+  }*/
 
   // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
   // ==========================================

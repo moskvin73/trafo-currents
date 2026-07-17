@@ -10,7 +10,7 @@ export default class RealNumber extends MathType {
   #value;
 
   static typeId = Symbol.for('Math.RealNumber');
-  
+
   /**
    * @param {number} value - Вещественное число
    */
@@ -38,7 +38,7 @@ export default class RealNumber extends MathType {
   // Универсальная таблица приведения по имени типа
   static #localConverters = new Map([
     ['number',        (val) => new RealNumber(val)],
-    [RealNumber,      (val) => val]
+    [Symbol.for('Math.RealNumber'),      (val) => val]
     // Перспектива: легко добавить новые типы прямо по их имени:
     // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
     // ['Vector2D',   (val) => new ComplexNumber(val.x, val.y)]
