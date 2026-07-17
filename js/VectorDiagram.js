@@ -616,21 +616,27 @@ export default class VectorDiagram {
      * Сборка чистого SVG-строкового кода со всеми стилями и MathJax
      */
     getSVGString() {
-        // Клонируем SVG, чтобы не испортить текущий на экране
         const clonedSvg = this.svg.cloneNode(true);
         
-        // Нам нужно вытащить отрендеренный MathJax CSS, иначе в скачанном файле формулы превратятся в кашу
+        // Фиксируем физический размер для скачиваемого файла
+        clonedSvg.setAttribute("width", this.width);
+        clonedSvg.setAttribute("height", this.height);
+        clonedSvg.style.width = this.width + "px";
+        clonedSvg.style.height = this.height + "px";
+        
+        // Принудительно прописываем пространство имен, без него Canvas падает на GitHub
+        clonedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        
         const mathJaxStyles = document.getElementById("MathJax_SVG_styles") || 
                               document.querySelector("style[id^='MathJax']") || 
                               document.querySelector("style");
         
         if (mathJaxStyles) {
-            const styleElement = document.createElementNS("http://w3.org", "style");
+            const styleElement = document.createElementNS("http://www.w3.org/2000/svg", "style");
             styleElement.textContent = mathJaxStyles.textContent;
             clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
         }
         
-        // Сериализуем в XML строку
         const serializer = new XMLSerializer();
         return serializer.serializeToString(clonedSvg);
     }
@@ -655,52 +661,48 @@ export default class VectorDiagram {
     /**
      * Вспомогательный метод для рендеринга SVG на скрытый Canvas (нужен для PNG)
      */
-    /**
-     * Вспомогательный метод для рендеринга SVG на скрытый Canvas с защитой от Tainted Canvas
-     */
     async renderToCanvas(scaleFactor = 2) {
         return new Promise((resolve, reject) => {
-            let svgString = this.getSVGString();
-            
-            // ХАК ДЛЯ СТАРОГО WORD И БРАУЗЕРА: 
-            // Если MathJax подтягивает внешние шрифты по URL (например, cdnjs),
-            // Canvas заблокирует экспорт. Удалим внешние ссылки @import/@font-face из стилей для Canvas,
-            // так как системных шрифтов в импортируемом SVG браузеру будет достаточно для отрисовки картинки.
-            svgString = svgString.replace(/@font-face\s*{[^}]*}/g, '');
-            svgString = svgString.replace(/@import\s*url\([^)]*\);/g, '');
-
-            const canvas = document.createElement('canvas');
-            canvas.width = this.width * scaleFactor;
-            canvas.height = this.height * scaleFactor;
-            
-            const ctx = canvas.getContext('2d');
-            ctx.scale(scaleFactor, scaleFactor);
-
-            const img = new Image();
-            
-            // КРИТИЧЕСКИ ВАЖНО ДЛЯ КОРРЕКТНОГО CORS:
-            img.crossOrigin = "anonymous"; 
-
-            // Используем современный и безопасный метод URL.createObjectURL
-            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
-
-            img.onload = () => {
-                // Заполняем фон белым цветом (иначе в Word 2010 картинка будет на черном или прозрачном фоне)
-                ctx.fillStyle = "#fafafa";
-                ctx.fillRect(0, 0, this.width, this.height);
+            try {
+                const svgString = this.getSVGString();
                 
-                ctx.drawImage(img, 0, 0, this.width, this.height);
-                URL.revokeObjectURL(url);
-                resolve(canvas);
-            };
-            
-            img.onerror = (err) => {
-                URL.revokeObjectURL(url);
-                reject(new Error("Браузер заблокировал рендеринг SVG в PNG из-за безопасности шрифтов."));
-            };
-            
-            img.src = url;
+                const canvas = document.createElement('canvas');
+                canvas.width = this.width * scaleFactor;
+                canvas.height = this.height * scaleFactor;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.scale(scaleFactor, scaleFactor);
+
+                const img = new Image();
+                
+                // Конвертируем строку в безопасный формат Base64 DataURL
+                // Решает проблему безопасности Tainted Canvas на GitHub
+                const utf8Bytes = new TextEncoder().encode(svgString);
+                let binaryStr = "";
+                for (let i = 0; i < utf8Bytes.length; i++) {
+                    binaryStr += String.fromCharCode(utf8Bytes[i]);
+                }
+                const base64Svg = btoa(binaryStr);
+                
+                img.onload = () => {
+                    // Делаем подложку чисто белой, чтобы в Word 2010 не было черного фона
+                    ctx.fillStyle = "#fafafa";
+                    ctx.fillRect(0, 0, this.width, this.height);
+                    
+                    ctx.drawImage(img, 0, 0, this.width, this.height);
+                    resolve(canvas);
+                };
+                
+                img.onerror = (err) => {
+                    reject(new Error("Ошибка рендеринга SVG. Проверьте валидность тегов."));
+                };
+                
+                // Передаем строку напрямую
+                img.src = "data:image/svg+xml;base64," + base64Svg;
+                
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 
