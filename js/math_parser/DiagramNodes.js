@@ -110,8 +110,6 @@ export class PlotVectorNode extends PlotDataNode {
      * @param {string} diagramId - Имя переменной диаграммы ("d1")
      * @param {string} variableNode - Имя слоя как строка/идентификатор ("voltages")
      * @param {string} layerId - Имя слоя как строка/идентификатор ("voltages")
-     * @param {string} color - валидная строки цвета (например, LiteralNode со значением "#FF0000")
-     * @param {Object|null} strokeWidthNode - Опциональный AST-узел для толщины линии (число)
      */
     constructor(diagramId, variableName, layerId, loc) {
         super(diagramId, loc);
@@ -122,9 +120,9 @@ export class PlotVectorNode extends PlotDataNode {
     internal_evaluate(context) {
         try
         {
-            const descriptor = this.getDiagram();
             if (variableNode instanceof VariableNode)
             {
+                const descriptor = this.getDiagram();
                 const vector_id = this.variableNode.name;
                 const texLabel = ASTNode.formatIdentifierToTeX(vector_id);
                 const value = this.variableNode.internal_evaluate(context);
