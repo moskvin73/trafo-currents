@@ -574,22 +574,12 @@ export class MathParser {
 
   #callFuncORVar() {
       const token_loc = this.#location;
-      const id_name = this.lexer.stringValue();      
-      const id = this.context.acquireId(id_name);
-      let is_error = false;
-
-      const sym_id = this.context.getSymbolById(id);
+      const name = this.lexer.stringValue();      
 
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {
         this.#consume(); // сожрали '('
-
-        if (sym_id.type !== SYM_BUILTIN) {
-            this.#error(`Идентификатор не является функцией "${id_name}"`, token_loc);
-            is_error = true;
-        }
-
         const args = [];
         // Читаем список аргументов через запятую (например: pow(x, 3) или sin(x))
         if (this.c_token !== TokenType.RPAREN) {
@@ -601,26 +591,12 @@ export class MathParser {
           }
         }
 
-        this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${id_name}"`);
+        this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${name}"`);
         
-        if (is_error) {
-            return new NumberNode(new RealNumber(1), token_loc);
-        } else {
-          // Возвращаем универсальный узел вызова
-          return new CallNode(id, args, token_loc);
-        }
+        // Возвращаем универсальный узел вызова
+        return new CallNode(name, args, token_loc);
       }
 
-      // Если скобки нет — это обычное чтение переменной из памяти
-      if (sym_id.type !== SYM_VARIABLE && sym_id.type !== SYM_UNDEFINED) {
-        this.#error(`Идентификатор не является переменной "${id_name}"`, token_loc);
-        is_error = true;
-      }
-
-      if (is_error) {
-          return new NumberNode(new RealNumber(1), token_loc);
-      } else {
-        return new VariableNode(id, token_loc);
-      }
+      return new VariableNode(name, token_loc);
   }
 }
