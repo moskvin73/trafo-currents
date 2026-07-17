@@ -22,6 +22,35 @@ export default class DiagramDescriptor {
         };
     }
 
+     /**
+     * Динамическое изменение настроек диаграммы из калькулятора
+     * @param {string} key - Имя параметра (например, auto_add, width, height)
+     * @param {*} value - Значение параметра (boolean, number и т.д.)
+     */
+    setConfig(key, value) {
+        // Приводим типы к нужным, если парсер отдал их как строки или индентификаторы
+        if (key === 'auto_add') {
+            // Если пришло строкой 'true'/'false' или токеном, приводим к честному boolean
+            this.data.config.auto_add = (value === true || value === 'true');
+        } 
+        else if (key === 'width' || key === 'height') {
+            const num = Number(value);
+            if (!isNaN(num) && num > 0) {
+                this.data.config[key] = num;
+                // Синхронизируем внутренние свойства дескриптора
+                if (key === 'width') this.width = num;
+                if (key === 'height') this.height = num;
+            }
+        } 
+        else {
+            // Для любых других кастомных настроек на будущее
+            this.data.config[key] = value;
+        }
+
+        // Если диаграмма уже отрендерена на экране, отправляем ее на пересчет
+        this.reactiveUpdate();
+    }
+       
     /**
      * Регистрация или обновление слоя
      */
