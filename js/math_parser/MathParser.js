@@ -195,13 +195,20 @@ export class MathParser {
    */
   parse() {
     try {
+        const statements = [];
         while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) {
-             const evl_context = this.#create_evl_context();
-             const value = stmt.node.evaluate(evl_context);
-             this.#program.statements.push(new StatementNode(stmt.node, value, stmt.isSilent));
+             statements.push(new StatementNode(stmt.node, null, stmt.isSilent));
           }
+      }
+      if (this.errors.length === 0) {
+          const evl_context = this.#create_evl_context();
+          for (const stmtNode of statements) {
+            // Вычисляем значение для каждого сохраненного узла
+            stmtNode.value = stmtNode.node.evaluate(evl_context);
+          }
+        this.#program.statements = statements;
       }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
