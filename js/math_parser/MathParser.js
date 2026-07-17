@@ -424,7 +424,7 @@ export class MathParser {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
     this.#consume();
-    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '(' после print")) {
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '('")) {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
