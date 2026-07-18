@@ -660,7 +660,6 @@
         import { MathParser } from './js/math_parser/MathParser.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
-        import { createFloatingWindowDOM } from './js/util.js';
         
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
@@ -801,7 +800,6 @@
                                 case 'plot':
                                     if (res.value.target === "window") {
                                         res.value.createFloatingWindow();
-                                        //createFloatingWindowDOM(res.value.id);
                                     } else if (res.value.target === "inline") {
                                         const mathRow = document.createElement("div");
                                         mathRow.className = "output-row";

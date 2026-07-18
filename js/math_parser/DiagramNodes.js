@@ -28,10 +28,6 @@ export class PlotInitNode extends ASTNode {
 
         // Если режим window — сразу генерируем плавающее окно
         if (this.viewType === "window") {
-            // 1. Создаем плавающее окно и получаем его внутренний div
-            //const contentDiv = createFloatingWindowDOM(this.diagramId);
-            descriptor.createFloatingWindow();
-            //descriptor.containerElement = contentDiv;
 
             descriptor.data.config.width = 450;
             descriptor.data.config.height = 450;
@@ -40,8 +36,8 @@ export class PlotInitNode extends ASTNode {
             descriptor.width = 450;
             descriptor.height = 450;
 
-            // 2. Инициализируем отрисовщик векторных диаграмм в этом окне
-            //descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
+           // 1. Создаем плавающее окно и получаем его внутренний div
+            descriptor.createFloatingWindow();            
         }
 
         // запишите текущий контекст во временную глобальную переменную, чтобы функция ресайза могла его найти
