@@ -56,9 +56,11 @@ export default class DiagramDescriptor {
         };
 
         // 1. Создаем DOM окна (оно добавляется в body, но размеры еще 0)
-        const contentDiv = createFloatingWindowDOM(this.id, () => {
-            if (this.instance) this.instance.syncContainerSizes();
-        });
+const contentDiv = createFloatingWindowDOM(this.id, () => {
+    if (this.instance && typeof this.instance.syncContainerSizes === 'function') {
+        this.instance.syncContainerSizes();
+    }
+}, options); 
 
         // 2. Вызываем ваш сеттер (он внутри создает new VectorDiagram)
         this.containerElement = contentDiv;
