@@ -14,12 +14,16 @@ export default class VectorDiagram {
         // Если калькулятор создал div шириной 300px или 800px, мы адаптируемся под него.
         const rect = this.container.getBoundingClientRect();
         
+        const w = rect.width || this.data.config.width || 300;
+        const h = rect.height || this.data.config.height || 300;
+
+        const s = Math.min(w, h);
         // Берем ширину контейнера. Если он скрыт или равен 0, то берем значение из конфига или 600
-        this.width = rect.width || this.data.config.width || 300;
+        this.width = s;
         
         // Чтобы диаграмма была квадратной, делаем высоту равной ширине 
         // (для векторных диаграмм это обычно оптимально)
-        this.height = this.width;
+        this.height = s;
         
         this.x0 = this.width / 2;
         this.y0 = this.height / 2;
