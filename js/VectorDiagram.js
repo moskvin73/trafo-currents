@@ -148,7 +148,7 @@ export default class VectorDiagram {
             // Считаем координаты точек в пикселях без учета сдвига (относительно нуля)
             let xStartPix, yStartPix, xEndPix, yEndPix;
             
-            if (this.data.config.mode === 'three-phase') {
+            if (this.data.config.mode === 'three_phase') {
                 // Электротехника базис: Re -> вверх (-Y), Im -> вправо (+X)
                 xStartPix = -vec.yStart * S; // Im уходит влево
                 yStartPix = -vec.xStart * S; // Re уходит вверх
@@ -186,7 +186,7 @@ export default class VectorDiagram {
      */
     projectCoordinates(x, y, layer) {
         const S = this.scales[layer];
-        if (this.data.config.mode === 'three-phase') {
+        if (this.data.config.mode === 'three_phase') {
             // Изменили знак плюс на минус перед мнимой частью (y), чтобы подписи тоже уходили влево
             return {
                 x: this.x0 - y * S, 
@@ -248,7 +248,7 @@ export default class VectorDiagram {
             // Расчет матрицы трансформации matrix(a, b, c, d, e, f)
             const S = this.scales[layerName];
             let matrix = "";
-            if (this.data.config.mode === 'three-phase') {
+            if (this.data.config.mode === 'three_phase') {
                 matrix = `matrix(0, ${-S}, ${-S}, 0, ${this.x0}, ${this.y0})`;
             } else {
                 matrix = `matrix(${S}, 0, 0, ${-S}, ${this.x0}, ${this.y0})`;
@@ -336,7 +336,7 @@ export default class VectorDiagram {
         let axisLabels = [];
         const padding = 15; // Отступ от краев осей в пикселях
 
-        if (this.data.config.mode === 'three-phase') {
+        if (this.data.config.mode === 'three_phase') {
             // ЭЛЕКТРОТЕХНИКА: Вверх -> +1, Влево -> +j (поворот против часовой стрелки на 90 градусов)
             axisLabels = [
                 { text: '+1', x: this.x0 + 8, y: padding }, // Сверху на вертикальной оси
