@@ -1,7 +1,5 @@
 import ASTNode, { VariableNode } from './ASTNodes.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
-// import { createFloatingWindowDOM }  from '../util.js';
-//import VectorDiagram from '../VectorDiagram.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
 
