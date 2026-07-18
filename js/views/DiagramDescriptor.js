@@ -29,12 +29,20 @@ export default class DiagramDescriptor {
     get containerElement() { return this.#containerElement; }
 
     set containerElement(contentDiv) {
+        if (this.#containerElement === contentDiv) {
+            return;
+        }
+
         if (!contentDiv || !(contentDiv instanceof Element)) {
             throw new TypeError("Инициализация невозможна: containerElement должен быть валидным DOM-элементом.");
         }
 
         this.instance = new VectorDiagram(contentDiv, this.data);
         this.#containerElement = contentDiv;
+    }
+
+    createFloatingWindow() {
+        containerElement = createFloatingWindowDOM(this.Id);
     }
 
     /**
