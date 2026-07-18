@@ -27,9 +27,14 @@ export default class DiagramDescriptor {
     get containerElement() { return this.#containerElement; }
 
     set containerElement(contentDiv) {
+        if (!contentDiv || !(contentDiv instanceof Element)) {
+            throw new TypeError("Инициализация невозможна: containerElement должен быть валидным DOM-элементом.");
+        }
+
         descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
         this.#containerElement = contentDiv;
     }
+
     /**
      * Считывает новые измененные размеры HTML-окна и обновляет внутренний SVG-viewBox
      */
