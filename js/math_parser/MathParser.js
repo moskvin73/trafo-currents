@@ -249,7 +249,7 @@ export class MathParser {
               return { type: 'expr', value:  `$$${renderString}$$` };
             }
           default:
-            throw new Error(`Неизвестная едегица компеляции ${stmt.type_unit}`);
+            throw new Error(`Неизвестная единица компиляции ${stmt.type_unit}`);
         }
       });
   }
