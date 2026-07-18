@@ -797,6 +797,15 @@
                                     resultBlock.appendChild(mathRow);
                                     }
                                 case 'plot':
+                                    if (res.value.target === "window") {
+                                        createFloatingWindowDOM(finalResult.id);
+                                    } else if (res.value.target === "inline") {
+                                        const mathRow = document.createElement("div");
+                                        mathRow.className = "output-row";
+                                        res.value.containerElement = mathRow;
+                                        res.value.instance = new VectorDiagram(mathRow, res.value.data); 
+                                        resultBlock.appendChild(mathRow);
+                                    }
                                     break;
                             }
                         });
