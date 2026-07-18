@@ -89,7 +89,7 @@ function collectTerms(node, out_errors, currentSign = false) {
 function aggregateTerms(terms) {
     // Сюда будем суммировать все NumberNode. Предполагаем, что у ComplexNumber есть метод .add()
     // Инициализируем нулем (замените на ваш класс комплексного нуля, если требуется)
-    let constantSum = ComplexNumber.from(0); 
+    let constantSum = new ComplexNumber(0, 0); 
     
     // Карта для подсчета множителей переменных: { "x": 2, "y": -1 }
     const variableCounts = {};
