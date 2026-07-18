@@ -28,14 +28,24 @@ export function isValidCSSColor(colorStr) {
 let maxZIndex = 10000;
 
 /**
- * Создает плавающее перетаскиваемое окно для отображения векторной диаграммы.
- * @param {string} diagramId - Уникальный идентификатор диаграммы (имя переменной)
- * @returns {HTMLElement} DOM-элемент контента окна, куда нужно инициализировать VectorDiagram
+ * @param {string} diagramId 
+ * @param {Function} onResize - функция обратного вызова при ресайзе
+ * @param {Object} [options] - настройки размеров и позиционирования
+ * @param {number} [options.width=300] - начальная ширина окна
+ * @param {number} [options.height=320] - начальная высота окна
+ * @param {string} [options.alignX='center'] - 'left' | 'center' | 'right'
+ * @param {string} [options.alignY='center'] - 'top' | 'center' | 'bottom'
  */
-export function createFloatingWindowDOM(diagramId, onResize) {
+export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     const windowId = `floating-win-${diagramId}`;
     let win = document.getElementById(windowId);
     
+    // Значения по умолчанию, если пользователь ничего не передал
+    const width = options.width || 300;
+    const height = options.height || 330;
+    const alignX = options.alignX || 'center';
+    const alignY = options.alignY || 'center';
+
     // ФУНКЦИЯ РАЗВЕРТЫВАНИЯ/ВОССТАНОВЛЕНИЯ ОКНА
     const restoreWindow = (targetWin) => {
         if (targetWin.dataset.isMinimized === 'true') {
@@ -85,8 +95,8 @@ export function createFloatingWindowDOM(diagramId, onResize) {
     
     Object.assign(win.style, {
         position: 'fixed',
-        width: '450px',
-        height: '490px',
+        width: `${width}px`,
+        height: `${height}px`,
         backgroundColor: '#ffffff',
         border: '1px solid #dcdcdc',
         borderRadius: '6px',
@@ -98,8 +108,43 @@ export function createFloatingWindowDOM(diagramId, onResize) {
         fontFamily: 'sans-serif'
     });
 
-    win.style.left = `${window.innerWidth / 2 - 225}px`;
-    win.style.top = `${window.innerHeight / 2 - 245}px`; // Досчитали центрирование по вертикале
+    // --- УМНОЕ ПОЗИЦИОНИРОВАНИЕ (Как в Windows) ---
+    let targetLeft = 0;
+    let targetTop = 0;
+
+    // Расчет по оси X
+    if (alignX === 'left') {
+        targetLeft = 20; // Небольшой отступ от края экрана
+    } else if (alignX === 'right') {
+        targetLeft = window.innerWidth - width - 20;
+    } else { // 'center'
+        targetLeft = window.innerWidth / 2 - width / 2;
+    }
+
+    // Расчет по оси Y
+    if (alignY === 'top') {
+        targetTop = 20;
+    } else if (alignY === 'bottom') {
+        targetTop = window.innerHeight - height - 20;
+    } else { // 'center'
+        targetTop = window.innerHeight / 2 - height / 2;
+    }
+
+    // ЭФФЕКТ СМЕЩЕНИЯ (Каскадное открытие окон, чтобы они не перекрывали друг друга один в один)
+    // Находим сколько окон СЕЙЧАС открыто (не свернуто) на экране
+    const openWindowsCount = document.querySelectorAll(`div[id^="floating-win-"]:not([data-is-minimized="true"])`).length;
+    
+    // Если на экране уже есть окна, смещаем новое окно по диагонали на 25 пикселей за каждое окно
+    if (openWindowsCount > 0) {
+        targetLeft += (openWindowsCount * 25);
+        targetTop += (openWindowsCount * 25);
+    }
+
+    // Применяем финальные координаты
+    win.style.left = `${targetLeft}px`;
+    win.style.top = `${targetTop}px`;    
+    //win.style.left = `${window.innerWidth / 2 - 225}px`;
+    //win.style.top = `${window.innerHeight / 2 - 245}px`; // Досчитали центрирование по вертикале
 
     // 2. Шапка окна
     const header = document.createElement('div');
@@ -255,7 +300,7 @@ export function createFloatingWindowDOM(diagramId, onResize) {
 /**
  * Вспомогательная функция, которая находит диаграмму в таблице символов и обновляет ее геометрию
  */
-export function triggerDiagramResize(diagramId) {
+/*export function triggerDiagramResize(diagramId) {
     // Если у вас есть глобальный контекст или вы можете достучаться до текущего evl_context:
     if (window.currentEvaluationContext) {
         const symbol = window.currentEvaluationContext.getSymbolByName(diagramId);
@@ -263,4 +308,4 @@ export function triggerDiagramResize(diagramId) {
             symbol.value.syncContainerSizes();
         }
     }
-}
+}*/
