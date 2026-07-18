@@ -19,7 +19,7 @@ export default class VectorDiagram {
         
         // Чтобы диаграмма была квадратной, делаем высоту равной ширине 
         // (для векторных диаграмм это обычно оптимально)
-        this.height = this.data.config.height || this.width;
+        this.height = this.width;
         
         this.x0 = this.width / 2;
         this.y0 = this.height / 2;
