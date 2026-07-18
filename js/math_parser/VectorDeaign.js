@@ -49,7 +49,7 @@ export function BuildVectorOperationDescription(node, out_errors)
     {
         conat a_left = BuildVectorOperationDescription(node.left, out_errors);
         conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left, ...a_right];
+        return [...a_left, ...a_right.map(item => Boolean(item.sign ^ Bool))];
     }
     else if (node instanceof VariableNode)
     {
