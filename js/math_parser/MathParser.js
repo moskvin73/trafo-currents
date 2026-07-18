@@ -447,7 +447,7 @@ export class MathParser {
     if (!mode) return error_value();
 
     let view_type = null;
-    if (this.c_token !== TokenType.COMMA) {
+    if (this.c_token === TokenType.COMMA) {
       this.#consume();
       view_type = this.#unconIdent();
       if (!view_type) return error_value();
