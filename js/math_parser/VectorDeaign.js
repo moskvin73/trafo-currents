@@ -72,4 +72,5 @@ export function BuildVectorOperationDescription(node, out_errors)
         }
     }
     out_errors.error("Недопустимая векторная опреация", node.loc);
+    return [];
 }
