@@ -233,14 +233,20 @@ export class MathParser {
     }
 
     return this.#program.statements
-      .filter((stmt) => !stmt.isSilent)
+      .filter((stmt) => !stmt.isSilent && stmt.node !== TYPE_UNIT.EMPTY)
       .map((stmt) => {
-        if (stmt.type_unit === TYPE_UNIT.PRINT) { 
-          return { mixed: true, value: stmt.value };
+        switch (stmt.type_unit)
+        {
+          case TYPE_UNIT.PRINT:
+            return { type: 'mixed', value: stmt.value };
+          case TYPE_UNIT.PLOT:
+            return { type: 'plot', value: stmt.node };
+          case TYPE_UNIT.EXPR:
+            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+            return { type: 'expr', value:  `$$${renderString}$$` };
+          default:
+            throw new Error(`Неизвестная едегица компеляции ${stmt.type_unit}`);
         }
-
-        const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-        return { mixed: false, value: `$$${renderString}$$` };
       });
   }
 

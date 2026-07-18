@@ -322,34 +322,6 @@ export default class ComplexNumber extends MathType {
 
   static get converters() { return ComplexNumber.#localConverters; }
 
-
-  /*static #cachedConverters = null;
-
-  static get converters() {
-    // Мап создается только при первом обращении, когда все классы уже готовы
-    // Если мап еще не создан, создаем его
-    if (!ComplexNumber.#cachedConverters) {
-      // 1. Безопасно пытаемся взять RealNumber из области видимости.
-      // Если браузер ругается, что его нет, мы берем его из глобального окна или кэша модулей.
-      let ActualRealNumber;
-      try {
-        ActualRealNumber = RealNumber;
-      } catch (e) {
-        // Если вы используете сборщик или чистый ESM, браузер может прятать классы.
-        // В таком случае проверяем, не определен ли он глобально:
-        ActualRealNumber = window.RealNumber;
-      }
-
-      ComplexNumber.#cachedConverters = new Map([
-        [ComplexNumber, (val) => val],
-        ['number',      (val) => new ComplexNumber(val, 0)],
-        // Используем проверенную переменную вместо прямой ссылки
-        [ActualRealNumber, (val) => new ComplexNumber(val.value, 0)]
-      ]);
-    }
-    return ComplexNumber.#cachedConverters;
-  }*/
-
   // #region АРИФМЕТИЧЕСКИЕ МЕТОДЫ
   // ==========================================
   // АРИФМЕТИЧЕСКИЕ МЕТОДЫ ЭКЗЕМПЛЯРА (Instance Methods)
