@@ -241,10 +241,10 @@ export class MathParser {
           case TYPE_UNIT.PRINT:
             return { type: 'mixed', value: stmt.value };
           case TYPE_UNIT.PLOT:
-            return { type: 'plot', value: stmt.value, id: stmt.node.diagramId };
+            return { type: 'plot', value: stmt.value };
           case TYPE_UNIT.EXPR:
             if (stmt.value instanceof DiagramDescriptor) {
-              return { type: 'plot', value: stmt.value, id: stmt.node.name };
+              return { type: 'plot', value: stmt.value };
             }
             else {
               const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
