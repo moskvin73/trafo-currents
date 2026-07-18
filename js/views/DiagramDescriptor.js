@@ -22,6 +22,37 @@ export default class DiagramDescriptor {
         };
     }
 
+    /**
+     * Считывает новые измененные размеры HTML-окна и обновляет внутренний SVG-viewBox
+     */
+    syncContainerSizes() {
+        if (!this.containerElement) return;
+        
+        // Измеряем новые физические габариты окна после изменения его мышкой
+        const rect = this.containerElement.getBoundingClientRect();
+        
+        if (rect.width > 0 && rect.height > 0) {
+            this.data.config.width = rect.width;
+            this.data.config.height = rect.height;
+            
+            this.width = rect.width;
+            this.height = rect.height;
+            
+            // Если экземпляр графики VectorDiagram жив, обновляем его корневые свойства
+            if (this.instance) {
+                this.instance.width = rect.width;
+                this.instance.height = rect.height;
+                this.instance.x0 = rect.width / 2;
+                this.instance.y0 = rect.height / 2;
+                // Пересчитываем радиус векторов под новый размер окна
+                this.instance.maxRadius = Math.min(rect.width, rect.height) / 2 * 0.8;
+            }
+            
+            // Перерисовываем диаграмму
+            this.reactiveUpdate();
+        }
+    }
+        
      /**
      * Динамическое изменение настроек диаграммы из калькулятора
      * @param {string} key - Имя параметра (например, auto_add, width, height)

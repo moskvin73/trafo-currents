@@ -26,8 +26,6 @@ export class PlotInitNode extends ASTNode {
         const descriptor = new DiagramDescriptor(this.mode, this.viewType);
         sym.value = descriptor;
 
-        window.currentEvaluationContext = context.scope_context;
-
         // Если режим window — сразу генерируем плавающее окно
         if (this.viewType === "window") {
             // 1. Создаем плавающее окно и получаем его внутренний div
@@ -45,6 +43,9 @@ export class PlotInitNode extends ASTNode {
             // 2. Инициализируем отрисовщик векторных диаграмм в этом окне
             descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
         }
+
+        // запишите текущий контекст во временную глобальную переменную, чтобы функция ресайза могла его найти
+        window.currentEvaluationContext = context.scope_context;
         return descriptor;
     }
     catch(err) {
