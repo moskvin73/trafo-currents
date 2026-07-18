@@ -24,12 +24,6 @@ export function isValidCSSColor(colorStr) {
            /^[a-z]+$/i.test(trimmed);
 }
 
-/**
- * Создает плавающее перетаскиваемое окно для отображения векторной диаграммы.
- * @param {string} diagramId - Уникальный идентификатор диаграммы (имя переменной)
- * @returns {HTMLElement} DOM-элемент контента окна, куда нужно инициализировать VectorDiagram
- */
-
 // Переменная живет вне функции, чтобы быть общей для всех создаваемых окон
 let maxZIndex = 10000;
 
@@ -38,7 +32,7 @@ let maxZIndex = 10000;
  * @param {string} diagramId - Уникальный идентификатор диаграммы (имя переменной)
  * @returns {HTMLElement} DOM-элемент контента окна, куда нужно инициализировать VectorDiagram
  */
-export function createFloatingWindowDOM(diagramId) {
+export function createFloatingWindowDOM(diagramId, onResize) {
     const windowId = `floating-win-${diagramId}`;
     let win = document.getElementById(windowId);
     
@@ -59,7 +53,8 @@ export function createFloatingWindowDOM(diagramId) {
             targetWin.querySelector('.v-min-btn').textContent = '_';
             
             // Триггерим ресайз диаграммы, так как размеры контейнера вернулись
-            triggerDiagramResize(diagramId);
+            //triggerDiagramResize(diagramId);
+            if (typeof onResize === 'function') onResize();
         }
     };
 
@@ -242,7 +237,8 @@ export function createFloatingWindowDOM(diagramId) {
             win.style.width = `${Math.max(250, nw)}px`;
             win.style.height = `${Math.max(250, nh)}px`;
             
-            triggerDiagramResize(diagramId);
+            //triggerDiagramResize(diagramId);
+            if (typeof onResize === 'function') onResize();
         }
     });
 
