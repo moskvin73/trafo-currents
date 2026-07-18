@@ -788,13 +788,6 @@ export default class VectorDiagram {
 
         // 2. ОТКРЫТИЕ НАШЕГО КАСТОМНОГО МЕНЮ
         this.container.addEventListener('contextmenu', (e) => {
-            /*e.preventDefault(); // Отключаем стандартное меню браузера
-            e.stopPropagation(); // Защита от всплытия выше
-
-            // Показываем меню точно под курсором
-            menu.style.left = `${e.clientX}px`;
-            menu.style.top = `${e.clientY}px`;
-            menu.style.display = 'block';*/
             e.preventDefault(); 
             e.stopPropagation(); 
 
