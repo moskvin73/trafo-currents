@@ -34,10 +34,12 @@ import ComplexNumber from '../math/ComplexNumber.js';
 
 export function BuildVectorOperationDescription(node, out_errors)
 {
-    const signState = { minusCount: 0 };
+    const node_sign = false;
     if (node instanceof UnaryOpNode)
     {
+        const signState = { minusCount: 0 };
         node = collapseUnaryChain(node, signState);
+        sign = minusCount / 2 !== 0;
     }
     if (node instanceof AddNode)
     {
@@ -49,7 +51,7 @@ export function BuildVectorOperationDescription(node, out_errors)
     {
         conat a_left = BuildVectorOperationDescription(node.left, out_errors);
         conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left, ...a_right.map(item => Boolean(item.sign ^ Bool))];
+        return [...a_left, ...a_right.map(item => Boolean(item.sign ^ node_sign))];
     }
     else if (node instanceof VariableNode)
     {
@@ -59,14 +61,14 @@ export function BuildVectorOperationDescription(node, out_errors)
     {
         const value_node = node.value;
         if (value_node instanceof RealNumber) {
-            return [{ sign: minusCount / 2 !== 0, name: null, value: ComplexNumber.from(value_node) }];
+            return [{ sign: node_sign, name: null, value: ComplexNumber.from(value_node) }];
         }
         if (value_node instanceof ComplexNumber) {
-            return [{ sign: minusCount / 2 !== 0, name: null, value: value_node }];
+            return [{ sign: node_sign, name: null, value: value_node }];
         }
         else { 
             out_errors.error("Недопустимый тип операнда векторной опреации", node.loc);
-            return null;
+            return [];
         }
     }
     out_errors.error("Недопустимая векторная опреация", node.loc);
