@@ -81,8 +81,6 @@ export default class DiagramDescriptor {
         
         observer.observe(contentDiv);
         return contentDiv;
-        //this.containerElement = createFloatingWindowDOM(this.id);
-        //return this.containerElement;
     }
 
     /**
