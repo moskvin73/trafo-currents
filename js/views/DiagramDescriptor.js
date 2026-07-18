@@ -1,6 +1,6 @@
 export default class DiagramDescriptor {
     /**
-     * @param {string} mode - "three-phase" или "math"
+     * @param {string} mode - "three_phase" или "math"
      * @param {string} viewType - "inline" или "window"
      */
     constructor(mode, viewType) {
@@ -52,7 +52,7 @@ export default class DiagramDescriptor {
             this.reactiveUpdate();
         }
     }
-        
+
      /**
      * Динамическое изменение настроек диаграммы из калькулятора
      * @param {string} key - Имя параметра (например, auto_add, width, height)
