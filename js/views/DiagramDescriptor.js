@@ -1,4 +1,5 @@
 export default class DiagramDescriptor {
+    #containerElement;
     /**
      * @param {string} mode - "three_phase" или "math"
      * @param {string} viewType - "inline" или "window"
@@ -8,7 +9,7 @@ export default class DiagramDescriptor {
         this.type = "DiagramState"; // Метка типа для вашей SymbolTable
         this.target = viewType || "inline";
         this.instance = null;        // Ссылка на живой объект VectorDiagram
-        this.containerElement = null; // DOM-элемент, куда рендерится SVG
+        this.#containerElement = null; // DOM-элемент, куда рендерится SVG
         
         // Чистая структура данных, которую ожидает VectorDiagram
         this.data = {
@@ -23,6 +24,12 @@ export default class DiagramDescriptor {
         };
     }
 
+    get containerElement() { return this.#containerElement; }
+
+    set containerElement(contentDiv) {
+        descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
+        this.#containerElement = contentDiv;
+    }
     /**
      * Считывает новые измененные размеры HTML-окна и обновляет внутренний SVG-viewBox
      */
