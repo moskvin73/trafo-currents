@@ -1,7 +1,7 @@
 import ASTNode, { VariableNode } from './ASTNodes.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { createFloatingWindowDOM }  from '../util.js';
-import VectorDiagram from '../VectorDiagram.js';
+//import VectorDiagram from '../VectorDiagram.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
 
@@ -41,7 +41,7 @@ export class PlotInitNode extends ASTNode {
             descriptor.height = 450;
 
             // 2. Инициализируем отрисовщик векторных диаграмм в этом окне
-            descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
+            //descriptor.instance = new VectorDiagram(contentDiv, descriptor.data);
         }
 
         // запишите текущий контекст во временную глобальную переменную, чтобы функция ресайза могла его найти

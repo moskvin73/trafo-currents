@@ -1,3 +1,5 @@
+import VectorDiagram from '../VectorDiagram.js'
+
 export default class DiagramDescriptor {
     #containerElement;
     /**
