@@ -240,10 +240,14 @@ export class MathParser {
           case TYPE_UNIT.PRINT:
             return { type: 'mixed', value: stmt.value };
           case TYPE_UNIT.PLOT:
-            return { type: 'plot', value: stmt.node };
+            return { type: 'plot', value: stmt.value };
           case TYPE_UNIT.EXPR:
-            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-            return { type: 'expr', value:  `$$${renderString}$$` };
+            if (stmt.value instanceof DiagramDescriptor) {
+              return { type: 'plot', value: stmt.value };
+            } else {
+              const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+              return { type: 'expr', value:  `$$${renderString}$$` };
+            }
           default:
             throw new Error(`Неизвестная едегица компеляции ${stmt.type_unit}`);
         }
