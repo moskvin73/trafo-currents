@@ -799,7 +799,7 @@
                                     }
                                 case 'plot':
                                     if (res.value.target === "window") {
-                                        createFloatingWindowDOM(finalResult.id);
+                                        createFloatingWindowDOM(res.value.id);
                                     } else if (res.value.target === "inline") {
                                         const mathRow = document.createElement("div");
                                         mathRow.className = "output-row";
