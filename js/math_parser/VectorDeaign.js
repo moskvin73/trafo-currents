@@ -18,61 +18,75 @@ import ASTNode, {
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
-  // Вспомогательный метод для размотки цепочки знаков +---++
-  function collapseUnaryChain(node, signState) {
-    // Если текущий узел — унарная операция, обрабатываем её и идём вглубь
+// Вспомогательный метод для размотки цепочки знаков +---++
+function collapseUnaryChain(node, signState) {
+// Если текущий узел — унарная операция, обрабатываем её и идём вглубь
+if (node instanceof UnaryOpNode) {
+    if (node.operator === '-') {
+    signState.minusCount++;
+    }
+    return collapseUnaryChain(node.argument, signState);
+}
+
+// Как только наткнулись на не-унарный узел, это база — возвращаем его
+return node;
+}  
+
+function collectTerms(node, out_errors, currentSign = false) {
+    // Если наткнулись на унарный знак, раскрываем всю цепочку
     if (node instanceof UnaryOpNode) {
-      if (node.operator === '-') {
-        signState.minusCount++;
-      }
-      return collapseUnaryChain(node.argument, signState);
+        const signState = { minusCount: 0 };
+        const coreNode = collapseUnaryChain(node, signState);
+        // Если количество минусов нечетное, инвертируем текущий знак
+        const hasMinus = signState.minusCount % 2 !== 0;
+        return collectTerms(coreNode, out_errors, currentSign !== hasMinus);
+    }
+
+    if (node instanceof AddNode) {
+        // При сложении знак родителя передается обоим поддеревьям без изменений
+        const a_left = collectTerms(node.left, out_errors, currentSign);
+        const a_right = collectTerms(node.right, out_errors, currentSign);
+        return [...a_left, ...a_right];
     }
     
-    // Как только наткнулись на не-унарный узел, это база — возвращаем его
-    return node;
-  }  
+    if (node instanceof SubNode) {
+        // При вычитании правое поддерево инвертирует входящий знак
+        const a_left = collectTerms(node.left, out_errors, currentSign);
+        const a_right = collectTerms(node.right, out_errors, !currentSign);
+        return [...a_left, ...a_right];
+    }
+    
+    if (node instanceof VariableNode) {
+        // Обязательно возвращаем в виде массива [ ... ]
+        return [{ sign: currentSign, name: node.name, value: null }];
+    }
+    
+    if (node instanceof NumberNode) {
+        const value_node = node.value;
+        let finalValue = null;
+
+        if (value_node instanceof RealNumber) {
+            finalValue = ComplexNumber.from(value_node);
+        } else if (value_node instanceof ComplexNumber) {
+            finalValue = value_node;
+        } else { 
+            out_errors.error("Недопустимый тип операнда векторной операции", node.loc);
+            return [];
+        }
+
+        // Если итоговый знак минус, инвертируем (негатируем) само число
+        if (currentSign) {
+            finalValue = finalValue.negate();
+        }
+
+        return [{ sign: false, name: null, value: finalValue }];
+    }
+
+    out_errors.error("Недопустимая векторная операция", node.loc);
+    return [];
+}
 
 export function BuildVectorOperationDescription(node, out_errors)
 {
-    const node_sign = false;
-    if (node instanceof UnaryOpNode)
-    {
-        const signState = { minusCount: 0 };
-        node = collapseUnaryChain(node, signState);
-        sign = minusCount / 2 !== 0;
-    }
-    if (node instanceof AddNode)
-    {
-        conat a_left = BuildVectorOperationDescription(node.left, out_errors);
-        conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left.map(item => Boolean(item.sign ^ node_sign)), 
-                        ...a_right.map(item => Boolean(item.sign ^ !node_sign))];
-    }
-    else if (node instanceof SubNode)
-    {
-        conat a_left = BuildVectorOperationDescription(node.left, out_errors);
-        conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left.map(item => Boolean(item.sign ^ node_sign)), 
-                        ...a_right.map(item => Boolean(item.sign ^ !node_sign))];
-    }
-    else if (node instanceof VariableNode)
-    {
-        return { sign: node_sign, name: node.name, value: null }
-    }
-    else if (node instanceof NumberNode)
-    {
-        const value_node = node.value;
-        if (value_node instanceof RealNumber) {
-            return [{ sign: false, name: null, value: ComplexNumber.from(node_sign ? value_node.negate() : value_node) }];
-        }
-        if (value_node instanceof ComplexNumber) {
-            return [{ sign: false, name: null, value: node_sign ? value_node.negate() : value_node }];
-        }
-        else { 
-            out_errors.error("Недопустимый тип операнда векторной опреации", node.loc);
-            return [];
-        }
-    }
-    out_errors.error("Недопустимая векторная опреация", node.loc);
-    return [];
+
 }
