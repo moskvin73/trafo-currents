@@ -800,8 +800,8 @@
                                     break;
                                 case 'plot':
                                     if (res.value.target === "window") {
-                                        res.value.createFloatingWindow();
-                                        //createFloatingWindowDOM(res.value.id);
+                                        //res.value.createFloatingWindow();
+                                        createFloatingWindowDOM(res.value.id);
                                     } else if (res.value.target === "inline") {
                                         const mathRow = document.createElement("div");
                                         mathRow.className = "output-row";
