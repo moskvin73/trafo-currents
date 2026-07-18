@@ -86,6 +86,37 @@ function collectTerms(node, out_errors, currentSign = false) {
     return [];
 }
 
+function aggregateTerms(terms) {
+    // Сюда будем суммировать все NumberNode. Предполагаем, что у ComplexNumber есть метод .add()
+    // Инициализируем нулем (замените на ваш класс комплексного нуля, если требуется)
+    let constantSum = ComplexNumber.from(0); 
+    
+    // Карта для подсчета множителей переменных: { "x": 2, "y": -1 }
+    const variableCounts = {};
+
+    for (const item of terms) {
+        if (item.name !== null) {
+            // Это переменная. Знак true означает (-1), false означает (+1)
+            const weight = item.sign ? -1 : 1;
+            
+            if (variableCounts[item.name] === undefined) {
+                variableCounts[item.name] = 0;
+            }
+            variableCounts[item.name] += weight;
+        } else if (item.value !== null) {
+            // Это константа. В collectTerms мы её уже инвертировали, если был минус,
+            // поэтому здесь просто складываем через метод .add() вашего класса
+            constantSum = constantSum.add(item.value);
+        }
+    }
+
+    // Формируем красивый итоговый результат
+    return {
+        constants: constantSum,        // Единое итоговое комплексное число
+        variables: variableCounts      // Объект вида { x: 2, y: -1, z: 0 }
+    };
+}
+
 export function BuildVectorOperationDescription(node, out_errors)
 {
 
