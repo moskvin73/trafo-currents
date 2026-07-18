@@ -114,29 +114,32 @@ export function createFloatingWindowDOM(diagramId) {
     Object.assign(minBtn.style, { cursor: 'pointer', fontWeight: 'bold', color: '#999', padding: '0 4px' });
     
     minBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Чтобы не сработал драг шапки
+         e.stopPropagation(); // Чтобы не сработал драг шапки
         
         if (win.dataset.isMinimized === 'false') {
-            // Сохраняем текущие координаты перед сворачиванием
+            // Сохраняем текущие координаты и размеры перед сворачиванием
             win.dataset.savedWidth = win.style.width;
             win.dataset.savedHeight = win.style.height;
             win.dataset.savedLeft = win.style.left;
             win.dataset.savedTop = win.style.top;
             
-            // Превращаем окно в маленькую плашку внизу экрана (как в Windows)
+            // Превращаем окно в компактную горизонтальную плашку
             win.dataset.isMinimized = 'true';
             win.style.width = '220px';
             win.style.height = '38px';
-            win.style.top = 'auto';
-            win.style.bottom = '10px';
-            // Выстраиваем свернутые окна в ряд слева направо
-            const openMinimized = document.querySelectorAll('[data-is-minimized="true"]').length - 1;
-            win.style.left = `${10 + openMinimized * 230}px`;
             
-            // Прячем контент холста и ресайзер
+            // ИНВЕРСНАЯ ЛОГИКА: Фиксируем в верхней части экрана (top)
+            win.style.bottom = 'auto';
+            win.style.top = '10px'; // Отступ 10 пикселей от верхнего края браузера
+            
+            // Находим все уже свернутые окна, чтобы выстроить их в ряд слева направо
+            const openMinimized = document.querySelectorAll('[data-is-minimized="true"]').length - 1;
+            win.style.left = `${10 + openMinimized * 230}px`; // Каждое окно занимает 220px + 10px зазор
+            
+            // Прячем контент холста и ресайзер, оставляем только шапку
             win.querySelector('.v-win-content').style.display = 'none';
             win.querySelector('.v-resize-handle').style.display = 'none';
-            minBtn.textContent = '▢'; // Иконка развертывания
+            minBtn.textContent = '▢'; // Меняем иконку на "развернуть"
         } else {
             restoreWindow(win);
         }
