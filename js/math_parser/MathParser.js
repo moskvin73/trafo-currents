@@ -240,7 +240,7 @@ export class MathParser {
           case TYPE_UNIT.PRINT:
             return { type: 'mixed', value: stmt.value };
           case TYPE_UNIT.PLOT:
-            return { type: 'plot', value: stmt.value };
+            return { type: 'plot', value: stmt.value, id: stmt.node.diagramId };
           case TYPE_UNIT.EXPR:
             const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
             return { type: 'expr', value:  `$$${renderString}$$` };
