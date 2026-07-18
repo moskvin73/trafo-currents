@@ -43,6 +43,18 @@ export default class DiagramDescriptor {
     }
 
     createFloatingWindow() {
+
+        // Вытаскиваем настройки, заданные пользователем или калькулятором
+        // Например, пользователь может написать в коде: config: { width: 500, alignX: 'right', alignY: 'top' }
+        const userConfig = (this.data && this.data.config) || {};
+
+        const options = {
+            width: userConfig.width || 300,
+            height: userConfig.height || 320,
+            alignX: userConfig.alignX || 'center',
+            alignY: userConfig.alignY || 'center'
+        };
+
         // 1. Создаем DOM окна (оно добавляется в body, но размеры еще 0)
         const contentDiv = createFloatingWindowDOM(this.id, () => {
             if (this.instance) this.instance.syncContainerSizes();

@@ -15,7 +15,7 @@ export default class VectorDiagram {
         const rect = this.container.getBoundingClientRect();
         
         // Берем ширину контейнера. Если он скрыт или равен 0, то берем значение из конфига или 600
-        this.width = rect.width || this.data.config.width || 600;
+        this.width = rect.width || this.data.config.width || 300;
         
         // Чтобы диаграмма была квадратной, делаем высоту равной ширине 
         // (для векторных диаграмм это обычно оптимально)
