@@ -807,39 +807,49 @@
                                         //res.value.instance = new VectorDiagram(mathRow, res.value.data); 
                                         resultBlock.appendChild(mathRow);*/
 
-                                      const mathRow = document.createElement("div");
+                                       // 1. Создаем промежуточный DIV-обёртку (ограничитель размеров)
+                                        const diagramWrapper = document.createElement("div");
+                                        diagramWrapper.className = "inline-diagram-wrapper";
+                                        
+                                        Object.assign(diagramWrapper.style, {
+                                            width: '100%',
+                                            maxWidth: '400px',       // Максимальный комфортный размер на десктопе
+                                            aspectRatio: '1 / 1',    // Идеальный квадрат (браузер сам рассчитает высоту от ширины!)
+                                            margin: '10px auto',     // Центрируем диаграмму внутри карточки
+                                            boxSizing: 'border-box'
+                                        });
+
+                                        // 2. Создаем финальный контейнер, куда запишется сама SVG-диаграмма
+                                        const mathRow = document.createElement("div");
                                         mathRow.className = "output-row";
                                         
-                                        // Задаем базовые стили для inline-контейнера, чтобы он имел хоть какую-то высоту по умолчанию,
-                                        // либо растягивался на всю ширину карточки калькулятора
                                         Object.assign(mathRow.style, {
                                             width: '100%',
-                                            minHeight: '300px', // Даем стартовую высоту, чтобы карточка не схлопывалась в ноль
+                                            height: '100%',          // Занимает ровно 100% от нашего wrapper-ограничителя
                                             position: 'relative'
                                         });
 
-                                        // ВАЖНО: Сначала крепим контейнер к карточке!
-                                        resultBlock.appendChild(mathRow);
+                                        // Собираем матрешку: пихаем mathRow во wrapper, а wrapper — в карточку
+                                        diagramWrapper.appendChild(mathRow);
+                                        resultBlock.appendChild(diagramWrapper);
                                         
-                                        // И только ПОСЛЕ добавления в DOM вызываем сеттер.
-                                        // Сеттер создаст new VectorDiagram.
+                                        // 3. Вызываем сеттер (внутри создается VectorDiagram)
                                         res.value.containerElement = mathRow;
 
-                                        // Включаем слежку: как только карточка появится на экране и примет реальные размеры,
-                                        // мы принудительно скомандуем диаграмме перерисоваться под этот размер!
+                                        // 4. Включаем слежку за размерами обёртки
                                         const inlineObserver = new ResizeObserver((entries) => {
                                             for (let entry of entries) {
-                                                if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-                                                    // Проверяем, что экземпляр диаграммы создался и у него есть метод ресайза
+                                                if (entry.contentRect.width > 0) {
                                                     if (res.value.instance && typeof res.value.instance.syncContainerSizes === 'function') {
                                                         res.value.instance.syncContainerSizes();
                                                     }
-                                                    inlineObserver.disconnect(); // Нам нужен только первый запуск отрисовки
+                                                    // В отличие от окон, для inline-карточек слежку НЕ выключаем (.disconnect() убираем),
+                                                    // чтобы при изменении размеров всего окна браузера диаграмма в карточке тоже адаптивно сжималась!
                                                 }
                                             }
                                         });
                                         
-                                        inlineObserver.observe(mathRow);                                        
+                                        inlineObserver.observe(diagramWrapper);                                       
 
                                     }
                                     break;
