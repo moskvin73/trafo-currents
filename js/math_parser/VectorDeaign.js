@@ -41,7 +41,9 @@ export function BuildVectorOperationDescription(node, out_errors)
     }
     if (node instanceof AddNode)
     {
-
+        conat a_left = BuildVectorOperationDescription(node.left, out_errors);
+        conat a_right = BuildVectorOperationDescription(node.right, out_errors);
+        return [...a_left, ...a_right];
     }
     else if (node instanceof SubNode)
     {
@@ -61,7 +63,7 @@ export function BuildVectorOperationDescription(node, out_errors)
             return [{ sign: minusCount / 2 !== 0, name: null, value: value_node }];
         }
         else { 
-            out_errors("Недопустимый тип векторной опреации");
+            out_errors("Недопустимый тип операнда векторной опреации", node.loc);
             return null;
         }
     }
