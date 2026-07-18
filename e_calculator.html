@@ -781,16 +781,23 @@
                         const parseResult = parser.toTex();
 
                         parseResult.forEach((res) => {
-                            if (res.mixed) {
-                                const printRow = document.createElement("div");
-                                printRow.className = "print-row"; 
-                                printRow.innerHTML = res.value; 
-                                resultBlock.appendChild(printRow);
-                            } else if (!res.isSilent) {
-                                const mathRow = document.createElement("div");
-                                mathRow.className = "output-row";
-                                mathRow.innerHTML = res.value;
-                                resultBlock.appendChild(mathRow);
+                            switch (res.type)
+                            {
+                                case 'mixed': {
+                                    const printRow = document.createElement("div");
+                                    printRow.className = "print-row"; 
+                                    printRow.innerHTML = res.value; 
+                                    resultBlock.appendChild(printRow);
+                                    }
+                                    break;
+                                case 'expr': {
+                                    const mathRow = document.createElement("div");
+                                    mathRow.className = "output-row";
+                                    mathRow.innerHTML = res.value;
+                                    resultBlock.appendChild(mathRow);
+                                    }
+                                case 'plot':
+                                    break;
                             }
                         });
                         // Если цикл прошёл, но в resultBlock ничего не добавилось (все строки были скрыты через $)
