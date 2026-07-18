@@ -24,6 +24,7 @@ import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './
 import { TYPE_UNIT } from './ConstantsDef.js';
 import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
 import { isValidCSSColor }  from '../util.js';
+import DiagramDescriptor from '../views/DiagramDescriptor.js';
 
 /**
  * Единый узел для любой инструкции в коде
@@ -242,8 +243,13 @@ export class MathParser {
           case TYPE_UNIT.PLOT:
             return { type: 'plot', value: stmt.value, id: stmt.node.diagramId };
           case TYPE_UNIT.EXPR:
-            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-            return { type: 'expr', value:  `$$${renderString}$$` };
+            if (stmt.value instanceof DiagramDescriptor) {
+              return { type: 'plot', value: stmt.value, id: stmt.node.name };
+            }
+            else {
+              const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+              return { type: 'expr', value:  `$$${renderString}$$` };
+            }
           default:
             throw new Error(`Неизвестная единица компиляции ${stmt.type_unit}`);
         }
