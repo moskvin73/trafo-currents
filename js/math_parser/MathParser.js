@@ -448,13 +448,11 @@ export class MathParser {
 
     let view_type = null;
     if (this.c_token !== TokenType.COMMA) {
-      this.#error("Пропущена ','", this.#location);
-    }
-    else { 
       this.#consume();
       view_type = this.#unconIdent();
       if (!view_type) return error_value();
     }
+
     if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
     {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
