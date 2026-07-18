@@ -788,13 +788,31 @@ export default class VectorDiagram {
 
         // 2. ОТКРЫТИЕ НАШЕГО КАСТОМНОГО МЕНЮ
         this.container.addEventListener('contextmenu', (e) => {
-            e.preventDefault(); // Отключаем стандартное меню браузера
+            /*e.preventDefault(); // Отключаем стандартное меню браузера
             e.stopPropagation(); // Защита от всплытия выше
 
             // Показываем меню точно под курсором
             menu.style.left = `${e.clientX}px`;
             menu.style.top = `${e.clientY}px`;
+            menu.style.display = 'block';*/
+            e.preventDefault(); 
+            e.stopPropagation(); 
+
+            // Считываем текущий максимальный слой окон и ставим меню НА ЕДИНИЦУ ВЫШЕ
+            // Чтобы получить доступ к переменной, импортируйте её вверху этого файла: 
+            // import { maxZIndex } from './путь_к_файлу_окон.js';
+            if (typeof maxZIndex !== 'undefined') {
+                menu.style.zIndex = String(maxZIndex + 1);
+            } else {
+                menu.style.zIndex = '9999999'; // Жесткий запасной вариант, если импорт не настроен
+            }
+
+            // Показываем меню точно под курсором
+            menu.style.left = `${e.clientX}px`;
+            menu.style.top = `${e.clientY}px`;
             menu.style.display = 'block';
+
+
         });
 
         // Скрываем меню при клике или скролле
