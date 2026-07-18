@@ -51,8 +51,8 @@ export default class DiagramDescriptor {
         const options = {
             width: userConfig.width || 300,
             height: userConfig.height || 320,
-            alignX: userConfig.alignX || 'center',
-            alignY: userConfig.alignY || 'center'
+            alignX: userConfig.alignX || 'right',
+            alignY: userConfig.alignY || 'top'
         };
 
         // 1. Создаем DOM окна (оно добавляется в body, но размеры еще 0)
