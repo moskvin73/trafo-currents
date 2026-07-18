@@ -205,32 +205,67 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     // 2. Шапка окна
     const header = document.createElement('div');
     Object.assign(header.style, {
-        padding: '10px 14px',
+        padding: '8px 14px',        // Чуть уменьшили вертикальный паддинг для аккуратности
+        height: '38px',             // Жёстко фиксируем высоту шапки для точности расчётов
+        boxSizing: 'border-box',
         backgroundColor: '#f5f5f5',
         borderBottom: '1px solid #e5e5e5',
         cursor: 'move',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'center',       // Центрирует заголовок и блок кнопок по вертикали
         userSelect: 'none'
     });
 
     const title = document.createElement('span');
     title.textContent = `Векторная диаграмма [${diagramId}]`;
-    title.style.fontSize = '13px';
-    title.style.fontWeight = 'bold';
+        Object.assign(title.style, {
+        fontSize: '13px',
+        fontWeight: 'bold',
+        whiteSpace: 'nowrap',       // Запрещаем перенос строки
+        overflow: 'hidden',         // Прячем то, что не влезло
+        textOverflow: 'ellipsis',   // Добавляем красивое троеточие (...)
+        marginRight: '10px',
+        flex: '1'                   // Даём заголовку занять всё свободное место
+    });
     header.appendChild(title);
 
     // Блок кнопок управления (Свернуть и Закрыть)
     const btnBlock = document.createElement('div');
-    btnBlock.style.display = 'flex';
-    btnBlock.style.gap = '10px';
+    Object.assign(btnBlock.style, {
+        display: 'flex',
+        alignItems: 'center',       // Ровно центрируем кнопки внутри блока
+        gap: '6px',
+        height: '100%'
+    });    
+
+     // Общие базовые стили для кнопок, чтобы они стояли идеально ровно
+    const baseBtnStyle = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '20px',
+        height: '20px',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        color: '#666',
+        fontSize: '14px',
+        borderRadius: '4px',
+        transition: 'background-color 0.2s'
+    };
 
     // КНОПКА СВЕРНУТЬ (_)
     const minBtn = document.createElement('span');
     minBtn.className = 'v-min-btn';
     minBtn.textContent = '_';
-    Object.assign(minBtn.style, { cursor: 'pointer', fontWeight: 'bold', color: '#999', padding: '0 4px' });
+    Object.assign(minBtn.style, baseBtnStyle);
+    // Добавим микро-эффект при наведении
+    minBtn.addEventListener('mouseenter', () => minBtn.style.backgroundColor = '#e0e0e0');
+    minBtn.addEventListener('mouseleave', () => minBtn.style.backgroundColor = 'transparent')
+
+    /*minBtn.className = 'v-min-btn';
+    minBtn.textContent = '_';
+    Object.assign(minBtn.style, { cursor: 'pointer', fontWeight: 'bold', color: '#999', padding: '0 4px' });*/
     
     minBtn.addEventListener('click', (e) => {
         e.stopPropagation(); // Чтобы не сработал драг шапки
@@ -267,11 +302,23 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     // КНОПКА ЗАКРЫТЬ (×)
     const closeBtn = document.createElement('span');
     closeBtn.textContent = '×';
+    Object.assign(closeBtn.style, baseBtnStyle);
+    closeBtn.style.fontSize = '18px'; // Крестик сделаем чуть крупнее визуально
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.backgroundColor = '#ff4d4f';
+        closeBtn.style.color = '#fff';
+    });
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.backgroundColor = 'transparent';
+        closeBtn.style.color = '#666';
+    });
+
+    /*closeBtn.textContent = '×';
     Object.assign(closeBtn.style, { cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', color: '#999' });
     closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         document.body.removeChild(win);
-    });
+    });*/
 
     btnBlock.appendChild(minBtn);
     btnBlock.appendChild(closeBtn);
