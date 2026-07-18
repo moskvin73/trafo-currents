@@ -24,6 +24,32 @@ export function isValidCSSColor(colorStr) {
            /^[a-z]+$/i.test(trimmed);
 }
 
+function getOrCreateTaskbar() {
+    let taskbar = document.getElementById('v-taskbar');
+    if (!taskbar) {
+        taskbar = document.createElement('div');
+        taskbar.id = 'v-taskbar';
+        Object.assign(taskbar.style, {
+            position: 'fixed',
+            top: '0',              // <-- Прижимаем к верхнему краю экрана
+            left: '0',
+            width: '100%',
+            height: '40px',
+            backgroundColor: 'rgba(245, 245, 245, 0.95)',
+            borderBottom: '1px solid #dcdcdc', // <-- Линия теперь снизу панели
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 10px',
+            gap: '8px',
+            boxSizing: 'border-box',
+            zIndex: '999999',      // По-прежнему на самом верху
+            userSelect: 'none'
+        });
+        document.body.appendChild(taskbar);
+    }
+    return taskbar;
+}
+
 // Переменная живет вне функции, чтобы быть общей для всех создаваемых окон
 let maxZIndex = 10000;
 
@@ -121,42 +147,7 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     });
 
     // --- УМНОЕ ПОЗИЦИОНИРОВАНИЕ (Как в Windows) ---
-   /* let targetLeft = 0;
-    let targetTop = 0;
-
-    // Расчет по оси X
-    if (alignX === 'left') {
-        targetLeft = 20; // Небольшой отступ от края экрана
-    } else if (alignX === 'right') {
-        targetLeft = window.innerWidth - width - 20;
-    } else { // 'center'
-        targetLeft = window.innerWidth / 2 - width / 2;
-    }
-
-    // Расчет по оси Y
-    if (alignY === 'top') {
-        targetTop = 20;
-    } else if (alignY === 'bottom') {
-        targetTop = window.innerHeight - height - 20;
-    } else { // 'center'
-        targetTop = window.innerHeight / 2 - height / 2;
-    }
-
-    // ЭФФЕКТ СМЕЩЕНИЯ (Каскадное открытие окон, чтобы они не перекрывали друг друга один в один)
-    // Находим сколько окон СЕЙЧАС открыто (не свернуто) на экране
-    const openWindowsCount = document.querySelectorAll(`div[id^="floating-win-"]:not([data-is-minimized="true"])`).length;
-    
-    // Если на экране уже есть окна, смещаем новое окно по диагонали на 25 пикселей за каждое окно
-    if (openWindowsCount > 0) {
-        targetLeft += (openWindowsCount * 25);
-        targetTop += (openWindowsCount * 25);
-    }
-
-    // Применяем финальные координаты
-    win.style.left = `${targetLeft}px`;
-    win.style.top = `${targetTop}px`;    */
-
-    let targetLeft = 0;
+     let targetLeft = 0;
     let targetTop = 0;
 
     // Получаем ЧИСТЫЕ размеры видимой области страницы без учета полос прокрутки
@@ -263,10 +254,6 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     minBtn.addEventListener('mouseenter', () => minBtn.style.backgroundColor = '#e0e0e0');
     minBtn.addEventListener('mouseleave', () => minBtn.style.backgroundColor = 'transparent')
 
-    /*minBtn.className = 'v-min-btn';
-    minBtn.textContent = '_';
-    Object.assign(minBtn.style, { cursor: 'pointer', fontWeight: 'bold', color: '#999', padding: '0 4px' });*/
-    
     minBtn.addEventListener('click', (e) => {
         e.stopPropagation(); // Чтобы не сработал драг шапки
         
@@ -313,8 +300,6 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
         closeBtn.style.color = '#666';
     });
 
-    /*closeBtn.textContent = '×';
-    Object.assign(closeBtn.style, { cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', color: '#999' });*/
     closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         document.body.removeChild(win);
@@ -375,13 +360,6 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
         document.body.style.cursor = 'se-resize';
         e.preventDefault();
         e.stopPropagation();        
-        /*if (e.button !== 0) return;
-        isResizing = true;
-        startX = e.clientX; startY = e.clientY;
-        startW = parseInt(win.style.width, 10); startH = parseInt(win.style.height, 10);
-        document.body.style.cursor = 'se-resize';
-        e.preventDefault();
-        e.stopPropagation();*/
     });
 
     // ОБЩИЙ ОБРАБОТЧИК ДВИЖЕНИЯ МЫШИ
@@ -393,12 +371,6 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
             win.style.top = `${Math.max(0, Math.min(nt, window.innerHeight - win.offsetHeight))}px`;
         }
         else if (isResizing) {
-           /*let nw = startW + (e.clientX - startX);
-            let nh = startH + (e.clientY - startY);
-            win.style.width = `${Math.max(250, nw)}px`;
-            win.style.height = `${Math.max(250, nh)}px`;
-            
-            if (typeof onResize === 'function') onResize();*/
             let nw = startW + (e.clientX - startX);
             let nh = startH + (e.clientY - startY);
             
@@ -425,16 +397,3 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
 
     return content;
 }
-
-/**
- * Вспомогательная функция, которая находит диаграмму в таблице символов и обновляет ее геометрию
- */
-/*export function triggerDiagramResize(diagramId) {
-    // Если у вас есть глобальный контекст или вы можете достучаться до текущего evl_context:
-    if (window.currentEvaluationContext) {
-        const symbol = window.currentEvaluationContext.getSymbolByName(diagramId);
-        if (symbol && symbol.value && symbol.value.type === "DiagramState") {
-            symbol.value.syncContainerSizes();
-        }
-    }
-}*/
