@@ -801,11 +801,46 @@
                                     if (res.value.target === "window") {
                                         res.value.createFloatingWindow();
                                     } else if (res.value.target === "inline") {
-                                        const mathRow = document.createElement("div");
+                                        /*const mathRow = document.createElement("div");
                                         mathRow.className = "output-row";
                                         res.value.containerElement = mathRow;
                                         //res.value.instance = new VectorDiagram(mathRow, res.value.data); 
+                                        resultBlock.appendChild(mathRow);*/
+
+                                      const mathRow = document.createElement("div");
+                                        mathRow.className = "output-row";
+                                        
+                                        // Задаем базовые стили для inline-контейнера, чтобы он имел хоть какую-то высоту по умолчанию,
+                                        // либо растягивался на всю ширину карточки калькулятора
+                                        Object.assign(mathRow.style, {
+                                            width: '100%',
+                                            minHeight: '300px', // Даем стартовую высоту, чтобы карточка не схлопывалась в ноль
+                                            position: 'relative'
+                                        });
+
+                                        // ВАЖНО: Сначала крепим контейнер к карточке!
                                         resultBlock.appendChild(mathRow);
+                                        
+                                        // И только ПОСЛЕ добавления в DOM вызываем сеттер.
+                                        // Сеттер создаст new VectorDiagram.
+                                        res.value.containerElement = mathRow;
+
+                                        // Включаем слежку: как только карточка появится на экране и примет реальные размеры,
+                                        // мы принудительно скомандуем диаграмме перерисоваться под этот размер!
+                                        const inlineObserver = new ResizeObserver((entries) => {
+                                            for (let entry of entries) {
+                                                if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+                                                    // Проверяем, что экземпляр диаграммы создался и у него есть метод ресайза
+                                                    if (res.value.instance && typeof res.value.instance.syncContainerSizes === 'function') {
+                                                        res.value.instance.syncContainerSizes();
+                                                    }
+                                                    inlineObserver.disconnect(); // Нам нужен только первый запуск отрисовки
+                                                }
+                                            }
+                                        });
+                                        
+                                        inlineObserver.observe(mathRow);
+                                    }                                        
                                     }
                                     break;
                             }
