@@ -148,11 +148,11 @@
             border-left: 2px solid var(--calc-color-brand);
             
             /* Добавляем поддержку плавного скрытия */
-            max-height: 500px; /* Задаем заведомо большую высоту для анимации */
+            /*max-height: 500px;  Задаем заведомо большую высоту для анимации */
             opacity: 1;
             overflow: hidden;
-            transition: background 0.3s, color 0.3s, border-color 0.3s, 
-                        max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;
+            /*transition: background 0.3s, color 0.3s, border-color 0.3s, 
+                        max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;*/
         }
 
         /* КЛАСС СКРЫТИЯ ЭХО-БЛОКА (Плавное схлопывание) */
@@ -801,12 +801,6 @@
                                     if (res.value.target === "window") {
                                         res.value.createFloatingWindow();
                                     } else if (res.value.target === "inline") {
-                                        /*const mathRow = document.createElement("div");
-                                        mathRow.className = "output-row";
-                                        res.value.containerElement = mathRow;
-                                        //res.value.instance = new VectorDiagram(mathRow, res.value.data); 
-                                        resultBlock.appendChild(mathRow);*/
-
                                        // 1. Создаем промежуточный DIV-обёртку (ограничитель размеров)
                                         const diagramWrapper = document.createElement("div");
                                         diagramWrapper.className = "inline-diagram-wrapper";
