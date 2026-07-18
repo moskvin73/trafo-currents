@@ -3,7 +3,8 @@ export default class DiagramDescriptor {
      * @param {string} mode - "three_phase" или "math"
      * @param {string} viewType - "inline" или "window"
      */
-    constructor(mode, viewType) {
+    constructor(id, mode, viewType) {
+        this.id = id;
         this.type = "DiagramState"; // Метка типа для вашей SymbolTable
         this.target = viewType || "inline";
         this.instance = null;        // Ссылка на живой объект VectorDiagram

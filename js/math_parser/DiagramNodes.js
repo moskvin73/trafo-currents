@@ -23,7 +23,7 @@ export class PlotInitNode extends ASTNode {
         const sym = context.scope_context.getSymbolById(id);
 
         // Создаем экземпляр нашего нового класса-описателя
-        const descriptor = new DiagramDescriptor(this.mode, this.viewType);
+        const descriptor = new DiagramDescriptor(this.diagramId, this.mode, this.viewType);
         sym.value = descriptor;
 
         // Если режим window — сразу генерируем плавающее окно
