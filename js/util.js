@@ -108,7 +108,7 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     Object.assign(win.style, {
         position: 'fixed',
         width: `${width}px`,
-        height: `${height}px`,
+        height: 'auto', //`${height}px`,
         backgroundColor: '#ffffff',
         border: '1px solid #dcdcdc',
         borderRadius: '6px',
@@ -121,7 +121,7 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     });
 
     // --- УМНОЕ ПОЗИЦИОНИРОВАНИЕ (Как в Windows) ---
-    let targetLeft = 0;
+   /* let targetLeft = 0;
     let targetTop = 0;
 
     // Расчет по оси X
@@ -154,9 +154,53 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
 
     // Применяем финальные координаты
     win.style.left = `${targetLeft}px`;
-    win.style.top = `${targetTop}px`;    
-    //win.style.left = `${window.innerWidth / 2 - 225}px`;
-    //win.style.top = `${window.innerHeight / 2 - 245}px`; // Досчитали центрирование по вертикале
+    win.style.top = `${targetTop}px`;    */
+
+    let targetLeft = 0;
+    let targetTop = 0;
+
+    // Получаем ЧИСТЫЕ размеры видимой области страницы без учета полос прокрутки
+    const viewWidth = document.documentElement.clientWidth;
+    const viewHeight = document.documentElement.clientHeight;
+
+    // Расчет по оси X (Используем viewWidth)
+    if (alignX === 'left') {
+        targetLeft = 20; 
+    } else if (alignX === 'right') {
+        targetLeft = viewWidth - width - 20; // Теперь окно встанет ровно перед скроллбаром!
+    } else { // 'center'
+        targetLeft = viewWidth / 2 - width / 2;
+    }
+
+    // Расчет по оси Y (Используем viewHeight)
+    if (alignY === 'top') {
+        targetTop = 20;
+    } else if (alignY === 'bottom') {
+        targetTop = viewHeight - height - 40; // Даем чуть больше зазор снизу под горизонтальный скроллбар, если он есть
+    } else { // 'center'
+        targetTop = viewHeight / 2 - height / 2;
+    }
+
+    // ЭФФЕКТ СМЕЩЕНИЯ (Каскадное открытие окон)
+    const openWindowsCount = document.querySelectorAll(`div[id^="floating-win-"]:not([data-is-minimized="true"])`).length;
+    
+    if (openWindowsCount > 0) {
+        targetLeft += (openWindowsCount * 25);
+        targetTop += (openWindowsCount * 25);
+    }
+
+    // Дополнительная проверка безопасности: если из-за каскада (смещения) 
+    // окно начинает вылезать за правый или нижний край чистой видимой зоны, возвращаем его в границы.
+    if (targetLeft + width > viewWidth) {
+        targetLeft = viewWidth - width - 20;
+    }
+    if (targetTop + height > viewHeight) {
+        targetTop = viewHeight - height - 40;
+    }
+
+    // Применяем финальные координаты
+    win.style.left = `${targetLeft}px`;
+    win.style.top = `${targetTop}px`;  
 
     // 2. Шапка окна
     const header = document.createElement('div');
@@ -242,7 +286,12 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     // 3. Тело окна (Рабочая область для SVG)
     const content = document.createElement('div');
     content.className = 'v-win-content';
-    Object.assign(content.style, { flex: '1', width: '100%', height: '100%', backgroundColor: '#fafafa', position: 'relative' });
+    Object.assign(content.style, 
+        { flex: '1', 
+          width: '100%', 
+          height: `${height}px`, //'100%', 
+          backgroundColor: '#fafafa', 
+          position: 'relative' });
     win.appendChild(content);
 
     // 4. ТРИГГЕР ИЗМЕНЕНИЯ РАЗМЕРА (Уголок Resize Handle в правом нижнем углу)
@@ -274,10 +323,18 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
         if (e.button !== 0) return;
         isResizing = true;
         startX = e.clientX; startY = e.clientY;
+        startW = parseInt(win.style.width, 10); 
+        startH = parseInt(content.style.height, 10); // <-- СЧИТЫВАЕМ ВЫСОТУ С КОНТЕНТА, А НЕ С WIN
+        document.body.style.cursor = 'se-resize';
+        e.preventDefault();
+        e.stopPropagation();        
+        /*if (e.button !== 0) return;
+        isResizing = true;
+        startX = e.clientX; startY = e.clientY;
         startW = parseInt(win.style.width, 10); startH = parseInt(win.style.height, 10);
         document.body.style.cursor = 'se-resize';
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation();*/
     });
 
     // ОБЩИЙ ОБРАБОТЧИК ДВИЖЕНИЯ МЫШИ
@@ -289,13 +346,26 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
             win.style.top = `${Math.max(0, Math.min(nt, window.innerHeight - win.offsetHeight))}px`;
         }
         else if (isResizing) {
-            let nw = startW + (e.clientX - startX);
+           /*let nw = startW + (e.clientX - startX);
             let nh = startH + (e.clientY - startY);
             win.style.width = `${Math.max(250, nw)}px`;
             win.style.height = `${Math.max(250, nh)}px`;
             
-            //triggerDiagramResize(diagramId);
-            if (typeof onResize === 'function') onResize();
+            if (typeof onResize === 'function') onResize();*/
+            let nw = startW + (e.clientX - startX);
+            let nh = startH + (e.clientY - startY);
+            
+            // Ограничиваем минимальные размеры
+            nw = Math.max(180, nw);
+            nh = Math.max(100, nh);
+            
+            // Меняем ширину у всего окна, а высоту — строго у контента диаграммы!
+            win.style.width = `${nw}px`;
+            content.style.height = `${nh}px`; // <-- МЕНЯЕМ ТУТ
+            
+            if (typeof onResize === 'function') {
+                try { onResize(); } catch (err) {}
+            }             
         }
     });
 
