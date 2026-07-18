@@ -43,7 +43,7 @@ export default class DiagramDescriptor {
     }
 
     createFloatingWindow() {
-        return containerElement = createFloatingWindowDOM(this.Id);
+        return containerElement = createFloatingWindowDOM(this.id);
     }
 
     /**
