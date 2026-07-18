@@ -147,7 +147,7 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     });
 
     // --- УМНОЕ ПОЗИЦИОНИРОВАНИЕ (Как в Windows) ---
-     let targetLeft = 0;
+    /* let targetLeft = 0;
     let targetTop = 0;
 
     // Получаем ЧИСТЫЕ размеры видимой области страницы без учета полос прокрутки
@@ -191,7 +191,44 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
 
     // Применяем финальные координаты
     win.style.left = `${targetLeft}px`;
-    win.style.top = `${targetTop}px`;  
+    win.style.top = `${targetTop}px`; */
+ 
+    let targetLeft = 0;
+    let targetTop = 0;
+
+    const viewWidth = document.documentElement.clientWidth;
+    const viewHeight = document.documentElement.clientHeight;
+
+    if (alignX === 'left') {
+        targetLeft = 20; 
+    } else if (alignX === 'right') {
+        targetLeft = viewWidth - width - 20;
+    } else {
+        targetLeft = viewWidth / 2 - width / 2;
+    }
+
+    if (alignY === 'top') {
+        targetTop = 50; // <-- МЕНЯЕМ НА 50 (40px панель + 10px зазор), чтобы окно не уходило под панель!
+    } else if (alignY === 'bottom') {
+        targetTop = viewHeight - height - 20; 
+    } else {
+        targetTop = viewHeight / 2 - height / 2;
+    }
+
+    // ЭФФЕКТ СМЕЩЕНИЯ (Каскад)
+    const openWindowsCount = document.querySelectorAll(`div[id^="floating-win-"]:not([data-is-minimized="true"])`).length;
+    if (openWindowsCount > 0) {
+        targetLeft += (openWindowsCount * 25);
+        targetTop += (openWindowsCount * 25);
+    }
+
+    // Проверка границ (учитываем верхнюю панель задач в 40px)
+    if (targetLeft + width > viewWidth) targetLeft = viewWidth - width - 20;
+    if (targetTop + height > viewHeight) targetTop = viewHeight - height - 20;
+    if (targetTop < 40) targetTop = 50; // Защита: не даем перетащить или создать окно выше панели
+
+    win.style.left = `${targetLeft}px`;
+    win.style.top = `${targetTop}px`;    
 
     // 2. Шапка окна
     const header = document.createElement('div');
@@ -255,7 +292,7 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     minBtn.addEventListener('mouseleave', () => minBtn.style.backgroundColor = 'transparent')
 
     minBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Чтобы не сработал драг шапки
+        /*e.stopPropagation(); // Чтобы не сработал драг шапки
         
         if (win.dataset.isMinimized === 'false') {
             // Сохраняем текущие координаты и размеры перед сворачиванием
@@ -283,7 +320,53 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
             minBtn.textContent = '▢'; // Меняем иконку на "развернуть"
         } else {
             restoreWindow(win);
-        }
+        }*/
+        e.stopPropagation();
+        
+        if (win.dataset.isMinimized === 'false') {
+            win.dataset.isMinimized = 'true';
+            win.style.display = 'none'; // Просто прячем окно
+            
+            const taskbar = getOrCreateTaskbar();
+            
+            const taskBtn = document.createElement('div');
+            taskBtn.id = `task-btn-${diagramId}`;
+            taskBtn.textContent = `📊 [${diagramId}]`;
+            
+            Object.assign(taskBtn.style, {
+                padding: '0 12px',
+                height: '30px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                maxWidth: '160px',
+                minWidth: '80px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                transition: 'all 0.2s'
+            });
+            
+            taskBtn.addEventListener('mouseenter', () => taskBtn.style.backgroundColor = '#f0f0f0');
+            taskBtn.addEventListener('mouseleave', () => taskBtn.style.backgroundColor = '#ffffff');
+            
+            taskBtn.addEventListener('click', () => {
+                restoreWindow(win);
+                taskbar.removeChild(taskBtn);
+                
+                if (taskbar.children.length === 0) {
+                    taskbar.remove();
+                }
+            });
+            
+            taskbar.appendChild(taskBtn);
+        }       
     });
 
     // КНОПКА ЗАКРЫТЬ (×)
@@ -302,7 +385,19 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
 
     closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        document.body.removeChild(win);
+        
+        // Удаляем кнопку с панели задач, если она там была
+        const taskBtn = document.getElementById(`task-btn-${diagramId}`);
+        if (taskBtn) {
+            taskBtn.remove();
+            // Проверяем, не опустела ли панель задач
+            const taskbar = document.getElementById('v-taskbar');
+            if (taskbar && taskbar.children.length === 0) taskbar.remove();
+        }
+        
+        document.body.removeChild(win);        
+        /*e.stopPropagation();
+        document.body.removeChild(win);*/
     });
 
     btnBlock.appendChild(minBtn);
