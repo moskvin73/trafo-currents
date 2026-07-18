@@ -314,11 +314,11 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     });
 
     /*closeBtn.textContent = '×';
-    Object.assign(closeBtn.style, { cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', color: '#999' });
+    Object.assign(closeBtn.style, { cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', color: '#999' });*/
     closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         document.body.removeChild(win);
-    });*/
+    });
 
     btnBlock.appendChild(minBtn);
     btnBlock.appendChild(closeBtn);
