@@ -41,10 +41,22 @@ export function createFloatingWindowDOM(diagramId, onResize, options = {}) {
     let win = document.getElementById(windowId);
     
     // Значения по умолчанию, если пользователь ничего не передал
-    const width = options.width || 300;
-    const height = options.height || 330;
     const alignX = options.alignX || 'center';
     const alignY = options.alignY || 'center';
+
+    // 1. Берем размеры из настроек или ставим значения по умолчанию
+    let width = options.width || 300;
+    let height = options.height || 330;
+
+    // 2. Ограничиваем МАКСИМАЛЬНЫЙ размер по окну браузера (минус 40px на зазоры)
+    // Если браузер пользователя сжат до 800px, то окно не станет шире 760px
+    width = Math.min(width, window.innerWidth - 40);
+    height = Math.min(height, window.innerHeight - 40);
+
+    // 3. Защита от экстремально маленьких размеров
+    // Меньше 180px делать нельзя, иначе кнопки «_» и «×» перекроют текст заголовка
+    width = Math.max(180, width);
+    height = Math.max(100, height); // Высота может быть совсем маленькой    
 
     // ФУНКЦИЯ РАЗВЕРТЫВАНИЯ/ВОССТАНОВЛЕНИЯ ОКНА
     const restoreWindow = (targetWin) => {
