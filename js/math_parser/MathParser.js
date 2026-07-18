@@ -233,7 +233,7 @@ export class MathParser {
     }
 
     return this.#program.statements
-      .filter((stmt) => !stmt.isSilent && stmt.node !== TYPE_UNIT.EMPTY)
+      .filter((stmt) => !stmt.isSilent && stmt.node..type_unit !== TYPE_UNIT.EMPTY)
       .map((stmt) => {
         switch (stmt.type_unit)
         {
