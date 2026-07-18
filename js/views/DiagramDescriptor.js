@@ -43,8 +43,32 @@ export default class DiagramDescriptor {
     }
 
     createFloatingWindow() {
-        this.containerElement = createFloatingWindowDOM(this.id);
-        return this.containerElement;
+        // 1. Создаем DOM окна (оно добавляется в body, но размеры еще 0)
+        const contentDiv = createFloatingWindowDOM(this.id, () => {
+            if (this.instance) this.instance.syncContainerSizes();
+        });
+
+        // 2. Вызываем ваш сеттер (он внутри создает new VectorDiagram)
+        this.containerElement = contentDiv;
+
+        // 3. Следим за тем, когда браузер реально выделит пиксели для contentDiv
+        const observer = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                // Как только появились реальные размеры > 0
+                if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+                    if (this.instance && typeof this.instance.syncContainerSizes === 'function') {
+                        // Принудительно заставляем диаграмму пересчитать геометрию по факту отрисовки
+                        this.instance.syncContainerSizes(); 
+                    }
+                    observer.disconnect(); // Отключаем слежку, так как первый запуск прошел
+                }
+            }
+        });
+        
+        observer.observe(contentDiv);
+        return contentDiv;
+        //this.containerElement = createFloatingWindowDOM(this.id);
+        //return this.containerElement;
     }
 
     /**

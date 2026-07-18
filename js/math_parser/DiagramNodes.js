@@ -27,12 +27,12 @@ export class PlotInitNode extends ASTNode {
         // Если режим window — сразу генерируем плавающее окно
         if (this.viewType === "window") {
 
-            descriptor.data.config.width = 450;
+            /*descriptor.data.config.width = 450;
             descriptor.data.config.height = 450;
             
             // Также синхронизируем размеры в дескрипторе
             descriptor.width = 450;
-            descriptor.height = 450;
+            descriptor.height = 450;*/
 
            // 1. Создаем плавающее окно и получаем его внутренний div
             descriptor.createFloatingWindow();            
