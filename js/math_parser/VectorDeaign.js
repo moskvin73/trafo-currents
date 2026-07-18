@@ -45,26 +45,28 @@ export function BuildVectorOperationDescription(node, out_errors)
     {
         conat a_left = BuildVectorOperationDescription(node.left, out_errors);
         conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left, ...a_right];
+        return [...a_left.map(item => Boolean(item.sign ^ node_sign)), 
+                        ...a_right.map(item => Boolean(item.sign ^ !node_sign))];
     }
     else if (node instanceof SubNode)
     {
         conat a_left = BuildVectorOperationDescription(node.left, out_errors);
         conat a_right = BuildVectorOperationDescription(node.right, out_errors);
-        return [...a_left, ...a_right.map(item => Boolean(item.sign ^ node_sign))];
+        return [...a_left.map(item => Boolean(item.sign ^ node_sign)), 
+                        ...a_right.map(item => Boolean(item.sign ^ !node_sign))];
     }
     else if (node instanceof VariableNode)
     {
-        return { sign: minusCount / 2 !== 0, name: node.name, value: null }
+        return { sign: node_sign, name: node.name, value: null }
     }
     else if (node instanceof NumberNode)
     {
         const value_node = node.value;
         if (value_node instanceof RealNumber) {
-            return [{ sign: node_sign, name: null, value: ComplexNumber.from(value_node) }];
+            return [{ sign: false, name: null, value: ComplexNumber.from(node_sign ? value_node.negate() : value_node) }];
         }
         if (value_node instanceof ComplexNumber) {
-            return [{ sign: node_sign, name: null, value: value_node }];
+            return [{ sign: false, name: null, value: node_sign ? value_node.negate() : value_node }];
         }
         else { 
             out_errors.error("Недопустимый тип операнда векторной опреации", node.loc);
