@@ -31,24 +31,44 @@ export function isValidCSSColor(colorStr) {
  */
 export function createFloatingWindowDOM(diagramId) {
     const windowId = `floating-win-${diagramId}`;
-    
-    // Если окно для этой диаграммы уже открыто — не дублируем, а возвращаем его тело
     let win = document.getElementById(windowId);
+    
+    // ФУНКЦИЯ РАЗВЕРТЫВАНИЯ/ВОССТАНОВЛЕНИЯ ОКНА
+    const restoreWindow = (targetWin) => {
+        if (targetWin.dataset.isMinimized === 'true') {
+            targetWin.dataset.isMinimized = 'false';
+            // Восстанавливаем старые размеры и координаты
+            targetWin.style.width = targetWin.dataset.savedWidth;
+            targetWin.style.height = targetWin.dataset.savedHeight;
+            targetWin.style.left = targetWin.dataset.savedLeft;
+            targetWin.style.top = targetWin.dataset.savedTop;
+            targetWin.style.position = 'fixed';
+            
+            // Показываем контент обратно
+            targetWin.querySelector('.v-win-content').style.display = 'block';
+            targetWin.querySelector('.v-resize-handle').style.display = 'block';
+            targetWin.querySelector('.v-min-btn').textContent = '_';
+            
+            // Триггерим ресайз диаграммы, так как размеры контейнера вернулись
+            triggerDiagramResize(diagramId);
+        }
+    };
+
+    // Если окно уже существует в DOM — просто разворачиваем его в старых позициях
     if (win) {
-        const existingContent = win.querySelector('.v-win-content');
-        existingContent.innerHTML = ''; // Очищаем старый холст перед перерисовкой
-        return existingContent;
+        restoreWindow(win);
+        return win.querySelector('.v-win-content');
     }
 
-    // 1. Создаем главный контейнер окна
+    // 1. Главный контейнер окна
     win = document.createElement('div');
     win.id = windowId;
+    win.dataset.isMinimized = 'false';
     
-    // Стилизуем окно (Инженерный стиль: аккуратные тени, фиксированный размер)
     Object.assign(win.style, {
         position: 'fixed',
         width: '450px',
-        height: '490px', // Высота чуть больше ширины, чтобы учесть шапку
+        height: '490px',
         backgroundColor: '#ffffff',
         border: '1px solid #dcdcdc',
         borderRadius: '6px',
@@ -60,11 +80,10 @@ export function createFloatingWindowDOM(diagramId) {
         fontFamily: 'sans-serif'
     });
 
-    // Стартовая позиция окна на экране (например, по центру с небольшим смещением)
-    win.style.left = `${window.innerWidth / 2 - 225 + (Math.random() * 40 - 20)}px`;
-    win.style.top = `${window.innerHeight / 2 - 245 + (Math.random() * 40 - 20)}px`;
+    win.style.left = `${window.innerWidth / 2 - 225}px`;
+    win.style.top = `${window.innerHeight / 2 - 245}px`;
 
-    // 2. Создаем шапку окна (Drag Handle)
+    // 2. Шапка окна
     const header = document.createElement('div');
     Object.assign(header.style, {
         padding: '10px 14px',
@@ -74,109 +93,151 @@ export function createFloatingWindowDOM(diagramId) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        userSelect: 'none' // Запрещаем выделение текста при таскании
+        userSelect: 'none'
     });
 
-    // Заголовок окна (Имя диаграммы)
     const title = document.createElement('span');
     title.textContent = `Векторная диаграмма [${diagramId}]`;
-    Object.assign(title.style, {
-        fontWeight: 'bold',
-        fontSize: '13px',
-        color: '#333'
-    });
+    title.style.fontSize = '13px';
+    title.style.fontWeight = 'bold';
     header.appendChild(title);
 
-    // Кнопка закрытия окна (х)
-    const closeBtn = document.createElement('span');
-    closeBtn.textContent = '×';
-    Object.assign(closeBtn.style, {
-        cursor: 'pointer',
-        fontSize: '18px',
-        lineHeight: '1',
-        color: '#999',
-        fontWeight: 'bold',
-        padding: '2px 6px',
-        transition: 'color 0.2s'
-    });
-    closeBtn.addEventListener('mouseover', () => closeBtn.style.color = '#ff4d4d');
-    closeBtn.addEventListener('mouseout', () => closeBtn.style.color = '#999');
+    // Блок кнопок управления (Свернуть и Закрыть)
+    const btnBlock = document.createElement('div');
+    btnBlock.style.display = 'flex';
+    btnBlock.style.gap = '10px';
+
+    // КНОПКА СВЕРНУТЬ (_)
+    const minBtn = document.createElement('span');
+    minBtn.className = 'v-min-btn';
+    minBtn.textContent = '_';
+    Object.assign(minBtn.style, { cursor: 'pointer', fontWeight: 'bold', color: '#999', padding: '0 4px' });
     
-    // При закрытии просто уничтожаем DOM-элемент окна
-    closeBtn.addEventListener('click', () => {
-        document.body.removeChild(win);
-        // Опционально: зануляем ссылку в реестре диаграмм, чтобы калькулятор знал о закрытии
-        if (window.CalculatorDiagrams && window.CalculatorDiagrams[diagramId]) {
-            window.CalculatorDiagrams[diagramId].instance = null;
+    minBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Чтобы не сработал драг шапки
+        
+        if (win.dataset.isMinimized === 'false') {
+            // Сохраняем текущие координаты перед сворачиванием
+            win.dataset.savedWidth = win.style.width;
+            win.dataset.savedHeight = win.style.height;
+            win.dataset.savedLeft = win.style.left;
+            win.dataset.savedTop = win.style.top;
+            
+            // Превращаем окно в маленькую плашку внизу экрана (как в Windows)
+            win.dataset.isMinimized = 'true';
+            win.style.width = '220px';
+            win.style.height = '38px';
+            win.style.top = 'auto';
+            win.style.bottom = '10px';
+            // Выстраиваем свернутые окна в ряд слева направо
+            const openMinimized = document.querySelectorAll('[data-is-minimized="true"]').length - 1;
+            win.style.left = `${10 + openMinimized * 230}px`;
+            
+            // Прячем контент холста и ресайзер
+            win.querySelector('.v-win-content').style.display = 'none';
+            win.querySelector('.v-resize-handle').style.display = 'none';
+            minBtn.textContent = '▢'; // Иконка развертывания
+        } else {
+            restoreWindow(win);
         }
     });
-    header.appendChild(closeBtn);
+
+    // КНОПКА ЗАКРЫТЬ (×)
+    const closeBtn = document.createElement('span');
+    closeBtn.textContent = '×';
+    Object.assign(closeBtn.style, { cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', color: '#999' });
+    closeBtn.addEventListener('click', () => document.body.removeChild(win));
+
+    btnBlock.appendChild(minBtn);
+    btnBlock.appendChild(closeBtn);
+    header.appendChild(btnBlock);
     win.appendChild(header);
 
-    // 3. Создаем тело окна, куда встанет резиновый SVG
+    // Клик по шапке свернутого окна также разворачивает его
+    header.addEventListener('click', () => {
+        if (win.dataset.isMinimized === 'true') restoreWindow(win);
+    });
+
+    // 3. Тело окна (Рабочая область для SVG)
     const content = document.createElement('div');
     content.className = 'v-win-content';
-    Object.assign(content.style, {
-        flex: '1',
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#fafafa',
-        position: 'relative'
-    });
+    Object.assign(content.style, { flex: '1', width: '100%', height: '100%', backgroundColor: '#fafafa', position: 'relative' });
     win.appendChild(content);
 
-    // Встраиваем окно в корень страницы
+    // 4. ТРИГГЕР ИЗМЕНЕНИЯ РАЗМЕРА (Уголок Resize Handle в правом нижнем углу)
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'v-resize-handle';
+    Object.assign(resizeHandle.style, {
+        position: 'absolute', right: '0', bottom: '0', width: '14px', height: '14px',
+        cursor: 'se-resize', background: 'linear-gradient(135deg, transparent 40%, #ccc 40%, #ccc 60%, transparent 60%, transparent 80%, #ccc 80%)',
+        zIndex: '10001'
+    });
+    win.appendChild(resizeHandle);
+
     document.body.appendChild(win);
 
-    // =====================================================================
-    // ЛОГИКА ПЕРЕТАСКИВАНИЯ (DRAG AND DROP)
-    // =====================================================================
-    let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
-
+    // ЛОГИКА ДРАГА (ПЕРЕМЕЩЕНИЯ)
+    let isDragging = false, startX, startY, initialLeft, initialTop;
     header.addEventListener('mousedown', (e) => {
-        // Таскать можно только левой кнопкой мыши
-        if (e.button !== 0) return; 
-        
+        if (e.button !== 0 || win.dataset.isMinimized === 'true') return;
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        
-        initialLeft = parseInt(win.style.left, 10);
-        initialTop = parseInt(win.style.top, 10);
-        
-        // Меняем курсор на "захват" на всём экране на время перемещения
+        startX = e.clientX; startY = e.clientY;
+        initialLeft = parseInt(win.style.left, 10); initialTop = parseInt(win.style.top, 10);
         document.body.style.cursor = 'move';
-        
         e.preventDefault();
     });
 
+    // ЛОГИКА РЕСАЙЗА (ИЗМЕНЕНИЯ РАЗМЕРОВ)
+    let isResizing = false, startW, startH;
+    resizeHandle.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isResizing = true;
+        startX = e.clientX; startY = e.clientY;
+        startW = parseInt(win.style.width, 10); startH = parseInt(win.style.height, 10);
+        document.body.style.cursor = 'se-resize';
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    // ОБЩИЙ ОБРАБОТЧИК ДВИЖЕНИЯ МЫШИ
     document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-
-        // Считаем дельту смещения мыши
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        // Рассчитываем новые координаты окна
-        let newLeft = initialLeft + dx;
-        let newTop = initialTop + dy;
-
-        // Защита от вылета окна за границы видимого экрана браузера
-        newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - win.offsetWidth));
-        newTop = Math.max(0, Math.min(newTop, window.innerHeight - win.offsetHeight));
-
-        win.style.left = `${newLeft}px`;
-        win.style.top = `${newTop}px`;
+        if (isDragging) {
+            let nl = initialLeft + (e.clientX - startX);
+            let nt = initialTop + (e.clientY - startY);
+            win.style.left = `${Math.max(0, Math.min(nl, window.innerWidth - win.offsetWidth))}px`;
+            win.style.top = `${Math.max(0, Math.min(nt, window.innerHeight - win.offsetHeight))}px`;
+        }
+        else if (isResizing) {
+            let nw = startW + (e.clientX - startX);
+            let nh = startH + (e.clientY - startY);
+            // Задаем минимальные ограничения, чтобы окно не схлопнулось (например, 250x250)
+            win.style.width = `${Math.max(250, nw)}px`;
+            win.style.height = `${Math.max(250, nh)}px`;
+            
+            // Важно: сообщаем движку диаграммы, что контейнер изменил размер!
+            triggerDiagramResize(diagramId);
+        }
     });
 
     document.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
+        if (isDragging || isResizing) {
+            isDragging = false; isResizing = false;
             document.body.style.cursor = 'default';
         }
     });
 
-    // Возвращаем именно блок контента, так как DiagramDescriptor ожидает рабочую область
     return content;
+}
+
+/**
+ * Вспомогательная функция, которая находит диаграмму в таблице символов и обновляет ее геометрию
+ */
+export function triggerDiagramResize(diagramId) {
+    // Если у вас есть глобальный контекст или вы можете достучаться до текущего evl_context:
+    if (window.currentEvaluationContext) {
+        const symbol = window.currentEvaluationContext.getSymbolByName(diagramId);
+        if (symbol && symbol.value && symbol.value.type === "DiagramState") {
+            symbol.value.syncContainerSizes();
+        }
+    }
 }
