@@ -242,12 +242,8 @@ export class MathParser {
           case TYPE_UNIT.PLOT:
             return { type: 'plot', value: stmt.value };
           case TYPE_UNIT.EXPR:
-            if (stmt.value instanceof DiagramDescriptor) {
-              return { type: 'plot', value: stmt.value };
-            } else {
-              const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-              return { type: 'expr', value:  `$$${renderString}$$` };
-            }
+            const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+            return { type: 'expr', value:  `$$${renderString}$$` };
           default:
             throw new Error(`Неизвестная единица компиляции ${stmt.type_unit}`);
         }
