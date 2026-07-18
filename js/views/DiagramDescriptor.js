@@ -18,8 +18,8 @@ export default class DiagramDescriptor {
         this.data = {
             config: { 
                 mode: mode, 
-                width: 600, 
-                height: 600, 
+                width: 300, 
+                height: 300, 
                 auto_add: true // Флаг автодобавления векторов для хорд
             },
             layers: {},
