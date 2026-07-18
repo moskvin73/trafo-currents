@@ -33,7 +33,7 @@ export default class DiagramDescriptor {
             throw new TypeError("Инициализация невозможна: containerElement должен быть валидным DOM-элементом.");
         }
 
-        this.instance = new VectorDiagram(contentDiv, data);
+        this.instance = new VectorDiagram(contentDiv, this.data);
         this.#containerElement = contentDiv;
     }
 
