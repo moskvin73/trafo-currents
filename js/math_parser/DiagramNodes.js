@@ -1,6 +1,6 @@
 import ASTNode, { VariableNode } from './ASTNodes.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
- import { createFloatingWindowDOM }  from '../util.js';
+// import { createFloatingWindowDOM }  from '../util.js';
 //import VectorDiagram from '../VectorDiagram.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
@@ -29,9 +29,9 @@ export class PlotInitNode extends ASTNode {
         // Если режим window — сразу генерируем плавающее окно
         if (this.viewType === "window") {
             // 1. Создаем плавающее окно и получаем его внутренний div
-            const contentDiv = createFloatingWindowDOM(this.diagramId);
-            //descriptor.createFloatingWindow();
-            descriptor.containerElement = contentDiv;
+            //const contentDiv = createFloatingWindowDOM(this.diagramId);
+            descriptor.createFloatingWindow();
+            //descriptor.containerElement = contentDiv;
 
             descriptor.data.config.width = 450;
             descriptor.data.config.height = 450;
