@@ -202,7 +202,7 @@ export default class ComplexNumber extends MathType {
           case ANGLE_MODE.DEGREES:
             angle = angle * (180 / Math.PI);
             //unitSuffix = '^\\circ';
-            unitSuffix = '^{\\circ}';
+            unitSuffix = '{}^{\\circ}';
             break;
           case ANGLE_MODE.GRADIANS:
             angle = angle * (200 / Math.PI);
