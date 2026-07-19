@@ -148,7 +148,10 @@ export class PlotChordNode extends PlotDataNode {
     internal_evaluate(context) {
         try
         {
-            
+            const descriptor = this.getDiagram(context);
+            // Вычисляем врожение
+            expNode.internal_evaluate(context);
+
         } catch(err) { this.error(context, err); }
         return this.errorValue();
     }
