@@ -611,7 +611,6 @@ export class MathParser {
     const err = this.#create_evl_context();
     const e_c = err.count;
 
-
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
     this.#consume();
