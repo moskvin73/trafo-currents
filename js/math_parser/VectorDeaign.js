@@ -166,10 +166,11 @@ export function BuildVectorOperationDescription(node, out_errors)
         {
             const cur_e = out_errors.count;
             const rawTerms = collectTerms(node.expression, out_errors);
+            const aggTerms = aggregateTerms(rawTerms);
             if (cur_e === out_errors.count) {
-                rawTerms.var_let_name = node.name;
-                rawTerms.var_let_value = null;
-                return aggregateTerms(rawTerms); }
+                aggTerms.var_let_name = node.name;
+                aggTerms.var_let_value = null;
+                return aggTerms; }
             else return {};
         }
         else
