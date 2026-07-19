@@ -759,44 +759,6 @@ export default class ComplexNumber extends MathType {
     } catch (e) {
       throw new Error(`[ComplexNumber]: Ошибка в методе .log(). ${e.message}`);
     }
-   
-    /*// 1. Проверяем положение числа на осях координат
-    const isQuasiReal = Math.abs(this.#imaginary) < MathType.EPSILON;
-    const isQuasiImag = Math.abs(this.#real) < MathType.EPSILON;
-
-    const x = isQuasiImag ? 0 : this.#real;
-    const y = isQuasiReal ? 0 : this.#imaginary; 
-
-    // 2. Обработка сингулярности нуля: ln(0) = -Infinity + 0i
-    if (x === 0 && y === 0) {
-      return new ComplexNumber(-Infinity, 0);
-    }
-
-    // 3. Вычисляем модуль |z| и аргумент arg(z)
-    // Используем hypot для защиты от переполнения при возведении в квадрат больших чисел
-    const r = Math.hypot(x, y); 
-    const angle = Math.atan2(y, x);
-
-    let realPart = Math.log(r);
-    let imagPart = angle;
-
-    // 4. Симметрия и фильтрация погрешностей (как в accuratePow)
-    // Если число квази-вещественное и ПОЛОЖИТЕЛЬНОЕ (например, 5 + 1e-16i) -> arg(z) должен быть строго 0
-    if (isQuasiReal && x > 0) imagPart = 0;
-    
-    // Если число квази-вещественное и ОТРИЦАТЕЛЬНОЕ (например, -5 + 1e-16i) -> arg(z) строго PI
-    if (isQuasiReal && x < 0) imagPart = Math.PI;
-
-    // Если число чисто мнимое ПОЛОЖИТЕЛЬНОЕ (0 + 2i) -> arg(z) строго PI/2
-    if (isQuasiImag && y > 0) imagPart = Math.PI / 2;
-
-    // Если число чисто мнимое ОТРИЦАТЕЛЬНОЕ (0 - 2i) -> arg(z) строго -PI/2
-    if (isQuasiImag && y < 0) imagPart = -Math.PI / 2;
-
-    // Если модуль равен единице (|z| = 1), то вещественная часть ln(1) = 0
-    if (Math.abs(r - 1) < MathType.EPSILON) realPart = 0;
-
-    return new ComplexNumber(realPart, imagPart);*/
   }
 
   /**
