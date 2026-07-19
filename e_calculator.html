@@ -835,7 +835,7 @@
                                         const inlineObserver = new ResizeObserver((entries) => {
                                             for (let entry of entries) {
                                                 if (entry.contentRect.width > 0) {
-                                                    if (res.value.instance && typeof res.value.instance.syncContainerSizes === 'function') {
+                                                    if (res.value.instance && typeof res.value.syncContainerSizes === 'function') {
                                                         res.value.syncContainerSizes();
                                                     }
                                                     // В отличие от окон, для inline-карточек слежку НЕ выключаем (.disconnect() убираем),
