@@ -149,6 +149,7 @@ function aggregateTerms(terms) {
                 value: Math.abs(multiplier), // Число (множитель)
                 name: varName,     // Идентификатор
                 isNegative: multiplier < 0,
+                tex_name: null,
             });
         }
     }
@@ -171,6 +172,7 @@ export function BuildVectorOperationDescription(node, out_errors)
             if (cur_e === out_errors.count) {
                 aggTerms.var_let_name = node.name;
                 aggTerms.var_let_value = null;
+                aggTerms.var_let_tex = null;
                 return aggTerms; }
             else return {};
         }
