@@ -621,7 +621,7 @@ export class MathParser {
     }
     else this.#consume();
 
-    const variable = this.#parseExpression();
+    const exp = this.#parseExpression();
     if (this.c_token !== TokenType.COMMA) {
       this.#error("Пропущена ','", this.#location);
     }
