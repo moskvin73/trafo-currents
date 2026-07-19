@@ -156,7 +156,7 @@ export class PlotChordNode extends PlotDataNode {
             if (c_e == context.count)
             {
                 const data = this.data;
-                data.totalConstant = ComplexNumber.from(data.totalConstant);
+                data.constant = ComplexNumber.from(data.constant);
                 // Получаем
                 const mame_let = data.var_let_name;
                 const sym = context.scope_context.getSymbolByName(mame_let);
