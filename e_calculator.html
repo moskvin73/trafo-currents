@@ -848,15 +848,24 @@ mathjaxStyle.textContent = `
     
     /* Обеспечиваем правильный шрифт для формул */
     div { font-family: MathJax_Main, sans-serif !important; }
-    
-    /* УНИВЕРСАЛЬНЫЙ ФИКС: Заставляем абсолютно любой маркер внутри этой карточки */
-    /* использовать тот цвет, который записан у него в атрибуте fill или stroke, */
-    /* полностью игнорируя любые попытки браузера сбросить его в черный */
-    marker path { 
-        fill: inherit !important; 
-        stroke: inherit !important; 
-    }
 `;
+
+setTimeout(() => {
+    // Находим все маркеры внутри нашего Shadow DOM
+    const markers = shadowContainer.querySelectorAll("marker path, marker polygon");
+    
+    markers.forEach(path => {
+        // Извлекаем цвет, который генератор зашил в атрибут fill (red, green и т.д.)
+        const nativeFill = path.getAttribute("fill");
+        
+        if (nativeFill && nativeFill !== "none") {
+            // Принудительно перезаписываем инлайн-стиль элемента этим цветом
+            path.style.setProperty("fill", nativeFill, "important");
+            path.style.setProperty("stroke", nativeFill, "important");
+        }
+    });
+}, 50); // 50мс достаточно, чтобы VectorDiagram успел отрендерить SVG
+
 
 shadow.appendChild(mathjaxStyle);
 shadow.appendChild(shadowContainer);
