@@ -312,7 +312,9 @@ export class MathParser {
       case TokenType.RW_PLOT_INIT:
         exprNode = this.#parsePlotInit();
         break;
-      //case TokenType.RW_PLOT_CHORD:
+      case TokenType.RW_PLOT_CHORD:
+
+        break;
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
         break;
@@ -426,7 +428,13 @@ export class MathParser {
     return varable;
   }
 
-
+  /**
+   * plot_init(diagram_id, mode, [view_type])
+   *  Инициализация диаграммы.
+   * - mode: three-phase (базис ТОЭ) или math (базис математики).
+   * - view_type (опционально): inline (в карточке, по умолчанию) или window (плавающее окно).
+   * Пример: plot_init(d1, three-phase, window);
+   */
   #parsePlotInit() {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
@@ -461,6 +469,11 @@ export class MathParser {
     return new PlotInitNode(diagram_id, mode, view_type, token_loc);
   }
 
+  /**
+   * plot_config(diagram_id, key, value)
+   * Глобальные настройки.
+   * Пример: plot_config(d1, auto_add, true);
+   */
   #parsePlotConfig() {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
@@ -495,6 +508,11 @@ export class MathParser {
     return new PlotConfigNode(diagram_id, key, valueNode, token_loc);    
   }
 
+  /**
+   * plot_layer(diagram_id, layer_id, color, [stroke_width])
+   * Регистрация слоя графики. Цвет задается строкой в кавычках.
+   * Пример: plot_layer(d1, voltages, "#FF0000", 3);
+   */
   #parsePlotLayer() {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
@@ -542,6 +560,11 @@ export class MathParser {
     return new PlotLayerNode(diagram_id, layer_id, color, stroke_width, token_loc);    
   }
 
+  /** 
+   * plot_vector(diagram_id, variable, layer_id)
+   * Построение вектора из начала координат.
+   * Пример: plot_vector(d1, U_a, voltages);
+   */
   #parsePlotVector() {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
