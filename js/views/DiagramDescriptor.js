@@ -163,7 +163,7 @@ export default class DiagramDescriptor {
      * Добавление базового вектора от центра координат
      */
     addVector(vectorId, labelTex, layerId, complexValue) {
-        if (!this.data.layers[layerId]) {
+        /*if (!this.data.layers[layerId]) {
             this.addLayer(layerId, "#666666", 2);
         }
 
@@ -191,7 +191,31 @@ export default class DiagramDescriptor {
         this.recalculateAllChords();
         
         // Рендерим обновленную картину
-        this.reactiveUpdate();        
+        this.reactiveUpdate(); */
+    if (!this.data.layers[layerId]) {
+        this.addLayer(layerId, "#666666", 2);
+    }
+
+    const existingVec = this.data.vectors.find(v => v.id === vectorId);
+    
+    if (existingVec) {
+        // Если вектор уже есть в графе, мы обновляем ТОЛЬКО его математическое значение.
+        // Мы не имеем права трогать его origin, потому что он мог быть связан хордой!
+        existingVec.value = { re: complexValue.real, im: complexValue.imaginary };
+        existingVec.label = labelTex;
+    } else {
+        // Если вектора нет, по умолчанию он строится от центра
+        this.data.vectors.push({
+            id: vectorId,
+            layer: layerId,
+            label: labelTex,
+            origin: { type: "center" },
+            value: { re: complexValue.real, im: complexValue.imaginary }
+        });
+    }
+
+    this.reactiveUpdate();        
+        
     }
 
     /**
@@ -200,7 +224,70 @@ export default class DiagramDescriptor {
      * @param {string} layerId - Идентификатор слоя
      */
     addChord(inputData, layerId) {
-        const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
+    const { var_let_name, var_let_tex, var_let_value, terms } = inputData;
+
+    if (!this.data.layers[layerId]) {
+        this.addLayer(layerId, "#666666", 1.5);
+    }
+
+    // 1. Сначала создаем/обновляем все слагаемые (terms) строго по цепочке "паровозиком"
+    if (terms && terms.length > 0) {
+        terms.forEach((term, index) => {
+            const existingVec = this.data.vectors.find(v => v.id === term.name);
+            
+            if (existingVec) {
+                // Если вектор-слагаемое уже есть на диаграмме, обновляем его значение.
+                // Его origin МЫ НЕ ТРОГАЕМ (он сохраняет свою позицию в графе).
+                existingVec.value = { re: term.value.real, im: term.value.imaginary };
+            } else {
+                // Если его нет, выстраиваем топологию:
+                // Первый элемент выражения идет от центра, каждый следующий — от конца предыдущего.
+                const termOrigin = (index === 0) 
+                    ? { type: "center" } 
+                    : { type: "vector", id: terms[index - 1].name };
+
+                this.data.vectors.push({
+                    id: term.name,
+                    layer: layerId,
+                    label: term.tex_name,
+                    origin: termOrigin,
+                    value: { re: term.value.real, im: term.value.imaginary }
+                });
+            }
+        });
+    }
+
+    // 2. Определяем origin для самого результирующего вектора (хорды).
+    // По правилам сложения цепочек, итоговый результат начинается там же, 
+    // где начинался САМЫЙ ПЕРВЫЙ элемент этой цепочки.
+    let chordOrigin = { type: "center" };
+    if (terms && terms.length > 0) {
+        const firstTerm = this.data.vectors.find(v => v.id === terms[0].name);
+        if (firstTerm) {
+            // Копируем origin первого элемента цепочки, чтобы хорда встала ровно в её начало
+            chordOrigin = JSON.parse(JSON.stringify(firstTerm.origin));
+        }
+    }
+
+    // 3. Записываем саму хорду в массив vectors
+    const existingChord = this.data.vectors.find(v => v.id === var_let_name);
+    if (existingChord) {
+        existingChord.value = { re: var_let_value.real, im: var_let_value.imaginary };
+        existingChord.origin = chordOrigin;
+        existingChord.label = var_let_tex;
+    } else {
+        this.data.vectors.push({
+            id: var_let_name,
+            layer: layerId,
+            label: var_let_tex,
+            origin: chordOrigin,
+            value: { re: var_let_value.real, im: var_let_value.imaginary }
+        });
+    }
+
+    // 4. Мгновенно отправляем чистый JSON в VectorDiagram
+    this.reactiveUpdate();        
+        /*const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
 
         if (!this.data.layers[layerId]) {
             this.addLayer(layerId, "#666666", 1.5);
@@ -255,7 +342,7 @@ export default class DiagramDescriptor {
         // Теперь сквозной пересчет увидит обновленный U_a и перестроит всю геометрию!
         this.recalculateAllChords();
         
-        this.reactiveUpdate();
+        this.reactiveUpdate();*/
     }
 
     /**
