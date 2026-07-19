@@ -230,20 +230,29 @@ export default class DiagramDescriptor {
         this.addLayer(layerId, "#666666", 1.5);
     }
 
-    // 1. Сначала создаем/обновляем все слагаемые (terms) строго по цепочке "паровозиком"
+    // Проверяем: возможно, сам результирующий вектор (например, ΔU) уже был создан ранее 
+    // как часть другой цепочки и имеет жестко заданный origin (например, id: "U_н")
+    const existingResultVec = this.data.vectors.find(v => v.id === var_let_name);
+    let sharedBaseOrigin = { type: "center" };
+
+    if (existingResultVec && existingResultVec.origin && existingResultVec.origin.type === "vector") {
+        // Если у вектора уже была электротехническая привязка, мы берем её за основу для всей подцепочки!
+        sharedBaseOrigin = JSON.parse(JSON.stringify(existingResultVec.origin));
+    }
+
+    // 1. Создаем или обновляем базовые слагаемые (terms)
     if (terms && terms.length > 0) {
         terms.forEach((term, index) => {
             const existingVec = this.data.vectors.find(v => v.id === term.name);
             
             if (existingVec) {
-                // Если вектор-слагаемое уже есть на диаграмме, обновляем его значение.
-                // Его origin МЫ НЕ ТРОГАЕМ (он сохраняет свою позицию в графе).
+                // Если вектор-слагаемое уже есть на диаграмме, обновляем только математику
                 existingVec.value = { re: term.value.real, im: term.value.imaginary };
             } else {
-                // Если его нет, выстраиваем топологию:
-                // Первый элемент выражения идет от центра, каждый следующий — от конца предыдущего.
+                // Если его нет, выстраиваем топологию цепочки:
+                // Первый элемент подцепочки (ΔU_а) вместо центра получает sharedBaseOrigin (конец U_н)!
                 const termOrigin = (index === 0) 
-                    ? { type: "center" } 
+                    ? sharedBaseOrigin 
                     : { type: "vector", id: terms[index - 1].name };
 
                 this.data.vectors.push({
@@ -257,24 +266,22 @@ export default class DiagramDescriptor {
         });
     }
 
-    // 2. Определяем origin для самого результирующего вектора (хорды).
-    // По правилам сложения цепочек, итоговый результат начинается там же, 
-    // где начинался САМЫЙ ПЕРВЫЙ элемент этой цепочки.
-    let chordOrigin = { type: "center" };
-    if (terms && terms.length > 0) {
+    // 2. Определяем итоговый origin для самой хорды
+    // Если у хорды уже был правильный векторный origin, мы его сохраняем.
+    // Если не было — берем origin первого элемента цепочки.
+    let chordOrigin = sharedBaseOrigin;
+    if (chordOrigin.type === "center" && terms && terms.length > 0) {
         const firstTerm = this.data.vectors.find(v => v.id === terms[0].name);
-        if (firstTerm) {
-            // Копируем origin первого элемента цепочки, чтобы хорда встала ровно в её начало
+        if (firstTerm && firstTerm.origin) {
             chordOrigin = JSON.parse(JSON.stringify(firstTerm.origin));
         }
     }
 
-    // 3. Записываем саму хорду в массив vectors
-    const existingChord = this.data.vectors.find(v => v.id === var_let_name);
-    if (existingChord) {
-        existingChord.value = { re: var_let_value.real, im: var_let_value.imaginary };
-        existingChord.origin = chordOrigin;
-        existingChord.label = var_let_tex;
+    // 3. Записываем/обновляем саму хорду в массиве vectors
+    if (existingResultVec) {
+        existingResultVec.value = { re: var_let_value.real, im: var_let_value.imaginary };
+        existingResultVec.origin = chordOrigin; // Железно сохраняем или выстраиваем связь
+        existingResultVec.label = var_let_tex;
     } else {
         this.data.vectors.push({
             id: var_let_name,
@@ -285,8 +292,8 @@ export default class DiagramDescriptor {
         });
     }
 
-    // 4. Мгновенно отправляем чистый JSON в VectorDiagram
-    this.reactiveUpdate();        
+    // 4. Мгновенная реактивная перерисовка SVG
+    this.reactiveUpdate();    
         /*const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
 
         if (!this.data.layers[layerId]) {
