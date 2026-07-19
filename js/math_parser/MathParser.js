@@ -606,7 +606,36 @@ export class MathParser {
    * Пример: plot_chord(d1, U_ab = U_a - U_b, linears);
    */
   #plot_chord() {
+    const token_loc = this.#location;
+    const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
+    this.#consume();
+    if (!this.#match(TokenType.LPAREN, "Ожидалась открывающая скобка '('")) {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    const diagram_id = this.#unconIdent();
+    if (!diagram_id) return error_value();
 
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const variable = this.#parseExpression();
+    if (this.c_token !== TokenType.COMMA) {
+      this.#error("Пропущена ','", this.#location);
+    }
+    else this.#consume();
+
+    const layer_id = this.#unconIdent();
+    if (!layer_id) return error_value();
+
+    if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')' в конце print"))
+    {
+      while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
+      return error_value();
+    }
+    return new ConstantNode(TokenType.RW_FALSE, token_loc);
   }
 
   // =======================================================
