@@ -599,6 +599,10 @@ export class MathParser {
     return new PlotVectorNode(diagram_id, variable, layer_id, token_loc);       
   }
 
+  #plot_chord(diagram_id, expression, layer_id) {
+    
+  }
+
   // =======================================================
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
   // =======================================================
