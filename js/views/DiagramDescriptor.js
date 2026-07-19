@@ -263,55 +263,86 @@ export default class DiagramDescriptor {
      * Вызывается автоматически при любом изменении plot_vector или plot_chord
      */
     recalculateAllChords() {
+        // ЭТАП 1: Сначала рассчитываем математические значения (re/im) абсолютно всех хорд,
+        // чтобы графы и формулы обладали актуальными комплексными числами.
         this.data.vectors.forEach(vector => {
             if (!vector.isChordDependant || !vector.formula) return;
 
             const { terms, constant } = vector.formula;
-            
-            // Переменные для отслеживания сквозного математического значения
             let totalRe = constant.re;
             let totalIm = constant.im;
 
-            // По умолчанию для ЧИСТОГО СЛОЖЕНИЯ (полинома) итоговый вектор
-            // должен выходить ИЗ ЦЕНТРА координат, замыкая многоугольник векторов!
-            let currentOriginObj = { type: "center" }; 
-
             if (terms && terms.length > 0) {
-                // Проверяем, есть ли в выражении хотя бы один минус (вычитание)
-                const hasNegative = terms.some(t => t.isNegative);
-
-                terms.forEach((term, index) => {
-                    // Ищем живой базовый вектор на диаграмме
+                terms.forEach(term => {
                     const liveVector = this.data.vectors.find(v => v.id === term.name);
-                    
                     if (liveVector) {
                         const sign = term.isNegative ? -1 : 1;
+                        // Если это вложенная хорда, берем ее посчитанное значение, иначе значение луча
                         totalRe += sign * liveVector.value.re;
                         totalIm += sign * liveVector.value.im;
-
-                        // ТОПОЛОГИЧЕСКАЯ ТРАССИРОВКА:
-                        if (hasNegative) {
-                            // СЦЕНАРИЙ А: Вычитание (разность векторов, например U_a - U_b)
-                            // Хорда является соединительной линией. Цепляем её за конец ВЫЧИТАЕМОГО.
-                            if (terms.length === 2 && term.isNegative) {
-                                currentOriginObj = { type: "vector", id: term.name };
-                            }
-                        } else {
-                            // СЦЕНАРИЙ Б: Чистое сложение (цепочка, например ΔU + U_н)
-                            // Базовые векторы должны выстроиться «паровозиком».
-                            // Первый элемент (index === 0) остается привязанным к центру.
-                            // А вот СЛЕДУЮЩИЙ вектор цепочки мы принудительно перепривязываем к концу предыдущего!
-                            if (index > 0) {
-                                liveVector.origin = { type: "vector", id: terms[index - 1].name };
-                            }
-                        }
                     }
                 });
             }
-
-            // Записываем полностью пересчитанные живые координаты и связи
             vector.value = { re: totalRe, im: totalIm };
-            vector.origin = currentOriginObj; // Для суммы это будет "center", для разности — "vector"
+        });
+
+        // ЭТАП 2: Топологическая трассировка (выстраивание origin паровозиком)
+        this.data.vectors.forEach(vector => {
+            if (!vector.isChordDependant || !vector.formula) return;
+
+            const { terms } = vector.formula;
+            const hasNegative = terms.some(t => t.isNegative);
+
+            // По умолчанию результирующий вектор суммы выходит из центра
+            let currentOriginObj = { type: "center" }; 
+
+            if (terms && terms.length > 0) {
+                // Если вектор, к которому мы хотим привязаться, САМ является вложенной хордой,
+                // мы должны наследовать его точку начала, а не ломать её!
+                const parentChord = this.data.vectors.find(v => v.id === vector.id && v.origin.type === "vector");
+
+                terms.forEach((term, index) => {
+                    const liveVector = this.data.vectors.find(v => v.id === term.name);
+                    if (!liveVector) return;
+
+                    if (hasNegative) {
+                        // Разность векторов (например, U_a - U_b) — цепляем за вычитаемый
+                        if (terms.length === 2 && term.isNegative) {
+                            currentOriginObj = { type: "vector", id: term.name };
+                        }
+                    } else {
+                        // Чистое сложение (Полином / Вложенная цепочка, например ΔU_а + ΔU_r)
+                        if (index === 0) {
+                            // Первый элемент цепочки: 
+                            // Если глобальный вектор (например, ΔU) уже куда-то привязан (был смещен первой хордой),
+                            // то первый элемент его подцепочки (ΔU_а) должен встать ТУДА ЖЕ, куда указывал старт родителя!
+                            const ownerChord = this.data.vectors.find(v => v.isChordDependant && v.formula.terms.some(t => t.name === vector.id));
+                            if (ownerChord) {
+                                // Находим базовый вектор, за который зацепился родитель
+                                const siblingTermIdx = ownerChord.formula.terms.findIndex(t => t.name === vector.id);
+                                if (siblingTermIdx > 0) {
+                                    liveVector.origin = { type: "vector", id: ownerChord.formula.terms[siblingTermIdx - 1].name };
+                                }
+                            }
+                        } else {
+                            // Последующие элементы подцепочки строго привязываются к концу предыдущего
+                            liveVector.origin = { type: "vector", id: terms[index - 1].name };
+                        }
+                    }
+                });
+
+                // Если это вложенная цепочка (как ΔU = ΔU_а + ΔU_r), то сам результирующий вектор ΔU 
+                // должен визуально начинаться там же, где начался его первый элемент (ΔU_а)
+                if (!hasNegative) {
+                    const firstChild = this.data.vectors.find(v => v.id === terms[0].name);
+                    if (firstChild && firstChild.origin.type === "vector") {
+                        currentOriginObj = firstChild.origin;
+                    }
+                }
+            }
+
+            // Записываем финальный выверенный origin для хорды
+            vector.origin = currentOriginObj;
         });
     }    
 
