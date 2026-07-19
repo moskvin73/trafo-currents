@@ -147,7 +147,8 @@ function aggregateTerms(terms) {
         if (multiplier !== 0) {
             variablesArray.push({
                 multiplier: multiplier, // Число (множитель)
-                name: varName           // Идентификатор
+                name: varName,           // Идентификатор
+                value: null
             });
         }
     }

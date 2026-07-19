@@ -141,7 +141,7 @@ export class PlotVectorNode extends PlotDataNode {
 export class PlotChordNode extends PlotDataNode {
     constructor(diagramId, expNode, data, layerId, loc) {
         super(diagramId, loc);
-        this.variableNode = variableNode;
+        this.expNode = expNode;
         this.layerId = layerId;
     }
 
@@ -150,7 +150,12 @@ export class PlotChordNode extends PlotDataNode {
         {
             const descriptor = this.getDiagram(context);
             // Вычисляем врожение
-            expNode.internal_evaluate(context);
+            const c_e = context.count;
+            this.expNode.internal_evaluate(context);
+            if (c_e == context.count)
+            {
+                
+            }
 
         } catch(err) { this.error(context, err); }
         return this.errorValue();
