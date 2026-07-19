@@ -314,7 +314,7 @@ export class MathParser {
         exprNode = this.#parsePlotInit();
         break;
       case TokenType.RW_PLOT_CHORD:
-        exprNode = this.#plot_chord();
+        exprNode = this.#parsePlotChord();
         break;
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
@@ -605,7 +605,7 @@ export class MathParser {
    * Построение хорды на основе выражения связи. Запрещены *, /, ^.
    * Пример: plot_chord(d1, U_ab = U_a - U_b, linears);
    */
-  #plot_chord() {
+  #parsePlotChord() {
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
     this.#consume();
