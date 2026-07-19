@@ -824,83 +824,7 @@
                                         });
 
                                         // Собираем матрешку: пихаем mathRow во wrapper, а wrapper — в карточку
-
-diagramWrapper.appendChild(mathRow);
-resultBlock.appendChild(diagramWrapper);
-
-// --- ФИКС ЧЕРНЫХ СТРЕЛОК + СОХРАНЕНИЕ MATHJAX (Shadow DOM) ---
-// Создаем изолированную зону внутри mathRow
-const shadow = mathRow.attachShadow({ mode: 'open' });
-
-// Создаем внутренний контейнер для VectorDiagram внутри Shadow DOM
-const shadowContainer = document.createElement("div");
-shadowContainer.className = "output-row";
-Object.assign(shadowContainer.style, {
-    width: '100%',
-    height: '100%',
-    position: 'relative'
-});
-
-// Нам нужно прокинуть стили шрифтов MathJax внутрь Shadow DOM, иначе формулы потеряют шрифты
-const mathjaxStyle = document.createElement("style");
-mathjaxStyle.textContent = `
-    @import url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js');
-    
-    /* Обеспечиваем правильный шрифт для формул */
-    div { font-family: MathJax_Main, sans-serif !important; }
-`;
-
-setTimeout(() => {
-    // Находим все маркеры внутри нашего Shadow DOM
-    const markers = shadowContainer.querySelectorAll("marker path, marker polygon");
-    
-    markers.forEach(path => {
-        // Извлекаем цвет, который генератор зашил в атрибут fill (red, green и т.д.)
-        const nativeFill = path.getAttribute("fill");
-        
-        if (nativeFill && nativeFill !== "none") {
-            // Принудительно перезаписываем инлайн-стиль элемента этим цветом
-            path.style.setProperty("fill", nativeFill, "important");
-            path.style.setProperty("stroke", nativeFill, "important");
-        }
-    });
-}, 50); // 50мс достаточно, чтобы VectorDiagram успел отрендерить SVG
-
-
-shadow.appendChild(mathjaxStyle);
-shadow.appendChild(shadowContainer);
-
-// Передаем в конструктор контейнер, находящийся внутри Shadow DOM
-res.value.containerElement = shadowContainer;
-// ------------------------------------------------------------------------
-
-// 4. Включаем слежку за размерами обёртки
-const inlineObserver = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-        if (entry.contentRect.width > 0) {
-            if (res.value.instance && typeof res.value.syncContainerSizes === 'function') {
-                res.value.syncContainerSizes();
-            }
-        }
-    }
-});
-
-inlineObserver.observe(diagramWrapper);
-
-// БЕЗОПАСНЫЙ ВЫЗОВ MATHJAX С УЧЕТОМ АСИНХРОННОЙ ЗАГРУЗКИ С CDN
-function triggerMathJax() {
-    // Проверяем, загрузился ли уже скрипт MathJax и готов ли его метод typesetPromise
-    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-        window.MathJax.typesetPromise([shadowContainer]).catch((err) => console.log('MathJax error:', err));
-    } else {
-        // Если скрипт еще качается с CDN, пробуем повторить через 100мс
-        setTimeout(triggerMathJax, 100);
-    }
-}
-
-// Запускаем проверку и отрисовку формул для этой карточки
-triggerMathJax();                                        
-                                        /*diagramWrapper.appendChild(mathRow);
+                                        diagramWrapper.appendChild(mathRow);
                                         resultBlock.appendChild(diagramWrapper);
                                         
                                         // 3. Вызываем сеттер (внутри создается VectorDiagram)
@@ -919,7 +843,7 @@ triggerMathJax();
                                             }
                                         });
                                         
-                                        inlineObserver.observe(diagramWrapper);*/                                      
+                                        inlineObserver.observe(diagramWrapper);                                   
 
                                     }
                                     break;
