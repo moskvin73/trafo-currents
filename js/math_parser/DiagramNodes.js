@@ -137,3 +137,19 @@ export class PlotVectorNode extends PlotDataNode {
         return this.errorValue();
     }
 }
+
+export class PlotChordNode extends PlotDataNode {
+    constructor(diagramId, expNode, data, layerId, loc) {
+        super(diagramId, loc);
+        this.variableNode = variableNode;
+        this.layerId = layerId;
+    }
+
+    internal_evaluate(context) {
+        try
+        {
+            
+        } catch(err) { this.error(context, err); }
+        return this.errorValue();
+    }
+}
