@@ -164,9 +164,10 @@ export function BuildVectorOperationDescription(node, out_errors)
     try {
     if (node instanceof AssignNode)
     {
-        
+        const cur_e = out_errors.count;
         const rawTerms = collectTerms(node, out_errors);
-        return aggregateTerms(rawTerms); 
+        if (cur_e === out_errors.count) return aggregateTerms(rawTerms);
+        else return {};
     }
     } catch(err) {
         out_errors.error("Недопустимая векторная операция", node.loc);
