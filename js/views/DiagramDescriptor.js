@@ -1,6 +1,6 @@
 import VectorDiagram from '../VectorDiagram.js'
 import { createFloatingWindowDOM }  from '../util.js';
-
+ 
 export default class DiagramDescriptor {
     #containerElement;
     /**
