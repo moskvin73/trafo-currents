@@ -160,17 +160,21 @@ export class PlotChordNode extends PlotDataNode {
                 const mame_let = data.var_let_name;
                 const sym = context.scope_context.getSymbolByName(mame_let);
                 data.var_let_value = ComplexNumber.from(sym.value);
-                data.var_let_name = ASTNode.formatIdentifierToTeX(mame_let);
+                data.var_let_tex = ASTNode.formatIdentifierToTeX(mame_let);
                 data.terms.forEach(item => {
                     const name = item.name;
                     const sym = context.scope_context.getSymbolByName(name);
                     if (item.value !== 1)
                     {
-                      item.name = 
+                      const ss = isNegative ? "_" : "";
+                      item.name = `${name}_${ss}${item.value}`;
                       const tex_n = ASTNode.formatIdentifierToTeX(name);
+                      item.value = ComplexNumber.from(sym.value).multiply(ComplexNumber.from(item.value));
                     }
-                    item.name = ASTNode.formatIdentifierToTeX(name);
-                    item.value = ComplexNumber.from(sym.value).multiply(ComplexNumber.from(item.value));
+                    else { 
+                        item.tex_name = ASTNode.formatIdentifierToTeX(name);
+                        item.value = ComplexNumber.from(sym.value);
+                    }
                 });
             }
         } catch(err) { this.error(context, err); }
