@@ -231,41 +231,45 @@ export default class DiagramDescriptor {
             this.addLayer(layerId, "#666666", 1.5);
         }
 
-        // Сохраняем математическую декларацию хорды (её рецепт сборки) внутри data.vectors
-        // Чтобы в любой момент времени при изменении U_a мы могли восстановить её состояние
+        // --- КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ТУТ ---
+        // Прежде чем что-то считать, мы должны обновить базовые векторы на диаграмме
+        // теми СВЕЖИМИ значениями, которые прямо сейчас прилетели из калькулятора в массиве terms!
+        if (terms && terms.length > 0) {
+            terms.forEach(term => {
+                const baseVector = this.data.vectors.find(v => v.id === term.name);
+                
+                if (baseVector) {
+                    // Если вектор уже есть на диаграмме, принудительно обновляем его значение
+                    // свежими данными из текущего расчета калькулятора
+                    baseVector.value = { re: term.value.real, im: term.value.imaginary };
+                } else if (this.data.config.auto_add) {
+                    // Если базового вектора вообще не было (auto_add), создаем его как луч
+                    this.addVector(term.name, term.tex_name, layerId, term.value);
+                }
+            });
+        }
+        // ---------------------------------
+
+        // Сохраняем или обновляем декларацию формулы хорды
         const chordDeclaration = {
             id: var_let_name,
             layer: layerId,
             label: var_let_tex,
-            origin: { type: "center" }, // Будет вычислено динамически в recalculateAllChords
+            origin: { type: "center" }, 
             value: { re: var_let_value.real, im: var_let_value.imaginary },
-            // Сохраняем метаданные формулы для последующих динамических пересчетов
             formula: {
                 constant: constant ? { re: constant.real, im: constant.imaginary } : { re: 0, im: 0 },
                 terms: terms.map(t => ({
                     name: t.name,
                     tex_name: t.tex_name,
                     isNegative: t.isNegative
-                    // Значения value мы НЕ сохраняем жестко, мы будем брать их "живыми" из базовых векторов!
                 }))
             },
-            isChordDependant: true // Метка для движка пересчета
+            isChordDependant: true
         };
-
-        // Гарантируем, что базовые векторы из terms существуют на диаграмме (логика auto_add)
-        if (terms && terms.length > 0) {
-            terms.forEach(term => {
-                const exists = this.data.vectors.some(v => v.id === term.name);
-                if (!exists && this.data.config.auto_add) {
-                    // Создаем базовый луч, если его забыли нарисовать через plot_vector
-                    this.addVector(term.name, term.tex_name, layerId, term.value);
-                }
-            });
-        }
 
         const existingIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
         if (existingIdx !== -1) {
-            // Обновляем декларацию формулы, если пользователь переписал выражение (например, было U_a - U_b, стало U_a + U_b)
             this.data.vectors[existingIdx].formula = chordDeclaration.formula;
             this.data.vectors[existingIdx].label = chordDeclaration.label;
             this.data.vectors[existingIdx].layer = layerId;
@@ -273,7 +277,7 @@ export default class DiagramDescriptor {
             this.data.vectors.push(chordDeclaration);
         }
 
-        // Запускаем сквозной пересчет всей геометрии графа
+        // Теперь сквозной пересчет увидит обновленный U_a и перестроит всю геометрию!
         this.recalculateAllChords();
         
         this.reactiveUpdate();
