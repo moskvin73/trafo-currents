@@ -226,61 +226,48 @@ export default class DiagramDescriptor {
         this.addLayer(layerId, "#666666", 1.5);
     }
 
-    // Проверяем, является ли выражение классическим вычитанием двух векторов (например, U_a - U_b)
     const isSubtraction = terms && terms.length === 2 && terms.some(t => t.isNegative);
-
-    // Храним физические ID точек старта для элементов цепочки
     const currentChainIds = [];
 
-    // 1. Проходим по элементам выражения
+    // 1. Обновляем слагаемые (terms) готовыми значениями из калькулятора
     if (terms && terms.length > 0) {
         terms.forEach((term, index) => {
             const existingVec = this.data.vectors.find(v => v.id === term.name);
             
-            // ОПРЕДЕЛЯЕМ ИСТИННЫЙ ТРЕБУЕМЫЙ ORIGIN:
             let requiredOrigin = { type: "center" };
-            
             if (!isSubtraction) {
-                // Если это СЛОЖЕНИЕ (цепочка падений напряжений в линии):
-                // Первый элемент идет от центра, каждый следующий — за кончик предыдущего
                 requiredOrigin = (index === 0)
                     ? { type: "center" }
                     : { type: "vector", id: currentChainIds[index - 1] };
-            } else {
-                // Если это ВЫЧИТАНИЕ (трехфазные линейные напряжения):
-                // Оба вектора-родителя обязаны быть честными лучами из центра координат!
-                requiredOrigin = { type: "center" };
             }
 
             if (existingVec) {
-                // ПРОВЕРКА НА РЕАЛЬНЫЙ КОНФЛИКТ ТОПОЛОГИИ:
-                // Клонируем вектор ТОЛЬКО если это цепочка сложения, а вектор нагло лежит в центре
-                if (existingVec.origin.type !== requiredOrigin.type || existingVec.origin.id !== requiredOrigin.id) {
-                    
+                if (!isSubtraction && existingVec.origin.type === "center" && index > 0) {
+                    // Клон для цепочки сложения (в линии)
                     const cloneId = `${term.name}_chain_v`;
                     currentChainIds.push(cloneId);
 
-                    const existingCloneIdx = this.data.vectors.findIndex(v => v.id === cloneId);
-                    const cloneData = {
-                        id: cloneId,
-                        layer: existingVec.layer, // Строго родной слой фазного напряжения/тока!
-                        label: term.tex_name,
-                        origin: requiredOrigin,
-                        value: { re: term.value.real, im: term.value.imaginary }
-                    };
-
-                    if (existingCloneIdx !== -1) {
-                        this.data.vectors[existingCloneIdx].value = cloneData.value;
+                    const existingClone = this.data.vectors.find(v => v.id === cloneId);
+                    if (!existingClone) {
+                        this.data.vectors.push({
+                            id: cloneId,
+                            layer: existingVec.layer,
+                            label: term.tex_name,
+                            origin: requiredOrigin,
+                            value: { re: term.value.real, im: term.value.imaginary }
+                        });
                     } else {
-                        this.data.vectors.push(cloneData);
+                        // Покомпонентное обновление клона
+                        existingClone.value.re = term.value.real;
+                        existingClone.value.im = term.value.imaginary;
                     }
                 } else {
-                    // Если топология полностью совпадает (как у фазных векторов в трехфазной сети)
-                    existingVec.value = { re: term.value.real, im: term.value.imaginary };
+                    // Покомпонентное обновление базового луча (для трехфазной сети)
+                    existingVec.value.re = term.value.real;
+                    existingVec.value.im = term.value.imaginary;
                     currentChainIds.push(term.name);
                 }
             } else {
-                // Если вектора вообще нет на диаграмме (auto_add)
                 this.data.vectors.push({
                     id: term.name,
                     layer: layerId,
@@ -293,40 +280,37 @@ export default class DiagramDescriptor {
         });
     }
 
-    // 2. ОПРЕДЕЛЯЕМ СТАРТ ДЛЯ САМОЙ ХОРДЫ (РЕЗУЛЬТАТА)
+    // 2. Вычисляем точку старта (origin) для хорды
     let chordOrigin = { type: "center" };
-    
     if (isSubtraction) {
-        // Правило знаков ТОЭ для вычитания (U_ab = U_a - U_b):
-        // Стрелка хорды должна начинаться в конце ВЫЧИТАЕМОГО вектора (того, что с минусом!)
         const negativeTerm = terms.find(t => t.isNegative);
         chordOrigin = { type: "vector", id: negativeTerm.name };
     } else {
-        // Правило для сложения цепочки (U_c = U_н + ΔU):
-        // Хорда-сумма замыкает контур, поэтому её стрелка привязывается к концу последнего звена цепочки
         if (currentChainIds.length > 0) {
             chordOrigin = { type: "vector", id: currentChainIds[currentChainIds.length - 1] };
         }
     }
 
-    // 3. Записываем/обновляем саму хорду в массиве vectors под её родным именем
-    const existingChordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
-    const chordData = {
-        id: var_let_name,
-        layer: layerId,
-        label: var_let_tex,
-        origin: chordOrigin,
-        value: { re: var_let_value.real, im: var_let_value.imaginary }
-    };
+    // 3. Жесткое покомпонентное обновление самой хорды
+    const existingChord = this.data.vectors.find(v => v.id === var_let_name);
 
-    if (existingChordIdx !== -1) {
-        this.data.vectors[existingChordIdx].value = chordData.value;
-        this.data.vectors[existingChordIdx].origin = chordData.origin;
-        this.data.vectors[existingChordIdx].label = chordData.label;
+    if (existingChord) {
+        // Гарантируем реактивность: принудительно меняем примитивные поля re/im
+        existingChord.value.re = var_let_value.real;
+        existingChord.value.im = var_let_value.imaginary;
+        existingChord.origin = chordOrigin;
+        existingChord.label = var_let_tex;
     } else {
-        this.data.vectors.push(chordData);
+        this.data.vectors.push({
+            id: var_let_name,
+            layer: layerId,
+            label: var_let_tex,
+            origin: chordOrigin,
+            value: { re: var_let_value.real, im: var_let_value.imaginary }
+        });
     }
 
+    // 4. Рендерим обновленные данные
     this.reactiveUpdate();
     }
 
