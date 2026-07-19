@@ -179,6 +179,7 @@ export class PlotChordNode extends PlotDataNode {
                         item.value = ComplexNumber.from(sym.value);
                     }
                 });
+                descriptor.addChord(data, this.layerId);
             }
         } catch(err) { this.error(context, err); }
         return this.errorValue();
