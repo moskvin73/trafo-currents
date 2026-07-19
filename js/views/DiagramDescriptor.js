@@ -163,7 +163,36 @@ export default class DiagramDescriptor {
      * Добавление базового вектора от центра координат
      */
     addVector(vectorId, labelTex, layerId, complexValue) {
-        if (!complexValue.isComplexNumber) {
+        if (!this.data.layers[layerId]) {
+            this.addLayer(layerId, "#666666", 2);
+        }
+
+        const vectorData = {
+            id: vectorId,
+            layer: layerId,
+            label: labelTex,
+            origin: { type: "center" }, // Лучи всегда из центра
+            value: { re: complexValue.real, im: complexValue.imaginary },
+            isChordDependant: false // Метка, что это базовый независимый луч
+        };
+
+        const existingIdx = this.data.vectors.findIndex(v => v.id === vectorId);
+        if (existingIdx !== -1) {
+            // Если вектор уже существовал, мы просто обновляем его значение
+            // Но сохраняем его структуру, чтобы не сломать граф
+            this.data.vectors[existingIdx].value = vectorData.value;
+            this.data.vectors[existingIdx].label = vectorData.label;
+            this.data.vectors[existingIdx].layer = layerId;
+        } else {
+            this.data.vectors.push(vectorData);
+        }
+
+        // Ключевой шаг: пересчитываем все зависимые хорды под новое значение этого вектора
+        this.recalculateAllChords();
+        
+        // Рендерим обновленную картину
+        this.reactiveUpdate();        
+        /*if (!complexValue.isComplexNumber) {
             throw new TypeError(`Ожидалось комплексное число в параметре 'complexValue', получено: ${typeof complexValue}`);
         }
         // Если слоя не существует, создаем дефолтный, чтобы не падало
@@ -187,7 +216,7 @@ export default class DiagramDescriptor {
             this.data.vectors.push(vectorData);
         }
 
-        this.reactiveUpdate();
+        this.reactiveUpdate();*/
     }
 
     /**
@@ -197,6 +226,58 @@ export default class DiagramDescriptor {
      */
     addChord(inputData, layerId) {
         const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
+
+        if (!this.data.layers[layerId]) {
+            this.addLayer(layerId, "#666666", 1.5);
+        }
+
+        // Сохраняем математическую декларацию хорды (её рецепт сборки) внутри data.vectors
+        // Чтобы в любой момент времени при изменении U_a мы могли восстановить её состояние
+        const chordDeclaration = {
+            id: var_let_name,
+            layer: layerId,
+            label: var_let_tex,
+            origin: { type: "center" }, // Будет вычислено динамически в recalculateAllChords
+            value: { re: var_let_value.real, im: var_let_value.imaginary },
+            // Сохраняем метаданные формулы для последующих динамических пересчетов
+            formula: {
+                constant: constant ? { re: constant.real, im: constant.imaginary } : { re: 0, im: 0 },
+                terms: terms.map(t => ({
+                    name: t.name,
+                    tex_name: t.tex_name,
+                    isNegative: t.isNegative
+                    // Значения value мы НЕ сохраняем жестко, мы будем брать их "живыми" из базовых векторов!
+                }))
+            },
+            isChordDependant: true // Метка для движка пересчета
+        };
+
+        // Гарантируем, что базовые векторы из terms существуют на диаграмме (логика auto_add)
+        if (terms && terms.length > 0) {
+            terms.forEach(term => {
+                const exists = this.data.vectors.some(v => v.id === term.name);
+                if (!exists && this.data.config.auto_add) {
+                    // Создаем базовый луч, если его забыли нарисовать через plot_vector
+                    this.addVector(term.name, term.tex_name, layerId, term.value);
+                }
+            });
+        }
+
+        const existingIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
+        if (existingIdx !== -1) {
+            // Обновляем декларацию формулы, если пользователь переписал выражение (например, было U_a - U_b, стало U_a + U_b)
+            this.data.vectors[existingIdx].formula = chordDeclaration.formula;
+            this.data.vectors[existingIdx].label = chordDeclaration.label;
+            this.data.vectors[existingIdx].layer = layerId;
+        } else {
+            this.data.vectors.push(chordDeclaration);
+        }
+
+        // Запускаем сквозной пересчет всей геометрии графа
+        this.recalculateAllChords();
+        
+        this.reactiveUpdate();
+        /*const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
 
         if (!this.data.layers[layerId]) {
             this.addLayer(layerId, "#666666", 1.5);
@@ -339,8 +420,64 @@ export default class DiagramDescriptor {
         }
 
         // 4. Реактивно перерисовываем холст
-        this.reactiveUpdate();
+        this.reactiveUpdate();*/
     }
+
+    /**
+     * Сердце алгоритма: Сквозной динамический пересчет геометрии и значений всех хорд
+     * Вызывается автоматически при любом изменении plot_vector или plot_chord
+     */
+    recalculateAllChords() {
+        // Проходимся только по тем векторам, которые были объявлены как хорды (полиномы)
+        this.data.vectors.forEach(vector => {
+            if (!vector.isChordDependant || !vector.formula) return;
+
+            const { terms, constant } = vector.formula;
+            let currentOriginObj = { type: "center" };
+            
+            // Начинаем динамически вычислять результирующее комплексное значение хорды
+            // на основе АКТУАЛЬНЫХ живых значений векторов на диаграмме
+            let totalRe = constant.re;
+            let totalIm = constant.im;
+
+            if (terms && terms.length > 0) {
+                terms.forEach((term, index) => {
+                    // Ищем живой базовый вектор на диаграмме
+                    const liveVector = this.data.vectors.find(v => v.id === term.name);
+                    
+                    if (liveVector) {
+                        // Прибавляем или вычитаем его текущее живое значение
+                        const sign = term.isNegative ? -1 : 1;
+                        totalRe += sign * liveVector.value.re;
+                        totalIm += sign * liveVector.value.im;
+
+                        // ОПРЕДЕЛЕНИЕ ТОПОЛОГИЧЕСКОГО НАЧАЛА (ORIGIN):
+                        // Это обобщенное правило знаков ТОЭ для полиномов:
+                        // Если это классическое вычитание двух векторов (длина === 2 и есть минус),
+                        // хорда должна начаться на конце вычитаемого вектора (того, перед которым минус).
+                        if (terms.length === 2) {
+                            const hasNegative = terms.some(t => t.isNegative);
+                            if (hasNegative && term.isNegative) {
+                                currentOriginObj = { type: "vector", id: term.name };
+                            } else if (!hasNegative && index === 0) {
+                                // Если два вектора складываются (+U_a + U_b), зацеп за конец первого
+                                currentOriginObj = { type: "vector", id: term.name };
+                            }
+                        } else {
+                            // Для длинных полиномов (цепочек) по умолчанию цепляем за последний элемент перед хордой
+                            if (index === terms.length - 1) {
+                                currentOriginObj = { type: "vector", id: term.name };
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Записываем полностью пересчитанные живые координаты и связи в хорду
+            vector.value = { re: totalRe, im: totalIm };
+            vector.origin = currentOriginObj;
+        });
+    }    
 
     /**
      * Внутренний метод реактивной перерисовки холста, если он уже выведен на экран
