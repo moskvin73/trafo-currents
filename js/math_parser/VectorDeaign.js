@@ -148,7 +148,6 @@ function aggregateTerms(terms) {
             variablesArray.push({
                 multiplier: multiplier, // Число (множитель)
                 name: varName,           // Идентификатор
-                value: null
             });
         }
     }
