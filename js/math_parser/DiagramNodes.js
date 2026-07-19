@@ -168,7 +168,7 @@ export class PlotChordNode extends PlotDataNode {
                     const sym = context.scope_context.getSymbolByName(name);
                     if (item.value !== 1)
                     {
-                      const ss = isNegative ? "_" : "";
+                      const ss = item.isNegative ? "_" : "";
                       item.name = `${name}_${ss}${item.value}`;
                       const tex_n = ASTNode.formatIdentifierToTeX(name);
                       item.tex_name = `${item.value}${tex_n}`
