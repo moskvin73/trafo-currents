@@ -599,8 +599,13 @@ export class MathParser {
     return new PlotVectorNode(diagram_id, variable, layer_id, token_loc);       
   }
 
+  /**
+   * plot_chord(diagram_id, expression, layer_id)
+   * Построение хорды на основе выражения связи. Запрещены *, /, ^.
+   * Пример: plot_chord(d1, U_ab = U_a - U_b, linears);
+   */
   #plot_chord(diagram_id, expression, layer_id) {
-    
+
   }
 
   // =======================================================
