@@ -25,7 +25,7 @@ import { TYPE_UNIT } from './ConstantsDef.js';
 import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
 import { isValidCSSColor }  from '../util.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
-import { BuildVectorOperationDescription } fr1om './VectorDeaign.js'
+import { BuildVectorOperationDescription } from './VectorDeaign.js'
 
 /**
  * Единый узел для любой инструкции в коде
