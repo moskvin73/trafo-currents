@@ -10,7 +10,7 @@ import { SourceLocation, CompilerError } from './CompilerErrors.js'; // пере
 }*/
 
 // Карта быстрого сопоставления с типами токенов
-const reservedWordsMap = {
+const reservedWordsMap = { 
   '%pi':   TokenType.MATH_PI,
   '%e':    TokenType.MATH_E,
   '%phi':  TokenType.MATH_PHI,
