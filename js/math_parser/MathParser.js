@@ -608,6 +608,10 @@ export class MathParser {
    * Пример: plot_chord(d1, U_ab = U_a - U_b, linears);
    */
   #parsePlotChord() {
+    const err = this.#create_evl_context();
+    const e_c = err.count;
+
+
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
     this.#consume();
@@ -624,8 +628,6 @@ export class MathParser {
     else this.#consume();
 
     const exp = this.#parseExpression();
-    const err = this.#create_evl_context();
-    const e_c = err.count;
     const data = BuildVectorOperationDescription(exp, this.#create_evl_context());
 
     if (this.c_token !== TokenType.COMMA) {
