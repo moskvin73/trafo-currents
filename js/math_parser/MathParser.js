@@ -622,6 +622,8 @@ export class MathParser {
     else this.#consume();
 
     const exp = this.#parseExpression();
+    const data = BuildVectorOperationDescription(exp, #create_evl_context());
+
     if (this.c_token !== TokenType.COMMA) {
       this.#error("Пропущена ','", this.#location);
     }
