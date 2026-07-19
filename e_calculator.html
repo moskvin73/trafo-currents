@@ -829,6 +829,14 @@
                                         
                                         // 3. Вызываем сеттер (внутри создается VectorDiagram)
                                         res.value.containerElement = mathRow;
+                                        
+// Фикс рендеринга маркеров: принудительно пересоздаем HTML внутри контейнера
+setTimeout(() => {
+    if (mathRow.innerHTML) {
+        // Заставляем браузер заново распарсить SVG, уже находящийся внутри живого DOM карточки
+        mathRow.innerHTML = mathRow.innerHTML; 
+    }
+}, 50); // Даем 50мс конструктору VectorDiagram на отрисовку
 
                                         // 4. Включаем слежку за размерами обёртки
                                         const inlineObserver = new ResizeObserver((entries) => {
