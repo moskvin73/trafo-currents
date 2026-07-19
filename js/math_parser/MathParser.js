@@ -22,7 +22,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import { MathLexer } from './MathLexer.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
-import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
+import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode, PlotChordNode } from './DiagramNodes.js';
 import { isValidCSSColor }  from '../util.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { BuildVectorOperationDescription } from './VectorDeaign.js'
@@ -642,7 +642,7 @@ export class MathParser {
       return error_value();
     }
     if (e_c === this.errors.length)
-      return new ConstantNode(TokenType.RW_FALSE, token_loc);
+      return new PlotChordNode(diagram_id, exp, data, layer_id, token_loc);
     else
       return error_value();
   }

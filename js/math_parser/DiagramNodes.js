@@ -154,9 +154,19 @@ export class PlotChordNode extends PlotDataNode {
             this.expNode.internal_evaluate(context);
             if (c_e == context.count)
             {
-                
+                const data = this.data;
+                // Получаем
+                const mame_let = data.var_let_name;
+                const sym = context.scope_context.getSymbolByName(var_let);
+                data.var_let_value = ComplexNumber.from(sym.value);
+                data.var_let_name = ASTNode.formatIdentifierToTeX(mame_let);
+                data.variablesArray.terms.forEach(item => {
+                    const name = item.name;
+                    const sym = context.scope_context.getSymbolByName(name);
+                    item.name = ASTNode.formatIdentifierToTeX(mame);
+                    item.value = ComplexNumber.from(sym.value).multiply(ComplexNumber.from(item.value));
+                });
             }
-
         } catch(err) { this.error(context, err); }
         return this.errorValue();
     }

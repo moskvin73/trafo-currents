@@ -146,7 +146,7 @@ function aggregateTerms(terms) {
         
         if (multiplier !== 0) {
             variablesArray.push({
-                multiplier: multiplier, // Число (множитель)
+                value: multiplier, // Число (множитель)
                 name: varName,           // Идентификатор
             });
         }
@@ -167,7 +167,8 @@ export function BuildVectorOperationDescription(node, out_errors)
             const cur_e = out_errors.count;
             const rawTerms = collectTerms(node.expression, out_errors);
             if (cur_e === out_errors.count) {
-                rawTerms.var_let = node.name;
+                rawTerms.var_let_name = node.name;
+                rawTerms.var_let_value = null;
                 return aggregateTerms(rawTerms); }
             else return {};
         }
