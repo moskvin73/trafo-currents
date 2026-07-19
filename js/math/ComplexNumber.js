@@ -206,15 +206,15 @@ export default class ComplexNumber extends MathType {
             break;
           case ANGLE_MODE.GRADIANS:
             angle = angle * (200 / Math.PI);
-            unitSuffix = '^{\\text{g}}';
+            unitSuffix = '{}^{\\text{g}}';
             break;
           case ANGLE_MODE.TURNS:
             angle = angle / (2 * Math.PI);
-            unitSuffix = '^{\\text{tr}}';
+            unitSuffix = '{}^{\\text{tr}}';
             break;
           case ANGLE_MODE.RADIANS:
           default:
-            unitSuffix = '^{\\text{rad}}';
+            unitSuffix = '{}^{\\text{rad}}';
             break;
         }
         const roundedAngle = this.#cleanRound(angle);
