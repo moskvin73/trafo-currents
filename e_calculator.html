@@ -844,7 +844,7 @@ Object.assign(shadowContainer.style, {
 // Нам нужно прокинуть стили шрифтов MathJax внутрь Shadow DOM, иначе формулы потеряют шрифты
 const mathjaxStyle = document.createElement("style");
 mathjaxStyle.textContent = `
-    @import url('https://jsdelivr.net');
+    @import url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js');
     div { font-family: MathJax_Main, sans-serif !important; }
     /* Если маркеры всё еще пытаются чернеть из-за багов хромиума, принудительно красим их тут: */
     marker[id*="phases"] path { fill: red !important; stroke: red !important; }
