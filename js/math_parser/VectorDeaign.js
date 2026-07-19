@@ -18,47 +18,69 @@ import ASTNode, {
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 
-// Вспомогательный метод для размотки цепочки знаков +---++
+/**
+ * Рекурсивный вспомогательный метод для "размотки" последовательных унарных операций.
+ * Считает количество унарных минусов в цепочке (например, для +---++x) и находит базовый узел.
+ * 
+ * @param {Object} node - Текущий узел AST-дерева.
+ * @param {Object} signState - Ссылка на объект-аккумулятор количества минусов { minusCount: N }.
+ * @returns {Object} Базовый (не унарный) узел, который находился в самом конце цепочки знаков.
+ */
 function collapseUnaryChain(node, signState) {
-// Если текущий узел — унарная операция, обрабатываем её и идём вглубь
-if (node instanceof UnaryOpNode) {
-    if (node.operator === '-') {
-    signState.minusCount++;
+    // Если текущий узел — унарная операция, обрабатываем её и идём вглубь
+    if (node instanceof UnaryOpNode) {
+        if (node.operator === '-') {
+        signState.minusCount++;
+        }
+        return collapseUnaryChain(node.argument, signState);
     }
-    return collapseUnaryChain(node.argument, signState);
-}
 
-// Как только наткнулись на не-унарный узел, это база — возвращаем его
-return node;
+    // Как только наткнулись на не-унарный узел, это база — возвращаем его
+    return node;
 }  
 
+/**
+ * Рекурсивно обходит AST-дерево и собирает все переменные и константы в единый плоский массив.
+ * Правильно вычисляет и пробрасывает математический знак (плюс/минус) сверху вниз по дереву.
+ * 
+ * @param {Object} node - Корень AST-дерева (или текущий под-узел).
+ * @param {Object} out_errors - Объект для логирования синтаксических или семантических ошибок.
+ * @param {boolean} currentSign - Текущий контекстный знак (false — плюс, true — минус). По умолчанию false.
+ * @returns {Array<Object>} Плоский массив объектов с описанием знака, имени переменной или значения константы.
+ */
 function collectTerms(node, out_errors, currentSign = false) {
-    // Если наткнулись на унарный знак, раскрываем всю цепочку
     if (node instanceof UnaryOpNode) {
         const signState = { minusCount: 0 };
         const coreNode = collapseUnaryChain(node, signState);
-        // Если количество минусов нечетное, инвертируем текущий знак
         const hasMinus = signState.minusCount % 2 !== 0;
         return collectTerms(coreNode, out_errors, currentSign !== hasMinus);
     }
 
     if (node instanceof AddNode) {
-        // При сложении знак родителя передается обоим поддеревьям без изменений
         const a_left = collectTerms(node.left, out_errors, currentSign);
         const a_right = collectTerms(node.right, out_errors, currentSign);
         return [...a_left, ...a_right];
     }
     
     if (node instanceof SubNode) {
-        // При вычитании правое поддерево инвертирует входящий знак
         const a_left = collectTerms(node.left, out_errors, currentSign);
         const a_right = collectTerms(node.right, out_errors, !currentSign);
         return [...a_left, ...a_right];
     }
     
     if (node instanceof VariableNode) {
-        // Обязательно возвращаем в виде массива [ ... ]
         return [{ sign: currentSign, name: node.name, value: null }];
+    }
+    
+    // Поддержка узла ConstantNode
+    if (node instanceof ConstantNode) {
+        const rawValue = node.value(); // Вызываем метод value()
+        let finalValue = ComplexNumber.from(rawValue);
+        
+        if (currentSign) {
+            finalValue = finalValue.negate();
+        }
+        return [{ sign: false, name: null, value: finalValue }];
     }
     
     if (node instanceof NumberNode) {
@@ -74,7 +96,6 @@ function collectTerms(node, out_errors, currentSign = false) {
             return [];
         }
 
-        // Если итоговый знак минус, инвертируем (негатируем) само число
         if (currentSign) {
             finalValue = finalValue.negate();
         }
@@ -86,16 +107,25 @@ function collectTerms(node, out_errors, currentSign = false) {
     return [];
 }
 
+/**
+ * Агрегирует (группирует) плоский массив элементов. 
+ * Складывает все константы в единое значение, вычисляет итоговые множители переменных 
+ * и полностью исключает из результата переменные с нулевым коэффициентом.
+ * 
+ * @param {Array<Object>} terms - Плоский массив объектов, возвращенный функцией collectTerms.
+ * @returns {Object} Объект с выделенной константой и массивом сгруппированных идентификаторов.
+ */
 function aggregateTerms(terms) {
-    // Сюда будем суммировать все NumberNode. Предполагаем, что у ComplexNumber есть метод .add()
-    // Инициализируем нулем (замените на ваш класс комплексного нуля, если требуется)
-    let constantSum = new ComplexNumber(0, 0); 
+    // Выделенная финальная константа (инициализируем комплексным нулем)
+    let totalConstant = ComplexNumber.from(0); 
     
+    // Промежуточный объект для подсчета множителей идентификаторов
     const variableCounts = {};
 
+    // 1. Проходим по всем элементам и распределяем их
     for (const item of terms) {
         if (item.name !== null) {
-            // true — это минус (-1), false — это плюс (+1)
+            // Переменная: true -> -1, false -> +1
             const weight = item.sign ? -1 : 1;
             
             if (variableCounts[item.name] === undefined) {
@@ -103,37 +133,30 @@ function aggregateTerms(terms) {
             }
             variableCounts[item.name] += weight;
         } else if (item.value !== null) {
-            // Константы просто складываем
-            constantSum = constantSum.add(item.value);
+            // Константа (из NumberNode или ConstantNode): просто суммируем
+            totalConstant = totalConstant.add(item.value);
         }
     }
 
-    // 3. Формируем итоговый массив элементов
-    const resultArray = [];
-
-    // Добавляем константу, только если она не равна нулю 
-    // (предполагаю, что у вашего ComplexNumber есть метод проверки на ноль, например .isZero() или проверка поля)
-    // Если такого метода нет, можно проверять модуль числа или его компоненты
-    if (!constantSum.equals(0)) {
-        resultArray.push({
-            value: constantSum,
-            name: null // У константы нет идентификатора
-        });
-    }
-
-    // Проходим по собранным переменным и добавляем только ненулевые
+    // 2. Формируем массив переменных, исключая нулевые множители
+    const variablesArray = [];
+    
     for (const varName in variableCounts) {
         const multiplier = variableCounts[varName];
         
         if (multiplier !== 0) {
-            resultArray.push({
-                value: multiplier, // Число (множитель)
-                name: varName      // Идентификатор
+            variablesArray.push({
+                multiplier: multiplier, // Число (множитель)
+                name: varName           // Идентификатор
             });
         }
     }
 
-    return resultArray;
+    // 3. Возвращаем разделенный результат
+    return {
+        constant: totalConstant, // Отдельное константное значение (ComplexNumber)
+        terms: variablesArray    // Массив элементов вида [{ multiplier, name }, ...] без нулей
+    };
 }
 
 export function BuildVectorOperationDescription(node, out_errors)
