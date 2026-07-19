@@ -226,36 +226,46 @@ export default class DiagramDescriptor {
         this.addLayer(layerId, "#666666", 1.5);
     }
 
-    // Храним ID точек старта для элементов текущей цепочки
+    // Проверяем, является ли выражение классическим вычитанием двух векторов (например, U_a - U_b)
+    const isSubtraction = terms && terms.length === 2 && terms.some(t => t.isNegative);
+
+    // Храним физические ID точек старта для элементов цепочки
     const currentChainIds = [];
 
-    // 1. Проходим по слагаемым выражения
+    // 1. Проходим по элементам выражения
     if (terms && terms.length > 0) {
         terms.forEach((term, index) => {
             const existingVec = this.data.vectors.find(v => v.id === term.name);
             
-            // Вычисляем, какой origin ТРЕБУЕТСЯ по математике этого выражения:
-            // Первый элемент — от центра (или от базовой точки), последующие — от конца предыдущего
-            const requiredOrigin = (index === 0)
-                ? { type: "center" }
-                : { type: "vector", id: currentChainIds[index - 1] };
+            // ОПРЕДЕЛЯЕМ ИСТИННЫЙ ТРЕБУЕМЫЙ ORIGIN:
+            let requiredOrigin = { type: "center" };
+            
+            if (!isSubtraction) {
+                // Если это СЛОЖЕНИЕ (цепочка падений напряжений в линии):
+                // Первый элемент идет от центра, каждый следующий — за кончик предыдущего
+                requiredOrigin = (index === 0)
+                    ? { type: "center" }
+                    : { type: "vector", id: currentChainIds[index - 1] };
+            } else {
+                // Если это ВЫЧИТАНИЕ (трехфазные линейные напряжения):
+                // Оба вектора-родителя обязаны быть честными лучами из центра координат!
+                requiredOrigin = { type: "center" };
+            }
 
             if (existingVec) {
-                // ОБНАРУЖЕН КОНФЛИКТ ТОПОЛОГИИ:
-                // Если вектор уже есть, но его текущий origin не совпадает с тем, что требует выражение
-                // (например, он луч из центра, а выражение требует прицепить его к концу другого вектора)
+                // ПРОВЕРКА НА РЕАЛЬНЫЙ КОНФЛИКТ ТОПОЛОГИИ:
+                // Клонируем вектор ТОЛЬКО если это цепочка сложения, а вектор нагло лежит в центре
                 if (existingVec.origin.type !== requiredOrigin.type || existingVec.origin.id !== requiredOrigin.id) {
                     
-                    // Создаем геометрический клон вектора для этой цепочки
                     const cloneId = `${term.name}_chain_v`;
                     currentChainIds.push(cloneId);
 
                     const existingCloneIdx = this.data.vectors.findIndex(v => v.id === cloneId);
                     const cloneData = {
                         id: cloneId,
-                        layer: existingVec.layer, // СТРОГО РОДНОЙ СЛОЙ базового вектора!
+                        layer: existingVec.layer, // Строго родной слой фазного напряжения/тока!
                         label: term.tex_name,
-                        origin: requiredOrigin,   // Ставим в нужное место цепочки
+                        origin: requiredOrigin,
                         value: { re: term.value.real, im: term.value.imaginary }
                     };
 
@@ -265,12 +275,12 @@ export default class DiagramDescriptor {
                         this.data.vectors.push(cloneData);
                     }
                 } else {
-                    // Если топология совпадает (вектор уже правильно привязан), используем его «как есть»
+                    // Если топология полностью совпадает (как у фазных векторов в трехфазной сети)
                     existingVec.value = { re: term.value.real, im: term.value.imaginary };
                     currentChainIds.push(term.name);
                 }
             } else {
-                // Если вектора вообще нет на диаграмме — создаем его в текущем слое хорды (логика auto_add)
+                // Если вектора вообще нет на диаграмме (auto_add)
                 this.data.vectors.push({
                     id: term.name,
                     layer: layerId,
@@ -283,15 +293,23 @@ export default class DiagramDescriptor {
         });
     }
 
-    // 2. Определяем точку старта для результирующего вектора (хорды)
-    // Хорда-результат всегда соединяет начало и конец получившейся цепочки
+    // 2. ОПРЕДЕЛЯЕМ СТАРТ ДЛЯ САМОЙ ХОРДЫ (РЕЗУЛЬТАТА)
     let chordOrigin = { type: "center" };
-    if (currentChainIds.length > 0) {
-        // Хорда привязывается к концу последнего элемента цепочки
-        chordOrigin = { type: "vector", id: currentChainIds[currentChainIds.length - 1] };
+    
+    if (isSubtraction) {
+        // Правило знаков ТОЭ для вычитания (U_ab = U_a - U_b):
+        // Стрелка хорды должна начинаться в конце ВЫЧИТАЕМОГО вектора (того, что с минусом!)
+        const negativeTerm = terms.find(t => t.isNegative);
+        chordOrigin = { type: "vector", id: negativeTerm.name };
+    } else {
+        // Правило для сложения цепочки (U_c = U_н + ΔU):
+        // Хорда-сумма замыкает контур, поэтому её стрелка привязывается к концу последнего звена цепочки
+        if (currentChainIds.length > 0) {
+            chordOrigin = { type: "vector", id: currentChainIds[currentChainIds.length - 1] };
+        }
     }
 
-    // 3. Записываем/обновляем результирующую хорду под её настоящим ID
+    // 3. Записываем/обновляем саму хорду в массиве vectors под её родным именем
     const existingChordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
     const chordData = {
         id: var_let_name,
