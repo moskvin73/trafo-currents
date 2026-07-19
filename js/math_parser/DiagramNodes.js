@@ -142,6 +142,7 @@ export class PlotChordNode extends PlotDataNode {
     constructor(diagramId, expNode, data, layerId, loc) {
         super(diagramId, loc);
         this.expNode = expNode;
+        this.data = data;
         this.layerId = layerId;
     }
 
