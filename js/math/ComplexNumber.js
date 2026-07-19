@@ -115,6 +115,10 @@ export default class ComplexNumber extends MathType {
     const sign = decimal < 0 ? -1 : 1;
     const absDec = Math.abs(decimal);
     
+    // Быстрая проверка на ноль или целое число, чтобы избежать деления на 0
+    if (absDec < tolerance) return { num: 0, den: 1 };
+    if (Math.abs(absDec - Math.round(absDec)) < tolerance) return { num: Math.round(absDec) * sign, den: 1 };    
+
     let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
     let b = absDec;
     
@@ -122,6 +126,7 @@ export default class ComplexNumber extends MathType {
       const a = Math.floor(b);
       const aux = h1; h1 = a * h1 + h2; h2 = aux;
       const aux2 = k1; k1 = a * k1 + k2; k2 = aux2;
+      if (Math.abs(b - a) < 1e-12) break;
       b = 1 / (b - a);
     } while (Math.abs(absDec - h1 / k1) > absDec * tolerance && isFinite(b));
 
@@ -196,7 +201,8 @@ export default class ComplexNumber extends MathType {
         switch (angleMode) {
           case ANGLE_MODE.DEGREES:
             angle = angle * (180 / Math.PI);
-            unitSuffix = '^\\circ';
+            //unitSuffix = '^\\circ';
+            unitSuffix = '^{\\circ}';
             break;
           case ANGLE_MODE.GRADIANS:
             angle = angle * (200 / Math.PI);
@@ -238,7 +244,8 @@ export default class ComplexNumber extends MathType {
         const cleanAngleTeX = isNeg ? angleTeX.substring(1) : angleTeX;
         
         // Для красивых дробей в степени убираем лишние пробелы: {e}^{-j\frac{\pi}{3}}
-        exponent = `${jSign}j ${cleanAngleTeX}`;
+        //exponent = `${jSign}j ${cleanAngleTeX}`;
+        exponent = `${jSign}j {${cleanAngleTeX}}`;
       }
 
       return `${magPart}{e}^{${exponent}}`;
