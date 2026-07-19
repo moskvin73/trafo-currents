@@ -572,7 +572,7 @@ export class VariableNode extends IdentifierNode {
     super(name, loc);
   }
 
-  getPriority() { return OpPriority.PRIMARY; }
+  getPriority()  { return OpPriority.PRIMARY; }
 
   toString(context) { return this.name; }
 
