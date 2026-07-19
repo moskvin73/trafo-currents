@@ -117,7 +117,7 @@ function collectTerms(node, out_errors, currentSign = false) {
  */
 function aggregateTerms(terms) {
     // Выделенная финальная константа (инициализируем комплексным нулем)
-    let totalConstant = ComplexNumber.from(0); 
+    let totalConstant = new ComplexNumber(0, 0); 
     
     // Промежуточный объект для подсчета множителей идентификаторов
     const variableCounts = {};
