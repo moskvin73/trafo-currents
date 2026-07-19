@@ -162,19 +162,19 @@ function aggregateTerms(terms) {
 export function BuildVectorOperationDescription(node, out_errors)
 {
     try {
-    if (node instanceof AssignNode)
-    {
-        const cur_e = out_errors.count;
-        const rawTerms = collectTerms(node, out_errors);
-        if (cur_e === out_errors.count) {
-            rawTerms.var_let = node.name;
-            return aggregateTerms(rawTerms); }
-        else return {};
-    }
-    else
-    {
-        out_errors.error("Ожидался оператор присваения", node.loc);
-    }
+        if (node instanceof AssignNode)
+        {
+            const cur_e = out_errors.count;
+            const rawTerms = collectTerms(node, out_errors);
+            if (cur_e === out_errors.count) {
+                rawTerms.var_let = node.name;
+                return aggregateTerms(rawTerms); }
+            else return {};
+        }
+        else
+        {
+            out_errors.error("Ожидался оператор присваения", node.loc);
+        }
     } catch(err) {
         out_errors.error(err.toString(), node.loc);
     } 
