@@ -165,7 +165,7 @@ export function BuildVectorOperationDescription(node, out_errors)
         if (node instanceof AssignNode)
         {
             const cur_e = out_errors.count;
-            const rawTerms = collectTerms(node, out_errors);
+            const rawTerms = collectTerms(node.expression, out_errors);
             if (cur_e === out_errors.count) {
                 rawTerms.var_let = node.name;
                 return aggregateTerms(rawTerms); }
