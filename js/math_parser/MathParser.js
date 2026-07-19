@@ -25,6 +25,7 @@ import { TYPE_UNIT } from './ConstantsDef.js';
 import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode } from './DiagramNodes.js';
 import { isValidCSSColor }  from '../util.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
+import { BuildVectorOperationDescription } ftom './VectorDeaign.js'
 
 /**
  * Единый узел для любой инструкции в коде
@@ -313,7 +314,7 @@ export class MathParser {
         exprNode = this.#parsePlotInit();
         break;
       case TokenType.RW_PLOT_CHORD:
-
+        this.#plot_chord();
         break;
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
