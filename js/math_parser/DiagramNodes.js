@@ -161,7 +161,7 @@ export class PlotChordNode extends PlotDataNode {
                 const sym = context.scope_context.getSymbolByName(mame_let);
                 data.var_let_value = ComplexNumber.from(sym.value);
                 data.var_let_name = ASTNode.formatIdentifierToTeX(mame_let);
-                data.variablesArray.terms.forEach(item => {
+                data.terms.forEach(item => {
                     const name = item.name;
                     const sym = context.scope_context.getSymbolByName(name);
                     item.name = ASTNode.formatIdentifierToTeX(mame);
