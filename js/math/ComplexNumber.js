@@ -244,8 +244,7 @@ export default class ComplexNumber extends MathType {
         const cleanAngleTeX = isNeg ? angleTeX.substring(1) : angleTeX;
         
         // Для красивых дробей в степени убираем лишние пробелы: {e}^{-j\frac{\pi}{3}}
-        //exponent = `${jSign}j ${cleanAngleTeX}`;
-        exponent = `${jSign}j {${cleanAngleTeX}}`;
+        exponent = `${jSign}j ${cleanAngleTeX}`;
       }
 
       return `${magPart}{e}^{${exponent}}`;
