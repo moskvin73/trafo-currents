@@ -265,7 +265,7 @@ export default class DiagramDescriptor {
     recalculateAllChords() { 
         // ШАГ 1: Математический расчет комплексных значений (re/im) для всех хорд.
         // Сначала считаем значения, чтобы геометрия опиралась на правильные числа.
-        let changed = true;
+       /* let changed = true;
         let iterations = 0;
         
         // Крутим цикл, пока значения не стабилизируются (для обработки вложенности хорда-в-хорде)
@@ -379,7 +379,7 @@ export default class DiagramDescriptor {
                     }
                 }
             }
-        });
+        });*/
     }    
 
     /**
