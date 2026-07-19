@@ -304,7 +304,7 @@ export default class DiagramDescriptor {
             if (!v.isChordDependant) {
                 v.origin = { type: "center" };
             }
-        });
+        }); 
 
         // Теперь проходим по каждой хорде и выстраиваем её внутренние terms "паровозиком"
         this.data.vectors.forEach(vector => {
