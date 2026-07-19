@@ -263,8 +263,7 @@ export default class DiagramDescriptor {
      * Вызывается автоматически при любом изменении plot_vector или plot_chord
      */
     recalculateAllChords() { 
-     // ШАГ 1: Синхронизируем чистые математические значения re/im из калькулятора.
-    // Сначала обновляем значения простых хорд, затем составных.
+    // ШАГ 1: Обновление комплексных значений re/im из калькулятора
     this.data.vectors.forEach(vector => {
         if (!vector.isChordDependant || !vector.formula) return;
         
@@ -285,13 +284,12 @@ export default class DiagramDescriptor {
         }
     });
 
-    // ШАГ 2: Базовый сброс всех векторов. По умолчанию каждый независимый вектор — из центра.
+    // ШАГ 2: Базовый сброс — все независимые лучи строго из центра
     this.data.vectors.forEach(v => {
         v.origin = { type: "center" };
     });
 
-    // ШАГ 3: ТОПОЛОГИЧЕСКАЯ СБОРКА ГРАФА СВЯЗЕЙ (Без циклов и угадываний)
-    // Мы перебираем все хорды и выстраиваем их внутренние элементы друг за другом.
+    // ШАГ 3: ЧЕСТНАЯ ТОПОЛОГИЧЕСКАЯ СБОРКА ЦЕПОЧЕК (По законам ТОЭ)
     this.data.vectors.forEach(vector => {
         if (!vector.isChordDependant || !vector.formula) return;
 
@@ -301,18 +299,20 @@ export default class DiagramDescriptor {
         const hasNegative = terms.some(t => t.isNegative);
 
         if (hasNegative) {
-            // Если в формуле есть минус (разность векторов, например U_a - U_b):
-            // Хорда просто соединяет их концы. Начало хорды — на вычитаемом векторе.
+            // Сценарий ВЫЧИТАНИЯ (Разность векторов, например U_ab = U_a - U_b)
+            // Хорда соединяет концы. Начало — строго на вычитаемом векторе.
             if (terms.length === 2) {
                 const negTerm = terms.find(t => t.isNegative);
                 vector.origin = { type: "vector", id: negTerm.name };
             }
         } else {
-            // Если это ЧИСТОЕ СЛОЖЕНИЕ (цепочка падений напряжений, Кирхгоф):
-            // Сама результирующая хорда (например, U_c) начинается там же, где её ПЕРВЫЙ элемент
-            vector.origin = { type: "vector", id: terms[0].name };
+            // Сценарий СЛОЖЕНИЯ (Цепочка / Полином падений напряжений Кирхгофа)
+            // 1. Сама результирующая хорда-сумма ВСЕГДА выходит из центра (замыкает контур)
+            vector.origin = { type: "center" };
 
-            // А вот элементы внутри этой формулы жестко сцепляем "паровозиком"
+            // 2. Выстраиваем слагаемые строго друг за другом "паровозиком"
+            // Первый элемент (terms[0]) остается в центре.
+            // Каждый следующий (terms[i]) прицепляется к концу ПРЕДЫДУЩЕГО (terms[i-1]).
             for (let i = 1; i < terms.length; i++) {
                 const prevName = terms[i - 1].name;
                 const currentTerm = this.data.vectors.find(v => v.id === terms[i].name);
@@ -323,18 +323,17 @@ export default class DiagramDescriptor {
         }
     });
 
-    // ШАГ 4: КОРРЕКЦИЯ ВЛОЖЕННОСТИ (Решение вашей проблемы со скриншота)
-    // Если вектор (например, ΔU) одновременно является и слагаемым в одной формуле, 
-    // и результатом (хордой) во второй формуле, мы должны связать эти две цепочки вместе.
+    // ШАГ 4: СТЫКОВКА ВЛОЖЕННЫХ ЦЕПОЧЕК (Рекурсивный перенос)
+    // Если вектор (например, ΔU) сам оказался сложной хордой (ΔU_а + ΔU_r),
+    // то элементы его подцепочки должны переместиться туда, где должен был начаться сам ΔU!
     this.data.vectors.forEach(vector => {
         if (!vector.isChordDependant || !vector.formula) return;
         
         const { terms } = vector.formula;
         const hasNegative = terms.some(t => t.isNegative);
         
-        // Нас интересует только цепочка сложения (как ΔU = ΔU_а + ΔU_r)
         if (!hasNegative && terms && terms.length > 0) {
-            // Ищем большую родительскую хорду (например, U_c), которая использует наш текущий вектор (ΔU) как слагаемое
+            // Проверяем, не является ли эта хорда (например, ΔU) слагаемым в какой-то другой хорде?
             const parentChord = this.data.vectors.find(p => 
                 p.isChordDependant && 
                 p.formula && 
@@ -345,15 +344,16 @@ export default class DiagramDescriptor {
                 const pTerms = parentChord.formula.terms;
                 const myIdxInParent = pTerms.findIndex(t => t.name === vector.id);
                 
-                // Находим первый элемент нашей маленькой подцепочки (ΔU_а)
+                // Находим первый элемент нашей внутренней подцепочки (ΔU_а)
                 const firstChildOfMine = this.data.vectors.find(v => v.id === terms[0].name);
 
                 if (firstChildOfMine && myIdxInParent > 0) {
-                    // КЛЮЧЕВОЙ МОМЕНТ: Переносим старт ΔU_а на конец предыдущего слагаемого большой формулы (U_н)
+                    // НАСТОЯЩИЙ СТЫК: Цепочка падения напряжения (ΔU_а) должна начаться 
+                    // на конце предыдущего слагаемого большой формулы (U_н)!
                     const siblingName = pTerms[myIdxInParent - 1].name;
                     firstChildOfMine.origin = { type: "vector", id: siblingName };
                     
-                    // А сам вектор-результат (ΔU) тоже визуально привязываем к этой же точке старта
+                    // Сам вспомогательный вектор-сумма ΔU тоже визуально смещается в эту точку
                     vector.origin = { type: "vector", id: siblingName };
                 }
             }
