@@ -166,7 +166,9 @@ export function BuildVectorOperationDescription(node, out_errors)
     {
         const cur_e = out_errors.count;
         const rawTerms = collectTerms(node, out_errors);
-        if (cur_e === out_errors.count) return aggregateTerms(rawTerms);
+        if (cur_e === out_errors.count) {
+            rawTerms.var_let = node.name;
+            return aggregateTerms(rawTerms); }
         else return {};
     }
     } catch(err) {
