@@ -313,7 +313,7 @@ export default class ComplexNumber extends MathType {
   // Переменная для кэширования таблицы конвертеров
   static #localConverters = new Map([
     [Symbol.for('Math.ComplexNumber'), (val) => val],
-    ['number',        (val) => new RealNumber(val)],
+    ['number',        (val) => new ComplexNumber(val, 0)],
     [Symbol.for('Math.RealNumber'),    (val) => new ComplexNumber(val.value, 0)]
     // Перспектива: легко добавить новые типы прямо по их имени:
     // ['BigInt',     (val) => new ComplexNumber(Number(val), 0)],
