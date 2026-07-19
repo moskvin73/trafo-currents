@@ -191,57 +191,154 @@ export default class DiagramDescriptor {
     }
 
     /**
-     * Добавление соединительного вектора (хорды) на основе разобранного AST
+     * Системное добавление/обновление хорды на основе топологического анализа векторов
+     * @param {Object} inputData - Подготовленные данные полинома
+     * @param {string} layerId - Идентификатор слоя
      */
-    addChord(targetId, labelTex, layerId, complexValue, parent1Id, parent2Id, operator, evl_context) {
+    addChord(inputData, layerId) {
+        const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
+
         if (!this.data.layers[layerId]) {
             this.addLayer(layerId, "#666666", 1.5);
         }
 
-        // Логика Опционального Автодобавления векторов-родителей
-        if (this.data.config.auto_add) {
-            [parent1Id, parent2Id].forEach(parentId => {
-                const exists = this.data.vectors.some(v => v.id === parentId);
-                if (!exists) {
-                    // Вытаскиваем комплексное значение пропущенного родителя из SymbolTable
-                    const parentSymbol = evl_context.getSymbolByName(parentId);
-                    if (parentSymbol && parentSymbol.value) {
-                        const tex = evl_context.translateToTeX(parentId);
-                        // Добавляем его в тот же слой или в базовый
-                        this.addVector(parentId, tex, layerId, parentSymbol.value);
-                    } else {
-                        throw new Error(`Runtime Error: Невозможно автоматически добавить вектор '${parentId}'. Переменная не найдена в калькуляторе.`);
+        // 1. Формируем ПОЛНЫЙ список участников полинома (цепочки)
+        const fullChain = [];
+
+        // Добавляем базовые векторы-слагаемые
+        if (terms && terms.length > 0) {
+            terms.forEach(term => {
+                fullChain.push({
+                    id: term.name,
+                    label: term.tex_name,
+                    isNegative: term.isNegative,
+                    // Если флаг true, инвертируем значение для отрисовки результирующего смещения
+                    value: { 
+                        re: term.isNegative ? -term.value.real : term.value.real, 
+                        im: term.isNegative ? -term.value.imaginary : term.value.imaginary 
                     }
+                });
+            });
+        }
+
+        // Обработка свободной константы: если она не равна нулю, синтезируем для нее вектор
+        if (constant && (constant.real !== 0 || constant.imaginary !== 0)) {
+            const constId = `const_${var_let_name}`; // Синтезируемое уникальное имя
+            fullChain.push({
+                id: constId,
+                label: `C`,
+                isNegative: false,
+                value: { re: constant.real, im: constant.imaginary }
+            });
+        }
+
+        // 2. РЕЖИМ 1: ПРОВЕРКА НА ПОЛНОЕ ОБНОВЛЕНИЕ СУЩЕСТВУЮЩЕЙ СИСТЕМЫ
+        // Проверяем, есть ли уже на диаграмме абсолютно все элементы и сама хорда
+        const allElementsExist = fullChain.every(elem => this.data.vectors.some(v => v.id === elem.id)) 
+                                && this.data.vectors.some(v => v.id === var_let_name);
+
+        if (allElementsExist) {
+            // Если вся система уже построена, мы просто обновляем их физические значения re/im
+            fullChain.forEach(elem => {
+                const idx = this.data.vectors.findIndex(v => v.id === elem.id);
+                this.data.vectors[idx].value = elem.value;
+            });
+
+            // Обновляем значение самой хорды
+            const chordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
+            this.data.vectors[chordIdx].value = { re: var_let_value.real, im: var_let_value.imaginary };
+
+            this.reactiveUpdate();
+            return; // Завершаем выполнение, структура связей не нарушена
+        }
+
+        // 3. РЕЖИМ 2: СИНТЕЗ НОВОЙ СИСТЕМЫ ВЕКТОРОВ И ХОРДЫ
+        // Ищем на диаграмме существующие "опорные лучи" среди элементов полинома
+        const existingRays = fullChain.filter(elem => this.data.vectors.some(v => v.id === elem.id));
+
+        if (existingRays.length > 0) {
+            // Сценарий А: Есть опорные лучи. Нам нужно встроить недостающие векторы в цепочку.
+            // Для этого мы берем первый найденный опорный луч как базу
+            const baseRay = existingRays[0];
+            
+            // Перестраиваем структуру недостающих векторов, привязывая их последовательно
+            let currentOriginId = baseRay.id;
+
+            fullChain.forEach(elem => {
+                const exists = this.data.vectors.some(v => v.id === elem.id);
+                if (!exists) {
+                    this.data.vectors.push({
+                        id: elem.id,
+                        layer: layerId,
+                        label: elem.label,
+                        origin: { type: "vector", id: currentOriginId },
+                        value: elem.value
+                    });
+                    currentOriginId = elem.id;
+                } else {
+                    // Если элемент уже был, цепочка развернется от него дальше
+                    currentOriginId = elem.id;
                 }
             });
+
+            // Саму хорду привязываем к концу последнего элемента получившейся цепочки
+            this.data.vectors.push({
+                id: var_let_name,
+                layer: layerId,
+                label: var_let_tex,
+                origin: { type: "vector", id: currentOriginId },
+                value: { re: var_let_value.real, im: var_let_value.imaginary }
+            });
+
         } else {
-            // Если автодобавление выключено — проверяем жестко
-            const p1Exists = this.data.vectors.some(v => v.id === parent1Id);
-            const p2Exists = this.data.vectors.some(v => v.id === parent2Id);
-            if (!p1Exists || !p2Exists) {
-                throw new Error(`Runtime Error: Для хорды '${targetId}' требуются векторы '${parent1Id}' и '${parent2Id}' на диаграмме.`);
+            // Сценарий Б: Полная пустота на диаграмме (нет опорных лучей)
+            // Произвольно размещаем первый вектор в начало координат (origin: center)
+            if (fullChain.length > 0) {
+                const firstElem = fullChain[0];
+                
+                this.data.vectors.push({
+                    id: firstElem.id,
+                    layer: layerId,
+                    label: firstElem.label,
+                    origin: { type: "center" }, // Сделали его опорным лучом
+                    value: firstElem.value
+                });
+
+                // Все последующие элементы выстраиваем «паровозиком» за ним
+                let currentOriginId = firstElem.id;
+                for (let i = 1; i < fullChain.length; i++) {
+                    const elem = fullChain[i];
+                    this.data.vectors.push({
+                        id: elem.id,
+                        layer: layerId,
+                        label: elem.label,
+                        origin: { type: "vector", id: currentOriginId },
+                        value: elem.value
+                    });
+                    currentOriginId = elem.id;
+                }
+
+                // Хорду цепляем к концу этой цепочки
+                this.data.vectors.push({
+                    id: var_let_name,
+                    layer: layerId,
+                    label: var_let_tex,
+                    origin: { type: "vector", id: currentOriginId },
+                    value: { re: var_let_value.real, im: var_let_value.imaginary }
+                });
+            } else {
+                // Если полином пустой и содержит только хорду (редкий случай)
+                this.data.vectors.push({
+                    id: var_let_name,
+                    layer: layerId,
+                    label: var_let_tex,
+                    origin: { type: "center" },
+                    value: { re: var_let_value.real, im: var_let_value.imaginary }
+                });
             }
         }
 
-        // Правило знаков ТОЭ: при вычитании (U_a - U_b) хорда начинается в конце вычитаемого (U_b)
-        // При сложении (U_a + U_b) хорда идет последовательно из конца U_a
-        const originId = (operator === '-') ? parent2Id : parent1Id;
-
-        const chordData = {
-            id: targetId,
-            label: labelTex,
-            layer: layerId,
-            value: { re: complexValue.re, im: complexValue.im },
-            origin: { type: "vector", id: originId }
-        };
-
-        const existingIdx = this.data.vectors.findIndex(v => v.id === targetId);
-        if (existingIdx !== -1) {
-            this.data.vectors[existingIdx] = chordData;
-        } else {
-            this.data.vectors.push(chordData);
-        }
-
+        // 4. Реактивно перерисовываем холст
         this.reactiveUpdate();
     }
 
