@@ -314,7 +314,7 @@ export class MathParser {
         exprNode = this.#parsePlotInit();
         break;
       case TokenType.RW_PLOT_CHORD:
-        this.#plot_chord();
+        exprNode = this.#plot_chord();
         break;
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
