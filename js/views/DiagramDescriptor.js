@@ -220,74 +220,96 @@ export default class DiagramDescriptor {
      * @param {string} layerId - Идентификатор слоя
      */
     addChord(inputData, layerId) {
-        const { var_let_name, var_let_tex, var_let_value, terms } = inputData;
+    const { var_let_name, var_let_tex, var_let_value, terms } = inputData;
 
-        if (!this.data.layers[layerId]) {
-            this.addLayer(layerId, "#666666", 1.5);
-        }
+    if (!this.data.layers[layerId]) {
+        this.addLayer(layerId, "#666666", 1.5);
+    }
 
-        // Регистрируем саму хорду под её чистым именем из калькулятора
-        this.#registerAlias(var_let_name, var_let_name);
+    // Храним ID точек старта для элементов текущей цепочки
+    const currentChainIds = [];
 
-        // 1. Выстраиваем внутреннюю топологию слагаемых (terms)
-        if (terms && terms.length > 0) {
-            terms.forEach((term, index) => {
-                // Создаем уникальный изолированный ID для слагаемого внутри этой конкретной хорды,
-                // чтобы оно никогда не конфликтовало с одноименным базовым лучом!
-                const termInstanceId = `${term.name}_in_${var_let_name}`;
-                this.#registerAlias(term.name, termInstanceId);
+    // 1. Проходим по слагаемым выражения
+    if (terms && terms.length > 0) {
+        terms.forEach((term, index) => {
+            const existingVec = this.data.vectors.find(v => v.id === term.name);
+            
+            // Вычисляем, какой origin ТРЕБУЕТСЯ по математике этого выражения:
+            // Первый элемент — от центра (или от базовой точки), последующие — от конца предыдущего
+            const requiredOrigin = (index === 0)
+                ? { type: "center" }
+                : { type: "vector", id: currentChainIds[index - 1] };
 
-                // Строго стандартный для вашего отрисовщика синтаксис: center или vector
-                const termOrigin = (index === 0)
-                    ? { type: "center" }
-                    : { type: "vector", id: `${terms[index - 1].name}_in_${var_let_name}` };
+            if (existingVec) {
+                // ОБНАРУЖЕН КОНФЛИКТ ТОПОЛОГИИ:
+                // Если вектор уже есть, но его текущий origin не совпадает с тем, что требует выражение
+                // (например, он луч из центра, а выражение требует прицепить его к концу другого вектора)
+                if (existingVec.origin.type !== requiredOrigin.type || existingVec.origin.id !== requiredOrigin.id) {
+                    
+                    // Создаем геометрический клон вектора для этой цепочки
+                    const cloneId = `${term.name}_chain_v`;
+                    currentChainIds.push(cloneId);
 
-                const existingIdx = this.data.vectors.findIndex(v => v.id === termInstanceId);
-                if (existingIdx !== -1) {
-                    this.data.vectors[existingIdx].value = { re: term.value.real, im: term.value.imaginary };
-                } else {
-                    this.data.vectors.push({
-                        id: termInstanceId,
-                        layer: layerId,
+                    const existingCloneIdx = this.data.vectors.findIndex(v => v.id === cloneId);
+                    const cloneData = {
+                        id: cloneId,
+                        layer: existingVec.layer, // СТРОГО РОДНОЙ СЛОЙ базового вектора!
                         label: term.tex_name,
-                        origin: termOrigin,
+                        origin: requiredOrigin,   // Ставим в нужное место цепочки
                         value: { re: term.value.real, im: term.value.imaginary }
-                    });
+                    };
+
+                    if (existingCloneIdx !== -1) {
+                        this.data.vectors[existingCloneIdx].value = cloneData.value;
+                    } else {
+                        this.data.vectors.push(cloneData);
+                    }
+                } else {
+                    // Если топология совпадает (вектор уже правильно привязан), используем его «как есть»
+                    existingVec.value = { re: term.value.real, im: term.value.imaginary };
+                    currentChainIds.push(term.name);
                 }
-            });
-        }
+            } else {
+                // Если вектора вообще нет на диаграмме — создаем его в текущем слое хорды (логика auto_add)
+                this.data.vectors.push({
+                    id: term.name,
+                    layer: layerId,
+                    label: term.tex_name,
+                    origin: requiredOrigin,
+                    value: { re: term.value.real, im: term.value.imaginary }
+                });
+                currentChainIds.push(term.name);
+            }
+        });
+    }
 
-        // 2. Определение точки старта для самой хорды по правилам вашего отрисовщика.
-        // Математика выражения диктует топологию: хорда-результат связывается с концом ПОСЛЕДНЕГО вектора цепочки.
-        let chordOrigin = { type: "center" };
-        if (terms && terms.length > 0) {
-            const lastTermInstanceId = `${terms[terms.length - 1].name}_in_${var_let_name}`;
-            chordOrigin = { type: "vector", id: lastTermInstanceId };
-        }
+    // 2. Определяем точку старта для результирующего вектора (хорды)
+    // Хорда-результат всегда соединяет начало и конец получившейся цепочки
+    let chordOrigin = { type: "center" };
+    if (currentChainIds.length > 0) {
+        // Хорда привязывается к концу последнего элемента цепочки
+        chordOrigin = { type: "vector", id: currentChainIds[currentChainIds.length - 1] };
+    }
 
-        // 3. Записываем или обновляем результирующий вектор (хорду) под её настоящим ID
-        const existingChordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
-        if (existingChordIdx !== -1) {
-            this.data.vectors[existingChordIdx].value = { re: var_let_value.real, im: var_let_value.imaginary };
-            this.data.vectors[existingChordIdx].origin = chordOrigin;
-            this.data.vectors[existingChordIdx].label = var_let_tex;
-        } else {
-            this.data.vectors.push({
-                id: var_let_name,
-                layer: layerId,
-                label: var_let_tex,
-                origin: chordOrigin, // Передаем строго валидный объект { type: "vector", id: "..." }
-                value: { re: var_let_value.real, im: var_let_value.imaginary }
-            });
-        }
+    // 3. Записываем/обновляем результирующую хорду под её настоящим ID
+    const existingChordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
+    const chordData = {
+        id: var_let_name,
+        layer: layerId,
+        label: var_let_tex,
+        origin: chordOrigin,
+        value: { re: var_let_value.real, im: var_let_value.imaginary }
+    };
 
-        // Синхронизируем обновленные калькулятором значения по всей таблице алиасов
-        this.#updateAllAliasesOf(var_let_name, var_let_value);
-        if (terms) {
-            terms.forEach(t => this.#updateAllAliasesOf(t.name, t.value));
-        }
+    if (existingChordIdx !== -1) {
+        this.data.vectors[existingChordIdx].value = chordData.value;
+        this.data.vectors[existingChordIdx].origin = chordData.origin;
+        this.data.vectors[existingChordIdx].label = chordData.label;
+    } else {
+        this.data.vectors.push(chordData);
+    }
 
-        this.reactiveUpdate();
+    this.reactiveUpdate();
     }
 
     /**
