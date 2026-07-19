@@ -192,31 +192,6 @@ export default class DiagramDescriptor {
         
         // Рендерим обновленную картину
         this.reactiveUpdate();        
-        /*if (!complexValue.isComplexNumber) {
-            throw new TypeError(`Ожидалось комплексное число в параметре 'complexValue', получено: ${typeof complexValue}`);
-        }
-        // Если слоя не существует, создаем дефолтный, чтобы не падало
-        if (!this.data.layers[layerId]) {
-            this.addLayer(layerId, "#666666", 2);
-        }
-
-        // Защита от дубликатов: если вектор уже есть, обновляем его значение
-        const existingIdx = this.data.vectors.findIndex(v => v.id === vectorId);
-        const vectorData = {
-            id: vectorId,
-            label: labelTex,
-            layer: layerId,
-            value: { re: complexValue.real, im: complexValue.imaginary },
-            origin: { type: "center" }
-        };
-
-        if (existingIdx !== -1) {
-            this.data.vectors[existingIdx] = vectorData;
-        } else {
-            this.data.vectors.push(vectorData);
-        }
-
-        this.reactiveUpdate();*/
     }
 
     /**
@@ -281,150 +256,6 @@ export default class DiagramDescriptor {
         this.recalculateAllChords();
         
         this.reactiveUpdate();
-        /*const { var_let_name, var_let_tex, var_let_value, constant, terms } = inputData;
-
-        if (!this.data.layers[layerId]) {
-            this.addLayer(layerId, "#666666", 1.5);
-        }
-
-        // 1. Формируем ПОЛНЫЙ список участников полинома (цепочки)
-        const fullChain = [];
-
-        // Добавляем базовые векторы-слагаемые
-        if (terms && terms.length > 0) {
-            terms.forEach(term => {
-                fullChain.push({
-                    id: term.name,
-                    label: term.tex_name,
-                    isNegative: term.isNegative,
-                    // Если флаг true, инвертируем значение для отрисовки результирующего смещения
-                    value: { 
-                        re: term.isNegative ? -term.value.real : term.value.real, 
-                        im: term.isNegative ? -term.value.imaginary : term.value.imaginary 
-                    }
-                });
-            });
-        }
-
-        // Обработка свободной константы: если она не равна нулю, синтезируем для нее вектор
-        if (constant && (constant.real !== 0 || constant.imaginary !== 0)) {
-            const constId = `const_${var_let_name}`; // Синтезируемое уникальное имя
-            fullChain.push({
-                id: constId,
-                label: `C`,
-                isNegative: false,
-                value: { re: constant.real, im: constant.imaginary }
-            });
-        }
-
-        // 2. РЕЖИМ 1: ПРОВЕРКА НА ПОЛНОЕ ОБНОВЛЕНИЕ СУЩЕСТВУЮЩЕЙ СИСТЕМЫ
-        // Проверяем, есть ли уже на диаграмме абсолютно все элементы и сама хорда
-        const allElementsExist = fullChain.every(elem => this.data.vectors.some(v => v.id === elem.id)) 
-                                && this.data.vectors.some(v => v.id === var_let_name);
-
-        if (allElementsExist) {
-            // Если вся система уже построена, мы просто обновляем их физические значения re/im
-            fullChain.forEach(elem => {
-                const idx = this.data.vectors.findIndex(v => v.id === elem.id);
-                this.data.vectors[idx].value = elem.value;
-            });
-
-            // Обновляем значение самой хорды
-            const chordIdx = this.data.vectors.findIndex(v => v.id === var_let_name);
-            this.data.vectors[chordIdx].value = { re: var_let_value.real, im: var_let_value.imaginary };
-
-            this.reactiveUpdate();
-            return; // Завершаем выполнение, структура связей не нарушена
-        }
-
-        // 3. РЕЖИМ 2: СИНТЕЗ НОВОЙ СИСТЕМЫ ВЕКТОРОВ И ХОРДЫ
-        // Ищем на диаграмме существующие "опорные лучи" среди элементов полинома
-        const existingRays = fullChain.filter(elem => this.data.vectors.some(v => v.id === elem.id));
-
-        if (existingRays.length > 0) {
-            // Сценарий А: Есть опорные лучи. Нам нужно встроить недостающие векторы в цепочку.
-            // Для этого мы берем первый найденный опорный луч как базу
-            const baseRay = existingRays[0];
-            
-            // Перестраиваем структуру недостающих векторов, привязывая их последовательно
-            let currentOriginId = baseRay.id;
-
-            fullChain.forEach(elem => {
-                const exists = this.data.vectors.some(v => v.id === elem.id);
-                if (!exists) {
-                    this.data.vectors.push({
-                        id: elem.id,
-                        layer: layerId,
-                        label: elem.label,
-                        origin: { type: "vector", id: currentOriginId },
-                        value: elem.value
-                    });
-                    currentOriginId = elem.id;
-                } else {
-                    // Если элемент уже был, цепочка развернется от него дальше
-                    currentOriginId = elem.id;
-                }
-            });
-
-            // Саму хорду привязываем к концу последнего элемента получившейся цепочки
-            this.data.vectors.push({
-                id: var_let_name,
-                layer: layerId,
-                label: var_let_tex,
-                origin: { type: "vector", id: currentOriginId },
-                value: { re: var_let_value.real, im: var_let_value.imaginary }
-            });
-
-        } else {
-            // Сценарий Б: Полная пустота на диаграмме (нет опорных лучей)
-            // Произвольно размещаем первый вектор в начало координат (origin: center)
-            if (fullChain.length > 0) {
-                const firstElem = fullChain[0];
-                
-                this.data.vectors.push({
-                    id: firstElem.id,
-                    layer: layerId,
-                    label: firstElem.label,
-                    origin: { type: "center" }, // Сделали его опорным лучом
-                    value: firstElem.value
-                });
-
-                // Все последующие элементы выстраиваем «паровозиком» за ним
-                let currentOriginId = firstElem.id;
-                for (let i = 1; i < fullChain.length; i++) {
-                    const elem = fullChain[i];
-                    this.data.vectors.push({
-                        id: elem.id,
-                        layer: layerId,
-                        label: elem.label,
-                        origin: { type: "vector", id: currentOriginId },
-                        value: elem.value
-                    });
-                    currentOriginId = elem.id;
-                }
-
-                // Хорду цепляем к концу этой цепочки
-                this.data.vectors.push({
-                    id: var_let_name,
-                    layer: layerId,
-                    label: var_let_tex,
-                    origin: { type: "vector", id: currentOriginId },
-                    value: { re: var_let_value.real, im: var_let_value.imaginary }
-                });
-            } else {
-                // Если полином пустой и содержит только хорду (редкий случай)
-                this.data.vectors.push({
-                    id: var_let_name,
-                    layer: layerId,
-                    label: var_let_tex,
-                    origin: { type: "center" },
-                    value: { re: var_let_value.real, im: var_let_value.imaginary }
-                });
-            }
-        }
-
-        // 4. Реактивно перерисовываем холст
-        this.reactiveUpdate();*/
     }
 
     /**
@@ -432,54 +263,55 @@ export default class DiagramDescriptor {
      * Вызывается автоматически при любом изменении plot_vector или plot_chord
      */
     recalculateAllChords() {
-        // Проходимся только по тем векторам, которые были объявлены как хорды (полиномы)
         this.data.vectors.forEach(vector => {
             if (!vector.isChordDependant || !vector.formula) return;
 
             const { terms, constant } = vector.formula;
-            let currentOriginObj = { type: "center" };
             
-            // Начинаем динамически вычислять результирующее комплексное значение хорды
-            // на основе АКТУАЛЬНЫХ живых значений векторов на диаграмме
+            // Переменные для отслеживания сквозного математического значения
             let totalRe = constant.re;
             let totalIm = constant.im;
 
+            // По умолчанию для ЧИСТОГО СЛОЖЕНИЯ (полинома) итоговый вектор
+            // должен выходить ИЗ ЦЕНТРА координат, замыкая многоугольник векторов!
+            let currentOriginObj = { type: "center" }; 
+
             if (terms && terms.length > 0) {
+                // Проверяем, есть ли в выражении хотя бы один минус (вычитание)
+                const hasNegative = terms.some(t => t.isNegative);
+
                 terms.forEach((term, index) => {
                     // Ищем живой базовый вектор на диаграмме
                     const liveVector = this.data.vectors.find(v => v.id === term.name);
                     
                     if (liveVector) {
-                        // Прибавляем или вычитаем его текущее живое значение
                         const sign = term.isNegative ? -1 : 1;
                         totalRe += sign * liveVector.value.re;
                         totalIm += sign * liveVector.value.im;
 
-                        // ОПРЕДЕЛЕНИЕ ТОПОЛОГИЧЕСКОГО НАЧАЛА (ORIGIN):
-                        // Это обобщенное правило знаков ТОЭ для полиномов:
-                        // Если это классическое вычитание двух векторов (длина === 2 и есть минус),
-                        // хорда должна начаться на конце вычитаемого вектора (того, перед которым минус).
-                        if (terms.length === 2) {
-                            const hasNegative = terms.some(t => t.isNegative);
-                            if (hasNegative && term.isNegative) {
-                                currentOriginObj = { type: "vector", id: term.name };
-                            } else if (!hasNegative && index === 0) {
-                                // Если два вектора складываются (+U_a + U_b), зацеп за конец первого
+                        // ТОПОЛОГИЧЕСКАЯ ТРАССИРОВКА:
+                        if (hasNegative) {
+                            // СЦЕНАРИЙ А: Вычитание (разность векторов, например U_a - U_b)
+                            // Хорда является соединительной линией. Цепляем её за конец ВЫЧИТАЕМОГО.
+                            if (terms.length === 2 && term.isNegative) {
                                 currentOriginObj = { type: "vector", id: term.name };
                             }
                         } else {
-                            // Для длинных полиномов (цепочек) по умолчанию цепляем за последний элемент перед хордой
-                            if (index === terms.length - 1) {
-                                currentOriginObj = { type: "vector", id: term.name };
+                            // СЦЕНАРИЙ Б: Чистое сложение (цепочка, например ΔU + U_н)
+                            // Базовые векторы должны выстроиться «паровозиком».
+                            // Первый элемент (index === 0) остается привязанным к центру.
+                            // А вот СЛЕДУЮЩИЙ вектор цепочки мы принудительно перепривязываем к концу предыдущего!
+                            if (index > 0) {
+                                liveVector.origin = { type: "vector", id: terms[index - 1].name };
                             }
                         }
                     }
                 });
             }
 
-            // Записываем полностью пересчитанные живые координаты и связи в хорду
+            // Записываем полностью пересчитанные живые координаты и связи
             vector.value = { re: totalRe, im: totalIm };
-            vector.origin = currentOriginObj;
+            vector.origin = currentOriginObj; // Для суммы это будет "center", для разности — "vector"
         });
     }    
 
