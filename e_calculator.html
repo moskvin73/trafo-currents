@@ -845,10 +845,17 @@ Object.assign(shadowContainer.style, {
 const mathjaxStyle = document.createElement("style");
 mathjaxStyle.textContent = `
     @import url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js');
+    
+    /* Обеспечиваем правильный шрифт для формул */
     div { font-family: MathJax_Main, sans-serif !important; }
-    /* Если маркеры всё еще пытаются чернеть из-за багов хромиума, принудительно красим их тут: */
-    marker[id*="phases"] path { fill: red !important; stroke: red !important; }
-    marker[id*="linears"] path { fill: green !important; stroke: green !important; }
+    
+    /* УНИВЕРСАЛЬНЫЙ ФИКС: Заставляем абсолютно любой маркер внутри этой карточки */
+    /* использовать тот цвет, который записан у него в атрибуте fill или stroke, */
+    /* полностью игнорируя любые попытки браузера сбросить его в черный */
+    marker path { 
+        fill: inherit !important; 
+        stroke: inherit !important; 
+    }
 `;
 
 shadow.appendChild(mathjaxStyle);
@@ -862,8 +869,8 @@ res.value.containerElement = shadowContainer;
 const inlineObserver = new ResizeObserver((entries) => {
     for (let entry of entries) {
         if (entry.contentRect.width > 0) {
-            if (res.value.instance && typeof res.value.instance.syncContainerSizes === 'function') {
-                res.value.instance.syncContainerSizes();
+            if (res.value.instance && typeof res.value.syncContainerSizes === 'function') {
+                res.value.syncContainerSizes();
             }
         }
     }
@@ -871,13 +878,19 @@ const inlineObserver = new ResizeObserver((entries) => {
 
 inlineObserver.observe(diagramWrapper);
 
-// Спустя мгновение просим MathJax обработать новые формулы внутри Shadow DOM
-setTimeout(() => {
+// БЕЗОПАСНЫЙ ВЫЗОВ MATHJAX С УЧЕТОМ АСИНХРОННОЙ ЗАГРУЗКИ С CDN
+function triggerMathJax() {
+    // Проверяем, загрузился ли уже скрипт MathJax и готов ли его метод typesetPromise
     if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-        // Передаем MathJax конкретную изолированную ноду для отрисовки
-        window.MathJax.typesetPromise([shadowContainer]);
+        window.MathJax.typesetPromise([shadowContainer]).catch((err) => console.log('MathJax error:', err));
+    } else {
+        // Если скрипт еще качается с CDN, пробуем повторить через 100мс
+        setTimeout(triggerMathJax, 100);
     }
-}, 100);                                        
+}
+
+// Запускаем проверку и отрисовку формул для этой карточки
+triggerMathJax();                                        
                                         /*diagramWrapper.appendChild(mathRow);
                                         resultBlock.appendChild(diagramWrapper);
                                         
