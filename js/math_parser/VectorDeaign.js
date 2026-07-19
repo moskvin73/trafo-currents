@@ -161,6 +161,15 @@ function aggregateTerms(terms) {
 
 export function BuildVectorOperationDescription(node, out_errors)
 {
-    const rawTerms = collectTerms(node, out_errors);
-    return aggregateTerms(rawTerms); 
+    try {
+    if (node instanceof AssignNode)
+    {
+        
+        const rawTerms = collectTerms(node, out_errors);
+        return aggregateTerms(rawTerms); 
+    }
+    } catch(err) {
+        out_errors.error("Недопустимая векторная операция", node.loc);
+    } 
+    return {};
 }

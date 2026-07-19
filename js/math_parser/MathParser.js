@@ -137,6 +137,8 @@ class out_errors
     this.scope_context = scope_context;
   }
 
+  get count() { return this.errors.length; }
+  
   error(message, loc, severity = 'error') {
     const err = new CompilerError(message, loc, severity);
     this.errors.push(err);
