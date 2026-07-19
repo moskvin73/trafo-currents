@@ -138,7 +138,7 @@ class out_errors
   }
 
   get count() { return this.errors.length; }
-  
+
   error(message, loc, severity = 'error') {
     const err = new CompilerError(message, loc, severity);
     this.errors.push(err);
@@ -624,6 +624,8 @@ export class MathParser {
     else this.#consume();
 
     const exp = this.#parseExpression();
+    const err = this.#create_evl_context();
+    const e_c = err.count;
     const data = BuildVectorOperationDescription(exp, this.#create_evl_context());
 
     if (this.c_token !== TokenType.COMMA) {
