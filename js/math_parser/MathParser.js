@@ -608,8 +608,7 @@ export class MathParser {
    * Пример: plot_chord(d1, U_ab = U_a - U_b, linears);
    */
   #parsePlotChord() {
-    const err = this.#create_evl_context();
-    const e_c = err.count;
+    const e_c = this.errors.length;
 
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
@@ -642,7 +641,10 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new ConstantNode(TokenType.RW_FALSE, token_loc);
+    if (e_c === this.errors.length)
+      return new ConstantNode(TokenType.RW_FALSE, token_loc);
+    else
+      return error_value();
   }
 
   // =======================================================
