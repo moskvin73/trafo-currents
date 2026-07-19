@@ -171,6 +171,7 @@ export class PlotChordNode extends PlotDataNode {
                       const ss = isNegative ? "_" : "";
                       item.name = `${name}_${ss}${item.value}`;
                       const tex_n = ASTNode.formatIdentifierToTeX(name);
+                      item.tex_name = `${item.value}${tex_n}`
                       item.value = ComplexNumber.from(sym.value).multiply(ComplexNumber.from(item.value));
                     }
                     else { 
