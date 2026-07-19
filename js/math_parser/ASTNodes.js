@@ -951,20 +951,25 @@ export class CallNode extends MathNode {
 
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
-    const sym = context.scope_context.getSymbolByName(this.name);
-    if (sym === null) {
-      this.error(context, `Идентификатор "${this.name}" не опредилён.`);
-    }
-    else if (sym.type === SYM_UNDEFINED) {
-      this.error(context, `Переменная "${this.name}" не инициализирована.`);
-      return this.errorValue();
-    }
-    else if (sym.type !== SYM_BUILTIN) {
-      this.error(context, `Идентификатор "${this.name}" не является функцией.`);
-      return this.errorValue();
-    } else {
-      const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-      return MathRegistry.execute(sym.value, evaluatedArgs, this.loc);
+    try {
+      const sym = context.scope_context.getSymbolByName(this.name);
+      if (sym === null) {
+        this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+      }
+      else if (sym.type === SYM_UNDEFINED) {
+        this.error(context, `Переменная "${this.name}" не инициализирована.`);
+        return this.errorValue();
+      }
+      else if (sym.type !== SYM_BUILTIN) {
+        this.error(context, `Идентификатор "${this.name}" не является функцией.`);
+        return this.errorValue();
+      } else {
+        const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
+        return MathRegistry.execute(sym.value, evaluatedArgs, this.loc);
+      }
+    } catch(err) {
+       this.error(context, err);
+       return this.errorValue();
     }
   }
 
