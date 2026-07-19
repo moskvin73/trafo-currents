@@ -313,9 +313,9 @@ export class MathParser {
       case TokenType.RW_PLOT_INIT:
         exprNode = this.#parsePlotInit();
         break;
-      case TokenType.RW_PLOT_CHORD:
+      /*case TokenType.RW_PLOT_CHORD:
         exprNode = this.#parsePlotChord();
-        break;
+        break;*/
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
         break;
