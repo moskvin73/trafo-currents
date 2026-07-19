@@ -138,6 +138,6 @@ function aggregateTerms(terms) {
 
 export function BuildVectorOperationDescription(node, out_errors)
 {
-    const rawTerms = collectTerms(astRootNode, out_errors);
+    const rawTerms = collectTerms(node, out_errors);
     return aggregateTerms(rawTerms); 
 }
