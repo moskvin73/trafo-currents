@@ -824,7 +824,61 @@
                                         });
 
                                         // Собираем матрешку: пихаем mathRow во wrapper, а wrapper — в карточку
-                                        diagramWrapper.appendChild(mathRow);
+
+diagramWrapper.appendChild(mathRow);
+resultBlock.appendChild(diagramWrapper);
+
+// --- ФИКС ЧЕРНЫХ СТРЕЛОК + СОХРАНЕНИЕ MATHJAX (Shadow DOM) ---
+// Создаем изолированную зону внутри mathRow
+const shadow = mathRow.attachShadow({ mode: 'open' });
+
+// Создаем внутренний контейнер для VectorDiagram внутри Shadow DOM
+const shadowContainer = document.createElement("div");
+shadowContainer.className = "output-row";
+Object.assign(shadowContainer.style, {
+    width: '100%',
+    height: '100%',
+    position: 'relative'
+});
+
+// Нам нужно прокинуть стили шрифтов MathJax внутрь Shadow DOM, иначе формулы потеряют шрифты
+const mathjaxStyle = document.createElement("style");
+mathjaxStyle.textContent = `
+    @import url('https://jsdelivr.net');
+    div { font-family: MathJax_Main, sans-serif !important; }
+    /* Если маркеры всё еще пытаются чернеть из-за багов хромиума, принудительно красим их тут: */
+    marker[id*="phases"] path { fill: red !important; stroke: red !important; }
+    marker[id*="linears"] path { fill: green !important; stroke: green !important; }
+`;
+
+shadow.appendChild(mathjaxStyle);
+shadow.appendChild(shadowContainer);
+
+// Передаем в конструктор контейнер, находящийся внутри Shadow DOM
+res.value.containerElement = shadowContainer;
+// ------------------------------------------------------------------------
+
+// 4. Включаем слежку за размерами обёртки
+const inlineObserver = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+        if (entry.contentRect.width > 0) {
+            if (res.value.instance && typeof res.value.instance.syncContainerSizes === 'function') {
+                res.value.instance.syncContainerSizes();
+            }
+        }
+    }
+});
+
+inlineObserver.observe(diagramWrapper);
+
+// Спустя мгновение просим MathJax обработать новые формулы внутри Shadow DOM
+setTimeout(() => {
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        // Передаем MathJax конкретную изолированную ноду для отрисовки
+        window.MathJax.typesetPromise([shadowContainer]);
+    }
+}, 100);                                        
+                                        /*diagramWrapper.appendChild(mathRow);
                                         resultBlock.appendChild(diagramWrapper);
                                         
                                         // 3. Вызываем сеттер (внутри создается VectorDiagram)
@@ -843,7 +897,7 @@
                                             }
                                         });
                                         
-                                        inlineObserver.observe(diagramWrapper);                                       
+                                        inlineObserver.observe(diagramWrapper);*/                                      
 
                                     }
                                     break;
