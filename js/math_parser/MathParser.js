@@ -313,9 +313,9 @@ export class MathParser {
       case TokenType.RW_PLOT_INIT:
         exprNode = this.#parsePlotInit();
         break;
-      /*case TokenType.RW_PLOT_CHORD:
+      case TokenType.RW_PLOT_CHORD:
         exprNode = this.#parsePlotChord();
-        break;*/
+        break;
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
         break;
@@ -622,7 +622,7 @@ export class MathParser {
     else this.#consume();
 
     const exp = this.#parseExpression();
-    const data = BuildVectorOperationDescription(exp, #create_evl_context());
+    const data = BuildVectorOperationDescription(exp, this.#create_evl_context());
 
     if (this.c_token !== TokenType.COMMA) {
       this.#error("Пропущена ','", this.#location);
