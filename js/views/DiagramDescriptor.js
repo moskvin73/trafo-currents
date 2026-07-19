@@ -263,123 +263,103 @@ export default class DiagramDescriptor {
      * Вызывается автоматически при любом изменении plot_vector или plot_chord
      */
     recalculateAllChords() { 
-        // ШАГ 1: Математический расчет комплексных значений (re/im) для всех хорд.
-        // Сначала считаем значения, чтобы геометрия опиралась на правильные числа.
-       /* let changed = true;
-        let iterations = 0;
+    // ШАГ 1: Быстрое обновление живых значений re/im без опасных циклов.
+    // Просто доверяем калькулятору и синхронизируем данные.
+    this.data.vectors.forEach(vector => {
+        if (!vector.isChordDependant || !vector.formula) return;
         
-        // Крутим цикл, пока значения не стабилизируются (для обработки вложенности хорда-в-хорде)
-        while (changed && iterations < 10) {
-            changed = false;
-            iterations++;
-            
-            this.data.vectors.forEach(vector => {
-                if (!vector.isChordDependant || !vector.formula) return;
-                
-                const { terms, constant } = vector.formula;
-                let totalRe = constant.re;
-                let totalIm = constant.im;
-                
-                if (terms && terms.length > 0) {
-                    terms.forEach(term => {
-                        const liveVector = this.data.vectors.find(v => v.id === term.name);
-                        if (liveVector) {
-                            const sign = term.isNegative ? -1 : 1;
-                            totalRe += sign * liveVector.value.re;
-                            totalIm += sign * liveVector.value.im;
-                        }
-                    });
-                }
-                
-                if (Math.abs(vector.value.re - totalRe) > 1e-5 || Math.abs(vector.value.im - totalIm) > 1e-5) {
-                    vector.value = { re: totalRe, im: totalIm };
-                    changed = true;
+        const { terms, constant } = vector.formula;
+        let totalRe = constant.re;
+        let totalIm = constant.im;
+        
+        if (terms && terms.length > 0) {
+            terms.forEach(term => {
+                const liveVector = this.data.vectors.find(v => v.id === term.name);
+                if (liveVector) {
+                    const sign = term.isNegative ? -1 : 1;
+                    totalRe += sign * liveVector.value.re;
+                    totalIm += sign * liveVector.value.im;
                 }
             });
+            vector.value = { re: totalRe, im: totalIm };
         }
+    });
 
-        // ШАГ 2: ТОПОЛОГИЧЕСКАЯ ТРАССИРОВКА (Распределение связей origin)
-        // Сначала сбрасываем всё в дефолтное состояние (базовые лучи из центра)
-        this.data.vectors.forEach(v => {
-            if (!v.isChordDependant) {
-                v.origin = { type: "center" };
+    // ШАГ 2: Сброс базовых независимых векторов в центр
+    this.data.vectors.forEach(v => {
+        if (!v.isChordDependant) {
+            v.origin = { type: "center" };
+        }
+    });
+
+    // ШАГ 3: ТОПОЛОГИЧЕСКАЯ ТРАССИРОВКА "ПАРОВОЗИКОМ"
+    // Проходим по хордам и связываем внутренние элементы друг за другом
+    this.data.vectors.forEach(vector => {
+        if (!vector.isChordDependant || !vector.formula) return;
+
+        const { terms } = vector.formula;
+        if (!terms || terms.length === 0) return;
+
+        const hasNegative = terms.some(t => t.isNegative);
+
+        if (hasNegative) {
+            // Если это вычитание, хорда просто соединяет концы
+            if (terms.length === 2) {
+                const negTerm = terms.find(t => t.isNegative);
+                vector.origin = { type: "vector", id: negTerm.name };
             }
-        }); 
+        } else {
+            // Если это сложение, сама хорда начинается там же, где её первый элемент
+            vector.origin = { type: "vector", id: terms[0].name };
 
-        // Теперь проходим по каждой хорде и выстраиваем её внутренние terms "паровозиком"
-        this.data.vectors.forEach(vector => {
-            if (!vector.isChordDependant || !vector.formula) return;
-
-            const { terms } = vector.formula;
-            if (!terms || terms.length === 0) return;
-
-            const hasNegative = terms.some(t => t.isNegative);
-
-            if (hasNegative) {
-                // Сценарий вычитания (разности): хорда просто соединяет концы
-                if (terms.length === 2) {
-                    const negTerm = terms.find(t => t.isNegative);
-                    vector.origin = { type: "vector", id: negTerm.name };
+            // А элементы внутри выражения жестко сцепляются по цепочке
+            for (let i = 1; i < terms.length; i++) {
+                const prevTermName = terms[i - 1].name;
+                const currentTerm = this.data.vectors.find(v => v.id === terms[i].name);
+                if (currentTerm) {
+                    currentTerm.origin = { type: "vector", id: prevTermName };
                 }
-            } else {
-                // Сценарий СЛОЖЕНИЯ (Цепочка / Полином / Падение в линии)
-                // Итоговый вектор суммы (например, U_c или ΔU) должен начинаться там же,
-                // где начинается самое первое слагаемое этой цепочки!
-                vector.origin = { type: "vector", id: terms[0].name };
+            }
+        }
+    });
 
-                // А сами элементы цепочки (terms) жестко привязываем друг за другом
-                for (let i = 1; i < terms.length; i++) {
-                    const prevTermName = terms[i - 1].name;
-                    const currentTerm = this.data.vectors.find(v => v.id === terms[i].name);
-                    
-                    if (currentTerm) {
-                        currentTerm.origin = { type: "vector", id: prevTermName };
+    // ШАГ 4: СВЯЗЫВАНИЕ ВЛОЖЕННЫХ ЦЕПОЧЕК (Иерархия Кирхгофа)
+    // Если вектор (например, ΔU) сам стал хордой, переносим старт его подцепочки (ΔU_a)
+    // в точку, где он должен находиться в глобальной формуле (после U_н)
+    this.data.vectors.forEach(vector => {
+        if (!vector.isChordDependant || !vector.formula) return;
+        
+        const { terms } = vector.formula;
+        const hasNegative = terms.some(t => t.isNegative);
+        
+        if (!hasNegative && terms && terms.length > 0) {
+            // Ищем родительскую хорду, которая использует текущий вектор как слагаемое
+            const parentChord = this.data.vectors.find(p => 
+                p.isChordDependant && 
+                p.formula && 
+                p.formula.terms.some(t => t.name === vector.id)
+            );
+
+            if (parentChord) {
+                const pTerms = parentChord.formula.terms;
+                const myIdxInParent = pTerms.findIndex(t => t.name === vector.id);
+                const firstChildOfMine = this.data.vectors.find(v => v.id === terms[0].name);
+
+                if (firstChildOfMine) {
+                    if (myIdxInParent === 0) {
+                        // Если в главной формуле этот узел стоит первым
+                        firstChildOfMine.origin = { type: "center" };
+                    } else {
+                        // Цепляем начало подцепочки к концу предыдущего слагаемого из родительской формулы
+                        const siblingName = pTerms[myIdxInParent - 1].name;
+                        firstChildOfMine.origin = { type: "vector", id: siblingName };
                     }
+                    // Сам суммирующий вектор тоже выравнивается по этой точке
+                    vector.origin = firstChildOfMine.origin;
                 }
             }
-        });
-
-        // ШАГ 3: КОРРЕКЦИЯ ВЛОЖЕННОСТИ (Главное исправление)
-        // Если вектор (например, ΔU) сам стал хордой, то он сместился. 
-        // Значит, первый элемент его подцепочки (ΔU_a) должен уйти из центра 
-        // и встать ровно в ту точку, куда изначально указывал старт родительского ΔU!
-        this.data.vectors.forEach(vector => {
-            if (!vector.isChordDependant || !vector.formula) return;
-            
-            const { terms } = vector.formula;
-            const hasNegative = terms.some(t => t.isNegative);
-            
-            if (!hasNegative && terms && terms.length > 0) {
-                // Находим, не является ли сама эта хорда чьим-то слагаемым в другой большой хорде?
-                const parentChord = this.data.vectors.find(p => 
-                    p.isChordDependant && 
-                    p.formula && 
-                    p.formula.terms.some(t => t.name === vector.id)
-                );
-
-                if (parentChord) {
-                    // Если нашли родительскую хорду (например, U_c), смотрим, где внутри неё стоял наш вектор (ΔU)
-                    const pTerms = parentChord.formula.terms;
-                    const myIdxInParent = pTerms.findIndex(t => t.name === vector.id);
-
-                    const firstChildOfMine = this.data.vectors.find(v => v.id === terms[0].name);
-                    if (firstChildOfMine) {
-                        if (myIdxInParent === 0) {
-                            // Если наш ΔU стоял первым в родительской цепочке, его подхорда начинается в центре
-                            firstChildOfMine.origin = { type: "center" };
-                        } else {
-                            // Если наш ΔU стоит после кого-то (например, после U_н), 
-                            // то первый элемент подцепочки (ΔU_a) привязывается к концу предыдущего слагаемого родителя (U_н)!
-                            const siblingName = pTerms[myIdxInParent - 1].name;
-                            firstChildOfMine.origin = { type: "vector", id: siblingName };
-                        }
-                        
-                        // Сам вектор-сумма (ΔU) теперь тоже визуально стартует из этой же точки связи
-                        vector.origin = firstChildOfMine.origin;
-                    }
-                }
-            }
-        });*/
+        }
+    });
     }    
 
     /**
