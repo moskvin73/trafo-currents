@@ -850,7 +850,8 @@ export class ConstantNode extends MathNode {
   internal_evaluate(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
-      throw new Error(`[AST Error]: Неизвестный тип константы (Token ID: ${this.#tokenType}) на ${this.loc}`);
+      this.error(context, 'Неизвестный тип константы (Token ID: ${this.#tokenType})');
+      return this.errorValue();
     }
     return config.instance;    
   }
