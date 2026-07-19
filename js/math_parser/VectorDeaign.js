@@ -171,8 +171,12 @@ export function BuildVectorOperationDescription(node, out_errors)
             return aggregateTerms(rawTerms); }
         else return {};
     }
+    else
+    {
+        out_errors.error("Ожидался оператор присваения", node.loc);
+    }
     } catch(err) {
-        out_errors.error("Недопустимая векторная операция", node.loc);
+        out_errors.error(err.toString(), node.loc);
     } 
     return {};
 }
