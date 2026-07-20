@@ -244,7 +244,7 @@ export default class DiagramDescriptor {
         let realSum = recipe.constant ? recipe.constant.real : 0;
         let imagSum = recipe.constant ? recipe.constant.imaginary : 0;
 
-        // 1. Математический пересчет значения R на основе актуальных координат на диаграмме
+        // 1. Сбор живых значений векторов с диаграммы
         for (const term of recipe.terms) {
             const liveVec = this.data.vectors.find(v => v.id === term.name);
             const val = liveVec ? liveVec.value : { re: 0, im: 0 };
@@ -257,31 +257,50 @@ export default class DiagramDescriptor {
                 imagSum += val.im;
             }
         }
-        chord.value = { re: realSum, im: imagSum };
 
-        // 2. ОБЩИЙ ТОПОЛОГИЧЕСКИЙ АНАЛИЗ (Поиск граничных лучей контура R = Vлн + summ - Vлк)
+        // 2. Ищем опорные лучи (от центра) в формуле
         const rays = recipe.terms.filter(t => {
             const v = this.data.vectors.find(vec => vec.id === t.name);
             return v && v.origin.type === "center";
         });
 
-        const negativeRay = rays.find(r => r.isNegative); // Наш V_лк (конечный луч с минусом)
-        const positiveRay = rays.find(r => !r.isNegative); // Наш V_лн (начальный луч с плюсом)
+        const negativeRay = rays.find(r => r.isNegative);
+        const positiveRay = rays.find(r => !r.isNegative);
 
-        // Если в выражении есть конечный луч контура V_лк (идет со знаком минус)
+        // Коррекция электротехнического направления смещения для визуализатора
+        if (negativeRay && positiveRay) {
+            // Если это классическая разность двух лучей U_a - U_b:
+            // Точка старта хорды — конец вектора с МИНУСОМ (U_b)
+            chord.origin = { type: "vector", id: negativeRay.name };
+            
+            // Получаем живые значения векторов, чтобы вычислить вектор-смещение из точки U_b в точку U_a
+            const posVec = this.data.vectors.find(v => v.id === positiveRay.name);
+            const negVec = this.data.vectors.find(v => v.id === negativeRay.name);
+            
+            const pVal = posVec ? posVec.value : { re: 0, im: 0 };
+            const nVal = negVec ? negVec.value : { re: 0, im: 0 };
+
+            // Геометрическое смещение от конца U_b до конца U_a всегда равно: V_положительный - V_отрицательный
+            chord.value = {
+                re: pVal.re - nVal.re,
+                im: pVal.im - nVal.im
+            };
+            return;
+        }
+
+        // Обычный расчет для ломаных линий и свободных цепочек
+        chord.value = { re: realSum, im: imagSum };
+
         if (negativeRay) {
-            // Хорда должна расти из конца вычитаемого луча, чтобы замкнуть контур геометрически
             chord.origin = { type: "vector", id: negativeRay.name };
             return;
         } 
-        
-        // Если отрицательного луча нет, но есть положительный опорный луч V_лн
         if (positiveRay) {
             chord.origin = { type: "vector", id: positiveRay.name };
             return;
         }
 
-        // Абстрактная свободная цепочка (нет лучей от центра вообще): строим последовательную ломаную линию
+        // Абстрактная свободная цепочка
         let currentOriginId = null;
         for (let i = 0; i < recipe.terms.length; i++) {
             const term = recipe.terms[i];
