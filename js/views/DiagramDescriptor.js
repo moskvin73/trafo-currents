@@ -197,36 +197,33 @@ export default class DiagramDescriptor {
      * @param {string} layerId - Идентификатор слоя
      */
     addChord(inputData, layerId) {
-        const chordId = inputData.mame_let;
-        
-        // 1. Построение инвариантного хэша топологии для однозначной идентификации цепочки
-        const topologyHash = this.#generateTopologyHash(inputData);
-        
-        // Вычисляем результирующее комплексное значение хорды по формуле R = sum((-1)^n * Vi) + C
-        const calculatedValue = this.#calculateChordValue(inputData);
+        // Учитываем опечатку в вашем JSON: mame_let
+        const chordId = inputData.mame_let || inputData.name_let;
+        if (!chordId) return;
 
-        // Ищем, не была ли эта хорда уже построена ранее
+        const calculatedValue = this.#calculateChordValue(inputData);
+        const topologyHash = this.#generateTopologyHash(inputData);
+
+        // Ищем хорду строго по её уникальному ID (U_ab, U_bc, U_ca)
         let existingChord = this.data.vectors.find(v => v.id === chordId);
 
         if (existingChord) {
-            // Если хорда найдена, обновляем её значение
             existingChord.value = calculatedValue;
             existingChord.layer = layerId;
             existingChord.label = inputData.var_let_tex;
             
-            // Если топологическая структура (состав векторов) изменилась, перестраиваем связи
+            // Перестраиваем топологию только если структура реально изменилась
             if (existingChord.topologyHash !== topologyHash) {
                 existingChord.topologyHash = topologyHash;
                 this.#buildTopologyConnections(existingChord, inputData, layerId);
             }
         } else {
-            // Создаем новую хорду
             const newChord = {
                 id: chordId,
                 layer: layerId,
                 label: inputData.var_let_tex,
                 topologyHash: topologyHash,
-                origin: { type: "center" }, // Будет переопределено в процессе топологического анализа
+                origin: { type: "center" },
                 value: calculatedValue
             };
             
@@ -285,35 +282,32 @@ export default class DiagramDescriptor {
      * Топологический анализ и выстраивание цепочки векторов/псевдонимов
      */
     #buildTopologyConnections(chordVector, inputData, layerId) {
-        const terms = inputData.terms;
-        if (terms.length === 0) {
+       const terms = inputData.terms;
+        if (!terms || terms.length === 0) {
             chordVector.origin = { type: "center" };
             return;
         }
 
-        // --- ОПТИМИЗАЦИЯ ДЛЯ КЛАССИЧЕСКИХ ХОРД (Разность двух существующих лучей) ---
-        // Если выражение состоит ровно из двух векторов, например: U_a (plus) и U_b (minus)
-        if (terms.length === 2 && terms.some(t => t.isNegative) && terms.some(t => !t.isNegative)) {
-            const positiveTerm = terms.find(t => !t.isNegative);
+        // КЛАССИКА: Разность двух векторов (например, U_a - U_b)
+        if (terms.length === 2) {
             const negativeTerm = terms.find(t => t.isNegative);
+            const positiveTerm = terms.find(t => !t.isNegative);
 
-            const hasPosVector = this.data.vectors.some(v => v.id === positiveTerm.name && v.origin.type === "center");
-            const hasNegVector = this.data.vectors.some(v => v.id === negativeTerm.name && v.origin.type === "center");
-
-            // Если оба вектора уже существуют на диаграмме как опорные лучи от центра
-            if (hasPosVector && hasNegVector) {
-                // В электротехнике вектор U_ab = U_a - U_b начинается на конце U_b и заканчивается на конце U_a
-                // Поэтому origin нашей хорды жестко привязывается к концу вектора со знаком МИНУС
-                chordVector.origin = { type: "vector", id: negativeTerm.name };
-                return; // Выходим, никакие скрытые/псевдонимные цепочки строить не нужно!
+            if (negativeTerm && positiveTerm) {
+                // Проверяем, есть ли на диаграмме вектор, вычитаемый из выражения
+                const hasNegVector = this.data.vectors.some(v => v.id === negativeTerm.name);
+                
+                if (hasNegVector) {
+                    // Точка начала хорды — это всегда конец вычитаемого вектора (минусового)
+                    chordVector.origin = { type: "vector", id: negativeTerm.name };
+                    return; 
+                }
             }
         }
 
-        // --- УНИВЕРСАЛЬНЫЙ ВАРИАНТ ДЛЯ СЛОЖНЫХ МНОГОЧЛЕНОВ (Построение цепочки) ---
-        // Если это не просто разность двух лучей, а сложная ломаная линия:
+        // УНИВЕРСАЛЬНАЯ СЛОЖНАЯ ЦЕПОЧКА (Если слагаемых больше двух)
         const firstTerm = terms[0];
         const existingBase = this.data.vectors.find(v => v.id === firstTerm.name);
-        
         let currentOriginId = null;
 
         if (existingBase && existingBase.origin.type === "center") {
