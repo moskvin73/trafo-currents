@@ -291,29 +291,43 @@ export default class DiagramDescriptor {
             return;
         }
 
-        // Анализируем первый элемент для определения базовой точки привязки всей цепочки
+        // --- ОПТИМИЗАЦИЯ ДЛЯ КЛАССИЧЕСКИХ ХОРД (Разность двух существующих лучей) ---
+        // Если выражение состоит ровно из двух векторов, например: U_a (plus) и U_b (minus)
+        if (terms.length === 2 && terms.some(t => t.isNegative) && terms.some(t => !t.isNegative)) {
+            const positiveTerm = terms.find(t => !t.isNegative);
+            const negativeTerm = terms.find(t => t.isNegative);
+
+            const hasPosVector = this.data.vectors.some(v => v.id === positiveTerm.name && v.origin.type === "center");
+            const hasNegVector = this.data.vectors.some(v => v.id === negativeTerm.name && v.origin.type === "center");
+
+            // Если оба вектора уже существуют на диаграмме как опорные лучи от центра
+            if (hasPosVector && hasNegVector) {
+                // В электротехнике вектор U_ab = U_a - U_b начинается на конце U_b и заканчивается на конце U_a
+                // Поэтому origin нашей хорды жестко привязывается к концу вектора со знаком МИНУС
+                chordVector.origin = { type: "vector", id: negativeTerm.name };
+                return; // Выходим, никакие скрытые/псевдонимные цепочки строить не нужно!
+            }
+        }
+
+        // --- УНИВЕРСАЛЬНЫЙ ВАРИАНТ ДЛЯ СЛОЖНЫХ МНОГОЧЛЕНОВ (Построение цепочки) ---
+        // Если это не просто разность двух лучей, а сложная ломаная линия:
         const firstTerm = terms[0];
         const existingBase = this.data.vectors.find(v => v.id === firstTerm.name);
         
         let currentOriginId = null;
 
-        // Если первый вектор — это существующий на диаграмме луч от центра
         if (existingBase && existingBase.origin.type === "center") {
-            // Подгоняем математику: исключаем дублирование луча, начинаем строить прямо от его конца
             currentOriginId = existingBase.id;
         } else {
-            // Если опорного луча нет, создаем начальный вектор-звено (или его псевдоним) из центра
             currentOriginId = this.#getOrCreateChainSegment(firstTerm, { type: "center" }, layerId);
         }
 
-        // Последовательно нанизываем остальные элементы цепочки друг на друга (Ветвление / Пристыковка)
         for (let i = 1; i < terms.length; i++) {
             const nextTerm = terms[i];
             const nextOrigin = { type: "vector", id: currentOriginId };
             currentOriginId = this.#getOrCreateChainSegment(nextTerm, nextOrigin, layerId);
         }
 
-        // Конечная привязка самой хорды: она закрепляется за концом последнего звена цепочки
         chordVector.origin = { type: "vector", id: currentOriginId };
     }
 
