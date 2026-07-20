@@ -166,15 +166,13 @@ export default class DiagramDescriptor {
      * Добавление базового вектора от центра координат
      */
     addVector(vectorId, labelTex, layerId, complexValue) {
-        const existingVector = this.data.vectors.find(v => v.id === vectorId);
+         let vec = this.data.vectors.find(v => v.id === vectorId);
 
-        if (existingVector) {
-            // Если вектор существует, просто реактивно обновляем его значение и слой
-            existingVector.value = { re: complexValue.real, im: complexValue.imaginary };
-            existingVector.layer = layerId;
-            existingVector.label = labelTex;
+        if (vec) {
+            vec.value = { re: complexValue.real, im: complexValue.imaginary };
+            vec.layer = layerId;
+            vec.label = labelTex;
         } else {
-            // Если вектора нет, создаем его как базовый луч от центра
             this.data.vectors.push({
                 id: vectorId,
                 layer: layerId,
@@ -184,10 +182,8 @@ export default class DiagramDescriptor {
             });
         }
 
-        // Каскадно обновляем все зависимые псевдонимы (например, инвертированные копии)
-        this.#updateDependentAliases(vectorId);
-
-        // Запускаем реактивный пересчет холста
+        // КРИТИЧЕСКИЙ СБРОС И ПЕРЕСЧЕТ: обновляем все зависимые хорды живыми значениями
+        this.#recalculateDependentElements();
         this.reactiveUpdate();
     }
 
@@ -197,40 +193,36 @@ export default class DiagramDescriptor {
      * @param {string} layerId - Идентификатор слоя
      */
     addChord(inputData, layerId) {
-        // Учитываем опечатку в вашем JSON: mame_let
-        const chordId = inputData.var_let_name;
+     const chordId = inputData.var_let_name;
         if (!chordId) return;
 
-        const calculatedValue = this.#calculateChordValue(inputData);
-        const topologyHash = this.#generateTopologyHash(inputData);
+        // Сохраняем рецепт (структуру формулы) внутри объекта хорды для реактивного пересчета
+        let chord = this.data.vectors.find(v => v.id === chordId);
 
-        // Ищем хорду строго по её уникальному ID (U_ab, U_bc, U_ca)
-        let existingChord = this.data.vectors.find(v => v.id === chordId);
-
-        if (existingChord) {
-            existingChord.value = calculatedValue;
-            existingChord.layer = layerId;
-            existingChord.label = inputData.var_let_tex;
-            
-            // Перестраиваем топологию только если структура реально изменилась
-            if (existingChord.topologyHash !== topologyHash) {
-                existingChord.topologyHash = topologyHash;
-                this.#buildTopologyConnections(existingChord, inputData, layerId);
-            }
-        } else {
-            const newChord = {
+        if (!chord) {
+            chord = {
                 id: chordId,
                 layer: layerId,
                 label: inputData.var_let_tex,
-                topologyHash: topologyHash,
-                origin: { type: "center" },
-                value: calculatedValue
+                origin: { type: "center" }
             };
-            
-            this.#buildTopologyConnections(newChord, inputData, layerId);
-            this.data.vectors.push(newChord);
+            this.data.vectors.push(chord);
         }
 
+        // Запоминаем формулу в контексте объекта
+        chord.recipe = {
+            constant: inputData.constant,
+            terms: inputData.terms.map(t => ({ name: t.name, isNegative: t.isNegative, tex_name: t.tex_name }))
+        };
+
+        // Связываем базовые векторы формулы с этой хордой в карте зависимостей
+        inputData.terms.forEach(t => {
+            if (!this.#aliases.has(t.name)) this.#aliases.set(t.name, []);
+            if (!this.#aliases.get(t.name).includes(chordId)) this.#aliases.get(t.name).push(chordId);
+        });
+
+        // Считаем геометрию и связи
+        this.#evaluateChordGeometry(chord, layerId);
         this.reactiveUpdate();
     }
 
@@ -394,5 +386,101 @@ export default class DiagramDescriptor {
             }
         }
     }
-    
+        /**
+     * Вычисление живого значения хорды на основе текущего состояния векторов на диаграмме
+     */
+    #evaluateChordGeometry(chord, layerId) {
+        const recipe = chord.recipe;
+        let realSum = recipe.constant ? recipe.constant.real : 0;
+        let imagSum = recipe.constant ? recipe.constant.imaginary : 0;
+
+        // 1. Расчет живого математического значения R = sum((-1)^n * V_живой) + C
+        for (const term of recipe.terms) {
+            // Ищем вектор прямо на диаграмме (берём актуальное измененное значение, например U_a/2)
+            const liveVec = this.data.vectors.find(v => v.id === term.name);
+            const val = liveVec ? liveVec.value : { re: 0, im: 0 };
+
+            if (term.isNegative) {
+                realSum -= val.re;
+                imagSum -= val.im;
+            } else {
+                realSum += val.re;
+                imagSum += val.im;
+            }
+        }
+        chord.value = { re: realSum, im: imagSum };
+
+        // 2. ОБЩИЙ ТОПОЛОГИЧЕСКИЙ АНАЛИЗ (Поиск граничных лучей контура)
+        // Ищем опорные лучи (привязанные к центру), которые участвуют в выражении
+        const rays = recipe.terms.filter(t => {
+            const v = this.data.vectors.find(vec => vec.id === t.name);
+            return v && v.origin.type === "center";
+        });
+
+        // Находим луч-вычитания (V_лк, идет с минусом) и луч-начала (V_лн, идет с плюсом)
+        const negativeRay = rays.find(r => r.isNegative);
+        const positiveRay = rays.find(r => !r.isNegative);
+
+        // Если нашли вычитаемый луч V_лк (физический конец контура, например -U_b)
+        if (negativeRay) {
+            // Чтобы хорда замкнула полигон и пристыковалась к концу этого луча,
+            // её геометрический origin должен быть привязан к его ID. При изменении луча хорда сдвинется сама.
+            chord.origin = { type: "vector", id: negativeRay.name };
+            return;
+        } 
+        
+        // Если отрицательного луча нет, но есть положительный опорный луч V_лн
+        if (positiveRay) {
+            chord.origin = { type: "vector", id: positiveRay.name };
+            return;
+        }
+
+        // Свободный случай (нет лучей вообще): строим последовательную цепочку в воздухе
+        let currentOriginId = null;
+        for (let i = 0; i < recipe.terms.length; i++) {
+            const term = recipe.terms[i];
+            const nextOrigin = currentOriginId ? { type: "vector", id: currentOriginId } : { type: "center" };
+            currentOriginId = this.#getOrCreateChainSegment(term, nextOrigin, layerId);
+        }
+        chord.origin = { type: "vector", id: currentOriginId };
+    }
+
+    /**
+     * Каскадный пересчет всех хорд при изменении любого базового вектора
+     */
+    #recalculateDependentElements() {
+        // Проходим по всем векторам, у которых есть сохраненный рецепт формулы (это наши хорды)
+        for (const vec of this.data.vectors) {
+            if (vec.recipe) {
+                this.#evaluateChordGeometry(vec, vec.layer);
+            }
+        }
+    }
+
+    /**
+     * Создание цепочки для абстрактных свободных векторов (без опорных лучей)
+     */
+    #getOrCreateChainSegment(term, originConfig, layerId) {
+        let segmentId = term.isNegative ? `${term.name}_minus` : term.name;
+        let liveVec = this.data.vectors.find(v => v.id === term.name);
+        
+        let baseValue = liveVec ? liveVec.value : { re: 0, im: 0 };
+        let targetValue = term.isNegative ? { re: -baseValue.re, im: -baseValue.im } : { re: baseValue.re, im: baseValue.im };
+        let targetLabel = term.isNegative ? (term.tex_name.startsWith('-') ? term.tex_name.slice(1) : `-${term.tex_name}`) : term.tex_name;
+
+        let segment = this.data.vectors.find(v => v.id === segmentId);
+        if (segment) {
+            segment.origin = originConfig;
+            segment.value = targetValue;
+        } else {
+            this.data.vectors.push({
+                id: segmentId,
+                layer: layerId,
+                label: targetLabel,
+                origin: originConfig,
+                value: targetValue
+            });
+        }
+        return segmentId;
+    }
 }
