@@ -3,7 +3,7 @@ import { createFloatingWindowDOM }  from '../util.js';
  
 export default class DiagramDescriptor {
     #containerElement;
-    #aliases; // Карта: имя_в_калькуляторе -> массив_id_на_диаграмме
+    #aliases; // Карта: имя_исходного_вектора -> массив_id_созданных_псевдонимов
 
     /**
      * @param {string} mode - "three_phase" или "math"
@@ -29,30 +29,6 @@ export default class DiagramDescriptor {
             vectors: []
         };
     }
-
-    /**
-     * Быстрое обновление значений всех графических проявлений вектора из калькулятора
-     */
-    #updateAllAliasesOf(calculatorName, complexValue) {
-        const aliasList = this.#aliases.get(calculatorName);
-        if (aliasList) {
-            aliasList.forEach(diagramId => {
-                const vec = this.data.vectors.find(v => v.id === diagramId);
-                if (vec) {
-                    vec.value = { re: complexValue.real, im: complexValue.imaginary };
-                }
-            });
-        }
-    }
-
-    #registerAlias(calculatorName, diagramId) {
-        if (!this.#aliases.has(calculatorName)) {
-            this.#aliases.set(calculatorName, []);
-        }
-        if (!this.#aliases.get(calculatorName).includes(diagramId)) {
-            this.#aliases.get(calculatorName).push(diagramId);
-        }
-    }    
 
     get containerElement() { return this.#containerElement; }
 
@@ -190,28 +166,28 @@ export default class DiagramDescriptor {
      * Добавление базового вектора от центра координат
      */
     addVector(vectorId, labelTex, layerId, complexValue) {
-      if (!this.data.layers[layerId]) {
-            this.addLayer(layerId, "#666666", 2);
-        }
+        const existingVector = this.data.vectors.find(v => v.id === vectorId);
 
-        const existingVec = this.data.vectors.find(v => v.id === vectorId);
-        const vecData = {
-            id: vectorId,
-            layer: layerId,
-            label: labelTex,
-            origin: { type: "center" },
-            value: { re: complexValue.real, im: complexValue.imaginary }
-        };
-
-        if (existingVec) {
-            existingVec.value.re = vecData.value.re;
-            existingVec.value.im = vecData.value.im;
+        if (existingVector) {
+            // Если вектор существует, просто реактивно обновляем его значение и слой
+            existingVector.value = { re: complexValue.real, im: complexValue.imaginary };
+            existingVector.layer = layerId;
+            existingVector.label = labelTex;
         } else {
-            this.data.vectors.push(vecData);
+            // Если вектора нет, создаем его как базовый луч от центра
+            this.data.vectors.push({
+                id: vectorId,
+                layer: layerId,
+                label: labelTex,
+                origin: { type: "center" },
+                value: { re: complexValue.real, im: complexValue.imaginary }
+            });
         }
 
-        // КЛЮЧЕВОЙ ШАГ: Пересчитываем все хорды диаграммы, так как этот вектор мог измениться!
-        this.recalculateChordsGraph();
+        // Каскадно обновляем все зависимые псевдонимы (например, инвертированные копии)
+        this.#updateDependentAliases(vectorId);
+
+        // Запускаем реактивный пересчет холста
         this.reactiveUpdate();
     }
 
@@ -221,111 +197,194 @@ export default class DiagramDescriptor {
      * @param {string} layerId - Идентификатор слоя
      */
     addChord(inputData, layerId) {
-        const { var_let_name, var_let_tex, var_let_value, terms } = inputData;
-
-        if (!this.data.layers[layerId]) {
-            this.addLayer(layerId, "#666666", 1.5);
-        }
-
-        // Сохраняем "рецепт" хорды прямо в объекте вектора, чтобы уметь пересчитывать её динамически
-        const isSubtraction = terms && terms.length === 2 && terms.some(t => t.isNegative);
+        const chordId = inputData.mame_let;
         
-        const chordData = {
-            id: var_let_name,
-            layer: layerId,
-            label: var_let_tex,
-            origin: { type: "center" }, // Вычислится в recalculateChordsGraph
-            value: { re: var_let_value.real, im: var_let_value.imaginary },
-            // Метаданные для сквозного реактивного пересчета
-            formula: {
-                isSubtraction: isSubtraction,
-                terms: terms.map(t => ({ name: t.name, isNegative: t.isNegative }))
-            }
-        };
+        // 1. Построение инвариантного хэша топологии для однозначной идентификации цепочки
+        const topologyHash = this.#generateTopologyHash(inputData);
+        
+        // Вычисляем результирующее комплексное значение хорды по формуле R = sum((-1)^n * Vi) + C
+        const calculatedValue = this.#calculateChordValue(inputData);
 
-        // Гарантируем наличие базовых векторов (terms) в массиве
-        if (terms && terms.length > 0) {
-            terms.forEach(term => {
-                const exists = this.data.vectors.some(v => v.id === term.name);
-                if (!exists) {
-                    this.data.vectors.push({
-                        id: term.name,
-                        layer: layerId,
-                        label: term.tex_name,
-                        origin: { type: "center" },
-                        value: { re: term.value.real, im: term.value.imaginary }
-                    });
-                }
-            });
-        }
+        // Ищем, не была ли эта хорда уже построена ранее
+        let existingChord = this.data.vectors.find(v => v.id === chordId);
 
-        const existingChord = this.data.vectors.find(v => v.id === var_let_name);
         if (existingChord) {
-            existingChord.value.re = chordData.value.re;
-            existingChord.value.im = chordData.value.im;
-            existingChord.formula = chordData.formula;
-            existingChord.label = chordData.label;
+            // Если хорда найдена, обновляем её значение
+            existingChord.value = calculatedValue;
+            existingChord.layer = layerId;
+            existingChord.label = inputData.var_let_tex;
+            
+            // Если топологическая структура (состав векторов) изменилась, перестраиваем связи
+            if (existingChord.topologyHash !== topologyHash) {
+                existingChord.topologyHash = topologyHash;
+                this.#buildTopologyConnections(existingChord, inputData, layerId);
+            }
         } else {
-            this.data.vectors.push(chordData);
+            // Создаем новую хорду
+            const newChord = {
+                id: chordId,
+                layer: layerId,
+                label: inputData.var_let_tex,
+                topologyHash: topologyHash,
+                origin: { type: "center" }, // Будет переопределено в процессе топологического анализа
+                value: calculatedValue
+            };
+            
+            this.#buildTopologyConnections(newChord, inputData, layerId);
+            this.data.vectors.push(newChord);
         }
 
-        // КЛЮЧЕВОЙ ШАГ: Обновляем весь граф зависимостей
-        this.recalculateChordsGraph();
         this.reactiveUpdate();
     }
 
-     /**
-     * Сквозной пересчет топологии и значений абсолютно всех хорд на диаграмме.
-     * Автоматически подтягивает "уплывшие" векторы (например, U_ca при изменении U_a).
-     */
-    recalculateChordsGraph() {
-        this.data.vectors.forEach(vector => {
-            // Если у вектора есть сохраненная формула — значит это хорда, требующая динамического ведения
-            if (!vector.formula) return;
-
-            const { isSubtraction, terms } = vector.formula;
-            if (!terms || terms.length === 0) return;
-
-            // 1. Динамически пересчитываем значение хорды на основе ЖИВЫХ векторов из массива
-            let totalRe = 0;
-            let totalIm = 0;
-
-            terms.forEach(term => {
-                const liveVec = this.data.vectors.find(v => v.id === term.name);
-                if (liveVec) {
-                    const sign = term.isNegative ? -1 : 1;
-                    totalRe += sign * liveVec.value.re;
-                    totalIm += sign * liveVec.value.im;
-                }
-            });
-
-            vector.value.re = totalRe;
-            vector.value.im = totalIm;
-
-            // 2. Динамически выравниваем её origin (точку старта)
-            if (isSubtraction) {
-                // Из конца вычитаемого (по правилу «Из конца начало»)
-                const negativeTerm = terms.find(t => t.isNegative);
-                vector.origin = { type: "vector", id: negativeTerm.name };
-            } else {
-                // Для последовательных цепочек (сумм) — из конца последнего слагаемого
-                vector.origin = { type: "vector", id: terms[terms.length - 1].name };
-            }
-        });
-    }
 
     /**
      * Внутренний метод реактивной перерисовки холста, если он уже выведен на экран
      */
     reactiveUpdate() {
         if (this.instance) {
-            const freshData = {
-                config: { ...this.data.config },
-                layers: { ...this.data.layers },
-                vectors: [...this.data.vectors]
-            };
-            this.instance.updateData(freshData);            
-            //this.instance.updateData(this.data);
+            this.instance.updateData(this.data);
         }
     }
+
+    /**
+     * Вычисление результирующего значения хорды
+     */
+    #calculateChordValue(inputData) {
+        let realSum = inputData.constant ? inputData.constant.real : 0;
+        let imagSum = inputData.constant ? inputData.constant.imaginary : 0;
+
+        for (const term of inputData.terms) {
+            if (term.isNegative) {
+                realSum -= term.value.real;
+                imagSum -= term.value.imaginary;
+            } else {
+                realSum += term.value.real;
+                imagSum += term.value.imaginary;
+            }
+        }
+
+        return { re: realSum, im: imagSum };
+    }
+
+    /**
+     * Генерация инвариантного хэша на основе алфавитной сортировки
+     */
+    #generateTopologyHash(inputData) {
+        const cReal = inputData.constant ? inputData.constant.real.toFixed(4) : "0";
+        const cImag = inputData.constant ? inputData.constant.imaginary.toFixed(4) : "0";
+        
+        // Сортируем копию массива terms по алфавиту Id для инвариантности к перестановкам
+        const sortedTerms = [...inputData.terms].sort((a, b) => a.name.localeCompare(b.name));
+        
+        const termsString = sortedTerms.map(t => `${t.name}[${t.isNegative ? 'minus' : 'plus'}]`).join('_');
+        return `C[${cReal}_${cImag}]_${termsString}`;
+    }
+
+    /**
+     * Топологический анализ и выстраивание цепочки векторов/псевдонимов
+     */
+    #buildTopologyConnections(chordVector, inputData, layerId) {
+        const terms = inputData.terms;
+        if (terms.length === 0) {
+            chordVector.origin = { type: "center" };
+            return;
+        }
+
+        // Анализируем первый элемент для определения базовой точки привязки всей цепочки
+        const firstTerm = terms[0];
+        const existingBase = this.data.vectors.find(v => v.id === firstTerm.name);
+        
+        let currentOriginId = null;
+
+        // Если первый вектор — это существующий на диаграмме луч от центра
+        if (existingBase && existingBase.origin.type === "center") {
+            // Подгоняем математику: исключаем дублирование луча, начинаем строить прямо от его конца
+            currentOriginId = existingBase.id;
+        } else {
+            // Если опорного луча нет, создаем начальный вектор-звено (или его псевдоним) из центра
+            currentOriginId = this.#getOrCreateChainSegment(firstTerm, { type: "center" }, layerId);
+        }
+
+        // Последовательно нанизываем остальные элементы цепочки друг на друга (Ветвление / Пристыковка)
+        for (let i = 1; i < terms.length; i++) {
+            const nextTerm = terms[i];
+            const nextOrigin = { type: "vector", id: currentOriginId };
+            currentOriginId = this.#getOrCreateChainSegment(nextTerm, nextOrigin, layerId);
+        }
+
+        // Конечная привязка самой хорды: она закрепляется за концом последнего звена цепочки
+        chordVector.origin = { type: "vector", id: currentOriginId };
+    }
+
+    /**
+     * Создание или переиспользование сегмента топологической цепи (с учетом псевдонимов для минуса)
+     */
+    #getOrCreateChainSegment(term, originConfig, layerId) {
+        let segmentId = term.name;
+        let targetLabel = term.tex_name;
+        let targetValue = { re: term.value.real, im: term.value.imaginary };
+
+        // Если вектор идет со знаком минус, создаем/используем его инвертированный псевдоним
+        if (term.isNegative) {
+            segmentId = `${term.name}_minus`;
+            
+            // Модифицируем TeX Label: инвертируем знак прямо в строке
+            targetLabel = term.tex_name.startsWith('-') ? term.tex_name.slice(1) : `-${term.tex_name}`;
+            targetValue = { re: -term.value.real, im: -term.value.imaginary };
+
+            // Регистрируем связь псевдонима с оригинальным вектором для последующей реактивности
+            if (!this.#aliases.has(term.name)) {
+                this.#aliases.set(term.name, []);
+            }
+            if (!this.#aliases.get(term.name).includes(segmentId)) {
+                this.#aliases.get(term.name).push(segmentId);
+            }
+        }
+
+        const existingSegment = this.data.vectors.find(v => v.id === segmentId);
+
+        if (existingSegment) {
+            // Если сегмент (или псевдоним) уже есть, обновляем его геометрию и точку привязки
+            existingSegment.origin = originConfig;
+            existingSegment.value = targetValue;
+            existingSegment.layer = layerId;
+            existingSegment.label = targetLabel;
+        } else {
+            // Иначе добавляем новый топологический узел на диаграмму
+            this.data.vectors.push({
+                id: segmentId,
+                layer: layerId,
+                label: targetLabel,
+                origin: originConfig,
+                value: targetValue
+            });
+        }
+
+        return segmentId;
+    }
+
+    /**
+     * Служебный метод каскадного обновления всех псевдонимов при изменении базового вектора
+     */
+    #updateDependentAliases(baseVectorId) {
+        if (!this.#aliases.has(baseVectorId)) return;
+
+        const baseVector = this.data.vectors.find(v => v.id === baseVectorId);
+        if (!baseVector) return;
+
+        const dependentIds = this.#aliases.get(baseVectorId);
+
+        for (const aliasId of dependentIds) {
+            const aliasVector = this.data.vectors.find(v => v.id === aliasId);
+            if (aliasVector) {
+                // Псевдонимы в нашей системе — это инвертированные векторы (isNegative: true)
+                aliasVector.value = {
+                    re: -baseVector.value.re,
+                    im: -baseVector.value.im
+                };
+            }
+        }
+    }
+    
 }
