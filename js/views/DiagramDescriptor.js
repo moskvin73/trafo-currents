@@ -236,167 +236,16 @@ export default class DiagramDescriptor {
         }
     }
 
-    /**
-     * Вычисление результирующего значения хорды
-     */
-    #calculateChordValue(inputData) {
-        let realSum = inputData.constant ? inputData.constant.real : 0;
-        let imagSum = inputData.constant ? inputData.constant.imaginary : 0;
-
-        for (const term of inputData.terms) {
-            if (term.isNegative) {
-                realSum -= term.value.real;
-                imagSum -= term.value.imaginary;
-            } else {
-                realSum += term.value.real;
-                imagSum += term.value.imaginary;
-            }
-        }
-
-        return { re: realSum, im: imagSum };
-    }
-
-    /**
-     * Генерация инвариантного хэша на основе алфавитной сортировки
-     */
-    #generateTopologyHash(inputData) {
-        const cReal = inputData.constant ? inputData.constant.real.toFixed(4) : "0";
-        const cImag = inputData.constant ? inputData.constant.imaginary.toFixed(4) : "0";
-        
-        // Сортируем копию массива terms по алфавиту Id для инвариантности к перестановкам
-        const sortedTerms = [...inputData.terms].sort((a, b) => a.name.localeCompare(b.name));
-        
-        const termsString = sortedTerms.map(t => `${t.name}[${t.isNegative ? 'minus' : 'plus'}]`).join('_');
-        return `C[${cReal}_${cImag}]_${termsString}`;
-    }
-
-    /**
-     * Топологический анализ и выстраивание цепочки векторов/псевдонимов
-     */
-    #buildTopologyConnections(chordVector, inputData, layerId) {
-       const terms = inputData.terms;
-        if (!terms || terms.length === 0) {
-            chordVector.origin = { type: "center" };
-            return;
-        }
-
-        // КЛАССИКА: Разность двух векторов (например, U_a - U_b)
-        if (terms.length === 2) {
-            const negativeTerm = terms.find(t => t.isNegative);
-            const positiveTerm = terms.find(t => !t.isNegative);
-
-            if (negativeTerm && positiveTerm) {
-                // Проверяем, есть ли на диаграмме вектор, вычитаемый из выражения
-                const hasNegVector = this.data.vectors.some(v => v.id === negativeTerm.name);
-                
-                if (hasNegVector) {
-                    // Точка начала хорды — это всегда конец вычитаемого вектора (минусового)
-                    chordVector.origin = { type: "vector", id: negativeTerm.name };
-                    return; 
-                }
-            }
-        }
-
-        // УНИВЕРСАЛЬНАЯ СЛОЖНАЯ ЦЕПОЧКА (Если слагаемых больше двух)
-        const firstTerm = terms[0];
-        const existingBase = this.data.vectors.find(v => v.id === firstTerm.name);
-        let currentOriginId = null;
-
-        if (existingBase && existingBase.origin.type === "center") {
-            currentOriginId = existingBase.id;
-        } else {
-            currentOriginId = this.#getOrCreateChainSegment(firstTerm, { type: "center" }, layerId);
-        }
-
-        for (let i = 1; i < terms.length; i++) {
-            const nextTerm = terms[i];
-            const nextOrigin = { type: "vector", id: currentOriginId };
-            currentOriginId = this.#getOrCreateChainSegment(nextTerm, nextOrigin, layerId);
-        }
-
-        chordVector.origin = { type: "vector", id: currentOriginId };
-    }
-
-    /**
-     * Создание или переиспользование сегмента топологической цепи (с учетом псевдонимов для минуса)
-     */
-    #getOrCreateChainSegment(term, originConfig, layerId) {
-        let segmentId = term.name;
-        let targetLabel = term.tex_name;
-        let targetValue = { re: term.value.real, im: term.value.imaginary };
-
-        // Если вектор идет со знаком минус, создаем/используем его инвертированный псевдоним
-        if (term.isNegative) {
-            segmentId = `${term.name}_minus`;
-            
-            // Модифицируем TeX Label: инвертируем знак прямо в строке
-            targetLabel = term.tex_name.startsWith('-') ? term.tex_name.slice(1) : `-${term.tex_name}`;
-            targetValue = { re: -term.value.real, im: -term.value.imaginary };
-
-            // Регистрируем связь псевдонима с оригинальным вектором для последующей реактивности
-            if (!this.#aliases.has(term.name)) {
-                this.#aliases.set(term.name, []);
-            }
-            if (!this.#aliases.get(term.name).includes(segmentId)) {
-                this.#aliases.get(term.name).push(segmentId);
-            }
-        }
-
-        const existingSegment = this.data.vectors.find(v => v.id === segmentId);
-
-        if (existingSegment) {
-            // Если сегмент (или псевдоним) уже есть, обновляем его геометрию и точку привязки
-            existingSegment.origin = originConfig;
-            existingSegment.value = targetValue;
-            existingSegment.layer = layerId;
-            existingSegment.label = targetLabel;
-        } else {
-            // Иначе добавляем новый топологический узел на диаграмму
-            this.data.vectors.push({
-                id: segmentId,
-                layer: layerId,
-                label: targetLabel,
-                origin: originConfig,
-                value: targetValue
-            });
-        }
-
-        return segmentId;
-    }
-
-    /**
-     * Служебный метод каскадного обновления всех псевдонимов при изменении базового вектора
-     */
-    #updateDependentAliases(baseVectorId) {
-        if (!this.#aliases.has(baseVectorId)) return;
-
-        const baseVector = this.data.vectors.find(v => v.id === baseVectorId);
-        if (!baseVector) return;
-
-        const dependentIds = this.#aliases.get(baseVectorId);
-
-        for (const aliasId of dependentIds) {
-            const aliasVector = this.data.vectors.find(v => v.id === aliasId);
-            if (aliasVector) {
-                // Псевдонимы в нашей системе — это инвертированные векторы (isNegative: true)
-                aliasVector.value = {
-                    re: -baseVector.value.re,
-                    im: -baseVector.value.im
-                };
-            }
-        }
-    }
-        /**
-     * Вычисление живого значения хорды на основе текущего состояния векторов на диаграмме
+     /**
+     * Живой расчет геометрии хорды на основе текущего состояния векторов
      */
     #evaluateChordGeometry(chord, layerId) {
         const recipe = chord.recipe;
         let realSum = recipe.constant ? recipe.constant.real : 0;
         let imagSum = recipe.constant ? recipe.constant.imaginary : 0;
 
-        // 1. Расчет живого математического значения R = sum((-1)^n * V_живой) + C
+        // 1. Математический пересчет значения R на основе актуальных координат на диаграмме
         for (const term of recipe.terms) {
-            // Ищем вектор прямо на диаграмме (берём актуальное измененное значение, например U_a/2)
             const liveVec = this.data.vectors.find(v => v.id === term.name);
             const val = liveVec ? liveVec.value : { re: 0, im: 0 };
 
@@ -410,21 +259,18 @@ export default class DiagramDescriptor {
         }
         chord.value = { re: realSum, im: imagSum };
 
-        // 2. ОБЩИЙ ТОПОЛОГИЧЕСКИЙ АНАЛИЗ (Поиск граничных лучей контура)
-        // Ищем опорные лучи (привязанные к центру), которые участвуют в выражении
+        // 2. ОБЩИЙ ТОПОЛОГИЧЕСКИЙ АНАЛИЗ (Поиск граничных лучей контура R = Vлн + summ - Vлк)
         const rays = recipe.terms.filter(t => {
             const v = this.data.vectors.find(vec => vec.id === t.name);
             return v && v.origin.type === "center";
         });
 
-        // Находим луч-вычитания (V_лк, идет с минусом) и луч-начала (V_лн, идет с плюсом)
-        const negativeRay = rays.find(r => r.isNegative);
-        const positiveRay = rays.find(r => !r.isNegative);
+        const negativeRay = rays.find(r => r.isNegative); // Наш V_лк (конечный луч с минусом)
+        const positiveRay = rays.find(r => !r.isNegative); // Наш V_лн (начальный луч с плюсом)
 
-        // Если нашли вычитаемый луч V_лк (физический конец контура, например -U_b)
+        // Если в выражении есть конечный луч контура V_лк (идет со знаком минус)
         if (negativeRay) {
-            // Чтобы хорда замкнула полигон и пристыковалась к концу этого луча,
-            // её геометрический origin должен быть привязан к его ID. При изменении луча хорда сдвинется сама.
+            // Хорда должна расти из конца вычитаемого луча, чтобы замкнуть контур геометрически
             chord.origin = { type: "vector", id: negativeRay.name };
             return;
         } 
@@ -435,7 +281,7 @@ export default class DiagramDescriptor {
             return;
         }
 
-        // Свободный случай (нет лучей вообще): строим последовательную цепочку в воздухе
+        // Абстрактная свободная цепочка (нет лучей от центра вообще): строим последовательную ломаную линию
         let currentOriginId = null;
         for (let i = 0; i < recipe.terms.length; i++) {
             const term = recipe.terms[i];
@@ -446,10 +292,9 @@ export default class DiagramDescriptor {
     }
 
     /**
-     * Каскадный пересчет всех хорд при изменении любого базового вектора
+     * Каскадный автоматический пересчет всех хорд
      */
     #recalculateDependentElements() {
-        // Проходим по всем векторам, у которых есть сохраненный рецепт формулы (это наши хорды)
         for (const vec of this.data.vectors) {
             if (vec.recipe) {
                 this.#evaluateChordGeometry(vec, vec.layer);
@@ -458,7 +303,7 @@ export default class DiagramDescriptor {
     }
 
     /**
-     * Создание цепочки для абстрактных свободных векторов (без опорных лучей)
+     * Создание или обновление звена свободной цепи
      */
     #getOrCreateChainSegment(term, originConfig, layerId) {
         let segmentId = term.isNegative ? `${term.name}_minus` : term.name;
