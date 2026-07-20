@@ -198,7 +198,7 @@ export default class DiagramDescriptor {
      */
     addChord(inputData, layerId) {
         // Учитываем опечатку в вашем JSON: mame_let
-        const chordId = inputData.mame_let || inputData.name_let;
+        const chordId = inputData.var_name_let;
         if (!chordId) return;
 
         const calculatedValue = this.#calculateChordValue(inputData);
