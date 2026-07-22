@@ -85,6 +85,67 @@ export default class Matrix extends MathType {
     return this.#rows.map(row => [...row]);
   }
 
+   // ==========================================
+  // МАТЕМАТИЧЕСКИЕ ОПЕРАЦИИ (Поэлементные)
+  // ==========================================
+
+  /**
+   * Унарный минус (инвертирует знаки всех элементов матрицы)
+   * @returns {Matrix} Новая матрица с противоположными знаками
+   */
+  negate() {
+    const negatedElements = this.#rows.map(row =>
+      row.map(cell => cell.negate())
+    );
+    return new Matrix(negatedElements);
+  }
+
+  /**
+   * Сложение матриц
+   * @param {Matrix} other 
+   * @returns {Matrix}
+   */
+  add(other) {
+    // Приводим тип через вашу систему конвертеров (на случай, если передали что-то приводимое)
+    const o = Matrix.from(other);
+
+    // Проверяем совместимость размерностей
+    if (this.rowCount !== o.rowCount || this.colCount !== o.colCount) {
+      throw new RangeError(
+        `[Matrix]: Невозможно сложить матрицы разных размеров: (${this.rowCount}x${this.colCount}) и (${o.rowCount}x${o.colCount}).`
+      );
+    }
+
+    // Складываем поэлементно, используя полиморфизм MathType
+    const resultElements = this.#rows.map((row, rowIndex) =>
+      row.map((cell, colIndex) => cell.add(o.get(rowIndex, colIndex)))
+    );
+
+    return new Matrix(resultElements);
+  }
+
+  /**
+   * Вычитание матриц
+   * @param {Matrix} other 
+   * @returns {Matrix}
+   */
+  subtract(other) {
+    const o = Matrix.from(other);
+
+    if (this.rowCount !== o.rowCount || this.colCount !== o.colCount) {
+      throw new RangeError(
+        `[Matrix]: Невозможно вычесть матрицы разных размеров: (${this.rowCount}x${this.colCount}) и (${o.rowCount}x${o.colCount}).`
+      );
+    }
+
+    // Вычитаем поэлементно
+    const resultElements = this.#rows.map((row, rowIndex) =>
+      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)))
+    );
+
+    return new Matrix(resultElements);
+  }
+   
   // ==========================================
   // МЕТОДЫ ОТОБРАЖЕНИЯ
   // ==========================================
