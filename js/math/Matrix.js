@@ -237,7 +237,7 @@ export default class Matrix extends MathType {
     return new Matrix(resultElements);
   }  
    
-   /**
+  /**
    * Вычисление определителя (детерминанта) квадратной матрицы
    */
   det(settings) {
@@ -252,21 +252,24 @@ export default class Matrix extends MathType {
     }
 
     const M = this.getRawRows();
-    const EPS = MathType.EPSILON; // Используем наш стабильный порог 1e-15
-    let sign = 1;
+    
+    // Локальный порог стабильности для защиты от шума плавающей точки double precision.
+    // Защищает алгоритм, но НЕ портит вывод маленьких чисел на вашем сайте!
+    const STABILITY_THRESHOLD = 1e-14; 
 
+    let sign = 1;
     const _where = new Array(n);
 
     // Шаг 1 прямого хода
     let sel = 0;
     for (let k = 1; k < n; k++) {
-      // ИСПОЛЬЗУЕМ ВАШ МЕТОД .abs(): cell.abs().value возвращает чистое JS-число (модуль)
-      if (M[k][0].abs().value > M[sel][0].abs().value) sel = k;
+      // cell.abs() возвращает чистый number (JS примитив), сравниваем напрямую!
+      if (M[k][0].abs() > M[sel][0].abs()) sel = k;
     }
     
-    if (M[sel][0].abs().value < EPS) {
-      // Возвращаем полиморфный ноль
-      return this.get(0,0).subtract(this.get(0,0));
+    if (M[sel][0].abs() < STABILITY_THRESHOLD) {
+      // Возвращаем полиморфный ноль (вычитаем элемент из самого себя)
+      return this.get(0, 0).subtract(this.get(0, 0));
     }
 
     if (sel !== 0) sign = -sign;
@@ -291,11 +294,11 @@ export default class Matrix extends MathType {
     for (let i = 1; i < n; i++) {
       sel = i;
       for (let k = i + 1; k < n; k++) {
-        if (M[_where[k]][i].abs().value > M[_where[sel]][i].abs().value) sel = k;
+        if (M[_where[k]][i].abs() > M[_where[sel]][i].abs()) sel = k;
       }
       
-      if (M[_where[sel]][i].abs().value < EPS) {
-        return this.get(0,0).subtract(this.get(0,0));
+      if (M[_where[sel]][i].abs() < STABILITY_THRESHOLD) {
+        return this.get(0, 0).subtract(this.get(0, 0));
       }
 
       if (sel !== i) sign = -sign;
@@ -335,18 +338,18 @@ export default class Matrix extends MathType {
     }
 
     const n = matrixM.rowCount;
-    const EPS = MathType.EPSILON;
+    const STABILITY_THRESHOLD = 1e-14;
 
     const M = matrixM.getRawRows();
-    const B = vectorB.getRawRows().map(row => row[0]); // Достаем элементы вектора-столбца
+    const B = vectorB.getRawRows().map(row => row[0]); // Выпрямляем вектор-столбец в массив MathType объектов
 
     const _where = new Array(n);
 
     let sel = 0;
     for (let k = 1; k < n; k++) {
-      if (M[k][0].abs().value > M[sel][0].abs().value) sel = k;
+      if (M[k][0].abs() > M[sel][0].abs()) sel = k;
     }
-    if (M[sel][0].abs().value < EPS) {
+    if (M[sel][0].abs() < STABILITY_THRESHOLD) {
       throw new Error("[LinearAlgebra]: Система вырождена или имеет бесконечно много решений.");
     }
 
@@ -370,9 +373,9 @@ export default class Matrix extends MathType {
     for (let i = 1; i < n; i++) {
       sel = i;
       for (let k = i + 1; k < n; k++) {
-        if (M[_where[k]][i].abs().value > M[_where[sel]][i].abs().value) sel = k;
+        if (M[_where[k]][i].abs() > M[_where[sel]][i].abs()) sel = k;
       }
-      if (M[_where[sel]][i].abs().value < EPS) {
+      if (M[_where[sel]][i].abs() < STABILITY_THRESHOLD) {
         throw new Error("[LinearAlgebra]: Система вырождена.");
       }
       
@@ -411,7 +414,8 @@ export default class Matrix extends MathType {
     resultElements[0] = B[j0].divide(M[j0][0]);
 
     return Matrix.columnVector(resultElements);
-  } 
+  }
+  
   // ==========================================
   // СТАТИЧЕСКИЕ МЕТОДЫ-ФАБРИКИ
   // ==========================================
