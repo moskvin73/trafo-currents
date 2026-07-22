@@ -3,6 +3,12 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY } from './SemanticDispatcher.js';
 
+const mathClasses = {
+    RealNumber,
+    ComplexNumber,
+    Matrix,
+};
+
 // =========================================================================
 // 2. ДЕКЛАРАТИВНЫЙ РЕЕСТР СИГНАТУР ФУНКЦИЙ (COMPILER REGISTRY)
 // =========================================================================
@@ -273,7 +279,7 @@ execute(overloads, args, loc, context = {}) {
       case 'static': {
         const targetName = bestOverload.target;
         const methodName = bestOverload.method;
-        const targetClass = targetName;//context[targetName];
+        const targetClass = mathClasses[targetName];//context[targetName];
         
         if (!targetClass || typeof targetClass[methodName] !== 'function') {
           throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
