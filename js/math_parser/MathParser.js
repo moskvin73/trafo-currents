@@ -226,7 +226,7 @@ export class MathParser {
       if (this.errors.length === 0) {
           const evl_context = this.#create_evl_context();
           for (const stmtNode of statements) {
-            if (stmtNode.node.type_unit == TYPE_UNIT.EXPR)
+            if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
             {
                const tab = foldASTToTable(stmtNode.node);
                stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
