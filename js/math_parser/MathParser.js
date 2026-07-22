@@ -833,6 +833,35 @@ export class MathParser {
 
          case TokenType.LSQUARE:
             this.#consume();
+
+            // Проверяем на пустой массив '[]' (если это разрешено в вашей системе)
+            if (this.c_token === TokenType.RSQUARE) {
+                this.#consume();
+                throw new SyntaxError("[Parser]: Матрица не может быть пустой.");
+            }
+
+            // Парсим элементы через запятую. 
+            // Если внутри лежат другие '[', то рекурсия сама распарсит их как строки матрицы.
+            const elements = [];
+            do {
+                elements.push(this.#parseExpression());
+            } while (this.#match(TokenType.COMMA));
+
+            this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка ']'");
+
+            // ОПРЕДЕЛЕНИЕ: Матрица это или просто строка матрицы?
+            // Если первый элемент распарсенного массива — это тоже массив (или узел массива),
+            // значит перед нами двумерная структура (Матрица).
+            if (Array.isArray(elements[0])) {
+                // Конструктор Matrix сам проверит валидность строк (одинаковую длину)
+                return new Matrix(elements);
+            }
+
+            // Если внутри лежат просто числа/выражения (например, [1, 2, 3]),
+            // то с точки зрения линейной алгебры это вектор-строка.
+            // Оборачиваем в массив верхнего уровня, чтобы получилась матрица размерности 1 x N.
+            return new Matrix([elements]);
+
          case TokenType.VARIABLE:
              return this.#callFuncORVar();
          default:
