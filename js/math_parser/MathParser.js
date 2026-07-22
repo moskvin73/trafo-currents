@@ -832,35 +832,49 @@ export class MathParser {
              this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
              return expr;
 
-         case TokenType.LSQUARE:
-            this.#consume();
-            // Проверяем на пустой массив '[]' (если это разрешено в вашей системе)
-            if (this.c_token === TokenType.RSQUARE) {
-                this.#consume();
-                throw new SyntaxError("[Parser]: Матрица не может быть пустой.");
-            }
+         case TokenType.LSQUARE: {
+          const startLoc = this.#location; // Сохраняем локацию для узла AST
+          this.#consume(); // Поглощаем стартовую '['
 
-            // Парсим элементы через запятую. 
-            // Если внутри лежат другие '[', то рекурсия сама распарсит их как строки матрицы.
-            const elements = [];
-            do {
-                elements.push(this.#parseExpression());
-            } while (this.c_token ===TokenType.COMMA);
+          if (this.c_token === TokenType.RSQUARE) {
+              this.#consume();
+              throw new SyntaxError("[Parser]: Матрица или вектор не могут быть пустыми.");
+          }
 
-            this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка ']'");
+          // Проверяем, что находится внутри: строка матрицы или элементы вектора?
+          if (this.c_token === TokenType.LSQUARE) {
+              // --- ВАРИАНТ: Двумерная матрица [[a, b], [c, d]] ---
+              const matrixRows = [];
+              do {
+                  // Ожидаем внутреннюю открывающую скобку для строки матрицы
+                  this.#match(TokenType.LSQUARE, "Ожидалась открывающая квадратная скобка строки матрицы '['");
+                  
+                  const rowNodes = [];
+                  do {
+                      rowNodes.push(this.#parseExpression()); // Парсим узел AST элемента
+                  } while (this.#match(TokenType.COMMA));
 
-            // ОПРЕДЕЛЕНИЕ: Матрица это или просто строка матрицы?
-            // Если первый элемент распарсенного массива — это тоже массив (или узел массива),
-            // значит перед нами двумерная структура (Матрица).
-            if (Array.isArray(elements[0])) {
-                // Конструктор Matrix сам проверит валидность строк (одинаковую длину)
-                return new Matrix(elements);
-            }
+                  this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка строки матрицы ']'");
+                  
+                  matrixRows.push(rowNodes); // Сохраняем массив узлов строки
+              } while (this.#match(TokenType.COMMA));
 
-            // Если внутри лежат просто числа/выражения (например, [1, 2, 3]),
-            // то с точки зрения линейной алгебры это вектор-строка.
-            // Оборачиваем в массив верхнего уровня, чтобы получилась матрица размерности 1 x N.
-            return new Matrix([elements]);
+              this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка матрицы ']'");
+              
+              return new MatrixNode(matrixRows, startLoc);
+          } else {
+              // --- ВАРИАНТ: Вектор-строка [1, 2, 3] ---
+              const rowNodes = [];
+              do {
+                  rowNodes.push(this.#parseExpression());
+              } while (this.#match(TokenType.COMMA));
+
+              this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка вектора ']'");
+
+              // Оборачиваем вектор в двумерную структуру (одна строка) для MatrixNode
+              return new MatrixNode([rowNodes], startLoc);
+          }          
+         }
 
          case TokenType.VARIABLE:
              return this.#callFuncORVar();
