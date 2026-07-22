@@ -28,6 +28,12 @@ export const TYPE_REGISTRY = new Map([
     rank: 3,
     selfPromote: null,
     casts: new Map()
+  }],
+  
+  [Matrix, {
+    rank: 4,          // Самый высокий ранг, чтобы диспетчер не пытался превратить матрицу в число
+    selfPromote: null,
+    casts: new Map()   // Касты пусты, так как число нельзя неявно превратить в матрицу
   }]
 ]);
 
