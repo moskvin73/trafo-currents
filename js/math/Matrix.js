@@ -241,94 +241,63 @@ export default class Matrix extends MathType {
    * Вычисление определителя (детерминанта) квадратной матрицы
    */
   det() {
-     if (!this.isSquare) {
+    if (!this.isSquare) {
       throw new RangeError("[Matrix]: Определитель можно вычислить только для квадратной матрицы.");
     }
-
     const n = this.rowCount;
     if (n === 1) return this.get(0, 0);
     if (n === 2) {
       return this.get(0, 0).multiply(this.get(1, 1)).subtract(this.get(0, 1).multiply(this.get(1, 0)));
     }
 
+    // Делаем глубокую копию строк
     const M = this.getRawRows();
-    const STABILITY_THRESHOLD = 1e-14; 
-
-    let sign = 1;
-    const _where = new Array(n);
-
-    // Шаг 1 прямого хода
-    let sel = 0;
-    for (let k = 1; k < n; k++) {
-      // Сравниваем строго элементы ПЕРВОГО столбца (индекс 0)
-      if (M[k][0].abs() > M[sel][0].abs()) sel = k;
-    }
+    const STABILITY_THRESHOLD = 1e-14;
     
-    if (M[sel][0].abs() < STABILITY_THRESHOLD) {
-      return this.get(0, 0).subtract(this.get(0, 0));
-    }
+    // Инициализируем определитель единицей того же типа, что и элементы
+    let detValue = this.get(0, 0).constructor.from ? this.get(0, 0).constructor.from(1) : this.get(0,0).divide(this.get(0,0));
+    let sign = 1;
 
-    if (sel !== 0) sign = -sign;
-
-    _where[0] = sel;
-    let kIdx = 0;
-    for (kIdx = 0; kIdx < sel; kIdx++) _where[kIdx] = kIdx;
-    _where[kIdx++] = 0;
-    for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
-
-    // ИСПРАВЛЕНО: Берём ведущий элемент из ячейки [sel][0]
-    let value = M[sel][0];
-
-    for (let k = 1; k < n; k++) {
-      const wk = _where[k];
-      // ИСПРАВЛЕНО: Берём элемент исключения из ячейки [wk][0]
-      const c = M[wk][0];
-      for (let j = 1; j < n; j++) {
-        M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
-      }
-    }
-
-    // Шаг 2 и далее прямого хода
-    for (let i = 1; i < n; i++) {
-      sel = i;
+    for (let i = 0; i < n; i++) {
+      // Выбор главного элемента по столбцу для стабильности double precision
+      let sel = i;
       for (let k = i + 1; k < n; k++) {
-        if (M[_where[k]][i].abs() > M[_where[sel]][i].abs()) sel = k;
+        if (M[k][i].abs() > M[sel][i].abs()) sel = k;
       }
       
-      if (M[_where[sel]][i].abs() < STABILITY_THRESHOLD) {
-        return this.get(0, 0).subtract(this.get(0, 0));
+      if (M[sel][i].abs() < STABILITY_THRESHOLD) {
+        return this.get(0, 0).subtract(this.get(0, 0)); // Матрица вырождена, определитель = 0
       }
 
-      if (sel !== i) sign = -sign;
+      // Физически меняем строки местами в копии матрицы
+      if (sel !== i) {
+        sign = -sign;
+        const temp = M[i];
+        M[i] = M[sel];
+        M[sel] = temp;
+      }
 
-      const temp = _where[sel];
-      _where[sel] = _where[i];
-      _where[i] = temp;
+      const pivot = M[i][i];
+      detValue = detValue.multiply(pivot); // Накапливаем определитель
 
-      sel = _where[i];
-      value = M[sel][i];
-
+      // Исключение элементов под диагональю
       for (let k = i + 1; k < n; k++) {
-        const wk = _where[k];
-        const c = M[wk][i];
-        for (let j = i + 1; j < n; j++) {
-          M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+        const factor = M[k][i].divide(pivot);
+        for (let j = i; j < n; j++) {
+          M[k][j] = M[k][j].subtract(factor.multiply(M[i][j]));
         }
       }
     }
-    
-    const lastRowIndex = _where[n - 1];
-    let finalDet = M[lastRowIndex][n - 1];
-    
-    if (sign < 0) finalDet = finalDet.negate();
-    return finalDet;
+
+    if (sign < 0) detValue = detValue.negate();
+    return detValue;
   }
 
   /**
    * Полное решение СЛАУ на основе вашего C++ алгоритма
    */
   static solveSystem(matrixM, vectorB) {
-    if (!matrixM.isSquare) {
+     if (!matrixM.isSquare) {
       throw new RangeError("[LinearAlgebra]: Матрица системы должна быть квадратной.");
     }
     if (matrixM.rowCount !== vectorB.rowCount || vectorB.colCount !== 1) {
@@ -339,79 +308,46 @@ export default class Matrix extends MathType {
     const STABILITY_THRESHOLD = 1e-14;
 
     const M = matrixM.getRawRows();
-    // Выпрямляем вектор-столбец: каждая строка содержит ровно один элемент [0]
+    // ЖЕСТКАЯ РАСПАКОВКА: Гарантированно извлекаем объекты MathType из вектора-столбца в 1D массив
     const B = vectorB.getRawRows().map(row => row[0]); 
 
-    const _where = new Array(n);
-
-    let sel = 0;
-    for (let k = 1; k < n; k++) {
-      if (M[k][0].abs() > M[sel][0].abs()) sel = k;
-    }
-    if (M[sel][0].abs() < STABILITY_THRESHOLD) {
-      throw new Error("[LinearAlgebra]: Система вырождена или имеет бесконечно много решений.");
-    }
-
-    _where[0] = sel;
-    let kIdx = 0;
-    for (kIdx = 0; kIdx < sel; kIdx++) _where[kIdx] = kIdx;
-    _where[kIdx++] = 0;
-    for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
-
-    // ИСПРАВЛЕНО: Индексация первого шага
-    let value = M[sel][0];
-
-    for (let k = 1; k < n; k++) {
-      const wk = _where[k];
-      const c = M[wk][0];
-      B[wk] = B[wk].multiply(value).subtract(B[sel].multiply(c));
-      for (let j = 1; j < n; j++) {
-        M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
-      }
-    }
-
-    for (let i = 1; i < n; i++) {
-      sel = i;
+    for (let i = 0; i < n; i++) {
+      let sel = i;
       for (let k = i + 1; k < n; k++) {
-        if (M[_where[k]][i].abs() > M[_where[sel]][i].abs()) sel = k;
-      }
-      if (M[_where[sel]][i].abs() < STABILITY_THRESHOLD) {
-        throw new Error("[LinearAlgebra]: Система вырождена.");
+        if (M[k][i].abs() > M[sel][i].abs()) sel = k;
       }
       
-      const temp = _where[sel];
-      _where[sel] = _where[i];
-      _where[i] = temp;
+      if (M[sel][i].abs() < STABILITY_THRESHOLD) {
+        throw new Error("[LinearAlgebra]: Система вырождена или имеет бесконечно много решений.");
+      }
 
-      sel = _where[i];
-      value = M[sel][i];
+      // Физически переставляем строки и элементы вектора B
+      if (sel !== i) {
+        const tempM = M[i]; M[i] = M[sel]; M[sel] = tempM;
+        const tempB = B[i]; B[i] = B[sel]; B[sel] = tempB;
+      }
+
+      const pivot = M[i][i];
 
       for (let k = i + 1; k < n; k++) {
-        const wk = _where[k];
-        const c = M[wk][i];
-        B[wk] = B[wk].multiply(value).subtract(B[sel].multiply(c));
-        for (let j = i + 1; j < n; j++) {
-          M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+        const factor = M[k][i].divide(pivot);
+        B[k] = B[k].subtract(factor.multiply(B[i]));
+        for (let j = i; j < n; j++) {
+          M[k][j] = M[k][j].subtract(factor.multiply(M[i][j]));
         }
       }
     }
 
     const resultElements = new Array(n);
-
-    // Обратный ход
-    for (let i = n - 1; i > 0; i--) {
-      const j = _where[i];
-      value = B[j].divide(M[j][i]);
-      resultElements[i] = value;
-      
-      for (let k = 0; k < i; k++) {
-        const wk = _where[k];
-        B[wk] = B[wk].subtract(M[wk][i].multiply(value));
-      }
-    }
     
-    const j0 = _where[0];
-    resultElements[0] = B[j0].divide(M[j0][0]);
+    // Обратный ход СЛАУ
+    for (let i = n - 1; i >= 0; i--) {
+      let sum = B[i];
+      for (let j = i + 1; j < n; j++) {
+        sum = sum.subtract(M[i][j].multiply(resultElements[j]));
+      }
+      resultElements[i] = sum.divide(M[i][i]);
+    }
 
     return Matrix.columnVector(resultElements);
   }
