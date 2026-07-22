@@ -234,7 +234,7 @@ export class MatrixNode extends MathNode {
     for (const row of evaluatedElements) {
       for (const cell of row) {
         const cellId = cell.constructor; // Это сам класс (например, RealNumber или ComplexNumber)
-        const config = context.semanticDispatcher.registry.get(cellId); // Получаем его конфиг из реестра
+        const config = dispatcher.registry.get(cellId); // Получаем его конфиг из реестра
         const currentRank = config ? config.rank : 0;
 
         if (currentRank > maxRank) {
