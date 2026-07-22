@@ -673,7 +673,12 @@ export class PowNode extends BinaryOpNode {
       return leftValue.pow(exp);
     }
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
-    return l.accuratePow(r);
+    if (typeof l?.accuratePow === 'function') {
+      return l.accuratePow(r);
+    } else {
+      this.error(context, `Оператор '^' не опредилён для типов "${l}" и "${r}".`);
+      return this.errorValue();
+    }
   } 
 
   toTeX(context) {
