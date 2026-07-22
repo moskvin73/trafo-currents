@@ -1,7 +1,7 @@
 import MathType from '../math/MathType.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
-import ComplexNumber from '../math/Matrix.js';
+import Matrix from '../math/Matrix.js';
 
 export const TYPE_REGISTRY = new Map([
   // 1. Примитив JS число. 
