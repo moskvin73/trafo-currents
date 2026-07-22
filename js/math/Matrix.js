@@ -232,31 +232,20 @@ export default class Matrix extends MathType {
    * @returns {Matrix}
    */
   static identity(n) {
-    if (n <= 0) throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть больше 0.");
+     if (n <= 0) throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть больше 0.");
     
-    // Динамически находим конвертер для чисел 'number', который был зарегистрирован в системе,
-    // чтобы не импортировать RealNumber напрямую!
-    // Ищем в реестрах соплеменников или по зарегистрированному глобальному символу
-    const MatrixClass = this;
     const elements = [];
-    
     for (let i = 0; i < n; i++) {
       const row = [];
       for (let j = 0; j < n; j++) {
         const rawValue = (i === j ? 1 : 0);
         
-        // ВАЖНО: Вместо примитива создаем объект MathType. 
-        // Мы можем динамически создать RealNumber, если заглянем в converters комплексных чисел
-        // или используем глобальный реестр. Если у вас RealNumber регистрирует себя где-то, берем оттуда.
-        // Самый простой способ без циклов — если у нас есть доступ к контексту.
-        // Но так как это чистый статический метод, мы можем извлечь фабрику RealNumber 
-        // из глобального кэша, который мы настраивали на Шаге 1 (RealNumberRef):
-        if (MatrixClass.RealNumberRef) {
-          row.push(MatrixClass.RealNumberRef.from(rawValue));
+        // Используем нашу статическую ссылку, которую мы привязали через registerRealNumberClass
+        if (Matrix.RealNumberRef) {
+          row.push(Matrix.RealNumberRef.from(rawValue));
         } else {
-          // Откат, если реф еще не привязался: попробуем найти через converters
-          const realConverter = MatrixClass.converters.get('number');
-          row.push(realConverter ? realConverter(rawValue) : rawValue);
+          // Если вдруг реф еще не успел встать, создаем через стандартный fallback
+          row.push(this.converters.get(Symbol.for('Math.RealNumber'))?.(rawValue) || rawValue);
         }
       }
       elements.push(row);
@@ -277,21 +266,20 @@ export default class Matrix extends MathType {
     const n = diagonalElements.length;
     const elements = [];
     
-    // Берем класс-конструктор самого первого элемента (например, RealNumber или ComplexNumber)
+    // БЕРЕМ КОНСТРУКТОР ПЕРВОГО ЭЛЕМЕНТА МАССИВА (например, RealNumber)
     const ElementClass = diagonalElements[0].constructor;
-    // Нам нужен объект "ноль" такого же типа, что и элементы диагонали
+    
+    // Создаем полиморфный ноль того же типа
     const zeroObject = ElementClass.from ? ElementClass.from(0) : diagonalElements[0].subtract(diagonalElements[0]);
 
     for (let i = 0; i < n; i++) {
       const row = [];
       for (let j = 0; j < n; j++) {
-        // Заталкиваем строго объекты MathType!
         row.push(i === j ? diagonalElements[i] : zeroObject);
       }
       elements.push(row);
     }
     return new Matrix(elements);
-
   }
 
   /**
