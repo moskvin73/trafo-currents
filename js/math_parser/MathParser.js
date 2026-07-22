@@ -226,8 +226,15 @@ export class MathParser {
       if (this.errors.length === 0) {
           const evl_context = this.#create_evl_context();
           for (const stmtNode of statements) {
-            // Вычисляем значение для каждого сохраненного узла
-            stmtNode.value = stmtNode.node.evaluate(evl_context);
+            if (stmtNode.node.type_unit == TYPE_UNIT.EXPR)
+            {
+               const tab = foldASTToTable(stmtNode.node);
+               stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
+            }
+            else {
+              // Вычисляем значение для каждого сохраненного узла
+              stmtNode.value = stmtNode.node.evaluate(evl_context);
+            }           
           }
         this.#program.statements = statements;
       }
