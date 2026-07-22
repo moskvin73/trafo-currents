@@ -1,40 +1,47 @@
-import { RationalBigInt } from './RationalBigInt.js';
+import { RationalComplexBigInt } from './RationalComplexBigInt.js';
 import { PolynomialTable } from './PolynomialTable.js';
 import { createFunctionTable } from './IdentityEngine.js'; // Логика функций из Шага Б
 import { registry } from './AtomRegistry.js';
 
 export function foldASTToTable(node) {
+  if (!node) throw new Error("Передан пустой узел в foldASTToTable");
+
   switch (node.type) {
+    
+    // Если парсер выдает комплексное число как единый узел
+    case 'ComplexNode': {
+      const table = new PolynomialTable();
+      const coeff = new RationalComplexBigInt(BigInt(node.real), BigInt(node.imag));
+      table.addMonomial(coeff, new Map());
+      return table;
+    }
     
     case 'NumberNode': {
       const table = new PolynomialTable();
-      // Наш парсер может возвращать вещественные числа. Для простоты пока приводим к BigInt.
-      // Если число дробное, здесь нужно будет распарсить его в числитель/знаменатель.
-      table.addMonomial(new RationalBigInt(BigInt(node.value), 1n), new Map());
+      // Чисто вещественное число — мнимая часть 0
+      const coeff = new RationalComplexBigInt(BigInt(node.value), 0n);
+      table.addMonomial(coeff, new Map());
       return table;
     }
 
     case 'VariableNode': {
+      // Больше никакой проверки на 'i', только чистые переменные (x, y,...)
       const table = new PolynomialTable();
-      let id;
-      if (node.name === 'i') {
-        id = -2; // Наш зарезервированный ID для мнимой единицы
-      } else {
-        id = registry.getOrCreateId(node.name); // 'x' -> -3, 'y' -> -4
-      }
-      table.addMonomial(new RationalBigInt(1n, 1n), new Map([[id, 1]]));
+      const id = registry.getOrCreateId(node.name); 
+      const coeff = new RationalComplexBigInt(1n, 0n); // Коэффициент 1
+      table.addMonomial(coeff, new Map([[id, 1]]));
       return table;
     }
 
     case 'UnaryOpNode': {
-        const leftTable = foldASTToTable(node.argument);
-        if (node.operator === '-') return leftTable.unaryMinus();
-        return leftTable;
+      const innerTable = foldASTToTable(node.argument);
+      if (node.operator === '-') return innerTable.unaryMinus();
+      if (node.operator === '+') return innerTable;
+      throw new Error(`Неподдерживаемый унарный оператор: ${node.operator}`);
     }
 
     case 'BinaryOpNode': {
       const leftTable = foldASTToTable(node.left);
-
       const rightTable = foldASTToTable(node.right);
 
       switch (node.operator) {
@@ -42,25 +49,27 @@ export function foldASTToTable(node) {
         case '-': return leftTable.add(rightTable.unaryMinus());
         case '*': return leftTable.multiply(rightTable);
         case '^': {
-          // Для полиномов степень обязана быть константным целым числом в рамках этого слоя
           if (node.right.type !== 'NumberNode') {
-            throw new Error("Символьные степени требуют расширения CAS до экспоненциального слоя");
+            throw new Error("Символьные степени требуют расширения CAS");
           }
           return leftTable.pow(node.right.value);
         }
         default:
-          throw new Error(`Неподдерживаемый оператор в полиномиальном слое: ${node.op}`);
+          throw new Error(`Неподдерживаемый бинарный оператор: ${node.operator}`);
       }
     }
 
     case 'CallNode': {
-      // Рекурсивно вычисляем таблицу для аргумента функции (например, x + 1)
-      const argumentTable = foldASTToTable(node.args);
-      // Передаем в интеллектуальную фабрику функций
+      if (!node.args || node.args.length === 0) {
+        const emptyTable = new PolynomialTable();
+        emptyTable.addMonomial(new RationalComplexBigInt(0n, 0n), new Map());
+        return createFunctionTable(node.name, emptyTable);
+      }
+      const argumentTable = foldASTToTable(node.args[0]); // Берём первый аргумент
       return createFunctionTable(node.name, argumentTable);
     }
 
     default:
-      throw new Error(`Неизвестный узел AST: ${node.type}`);
+      throw new Error(`Неизвестный тип узла AST: ${node.type}`);
   }
 }
