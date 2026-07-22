@@ -170,6 +170,73 @@ export class NumberNode extends MathNode {
   toTeX(context) { return this.value.toRawTeX(context); }
 }
 
+export class MatrixNode extends MathNode {
+  #rows; // Двумерный массив узлов ASTNode/MathNode
+
+  /**
+   * @param {ASTNode[][]} rows - Двумерный массив узлов дерева
+   * @param {SourceLocation} loc - Локация токена для вывода ошибок
+   */
+  constructor(rows, loc) {
+    super(loc);
+    this.#rows = rows;
+  }
+
+  getPriority() { 
+    return 11; // OpPriority.PRIMARY (Максимальный приоритет, как у чисел и скобок)
+  }
+
+  /**
+   * Текстовое представление дерева (до вычисления)
+   */
+  toString(context) {
+    const rowsStr = this.#rows.map(row => 
+      `[${row.map(node => node.toString(context)).join(', ')}]`
+    );
+    return `[${rowsStr.join(', ')}]`;
+  }
+
+  /**
+   * Генерирует TeX-код структуры дерева выражений (например, покажет \frac{1}{2} внутри матрицы)
+   */
+  toTeX(context) {
+    const env = (context && context.settings && context.settings.matrixFormat) || 'bmatrix';
+    
+    const body = this.#rows.map(row => 
+      row.map(node => node.toTeX(context)).join(' & ')
+    ).join(' \\\\ \n');
+
+    return `\\begin{${env}}\n${body}\n\\end{${env}}`;
+  }
+
+  /**
+   * Вычисление матрицы: вычисляет каждый узел внутри дерева
+   * @returns {Matrix} Готовый математический объект матрицы
+   */
+  internal_evaluate(context) {
+    // Вычисляем каждый узел AST, превращая его в MathType (RealNumber/ComplexNumber)
+    const evaluatedElements = this.#rows.map(row =>
+      row.map(node => node.evaluate(context))
+    );
+
+    // Конструктор класса Matrix сам проверит валидность размеров строк
+    return new Matrix(evaluatedElements);
+  }
+
+  /**
+   * Сбор математических выражений (интеграция в вашу систему обхода)
+   */
+  collectMathExpressions(list) {
+    list.push(this);
+    // Рекурсивно погружаемся в каждый узел матрицы, если это необходимо системе
+    for (const row of this.#rows) {
+      for (const node of row) {
+        node.collectMathExpressions(list);
+      }
+    }
+  }
+}
+
 /**
  * Узел унарной операции (например: -x, +sin(i))
  */
