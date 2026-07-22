@@ -283,6 +283,7 @@ export class MathParser {
     TokenType.NUMBER,
     TokenType.COMPLEX_NUMBER,
     TokenType.LPAREN,
+    TokenType.LSQUARE,
     TokenType.VARIABLE,
     TokenType.PLUS,
     TokenType.MINUS,
@@ -300,6 +301,7 @@ export class MathParser {
     TokenType.NUMBER,
     TokenType.COMPLEX_NUMBER,
     TokenType.LPAREN,
+    TokenType.LSQUARE,
     TokenType.VARIABLE,
     TokenType.PLUS,
     TokenType.MINUS,
@@ -763,7 +765,7 @@ export class MathParser {
     TokenType.NUMBER,
     TokenType.COMPLEX_NUMBER,
     TokenType.LPAREN,
-    TokenType.LSQUARE.
+    TokenType.LSQUARE,
     TokenType.VARIABLE,
   ]));
 
