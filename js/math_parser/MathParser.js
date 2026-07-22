@@ -749,7 +749,7 @@ export class MathParser {
 
   // Степень (Правая ассоциация)
   #parsePower() { 
-    let expr = this.#parsePrimary();
+    let expr = this.#parsePrimaryExpression();
 
     if (this.c_token === TokenType.POW) {
       const loc = this.#location;
