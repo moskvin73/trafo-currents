@@ -138,6 +138,63 @@ export default class Matrix extends MathType {
 
     return new Matrix(resultElements);
   }
+
+  /**
+   * Универсальное умножение матрицы (на скаляр или на другую матрицу)
+   * @param {MathType|number} other 
+   * @returns {Matrix}
+   */
+  multiply(other) {
+    // 1. Проверяем, является ли "other" матрицей/вектором
+    // Используем Symbol.for, чтобы избежать циклических импортов
+    const isMatrix = typeof other === 'object' && other !== null && 
+                     (other.constructor.typeId === Symbol.for('Math.Matrix') || other instanceof Matrix);
+
+    if (!isMatrix) {
+      // --- ВАРИАНТ А: Умножение матрицы на скаляр (RealNumber/ComplexNumber) ---
+      // Мы не знаем, какой именно тип у other, но мы знаем, что у него есть метод multiply!
+      // Поэтому мы просто берем каждый наш элемент и умножаем его на этот скаляр.
+      const resultElements = this.getRawRows().map(row =>
+        row.map(cell => cell.multiply(other))
+      );
+      return new Matrix(resultElements);
+    }
+
+    // --- ВАРИАНТ Б: Матричное умножение (Строка на Столбец) ---
+    const o = Matrix.from(other);
+
+    // Проверяем главное правило линейной алгебры: кол-во столбцов А должно быть равно кол-во строк В
+    if (this.colCount !== o.rowCount) {
+      throw new RangeError(
+        `[Matrix]: Несовместимые размеры для матричного умножения: (${this.rowCount}x${this.colCount}) и (${o.rowCount}x${o.colCount}).`
+      );
+    }
+
+    const A = this.getRawRows();
+    const B = o.getRawRows();
+    const resultElements = [];
+
+    // Алгоритм умножения матриц
+    for (let i = 0; i < this.rowCount; i++) {
+      const resultRow = [];
+      for (let j = 0; j < o.colCount; j++) {
+        
+        // Считаем скалярное произведение i-й строки матрицы А и j-го столбца матрицы В
+        // Начинаем с произведения первых элементов
+        let sum = A[i][0].multiply(B[0][j]);
+        
+        for (let k = 1; k < this.colCount; k++) {
+          const product = A[i][k].multiply(B[k][j]);
+          sum = sum.add(product); // Складываем через полиморфный метод .add()
+        }
+        
+        resultRow.push(sum);
+      }
+      resultElements.push(resultRow);
+    }
+
+    return new Matrix(resultElements);
+  }  
    
   // ==========================================
   // МЕТОДЫ ОТОБРАЖЕНИЯ
