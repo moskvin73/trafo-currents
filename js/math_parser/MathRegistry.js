@@ -1,7 +1,7 @@
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
-import { TYPE_REGISTRY, ispatcher } from './SemanticDispatcher.js';
+import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
 
 const mathClasses = {
     RealNumber,
@@ -169,12 +169,21 @@ export const COMPILER_REGISTRY = new Map([
   ['linsolve', [
     {
       types: [Matrix, Matrix],
-      callType: 'static',
-      target: 'Matrix',
-      method: 'solveSystem'
+      callType: 'custom',
+      execute: (finalArgs) => {
+        // 1. Распаковываем исходные аргументы из массива
+        const [matrixM, vectorB] = finalArgs;
+
+        // 2. ЯВНО вызываем ваш семантический диспетчер типов!
+        // Он заглянет внутрь матриц, увидит, что вектор комплексный, 
+        // и подтянет матрицу M до комплексного уровня.
+        const { l, r } = dispatcher.promoteTypes(matrixM, vectorB);
+
+        // 3. Передаем идеально выровненные по типам данных матрицы в вычислительное ядро
+        return Matrix.solveSystem(l, r);
+      }
     }
-  ]], 
-  // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
+  ]],  // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
   ]]*/
