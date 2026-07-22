@@ -844,7 +844,7 @@ export class MathParser {
             const elements = [];
             do {
                 elements.push(this.#parseExpression());
-            } while (this.#match(TokenType.COMMA));
+            } while (this.c_token ===TokenType.COMMA);
 
             this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка ']'");
 
