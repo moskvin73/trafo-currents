@@ -87,6 +87,78 @@ export class PolynomialTable extends MathType {
   }
 
   /**
+   * Сложение текущей таблицы с другой таблицей
+   * @param {PolynomialTable} other 
+   * @returns {PolynomialTable} Новая объединенная таблица
+   */
+  add(other) {
+    const resultTable = new PolynomialTable();
+
+    // Копируем все мономы из первой таблицы
+    for (const [_, monom] of this.monomials.entries()) {
+      resultTable.addMonomial(monom.coeff, monom.powers);
+    }
+
+    // Добавляем все мономы из второй таблицы (метод addMonomial сам схлопнет подобные)
+    for (const [_, monom] of other.monomials.entries()) {
+      resultTable.addMonomial(monom.coeff, monom.powers);
+    }
+
+    return resultTable;
+  }
+
+  /**
+   * Унарный минус (инверсия знаков всех коэффициентов)
+   * @returns {PolynomialTable} Новая инвертированная таблица
+   */
+  unaryMinus() {
+    const resultTable = new PolynomialTable();
+    const minusOne = new RationalBigInt(-1n, 1n);
+
+    for (const [_, monom] of this.monomials.entries()) {
+      const newCoeff = monom.coeff.mul(minusOne);
+      resultTable.addMonomial(newCoeff, monom.powers);
+    }
+
+    return resultTable;
+  }
+
+  /**
+   * Быстрое бинарное возведение таблицы в целую положительную степень
+   * @param {number|bigint} exponent 
+   * @returns {PolynomialTable} Результат возведения в степень
+   */
+  pow(exponent) {
+    let exp = BigInt(exponent);
+    
+    if (exp < 0n) {
+      throw new Error("Отрицательные степени полиномиальных таблиц требуют деления (внедрение RationalExpression)");
+    }
+
+    // Любое выражение в степени 0 дает единичную константу
+    if (exp === 0n) {
+      const unitTable = new PolynomialTable();
+      unitTable.addMonomial(new RationalBigInt(1n, 1n), new Map());
+      return unitTable;
+    }
+
+    // Алгоритм быстрого возведения в степень (схож с тем, что мы делали для матриц)
+    let base = this;
+    let result = new PolynomialTable();
+    result.addMonomial(new RationalBigInt(1n, 1n), new Map()); // Инициализация единицей
+
+    while (exp > 0n) {
+      if (exp % 2n === 1n) {
+        result = result.multiply(base);
+      }
+      base = base.multiply(base);
+      exp /= 2n;
+    }
+
+    return result;
+  } 
+  
+  /**
    * Добавить моном в таблицу
    * @param {number|Complex} coeff - Коэффициент
    * @param {Map<number, number>} powers - Карта: [ID операнда] -> [Степень]
