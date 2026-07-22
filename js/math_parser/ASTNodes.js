@@ -824,7 +824,7 @@ export class IndexNode extends MathNode {
 
   internal_evaluate(context) {
     // 1. Вычисляем то, к чему применяется индексация (получаем объект Matrix)
-    const matrixObj = this.#target.evaluate(context);
+    const matrixObj = this.#target.internal_evaluate(context);
     
     const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
     if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
@@ -832,8 +832,8 @@ export class IndexNode extends MathNode {
     }
 
     // 2. Вычисляем индексы строки и столбца
-    const rNum = this.#rowExpr.evaluate(context);
-    const cNum = this.#colExpr ? this.#colExpr.evaluate(context) : null;
+    const rNum = this.#rowExpr.internal_evaluate(context);
+    const cNum = this.#colExpr ? this.#colExpr.internal_evaluate(context) : null;
 
     // Извлекаем примитивные целые числа. 
     // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
