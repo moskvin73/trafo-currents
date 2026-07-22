@@ -1,4 +1,5 @@
 import { MathType } from './MathType.js';
+import { RationalBigInt } from './RationalBigInt.js';
 import { registry } from './AtomRegistry.js';
 
 export class PolynomialTable extends MathType {
@@ -10,16 +11,92 @@ export class PolynomialTable extends MathType {
     this._hash = null;
   }
 
+    /**
+   * Умножение текущей таблицы на другую таблицу (раскрытие скобок)
+   * @param {PolynomialTable} other 
+   * @returns {PolynomialTable} Новая упрощенная таблица-результат
+   */
+  multiply(other) {
+    const resultTable = new PolynomialTable();
+
+    // Перебираем каждый моном из первой таблицы (this)
+    for (const [_, monomA] of this.monomials.entries()) {
+      
+      // Перебираем каждый моном из второй таблицы (other)
+      for (const [_, monomB] of other.monomials.entries()) {
+        
+        // 1. Перемножаем дробные коэффициенты BigInt
+        const nextCoeff = monomA.coeff.mul(monomB.coeff);
+        
+        // 2. Складываем степени сомножителей
+        const nextPowers = new Map();
+
+        // Копируем степени из А
+        for (const [id, exp] of monomA.powers.entries()) {
+          nextPowers.set(id, exp);
+        }
+
+        // Добавляем/складываем степени из B
+        for (const [id, exp] of monomB.powers.entries()) {
+          if (nextPowers.has(id)) {
+            const totalExp = nextPowers.get(id) + exp;
+            if (totalExp === 0) {
+              nextPowers.delete(id); // x^0 = 1, убираем операнд
+            } else {
+              nextPowers.set(id, totalExp);
+            }
+          } else {
+            nextPowers.set(id, exp);
+          }
+        }
+
+        // 3. Специфическая постобработка мнимой единицы (ID = -2)
+        // Если после перемножения i имеет степень, отличную от 0 или 1, упрощаем её
+        let finalCoeff = nextCoeff;
+        if (nextPowers.has(-2)) {
+          const iExp = nextPowers.get(-2);
+          
+          // Обрабатываем только целые положительные степени мнимой единицы
+          if (iExp > 1) {
+            const remainder = iExp % 4;
+            nextPowers.delete(-2); // Временно убираем, чтобы переписать степень
+
+            if (remainder === 0) {
+              // i^4 = 1 -> коэффициент не меняется, i уходит полностью
+            } else if (remainder === 1) {
+              // i^5 = i -> возвращаем i в 1-й степени
+              nextPowers.set(-2, 1);
+            } else if (remainder === 2) {
+              // i^2 = -1 -> меняем знак коэффициента
+              finalCoeff = finalCoeff.mul(new RationalBigInt(-1n, 1n));
+            } else if (remainder === 3) {
+              // i^3 = -i -> меняем знак коэффициента и возвращаем i в 1-й степени
+              finalCoeff = finalCoeff.mul(new RationalBigInt(-1n, 1n));
+              nextPowers.set(-2, 1);
+            }
+          }
+        }
+
+        // 4. Безопасно добавляем получившийся моном в результирующую таблицу
+        // Метод addMonomial сам отсортирует ключи и схлопнет подобные, если они возникнут
+        resultTable.addMonomial(finalCoeff, nextPowers);
+      }
+    }
+
+    return resultTable;
+  }
+
   /**
    * Добавить моном в таблицу
    * @param {number|Complex} coeff - Коэффициент
    * @param {Map<number, number>} powers - Карта: [ID операнда] -> [Степень]
    */
   addMonomial(coeff, powers) {
-    // 1. Сортируем ключи (ID операндов), чтобы получить каноническую строку степеней
+     if (coeff.isZero()) return;
+
+    // Сортируем ID для детерминированной сигнатуры
     const sortedKeys = Array.from(powers.keys()).sort((a, b) => a - b);
     
-    // 2. Строим уникальную сигнатуру монома для поиска подобных
     let signature = '';
     for (const id of sortedKeys) {
       const exp = powers.get(id);
@@ -27,26 +104,20 @@ export class PolynomialTable extends MathType {
         signature += `${id}:${exp};`;
       }
     }
-
     if (!signature) signature = 'constant';
 
-    // 3. Схлопывание подобных членов (Алгебраическое сложение)
     if (this.monomials.has(signature)) {
       const existing = this.monomials.get(signature);
-      // Предполагаем, что у нас есть полиморфный метод сложения (из SemanticDispatcher или MathType)
-      existing.coeff = this._addCoefficients(existing.coeff, coeff);
+      existing.coeff = existing.coeff.add(coeff);
       
-      // Если коэффициент занулился — удаляем моном из таблицы
-      if (this._isZero(existing.coeff)) {
+      if (existing.coeff.isZero()) {
         this.monomials.delete(signature);
       }
     } else {
-      if (!this._isZero(coeff)) {
-        this.monomials.set(signature, { coeff, powers, sortedKeys });
-      }
+      this.monomials.set(signature, { coeff, powers, sortedKeys });
     }
     
-    this._hash = null; // Сбрасываем кэш хэша при изменении структуры
+    this._hash = null; // Сбрасываем кэш хэша
   }
 
   /**
