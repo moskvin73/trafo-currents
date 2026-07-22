@@ -215,6 +215,27 @@ export default class Matrix extends MathType {
 
     return new Matrix(resultElements);
   }
+
+  /**
+   * Транспонирование матрицы (поворот: строки становятся столбцами)
+   * @returns {Matrix} Новая прямоугольная транспонированная матрица
+   */
+  transpose() {
+    const A = this.getRawRows();
+    const resultElements = [];
+
+    // Идём по СТОЛБЦАМ исходной матрицы (их количество станет количеством новых строк)
+    for (let j = 0; j < this.colCount; j++) {
+      const newRow = [];
+      // Идём по СТРОКАМ исходной матрицы
+      for (let i = 0; i < this.rowCount; i++) {
+        newRow.push(A[i][j]);
+      }
+      resultElements.push(newRow);
+    }
+
+    return new Matrix(resultElements);
+  }  
    
   // ==========================================
   // СТАТИЧЕСКИЕ МЕТОДЫ-ФАБРИКИ
