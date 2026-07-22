@@ -245,7 +245,7 @@ export class MatrixNode extends MathNode {
     // приводим ВСЕ элементы к его типу через promoteTypes
     const finalElements = evaluatedElements.map(row =>
       row.map(cell => {
-        const { r } = context.semanticDispatcher.promoteTypes(targetSample, cell);
+        const { r } = dispatcher.promoteTypes(targetSample, cell);
         return r; // r — это наш cell, подтянутый диспетчером до уровня targetSample!
       })
     );
