@@ -1,5 +1,4 @@
 import MathType from './MathType.js';
-import RealNumber from './RealNumber.js';
 
 export default class Matrix extends MathType {
   static typeId = Symbol.for('Math.Matrix');
@@ -16,36 +15,30 @@ export default class Matrix extends MathType {
    * @param {MathType[][]} elements - Двумерный массив объектов, унаследованных от MathType
    */
   constructor(elements) {
-	  super();
-	  
-	  if (!Array.isArray(elements) || elements.length === 0) {
-		throw new TypeError("[Matrix]: Данные должны быть непустым двумерным массивом.");
-	  }
+    super();
+    
+    if (!Array.isArray(elements) || elements.length === 0) {
+      throw new TypeError("[Matrix]: Данные должны быть непустым двумерным массивом.");
+    }
 
-	  const expectedColCount = elements[0].length;
-	  
-	  this.#rows = elements.map((row, rowIndex) => {
-		if (!Array.isArray(row)) {
-		  throw new TypeError(`[Matrix]: Строка ${rowIndex} не является массивом.`);
-		}
-		if (row.length !== expectedColCount) {
-		  throw new RangeError(`[Matrix]: Нарушена размерность. Строка ${rowIndex} имеет длину ${row.length} вместо ${expectedColCount}.`);
-		}
-		
-		return row.map((cell, colIndex) => {
-		  // Если это чистый примитив-число, упаковываем в RealNumber через его же фабрику
-		  if (typeof cell === 'number') {
-			return RealNumber.from(cell);
-		  }
-		  
-		  // Если это уже объект MathType (RealNumber, ComplexNumber, Matrix) — оставляем как есть
-		  if (cell instanceof MathType) {
-			return cell;
-		  }
-		  
-		  throw new TypeError(`[Matrix]: Элемент [${rowIndex}][${colIndex}] не поддерживается.`);
-		});
-	  });
+    const expectedColCount = elements[0].length; // Берем эталон по первой строке
+    
+    this.#rows = elements.map((row, rowIndex) => {
+      if (!Array.isArray(row)) {
+        throw new TypeError(`[Matrix]: Строка ${rowIndex} не является массивом.`);
+      }
+      if (row.length !== expectedColCount) {
+        throw new RangeError(`[Matrix]: Нарушена размерность. Строка ${rowIndex} имеет длину ${row.length} вместо ${expectedColCount}.`);
+      }
+      
+      return row.map((cell, colIndex) => {
+        // Матрица принимает ТОЛЬКО готовые объекты вашей системы
+        if (cell instanceof MathType) {
+          return cell;
+        }
+        throw new TypeError(`[Matrix]: Элемент [${rowIndex}][${colIndex}] должен быть наследником MathType.`);
+      });
+    });
   }
 
   // ==========================================
