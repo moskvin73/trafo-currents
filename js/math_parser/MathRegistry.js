@@ -158,11 +158,9 @@ export const COMPILER_REGISTRY = new Map([
   ['linsolve', [
     {
       types: [Matrix, Matrix],
-      callType: 'custom',
-      execute: (finalArgs) => {
-        const [matrixM, vectorB] = finalArgs;
-        return Matrix.solveSystem(matrixM, vectorB);
-      }
+      callType: 'static',
+      target: 'Matrix',
+      method: 'solveSystem'
     }
   ]], 
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
