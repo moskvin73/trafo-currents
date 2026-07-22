@@ -183,7 +183,7 @@ export class MatrixNode extends MathNode {
   }
 
   getPriority() { 
-    return 11; // OpPriority.PRIMARY (Максимальный приоритет, как у чисел и скобок)
+    return OpPriority.PRIMARY;
   }
 
   /**
