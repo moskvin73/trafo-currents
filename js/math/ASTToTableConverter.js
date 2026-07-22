@@ -40,24 +40,29 @@ export function foldASTToTable(node) {
       throw new Error(`Неподдерживаемый унарный оператор: ${node.operator}`);
     }
 
-    case 'BinaryOpNode': {
+     case 'AddNode': {
       const leftTable = foldASTToTable(node.left);
       const rightTable = foldASTToTable(node.right);
-
-      switch (node.operator) {
-        case '+': return leftTable.add(rightTable);
-        case '-': return leftTable.add(rightTable.unaryMinus());
-        case '*': return leftTable.multiply(rightTable);
-        case '^': {
-          if (node.right.type !== 'NumberNode') {
-            throw new Error("Символьные степени требуют расширения CAS");
-          }
-          return leftTable.pow(node.right.value);
-        }
-        default:
-          throw new Error(`Неподдерживаемый бинарный оператор: ${node.operator}`);
-      }
-    }
+      return leftTable.add(rightTable);
+     }
+     case 'SubNode': {
+      const leftTable = foldASTToTable(node.left);
+      const rightTable = foldASTToTable(node.right);
+      return leftTable.add(rightTable.unaryMinus());
+     }
+     case 'MulNode': {
+      const leftTable = foldASTToTable(node.left);
+      const rightTable = foldASTToTable(node.right);
+      return leftTable.multiply(rightTable);
+     }
+     case 'PowNode': {
+      const leftTable = foldASTToTable(node.left);
+      const rightTable = foldASTToTable(node.right);
+       if (node.right.type !== 'NumberNode') {
+        throw new Error("Символьные степени требуют расширения CAS");
+       }
+       return leftTable.pow(node.right.value);
+     }
 
     case 'CallNode': {
       if (!node.args || node.args.length === 0) {
