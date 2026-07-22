@@ -137,6 +137,18 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // === ТРАНСПОНИРОВАНИЕ МАТРИЦЫ ===
+  ['transpose', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs; // Извлекаем матрицу из массива аргументов
+        return inputMatrix.transpose();
+      }
+    }
+  ]],  
+
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
