@@ -268,7 +268,7 @@ execute(overloads, args, loc, context = {}) {
       case 'static': {
         const targetName = bestOverload.target;
         const methodName = bestOverload.method;
-        const targetClass = context[targetName];
+        const targetClass = targetName;//context[targetName];
         
         if (!targetClass || typeof targetClass[methodName] !== 'function') {
           throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
