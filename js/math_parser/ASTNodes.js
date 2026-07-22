@@ -676,7 +676,7 @@ export class PowNode extends BinaryOpNode {
     if (typeof l?.accuratePow === 'function') {
       return l.accuratePow(r);
     } else {
-      this.error(context, `Оператор '^' не опредилён для типов "${l}" и "${r}".`);
+      this.error(context, `Оператор '^' не определён для типов "${l.type}" и "${r.type}".`);
       return this.errorValue();
     }
   } 
