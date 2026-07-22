@@ -1,7 +1,7 @@
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
-import { TYPE_REGISTRY } from './SemanticDispatcher.js';
+import { TYPE_REGISTRY, ispatcher } from './SemanticDispatcher.js';
 
 const mathClasses = {
     RealNumber,

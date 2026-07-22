@@ -198,3 +198,5 @@ export default class SemanticDispatcher {
     throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${currentName} к ${targetName}`);
   }
 }
+
+export const dispatcher = new SemanticDispatcher();
