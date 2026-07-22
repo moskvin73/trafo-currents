@@ -72,20 +72,43 @@ export default class SemanticDispatcher {
     }
 
     // ИСКЛЮЧЕНИЕ ДЛЯ ЛИНЕЙНОЙ АЛГЕБРЫ:
-    // Если один из операндов — Матрица, а второй — число (примитив, Real или Complex),
-    // мы НЕ выполняем автоматический cast, а возвращаем их как есть. 
-    // Матрица сама обработает скаляр внутри своих методов.
-    const isLeftMatrix = leftId === Matrix;
-    const isRightMatrix = rightId === Matrix;
+    // ИНТЕЛЛЕКТУАЛЬНЫЙ АНАЛИЗ ДЛЯ ЛИНЕЙНОЙ АЛГЕБРЫ
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    const isLeftMatrix = leftVal.constructor.typeId === MATRIX_SYMBOL;
+    const isRightMatrix = rightVal.constructor.typeId === MATRIX_SYMBOL;
+
     if (isLeftMatrix || isRightMatrix) {
-      // Единственное: если число оказалось примитивом 'number', 
-      // для безопасности обернем его в RealNumber перед передачей в матрицу
-      let l = leftVal;
-      let r = rightVal;
-      if (leftId === 'number' && leftConfig?.selfPromote) l = leftConfig.selfPromote(leftVal);
-      if (rightId === 'number' && rightConfig?.selfPromote) r = rightConfig.selfPromote(rightVal);
-      
-      return { l, r };
+      let matrix = isLeftMatrix ? leftVal : rightVal;
+      let scalar = isLeftMatrix ? rightVal : leftVal;
+
+      // Нормализуем примитив 'number' до RealNumber через ваш реестр, если это необходимо
+      if (typeof scalar === 'number' && this.#registry.get('number')?.selfPromote) {
+        scalar = this.#registry.get('number').selfPromote(scalar);
+      }
+
+      // Определяем типы (классы-конструкторы) скаляра и элементов внутри матрицы
+      const scalarClass = scalar.constructor;
+      // Так как матрица у нас теперь гарантированно однородная, берем тип ее самого первого элемента [0][0]
+      const matrixElementsClass = matrix.get(0, 0).constructor;
+
+      // Извлекаем конфигурации рангов из вашего приватного реестра #registry
+      const scalarConfig = this.#registry.get(scalarClass);
+      const matrixElementsConfig = this.#registry.get(matrixElementsClass);
+
+      const scalarRank = scalarConfig ? scalarConfig.rank : 0;
+      const matrixElementsRank = matrixElementsConfig ? matrixElementsConfig.rank : 0;
+
+      // ГЛАВНОЕ РЕШЕНИЕ: Если ранг скаляра выше, чем текущий ранг элементов матрицы,
+      // мы динамически повышаем ВСЮ матрицу до типа этого скаляра!
+      if (scalarRank > matrixElementsRank) {
+        matrix = matrix.castElementsTo(scalarClass);
+      }
+
+      // Возвращаем операнды на свои места, полностью выровненные по типам чисел!
+      return {
+        l: isLeftMatrix ? matrix : scalar,
+        r: isLeftMatrix ? scalar : matrix
+      };
     }
 
     // СЛУЧАЙ 2: Стандартное семантическое повышение (для чисел между собой)
