@@ -598,7 +598,7 @@ export class MulNode extends BinaryOpNode {
     const rightValue = this.right.internal_evaluate(context);
 
     // 2. Выравниваем скаляры между собой (если это, например, Real и Complex)
-    const { l, r } = dispatcherr.promoteTypes(leftValue, rightValue);
+    const { l, r } = dispatcher.promoteTypes(leftValue, rightValue);
 
     const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
 
