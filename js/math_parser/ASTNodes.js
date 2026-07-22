@@ -633,8 +633,36 @@ export class DivNode extends StrictRightBinNode {
   getPriority() { return OpPriority.MUL_DIV; }
 
   internal_evaluate(context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    const leftValue = this.left.evaluate(context);
+    const rightValue = this.right.evaluate(context);
+
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    const isRightMatrix = rightValue && rightValue.constructor.typeId === MATRIX_SYMBOL;
+
+    // ЕСЛИ мы делим что-то на Матрицу (например, A / B)
+    if (isRightMatrix) {
+      // Математика: A / B === A * B.invert()
+      const invertedB = rightValue.invert();
+      
+      // Прогоняем левую матрицу и новую обратную матрицу через promoteTypes для выравнивания типов
+      const { l, r } = dispatcher.promoteTypes(leftValue, invertedB);
+      return l.multiply(r);
+    }
+
+    // Стандартное деление чисел или матрицы на скаляр
+    const { l, r } = dispatcher.promoteTypes(leftValue, rightValue);
+    
+    // Если делим Матрицу на Число (скаляр):
+    if (l.constructor.typeId === MATRIX_SYMBOL) {
+      // Деление матрицы на число k — это умножение на (1 / k)
+      const scalarInverse = r.inverse ? r.inverse() : r; // Если у вашего числа есть метод inverse()
+      return l.multiply(scalarInverse);
+    }
+
     return l.divide(r);
+
+    /*const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.divide(r);*/
   } 
 
   toTeX(context) { return super._renderFractionChain(context); }
