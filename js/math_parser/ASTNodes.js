@@ -223,7 +223,7 @@ export class MatrixNode extends MathNode {
   internal_evaluate(context) {
     // 1. Вычисляем все узлы AST внутри матрицы, получая атомарные объекты MathType
     const evaluatedElements = this.#rows.map(row =>
-      row.map(node => node.evaluate(context))
+      row.map(node => node.internal_evaluate(context))
     );
 
     // 2. Ищем максимальный ранг числового типа среди всех вычисленных ячеек
@@ -601,8 +601,32 @@ export class MulNode extends BinaryOpNode {
   getPriority() { return OpPriority.MUL_DIV; }
 
   internal_evaluate(context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+
+    // 1. Вычисляем левую и правую части
+    const leftValue = this.left.internal_evaluate(context);
+    const rightValue = this.right.internal_evaluate(context);
+
+    // 2. Выравниваем скаляры между собой (если это, например, Real и Complex)
+    const { l, r } = context.semanticDispatcher.promoteTypes(leftValue, rightValue);
+
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+
+    // 3. Проверяем, является ли левый операнд ЧИСЛОМ, а правый — МАТРИЦЕЙ
+    const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
+    const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
+
+    if (!isLeftMatrix && isRightMatrix) {
+      // Математический закон: Скаляр * Матрица === Матрица * Скаляр
+      // Вызываем метод умножения у матрицы (r), передавая ей скаляр (l)
+      return r.multiply(l);
+    }
+
+    // 4. Во всех остальных случаях (Матрица * Матрица, Матрица * Скаляр, Число * Число)
+    // выполняем стандартный линейный вызов
     return l.multiply(r);
+
+    /*const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.multiply(r);*/
   } 
 
   toTeX(context) { return super._renderFractionChain(context); }
