@@ -12,7 +12,7 @@ export class SymbolTableContext {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
       angleMode:     ANGLE_MODE.RADIANS,
       precision:     4,
-      matrixFormat: 'pmatrix', // 'bmatrix', 'pmatrix', 'matrix'
+      matrixFormat: 'matrix', // 'bmatrix', 'pmatrix', 'matrix'
     };
 
     // Статическая часть
