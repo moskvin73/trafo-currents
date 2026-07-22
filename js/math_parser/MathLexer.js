@@ -311,6 +311,8 @@ export class MathLexer {
             else if (code === 61) type = TokenType.ASSIGN;
             else if (code === 40) type = TokenType.LPAREN;
             else if (code === 41) type = TokenType.RPAREN;
+            else if (code === 91) type = TokenType.LSQUARE;
+            else if (code === 93) type = TokenType.RSQUARE;
             else if (code === 59) type = TokenType.SEMICOLON;
             else if (code === 36) type = TokenType.SILENT;
             else if (code === 44) type = TokenType.COMMA;
