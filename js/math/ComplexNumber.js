@@ -340,6 +340,7 @@ export default class ComplexNumber extends MathType {
     return new ComplexNumber(-this.real, -this.imaginary);
   }
 
+  abs() { return magnitude; }
   /**
    * Возвращает обратную величину комплексного числа (1 / z).
    * Полностью соответствует стандартам IEEE 754 и ISO C99.

@@ -55,11 +55,15 @@ export default class RealNumber extends MathType {
    */
   negate() { return new RealNumber(-this.value); }
 
+  abs() { return Math.abs(this.value); }
+
   /**
    * Возвращает обратную величину числа (результат деления единицы на это число).
    * @returns {RealNumber} Новое число вида 1/x.
    */  
   inverse() { return new RealNumber(1 / this.value); }
+
+
   /**
    * Внутренний метод сложения двух вещественных чисел
    */
