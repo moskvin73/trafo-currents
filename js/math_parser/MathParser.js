@@ -833,47 +833,74 @@ export class MathParser {
              return expr;
 
          case TokenType.LSQUARE: {
-          const startLoc = this.#location; // Сохраняем локацию для узла AST
+          const startLoc = this.#location; // Сохраняем локацию начала матрицы
           this.#consume(); // Поглощаем стартовую '['
 
+          // Проверка на пустую матрицу '[]'
           if (this.c_token === TokenType.RSQUARE) {
               this.#consume();
-              throw new SyntaxError("[Parser]: Матрица или вектор не могут быть пустыми.");
+              this.#error("Матрица или вектор не могут быть пустыми.", startLoc);
+              return new NumberNode(this.errorValue(), startLoc);
           }
 
           // Проверяем, что находится внутри: строка матрицы или элементы вектора?
           if (this.c_token === TokenType.LSQUARE) {
               // --- ВАРИАНТ: Двумерная матрица [[a, b], [c, d]] ---
               const matrixRows = [];
-              do {
-                  // Ожидаем внутреннюю открывающую скобку для строки матрицы
+              
+              while (true) {
+                  // Утверждаем и поглощаем внутреннюю открывающую скобку '['
                   this.#match(TokenType.LSQUARE, "Ожидалась открывающая квадратная скобка строки матрицы '['");
                   
                   const rowNodes = [];
-                  do {
-                      rowNodes.push(this.#parseExpression()); // Парсим узел AST элемента
-                  } while (this.#match(TokenType.COMMA));
+                  while (true) {
+                      rowNodes.push(this.#parseExpression()); // Парсим узел элемента
+                      
+                      // Если дальше идет запятая, поглощаем её и продолжаем парсить строку
+                      if (this.c_token === TokenType.COMMA) {
+                          this.#consume();
+                      } else {
+                          break; // Запятой нет, значит строка закончилась
+                      }
+                  }
 
+                  // Утверждаем и поглощаем закрывающую скобку строки ']'
                   this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка строки матрицы ']'");
-                  
-                  matrixRows.push(rowNodes); // Сохраняем массив узлов строки
-              } while (this.#match(TokenType.COMMA));
+                  matrixRows.push(rowNodes); // Сохраняем готовую строку узлов
 
+                  // Если после строки идет запятая, значит будет еще одна строка
+                  if (this.c_token === TokenType.COMMA) {
+                      this.#consume();
+                  } else {
+                      break; // Больше строк нет
+                  }
+              }
+
+              // Утверждаем и поглощаем финальную закрывающую скобку матрицы ']'
               this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка матрицы ']'");
               
               return new MatrixNode(matrixRows, startLoc);
+              
           } else {
-              // --- ВАРИАНТ: Вектор-строка [1, 2, 3] ---
+              // --- ВАРИАНТ: Вектор-строка [a, b, c] ---
               const rowNodes = [];
-              do {
+              
+              while (true) {
                   rowNodes.push(this.#parseExpression());
-              } while (this.#match(TokenType.COMMA));
+                  
+                  if (this.c_token === TokenType.COMMA) {
+                      this.#consume();
+                  } else {
+                      break;
+                  }
+              }
 
+              // Утверждаем и поглощаем закрывающую скобку вектора ']'
               this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка вектора ']'");
 
               // Оборачиваем вектор в двумерную структуру (одна строка) для MatrixNode
               return new MatrixNode([rowNodes], startLoc);
-          }          
+          }
          }
 
          case TokenType.VARIABLE:
