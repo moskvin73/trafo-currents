@@ -8,20 +8,19 @@ export function foldASTToTable(node) {
 
   switch (node.constructor.name) {
     
-    // Если парсер выдает комплексное число как единый узел
-    case 'ComplexNode': {
-      const table = new PolynomialTable();
-      const coeff = new RationalComplexBigInt(BigInt(node.real), BigInt(node.imag));
-      table.addMonomial(coeff, new Map());
-      return table;
-    }
-    
     case 'NumberNode': {
       const table = new PolynomialTable();
-      // Чисто вещественное число — мнимая часть 0
-      const coeff = new RationalComplexBigInt(BigInt(node.value), 0n);
-      table.addMonomial(coeff, new Map());
-      return table;
+      if (node.value.constructor.name === 'RealNumber') {
+        // Чисто вещественное число — мнимая часть 0
+        const coeff = new RationalComplexBigInt(BigInt(node.value), 0n);
+        table.addMonomial(coeff, new Map());
+        return table;
+      }
+      else if (node.value.constructor.name === 'ComplexNumber') {
+        const coeff = new RationalComplexBigInt(BigInt(node.real), BigInt(node.imag));
+        table.addMonomial(coeff, new Map());
+        return table;
+      }
     }
 
     case 'VariableNode': {
