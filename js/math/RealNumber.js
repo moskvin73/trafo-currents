@@ -54,6 +54,7 @@ export default class RealNumber extends MathType {
    * Реализация унарного минуса для вещественного числа
    */
   negate() { return new RealNumber(-this.value); }
+  
 
   abs() { return Math.abs(this.value); }
 

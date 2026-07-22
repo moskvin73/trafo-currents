@@ -237,6 +237,181 @@ export default class Matrix extends MathType {
     return new Matrix(resultElements);
   }  
    
+   /**
+   * Вычисление определителя (детерминанта) квадратной матрицы
+   */
+  det(settings) {
+    if (!this.isSquare) {
+      throw new RangeError("[Matrix]: Определитель можно вычислить только для квадратной матрицы.");
+    }
+
+    const n = this.rowCount;
+    if (n === 1) return this.get(0, 0);
+    if (n === 2) {
+      return this.get(0, 0).multiply(this.get(1, 1)).subtract(this.get(0, 1).multiply(this.get(1, 0)));
+    }
+
+    const M = this.getRawRows();
+    const EPS = MathType.EPSILON; // Используем наш стабильный порог 1e-15
+    let sign = 1;
+
+    const _where = new Array(n);
+
+    // Шаг 1 прямого хода
+    let sel = 0;
+    for (let k = 1; k < n; k++) {
+      // ИСПОЛЬЗУЕМ ВАШ МЕТОД .abs(): cell.abs().value возвращает чистое JS-число (модуль)
+      if (M[k][0].abs().value > M[sel][0].abs().value) sel = k;
+    }
+    
+    if (M[sel][0].abs().value < EPS) {
+      // Возвращаем полиморфный ноль
+      return this.get(0,0).subtract(this.get(0,0));
+    }
+
+    if (sel !== 0) sign = -sign;
+
+    _where[0] = sel;
+    let kIdx = 0;
+    for (kIdx = 0; kIdx < sel; kIdx++) _where[kIdx] = kIdx;
+    _where[kIdx++] = 0;
+    for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
+
+    let value = M[sel][0];
+
+    for (let k = 1; k < n; k++) {
+      const wk = _where[k];
+      const c = M[wk][0];
+      for (let j = 1; j < n; j++) {
+        M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+      }
+    }
+
+    // Шаг 2 и далее прямого хода
+    for (let i = 1; i < n; i++) {
+      sel = i;
+      for (let k = i + 1; k < n; k++) {
+        if (M[_where[k]][i].abs().value > M[_where[sel]][i].abs().value) sel = k;
+      }
+      
+      if (M[_where[sel]][i].abs().value < EPS) {
+        return this.get(0,0).subtract(this.get(0,0));
+      }
+
+      if (sel !== i) sign = -sign;
+
+      const temp = _where[sel];
+      _where[sel] = _where[i];
+      _where[i] = temp;
+
+      sel = _where[i];
+      value = M[sel][i];
+
+      for (let k = i + 1; k < n; k++) {
+        const wk = _where[k];
+        const c = M[wk][i];
+        for (let j = i + 1; j < n; j++) {
+          M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+        }
+      }
+    }
+    
+    const lastRowIndex = _where[n - 1];
+    let finalDet = M[lastRowIndex][n - 1];
+    
+    if (sign < 0) finalDet = finalDet.negate();
+    return finalDet;
+  }
+
+  /**
+   * Полное решение СЛАУ на основе вашего C++ алгоритма
+   */
+  static solveSystem(matrixM, vectorB) {
+    if (!matrixM.isSquare) {
+      throw new RangeError("[LinearAlgebra]: Матрица системы должна быть квадратной.");
+    }
+    if (matrixM.rowCount !== vectorB.rowCount || vectorB.colCount !== 1) {
+      throw new RangeError("[LinearAlgebra]: Размерность вектора B должна совпадать с количеством строк матрицы M (N x 1).");
+    }
+
+    const n = matrixM.rowCount;
+    const EPS = MathType.EPSILON;
+
+    const M = matrixM.getRawRows();
+    const B = vectorB.getRawRows().map(row => row[0]); // Достаем элементы вектора-столбца
+
+    const _where = new Array(n);
+
+    let sel = 0;
+    for (let k = 1; k < n; k++) {
+      if (M[k][0].abs().value > M[sel][0].abs().value) sel = k;
+    }
+    if (M[sel][0].abs().value < EPS) {
+      throw new Error("[LinearAlgebra]: Система вырождена или имеет бесконечно много решений.");
+    }
+
+    _where[0] = sel;
+    let kIdx = 0;
+    for (kIdx = 0; kIdx < sel; kIdx++) _where[kIdx] = kIdx;
+    _where[kIdx++] = 0;
+    for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
+
+    let value = M[sel][0];
+
+    for (let k = 1; k < n; k++) {
+      const wk = _where[k];
+      const c = M[wk][0];
+      B[wk] = B[wk].multiply(value).subtract(B[sel].multiply(c));
+      for (let j = 1; j < n; j++) {
+        M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+      }
+    }
+
+    for (let i = 1; i < n; i++) {
+      sel = i;
+      for (let k = i + 1; k < n; k++) {
+        if (M[_where[k]][i].abs().value > M[_where[sel]][i].abs().value) sel = k;
+      }
+      if (M[_where[sel]][i].abs().value < EPS) {
+        throw new Error("[LinearAlgebra]: Система вырождена.");
+      }
+      
+      const temp = _where[sel];
+      _where[sel] = _where[i];
+      _where[i] = temp;
+
+      sel = _where[i];
+      value = M[sel][i];
+
+      for (let k = i + 1; k < n; k++) {
+        const wk = _where[k];
+        const c = M[wk][i];
+        B[wk] = B[wk].multiply(value).subtract(B[sel].multiply(c));
+        for (let j = i + 1; j < n; j++) {
+          M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
+        }
+      }
+    }
+
+    const resultElements = new Array(n);
+
+    // Обратный ход
+    for (let i = n - 1; i > 0; i--) {
+      const j = _where[i];
+      value = B[j].divide(M[j][i]);
+      resultElements[i] = value;
+      
+      for (let k = 0; k < i; k++) {
+        const wk = _where[k];
+        B[wk] = B[wk].subtract(M[wk][i].multiply(value));
+      }
+    }
+    
+    const j0 = _where[0];
+    resultElements[0] = B[j0].divide(M[j0][0]);
+
+    return Matrix.columnVector(resultElements);
+  } 
   // ==========================================
   // СТАТИЧЕСКИЕ МЕТОДЫ-ФАБРИКИ
   // ==========================================
