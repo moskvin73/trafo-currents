@@ -833,7 +833,6 @@ export class MathParser {
 
          case TokenType.LSQUARE:
             this.#consume();
-
             // Проверяем на пустой массив '[]' (если это разрешено в вашей системе)
             if (this.c_token === TokenType.RSQUARE) {
                 this.#consume();
