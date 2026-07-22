@@ -1053,7 +1053,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
   
   // ЛИНЕЙНАЯ АЛГЕБРА И АНАЛИЗ (Задел на будущее)
   ['det',    { tex: '\\det' }], // Определитель матрицы
-  ['transpose',     { render: ([M]) => `${M}^\top` }]   
+  ['transpose',     { render: ([M]) => `${M}^\top` }],  
   ['tr',     { tex: '\\operatorname{tr}' }], // След матрицы
   ['lim',    { tex: '\\lim' }],
   ['arg',    { tex: '\\arg' }]  // Аргумент комплексного числа
