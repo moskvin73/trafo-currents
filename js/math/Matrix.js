@@ -241,7 +241,7 @@ export default class Matrix extends MathType {
    * Вычисление определителя (детерминанта) квадратной матрицы
    */
   det() {
-    if (!this.isSquare) {
+     if (!this.isSquare) {
       throw new RangeError("[Matrix]: Определитель можно вычислить только для квадратной матрицы.");
     }
 
@@ -252,9 +252,6 @@ export default class Matrix extends MathType {
     }
 
     const M = this.getRawRows();
-    
-    // Локальный порог стабильности для защиты от шума плавающей точки double precision.
-    // Защищает алгоритм, но НЕ портит вывод маленьких чисел на вашем сайте!
     const STABILITY_THRESHOLD = 1e-14; 
 
     let sign = 1;
@@ -263,12 +260,11 @@ export default class Matrix extends MathType {
     // Шаг 1 прямого хода
     let sel = 0;
     for (let k = 1; k < n; k++) {
-      // cell.abs() возвращает чистый number (JS примитив), сравниваем напрямую!
+      // Сравниваем строго элементы ПЕРВОГО столбца (индекс 0)
       if (M[k][0].abs() > M[sel][0].abs()) sel = k;
     }
     
     if (M[sel][0].abs() < STABILITY_THRESHOLD) {
-      // Возвращаем полиморфный ноль (вычитаем элемент из самого себя)
       return this.get(0, 0).subtract(this.get(0, 0));
     }
 
@@ -280,10 +276,12 @@ export default class Matrix extends MathType {
     _where[kIdx++] = 0;
     for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
 
+    // ИСПРАВЛЕНО: Берём ведущий элемент из ячейки [sel][0]
     let value = M[sel][0];
 
     for (let k = 1; k < n; k++) {
       const wk = _where[k];
+      // ИСПРАВЛЕНО: Берём элемент исключения из ячейки [wk][0]
       const c = M[wk][0];
       for (let j = 1; j < n; j++) {
         M[wk][j] = M[wk][j].multiply(value).subtract(M[sel][j].multiply(c));
@@ -341,7 +339,8 @@ export default class Matrix extends MathType {
     const STABILITY_THRESHOLD = 1e-14;
 
     const M = matrixM.getRawRows();
-    const B = vectorB.getRawRows().map(row => row[0]); // Выпрямляем вектор-столбец в массив MathType объектов
+    // Выпрямляем вектор-столбец: каждая строка содержит ровно один элемент [0]
+    const B = vectorB.getRawRows().map(row => row[0]); 
 
     const _where = new Array(n);
 
@@ -359,6 +358,7 @@ export default class Matrix extends MathType {
     _where[kIdx++] = 0;
     for (; kIdx < n; kIdx++) _where[kIdx] = kIdx;
 
+    // ИСПРАВЛЕНО: Индексация первого шага
     let value = M[sel][0];
 
     for (let k = 1; k < n; k++) {
