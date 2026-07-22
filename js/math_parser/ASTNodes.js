@@ -183,9 +183,7 @@ export class MatrixNode extends MathNode {
     this.#rows = rows;
   }
 
-  getPriority() { 
-    return OpPriority.PRIMARY;
-  }
+  getPriority() {  return OpPriority.PRIMARY; }
 
   /**
    * Текстовое представление дерева (до вычисления)
