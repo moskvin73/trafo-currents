@@ -366,6 +366,7 @@ export class MathParser {
     TokenType.SEMICOLON,
     TokenType.SILENT,
     TokenType.PARENR,
+    TokenType.RSQUARE,
   ]));
 
   #parsePrintStatement() {
