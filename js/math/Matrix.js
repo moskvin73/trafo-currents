@@ -232,19 +232,22 @@ export default class Matrix extends MathType {
    * @returns {Matrix}
    */
   static identity(n) {
-     if (n <= 0) throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть больше 0.");
+   // Принудительно округляем вниз до целого числа, отсекая дробную часть
+    const size = Math.floor(n);
+
+    if (size <= 0) {
+      throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть целым числом больше 0.");
+    }
     
     const elements = [];
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < size; i++) {
       const row = [];
-      for (let j = 0; j < n; j++) {
+      for (let j = 0; j < size; j++) {
         const rawValue = (i === j ? 1 : 0);
         
-        // Используем нашу статическую ссылку, которую мы привязали через registerRealNumberClass
         if (Matrix.RealNumberRef) {
           row.push(Matrix.RealNumberRef.from(rawValue));
         } else {
-          // Если вдруг реф еще не успел встать, создаем через стандартный fallback
           row.push(this.converters.get(Symbol.for('Math.RealNumber'))?.(rawValue) || rawValue);
         }
       }
