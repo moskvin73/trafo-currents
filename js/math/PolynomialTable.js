@@ -1,6 +1,6 @@
-import { MathType } from './MathType.js';
+import MathType from './MathType.js';
 import { RationalBigInt } from './RationalBigInt.js';
-import { registry } from './AtomRegistry.js';
+//import { registry } from './AtomRegistry.js';
 
 export class PolynomialTable extends MathType {
   constructor() {
