@@ -149,6 +149,22 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],  
 
+   // === ОПРЕДЕЛИТЕЛЬ МАТРИЦЫ ===
+  ['det', [
+    { types: [Matrix], callType: 'instance', method: 'det' }
+  ]],
+
+  // === РЕШЕНИЕ СИСТЕМ ЛИНЕЙНЫХ УРАВНЕНИЙ (СЛАУ) ===
+  ['linsolve', [
+    {
+      types: [Matrix, Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [matrixM, vectorB] = finalArgs;
+        return Matrix.solveSystem(matrixM, vectorB);
+      }
+    }
+  ]], 
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }

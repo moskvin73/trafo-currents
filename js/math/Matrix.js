@@ -240,7 +240,7 @@ export default class Matrix extends MathType {
   /**
    * Вычисление определителя (детерминанта) квадратной матрицы
    */
-  det(settings) {
+  det() {
     if (!this.isSquare) {
       throw new RangeError("[Matrix]: Определитель можно вычислить только для квадратной матрицы.");
     }
