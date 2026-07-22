@@ -109,7 +109,7 @@ export const COMPILER_REGISTRY = new Map([
       types: [Matrix],
       callType: 'custom',
       execute: (finalArgs) => {
-        const inputMatrix = finalArgs;
+       const [inputMatrix] = finalArgs;
         if (inputMatrix.rowCount !== 1) {
           throw new TypeError("[Semantic Error]: Функция diag() ожидает одномерный список элементов вида [a, b, c].");
         }
