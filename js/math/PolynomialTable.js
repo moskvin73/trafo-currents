@@ -25,7 +25,27 @@ export class PolynomialTable extends MathType {
       // Перебираем каждый моном из второй таблицы (other)
       for (const [_, monomB] of other.monomials.entries()) {
         
-        // 1. Перемножаем дробные коэффициенты BigInt
+    
+        // 1. Умножение комплексных дробей BigInt автоматически учтет i^2 = -1
+        const nextCoeff = monomA.coeff.mul(monomB.coeff);
+        
+        // 2. Складываем степени чистых символьных переменных (x, y...)
+        const nextPowers = new Map();
+        for (const [id, exp] of monomA.powers.entries()) nextPowers.set(id, exp);
+        
+        for (const [id, exp] of monomB.powers.entries()) {
+          if (nextPowers.has(id)) {
+            const totalExp = nextPowers.get(id) + exp;
+            if (totalExp === 0) nextPowers.delete(id);
+            else nextPowers.set(id, totalExp);
+          } else {
+            nextPowers.set(id, exp);
+          }
+        }
+
+        // 3. Просто добавляем — никакой ручной чистки мнимой единицы!
+        resultTable.addMonomial(nextCoeff, nextPowers);
+        /*// 1. Перемножаем дробные коэффициенты BigInt
         const nextCoeff = monomA.coeff.mul(monomB.coeff);
         
         // 2. Складываем степени сомножителей
@@ -79,7 +99,7 @@ export class PolynomialTable extends MathType {
 
         // 4. Безопасно добавляем получившийся моном в результирующую таблицу
         // Метод addMonomial сам отсортирует ключи и схлопнет подобные, если они возникнут
-        resultTable.addMonomial(finalCoeff, nextPowers);
+        resultTable.addMonomial(finalCoeff, nextPowers);*/
       }
     }
 
@@ -157,7 +177,7 @@ export class PolynomialTable extends MathType {
 
     return result;
   } 
-  
+
   /**
    * Добавить моном в таблицу
    * @param {number|Complex} coeff - Коэффициент
