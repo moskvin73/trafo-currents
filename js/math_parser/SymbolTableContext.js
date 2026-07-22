@@ -11,7 +11,8 @@ export class SymbolTableContext {
     this.settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
       angleMode:     ANGLE_MODE.RADIANS,
-      precision:     4
+      precision:     4,
+      matrixFormat: 'pmatrix', // 'bmatrix', 'pmatrix', 'matrix'
     };
 
     // Статическая часть
