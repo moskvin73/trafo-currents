@@ -103,44 +103,40 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
-  // Диагональная матрица: принимает вектор-строку (объект Matrix)
+  // Диагональная матрица
   ['diag', [
     {
       types: [Matrix],
       callType: 'custom',
       execute: (finalArgs) => {
-        const inputMatrix = finalArgs[0];
-        
-        // Проверяем, что нам передали одномерный вектор (1 строка)
+        const inputMatrix = finalArgs;
         if (inputMatrix.rowCount !== 1) {
           throw new TypeError("[Semantic Error]: Функция diag() ожидает одномерный список элементов вида [a, b, c].");
         }
-        
-        // Извлекаем нативный JS-массив ячеек из первой строки матрицы
-        const diagonalElements = inputMatrix.getRawRows()[0];
+        // Извлекаем именно ОДНОМЕРНЫЙ массив объектов MathType из первой строки матрицы
+        const diagonalElements = inputMatrix.getRawRows()[0]; 
         return Matrix.diagonal(diagonalElements);
       }
     }
   ]],
 
-  // Быстрое создание вектора-столбца из списка
+  // Вектор-столбец
   ['colvector', [
     {
       types: [Matrix],
       callType: 'custom',
       execute: (finalArgs) => {
-        const inputMatrix = finalArgs[0];
-        
+        const inputMatrix = finalArgs;
         if (inputMatrix.rowCount !== 1) {
           throw new TypeError("[Semantic Error]: Функция colvector() ожидает одномерный список элементов вида [a, b, c].");
         }
-        
+        // Извлекаем именно ОДНОМЕРНЫЙ массив объектов MathType
         const vectorElements = inputMatrix.getRawRows()[0];
         return Matrix.columnVector(vectorElements);
       }
     }
   ]],
-    
+
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
