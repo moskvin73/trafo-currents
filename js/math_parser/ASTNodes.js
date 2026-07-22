@@ -236,7 +236,7 @@ export class MatrixNode extends MathNode {
       for (const cell of row) {
         // Вызываем ваш диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
         // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
-        const { l } = context.semanticDispatcher.promoteTypes(targetSample, cell);
+        const { l } = dispatcher.promoteTypes(targetSample, cell);
         targetSample = l; // Запоминаем текущий самый сильный объект-эталон
       }
     }
