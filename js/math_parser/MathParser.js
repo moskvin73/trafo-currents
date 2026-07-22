@@ -786,6 +786,42 @@ export class MathParser {
     TokenType.COMMA,
   ]));
 
+  #parsePrimaryExpression() {
+    let expr = this.#parsePrimary();
+
+    // ЗАПУСКАЕМ ЦИКЛ ПОСТФИКСОВ: Пока после атома идут скобки или индексы, мы оборачиваем его!
+    while (true) {
+      if (this.c_token === TokenType.LSQUARE) {
+        const loc = this.#location;
+        this.#consume(); // Поглощаем '['
+
+        // Парсим индекс строки
+        const rowExpr = this.#parseExpression();
+        let colExpr = null;
+
+        // Если дальше идет запятая, значит передан второй индекс (столбец)
+        if (this.c_token === TokenType.COMMA) {
+          this.#consume(); // Поглощаем ','
+          colExpr = this.#parseExpression(); // Парсим индекс столбца
+        }
+
+        this.#match(TokenType.RSQUARE, "Ожидалась закрывающая квадратная скобка индекса ']'");
+
+        // Магия! Мы оборачиваем текущее выражение expr в IndexNode.
+        // Это позволит работать цепочкам вида A[1,2], (M*N)[1,1], или даже функциям: getMatrix()[1,2]!
+        expr = new IndexNode(expr, rowExpr, colExpr, loc);
+        continue;
+      }
+      
+      // Здесь же у вас может стоять проверка на круглую скобку (вызов функции)
+      // if (this.c_token === TokenType.LPAREN) { ... expr = new CallNode(expr, ...); continue; }
+
+      break; // Никаких постфиксов больше нет, выходим
+    }
+
+    return expr;    
+  }
+
   // Терминалы (FIRST множество: NUMBER, COMPLEX_NUMBER, FUNCTION, LPAREN, VARIABLE)
   #parsePrimary() {
     let token_loc = this.#location;
