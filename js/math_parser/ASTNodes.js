@@ -791,6 +791,83 @@ export class AssignNode extends IdentifierNode {
   }
 }
 
+export class IndexNode extends MathNode {
+  #target;
+  #rowExpr;
+  #colExpr;
+
+  constructor(target, rowExpr, colExpr, loc) {
+    super(loc);
+    this.#target = target;
+    this.#rowExpr = rowExpr;
+    this.#colExpr = colExpr; // Может быть null
+  }
+
+  getPriority() {
+    return  OpPriority.PRIMARY;
+  }
+
+  toString(context) {
+    const targetStr = this.#target.toString(context);
+    const rowStr = this.#rowExpr.toString(context);
+    const colStr = this.#colExpr ? `, ${this.#colExpr.toString(context)}` : '';
+    return `${targetStr}[${rowStr}${colStr}]`;
+  }
+
+  toTeX(context) {
+    // В LaTeX индексы матриц принято писать нижним подстрочным индексом: A_{i, j}
+    const targetTeX = this.#target.toTeX(context);
+    const rowTeX = this.#rowExpr.toTeX(context);
+    const colTeX = this.#colExpr ? `, ${this.#colExpr.toTeX(context)}` : '';
+    return `${targetTeX}_{{${rowTeX}${colTeX}}}`;
+  }
+
+  internal_evaluate(context) {
+    // 1. Вычисляем то, к чему применяется индексация (получаем объект Matrix)
+    const matrixObj = this.#target.evaluate(context);
+    
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
+      throw new TypeError("[Runtime Error]: Операция индексации [,] применима только к матрицам и векторам.");
+    }
+
+    // 2. Вычисляем индексы строки и столбца
+    const rNum = this.#rowExpr.evaluate(context);
+    const cNum = this.#colExpr ? this.#colExpr.evaluate(context) : null;
+
+    // Извлекаем примитивные целые числа. 
+    // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
+    // а внутри JS массивы с 0 (0-indexed). Вычитаем 1 для удобства человека!
+    const rowIndex = Math.floor(rNum.value ?? Number(rNum)) - 1;
+    
+    let colIndex = 0;
+    if (cNum) {
+      colIndex = Math.floor(cNum.value ?? Number(cNum)) - 1;
+    } else {
+      // Если передан только один индекс (например, v[3]), проверяем, что это вектор
+      if (matrixObj.isVector) {
+        // Если это вектор-строка, то индекс означает столбец, если столбец — то строку
+        if (matrixObj.rowCount === 1) {
+          return matrixObj.get(0, rowIndex);
+        } else {
+          return matrixObj.get(rowIndex, 0);
+        }
+      } else {
+        throw new RangeError("[Runtime Error]: Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
+      }
+    }
+
+    // 3. Возвращаем готовый MathType объект из ячейки матрицы
+    return matrixObj.get(rowIndex, colIndex);
+  }
+
+  collectMathExpressions(list) {
+    list.push(this);
+    this.#target.collectMathExpressions(list);
+    this.#rowExpr.collectMathExpressions(list);
+    if (this.#colExpr) this.#colExpr.collectMathExpressions(list);
+  }
+}
 
 /**
  * Узел для всей программы (блокнота/интерфейса вычислений)
