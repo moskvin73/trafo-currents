@@ -27,7 +27,9 @@ import { TYPE_UNIT } from './ConstantsDef.js';
 import { PlotInitNode, PlotDataNode, PlotConfigNode, PlotLayerNode, PlotVectorNode, PlotChordNode } from './DiagramNodes.js';
 import { isValidCSSColor }  from '../util.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
-import { BuildVectorOperationDescription } from './VectorDeaign.js'
+import { BuildVectorOperationDescription } from './VectorDeaign.js';
+import { foldASTToTable } from '../math/ASTToTableConverter.js'
+import { unfoldTableToAST } from '../math/unfoldTableToAST.js'
 
 /**
  * Единый узел для любой инструкции в коде
