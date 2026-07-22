@@ -1,5 +1,6 @@
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
+import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY } from './SemanticDispatcher.js';
 
 // =========================================================================
@@ -89,6 +90,57 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
   ]],
 
+  // Единичная матрица: принимает размерность (вещественное число)
+  ['ident', [
+    {
+      types: [RealNumber],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        // finalArgs[0] — это гарантированно RealNumber благодаря вашей системе скоринга
+        const n = finalArgs[0].value; 
+        return Matrix.identity(n);
+      }
+    }
+  ]],
+
+  // Диагональная матрица: принимает вектор-строку (объект Matrix)
+  ['diag', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const inputMatrix = finalArgs[0];
+        
+        // Проверяем, что нам передали одномерный вектор (1 строка)
+        if (inputMatrix.rowCount !== 1) {
+          throw new TypeError("[Semantic Error]: Функция diag() ожидает одномерный список элементов вида [a, b, c].");
+        }
+        
+        // Извлекаем нативный JS-массив ячеек из первой строки матрицы
+        const diagonalElements = inputMatrix.getRawRows()[0];
+        return Matrix.diagonal(diagonalElements);
+      }
+    }
+  ]],
+
+  // Быстрое создание вектора-столбца из списка
+  ['colvector', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const inputMatrix = finalArgs[0];
+        
+        if (inputMatrix.rowCount !== 1) {
+          throw new TypeError("[Semantic Error]: Функция colvector() ожидает одномерный список элементов вида [a, b, c].");
+        }
+        
+        const vectorElements = inputMatrix.getRawRows()[0];
+        return Matrix.columnVector(vectorElements);
+      }
+    }
+  ]],
+    
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
