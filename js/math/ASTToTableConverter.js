@@ -6,7 +6,7 @@ import { registry } from './AtomRegistry.js';
 export function foldASTToTable(node) {
   if (!node) throw new Error("Передан пустой узел в foldASTToTable");
 
-  switch (node.type) {
+  switch (node.constructor.name) {
     
     // Если парсер выдает комплексное число как единый узел
     case 'ComplexNode': {
