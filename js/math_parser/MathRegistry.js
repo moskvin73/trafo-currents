@@ -183,7 +183,20 @@ export const COMPILER_REGISTRY = new Map([
         return Matrix.solveSystem(l, r);
       }
     }
-  ]],  // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
+  ]],  
+  
+  // === ОБРАТНАЯ МАТРИЦА ===
+  ['invert', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.invert();
+      }
+    }
+  ]],  
+  // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
   ]]*/
