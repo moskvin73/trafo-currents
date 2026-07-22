@@ -214,8 +214,72 @@ export default class Matrix extends MathType {
     }
 
     return new Matrix(resultElements);
-  }  
+  }
    
+  // ==========================================
+  // СТАТИЧЕСКИЕ МЕТОДЫ-ФАБРИКИ
+  // ==========================================
+
+  /**
+   * Создает единичную матрицу размера n x n
+   * @param {number} n - Размерность матрицы
+   * @returns {Matrix}
+   */
+  static identity(n) {
+    if (n <= 0) throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть больше 0.");
+    
+    const elements = [];
+    for (let i = 0; i < n; i++) {
+      const row = [];
+      for (let j = 0; j < n; j++) {
+        // На главной диагонали — 1, в остальных местах — 0
+        // Конструктор Matrix сам упакует эти примитивы в RealNumber
+        row.push(i === j ? 1 : 0);
+      }
+      elements.push(row);
+    }
+    return new Matrix(elements);
+  }
+
+  /**
+   * Создает диагональную матрицу на основе массива готовых MathType объектов
+   * @param {MathType[]} diagonalElements - Массив элементов главной диагонали
+   * @returns {Matrix}
+   */
+  static diagonal(diagonalElements) {
+    if (!Array.isArray(diagonalElements) || diagonalElements.length === 0) {
+      throw new TypeError("[Matrix]: Для диагональной матрицы нужен непустой массив элементов.");
+    }
+
+    const n = diagonalElements.length;
+    const elements = [];
+    
+    for (let i = 0; i < n; i++) {
+      const row = [];
+      for (let j = 0; j < n; j++) {
+        // Если мы на диагонали, берем переданный объект MathType, иначе — вещественный 0
+        row.push(i === j ? diagonalElements[i] : 0);
+      }
+      elements.push(row);
+    }
+    return new Matrix(elements);
+  }
+
+  /**
+   * Создает вектор-столбец (матрицу размером N x 1) из одномерного массива
+   * @param {MathType[]} vectorElements - Массив элементов столбца
+   * @returns {Matrix}
+   */
+  static columnVector(vectorElements) {
+    if (!Array.isArray(vectorElements) || vectorElements.length === 0) {
+      throw new TypeError("[Matrix]: Для вектора-столбца нужен непустой массив элементов.");
+    }
+    
+    // Каждый элемент оборачиваем в собственный массив, формируя строки из 1 элемента
+    const elements = vectorElements.map(cell => [cell]);
+    return new Matrix(elements);
+  }
+    
   // ==========================================
   // МЕТОДЫ ОТОБРАЖЕНИЯ
   // ==========================================
