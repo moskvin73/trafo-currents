@@ -662,6 +662,16 @@ export class PowNode extends BinaryOpNode {
   }
 
   internal_evaluate(context) {
+    const leftValue = this.left.evaluate(context);
+    const rightValue = this.right.evaluate(context); // Правая часть — это степень (RealNumber)
+
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    
+    if (leftValue && leftValue.constructor.typeId === MATRIX_SYMBOL) {
+      // Извлекаем примитивное целое число из объекта степени
+      const exp = Math.floor(rightValue.value ?? Number(rightValue));
+      return leftValue.pow(exp);
+    }
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.accuratePow(r);
   } 
