@@ -293,6 +293,99 @@ export default class Matrix extends MathType {
     return detValue;
   }
 
+    /**
+   * Вычисление обратной матрицы методом Гаусса-Жордана
+   * @returns {Matrix} Новая обратная матрица N x N
+   */
+  invert() {
+    if (!this.isSquare) {
+      throw new RangeError("[Matrix]: Обратную матрицу можно вычислить только для квадратной матрицы.");
+    }
+
+    const n = this.rowCount;
+    const STABILITY_THRESHOLD = 1e-14;
+
+    // Создаем копию нашей матрицы
+    const M = this.getRawRows();
+    
+    // Генерируем единичную матрицу такой же размерности и берем ее строки
+    const I = Matrix.identity(n).getRawRows();
+
+    // Прямой и обратный ход Гаусса-Жордана
+    for (let i = 0; i < n; i++) {
+      // Поиск главного элемента по столбцу для численной стабильности
+      let sel = i;
+      for (let k = i + 1; k < n; k++) {
+        if (M[k][i].abs() > M[sel][i].abs()) sel = k;
+      }
+
+      if (M[sel][i].abs() < STABILITY_THRESHOLD) {
+        throw new Error("[Matrix]: Матрица вырождена (определитель равен 0), обратной матрицы не существует.");
+      }
+
+      // Переставляем строки как в исходной матрице, так и в единичной
+      if (sel !== i) {
+        const tempM = M[i]; M[i] = M[sel]; M[sel] = tempM;
+        const tempI = I[i]; I[i] = I[sel]; I[sel] = tempI;
+      }
+
+      const pivot = M[i][i];
+
+      // Нормализуем текущую строку (делим её на pivot, чтобы на диагонали встала строго 1)
+      for (let j = i; j < n; j++) M[i][j] = M[i][j].divide(pivot);
+      for (let j = 0; j < n; j++) I[i][j] = I[i][j].divide(pivot);
+
+      // Обнуляем все остальные элементы в i-м столбце (и над диагональю, и под ней!)
+      for (let k = 0; k < n; k++) {
+        if (k === i) continue; // Пропускаем саму ведущую строку
+        const factor = M[k][i];
+        
+        for (let j = i; j < n; j++) {
+          M[k][j] = M[k][j].subtract(factor.multiply(M[i][j]));
+        }
+        for (let j = 0; j < n; j++) {
+          I[k][j] = I[k][j].subtract(factor.multiply(I[i][j]));
+        }
+      }
+    }
+
+    // Возвращаем правую половину — теперь это чистая обратная матрица!
+    return new Matrix(I);
+  }
+
+    /**
+   * Возведение квадратной матрицы в целую степень (поддерживает отрицательные числа)
+   * @param {number} exp - Целое число (степень)
+   * @returns {Matrix}
+   */
+  pow(exp) {
+    if (!this.isSquare) {
+      throw new RangeError("[Matrix]: В степень можно возвести только квадратную матрицу.");
+    }
+    if (!Number.isInteger(exp)) {
+      throw new TypeError("[Matrix]: Матрицу можно возвести только в целую степень.");
+    }
+
+    const n = this.rowCount;
+
+    // СЛУЧАЙ 1: Нулевая степень — это всегда единичная матрица
+    if (exp === 0) {
+      return Matrix.identity(n);
+    }
+
+    // СЛУЧАЙ 2: Отрицательная степень — вычисляем обратную матрицу и меняем знак степени
+    let base = this;
+    if (exp  0) {
+      if (exp % 2 === 1) {
+        result = result.multiply(currentPower);
+      }
+      currentPower = currentPower.multiply(currentPower);
+      exp = Math.floor(exp / 2);
+    }
+
+    return result;
+  }
+
   /**
    * Полное решение СЛАУ на основе вашего C++ алгоритма
    */
