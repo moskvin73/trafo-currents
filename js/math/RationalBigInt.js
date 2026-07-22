@@ -40,6 +40,8 @@ export class RationalBigInt {
     return new RationalBigInt(this.num * other.num, this.den * other.den);
   }
 
+  unaryMinus() { return new RationalBigInt(-this.num, this.den); }
+
   isZero() {
     return this.num === 0n;
   }
