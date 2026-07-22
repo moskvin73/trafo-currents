@@ -78,6 +78,26 @@ export default class Matrix extends MathType {
     return this.#rows.map(row => [...row]);
   }
 
+  /**
+   * Универсальное повышение типа всех элементов матрицы до целевого числового класса.
+   * @param {Function} TargetNumberClass - Класс, к которому нужно привести элементы (например, ComplexNumber)
+   * @returns {Matrix} Новая матрица с элементами повышенного типа
+   */
+  castElementsTo(TargetNumberClass) {
+    if (!TargetNumberClass || typeof TargetNumberClass.from !== 'function') {
+      return this; // Если класс не имеет фабрики приведения, возвращаем как есть
+    }
+
+    const castedRows = this.getRawRows().map(row =>
+      row.map(cell => {
+        // Если элемент уже принадлежит целевому классу — оставляем, иначе повышаем
+        return cell.constructor === TargetNumberClass ? cell : TargetNumberClass.from(cell);
+      })
+    );
+
+    return new Matrix(castedRows);
+  }
+    
    // ==========================================
   // МАТЕМАТИЧЕСКИЕ ОПЕРАЦИИ (Поэлементные)
   // ==========================================
