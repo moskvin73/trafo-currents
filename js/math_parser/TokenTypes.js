@@ -10,6 +10,8 @@ const tokenNames = [
   'POW',
   'ASSIGN',
   'LPAREN',
+  'LSQUARE',
+  'RSQUARE',
   'PARENR',
   'VARIABLE',
   'TEXT_BLOCK',
