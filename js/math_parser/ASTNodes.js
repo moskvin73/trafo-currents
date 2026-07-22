@@ -42,6 +42,10 @@ export default class ASTNode {
    this.loc = loc;
   }
 
+  get isLiteral() {
+    return false; // По умолчанию большинство узлов динамические (переменные, функции и т.д.)
+  }
+
   getPriority() { throw new Error("Not implemented"); }
 
   toString(context) { throw new Error("Not implemented"); }
@@ -162,6 +166,8 @@ export class NumberNode extends MathNode {
     this.value = mathTypeValue;
   }
 
+  get isLiteral() { return true; }
+
   getPriority() { return OpPriority.PRIMARY; }
 
   toString(context) { return this.value.toString(context); }
@@ -182,6 +188,8 @@ export class MatrixNode extends MathNode {
     super(loc);
     this.#rows = rows;
   }
+
+  get isLiteral() { return true; }
 
   getPriority() {  return OpPriority.PRIMARY; }
 
@@ -898,6 +906,8 @@ export class ConstantNode extends MathNode {
     this.#tokenType = tokenType; 
   }
 
+  get isLiteral() { return true; }
+  
   getPriority() { return OpPriority.PRIMARY; }
 
   toString(context) {
