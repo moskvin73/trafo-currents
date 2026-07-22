@@ -140,6 +140,7 @@ export default class ASTNode {
   }
 }
 
+const dispatcher = new SemanticDispatcher();
 
 export class MathNode extends ASTNode {
   constructor(loc) {
@@ -363,9 +364,6 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
     return argVal.negate();
   }
 }
-
-
-const dispatcher = new SemanticDispatcher();
 
 /**
  * Узел бинарной операции (+, -, *, /, ^)
