@@ -29,7 +29,7 @@ export const TYPE_REGISTRY = new Map([
     selfPromote: null,
     casts: new Map()
   }],
-  
+
   [Matrix, {
     rank: 4,          // Самый высокий ранг, чтобы диспетчер не пытался превратить матрицу в число
     selfPromote: null,
@@ -54,6 +54,55 @@ export default class SemanticDispatcher {
    */
   promoteTypes(leftVal, rightVal) {
     const leftId = this.#getTypeId(leftVal);
+    const rightId = this.#getTypeId(rightVal);
+
+    const leftConfig = this.#registry.get(leftId);
+    const rightConfig = this.#registry.get(rightId);
+
+    // СЛУЧАЙ 1: Типы абсолютно одинаковы
+    if (leftId === rightId) {
+      if (leftConfig?.selfPromote) {
+        return { 
+          l: leftConfig.selfPromote(leftVal), 
+          r: leftConfig.selfPromote(rightVal) 
+        };
+      }
+      return { l: leftVal, r: rightVal };
+    }
+
+    // ИСКЛЮЧЕНИЕ ДЛЯ ЛИНЕЙНОЙ АЛГЕБРЫ:
+    // Если один из операндов — Матрица, а второй — число (примитив, Real или Complex),
+    // мы НЕ выполняем автоматический cast, а возвращаем их как есть. 
+    // Матрица сама обработает скаляр внутри своих методов.
+    const isLeftMatrix = leftId === Matrix;
+    const isRightMatrix = rightId === Matrix;
+    if (isLeftMatrix || isRightMatrix) {
+      // Единственное: если число оказалось примитивом 'number', 
+      // для безопасности обернем его в RealNumber перед передачей в матрицу
+      let l = leftVal;
+      let r = rightVal;
+      if (leftId === 'number' && leftConfig?.selfPromote) l = leftConfig.selfPromote(leftVal);
+      if (rightId === 'number' && rightConfig?.selfPromote) r = rightConfig.selfPromote(rightVal);
+      
+      return { l, r };
+    }
+
+    // СЛУЧАЙ 2: Стандартное семантическое повышение (для чисел между собой)
+    const leftRank = leftConfig ? leftConfig.rank : 0;
+    const rightRank = rightConfig ? rightConfig.rank : 0;
+
+    let l = leftVal;
+    let r = rightVal;
+
+    if (leftRank < rightRank && rightConfig) {
+      l = this.#cast(l, leftId, rightId, leftConfig);
+    } else if (rightRank < leftRank && leftConfig) {
+      r = this.#cast(r, rightId, leftId, rightConfig);
+    }
+
+    return { l, r };
+
+    /*const leftId = this.#getTypeId(leftVal);
     const rightId = this.#getTypeId(rightVal);
 
     const leftConfig = this.#registry.get(leftId);
@@ -85,7 +134,7 @@ export default class SemanticDispatcher {
       r = this.#cast(r, rightId, leftId, rightConfig);
     }
 
-    return { l, r };
+    return { l, r };*/
   }
 
   #cast(value, currentTypeId, targetTypeId, currentConfig) {
