@@ -762,6 +762,7 @@ export class MathParser {
     TokenType.NUMBER,
     TokenType.COMPLEX_NUMBER,
     TokenType.LPAREN,
+    TokenType.LSQUARE.
     TokenType.VARIABLE,
   ]));
 
@@ -770,6 +771,7 @@ export class MathParser {
     TokenType.SEMICOLON,
     TokenType.SILENT,
     TokenType.PARENR,
+    TokenType.RSQUARE,
     TokenType.POW,
     TokenType.MUL,
     TokenType.DIV,
@@ -829,6 +831,8 @@ export class MathParser {
              this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
              return expr;
 
+         case TokenType.LSQUARE:
+            this.#consume();
          case TokenType.VARIABLE:
              return this.#callFuncORVar();
          default:
