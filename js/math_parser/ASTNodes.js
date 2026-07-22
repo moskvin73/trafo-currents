@@ -221,13 +221,43 @@ export class MatrixNode extends MathNode {
    * @returns {Matrix} Готовый математический объект матрицы
    */
   internal_evaluate(context) {
-    // Вычисляем каждый узел AST, превращая его в MathType (RealNumber/ComplexNumber)
+    // 1. Вычисляем все узлы AST внутри матрицы, получая атомарные объекты MathType
     const evaluatedElements = this.#rows.map(row =>
       row.map(node => node.evaluate(context))
     );
 
-    // Конструктор класса Matrix сам проверит валидность размеров строк
-    return new Matrix(evaluatedElements);
+    // 2. Ищем максимальный ранг числового типа среди всех вычисленных ячеек
+    let maxRank = -1;
+    let targetClass = null;
+
+    for (const row of evaluatedElements) {
+      for (const cell of row) {
+        const cellId = cell.constructor; // Это сам класс (например, RealNumber или ComplexNumber)
+        const config = context.semanticDispatcher.registry.get(cellId); // Получаем его конфиг из реестра
+        const currentRank = config ? config.rank : 0;
+
+        if (currentRank > maxRank) {
+          maxRank = currentRank;
+          targetClass = cellId; // Запоминаем класс с наивысшим приоритетом
+        }
+      }
+    }
+
+    // 3. Если в матрице оказались разные типы, приводим ВСЕ элементы к классу с максимальным рангом
+    const finalElements = evaluatedElements.map(row =>
+      row.map(cell => {
+        // Если тип ячейки слабее максимального ранга — повышаем его через полиморфный .from()
+        if (cell.constructor !== targetClass && targetClass) {
+          // Ваша универсальная фабрика: targetClass.from(cell) автоматически 
+          // залезет в static converters этого класса и вернет нужный тип!
+          return targetClass.from(cell);
+        }
+        return cell;
+      })
+    );
+
+    // 4. Передаем однородный массив в конструктор Матрицы
+    return new Matrix(finalElements);
   }
 
   /**
