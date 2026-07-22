@@ -230,6 +230,7 @@ export class MathParser {
             {
                const tab = foldASTToTable(stmtNode.node);
                stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
+               stmtNode.value = stmtNode.node.evaluate(evl_context);
             }
             else {
               // Вычисляем значение для каждого сохраненного узла
