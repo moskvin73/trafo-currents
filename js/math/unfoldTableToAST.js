@@ -18,7 +18,8 @@ import ASTNode, {
   MatrixNode,
   IndexNode,
   ConstantNode } from '../math_parser/ASTNodes.js';
-  import RealNumber from '../math/RealNumber.js';
+  import RealNumber from './RealNumber.js';
+  import ComplexNumber from './ComplexNumber.js';
 
 
 /**
@@ -157,18 +158,18 @@ function createLiteralNodeFromRationalComplex(coeff, loc) {
   // Если это комплексное число без дробей
   if (coeff.real.den === 1n && coeff.imag.den === 1n) {
     // Передаем в ваш ComplexNode реальную и мнимую части
-    return new NumberNode(ComplexNode(coeff.real.num, coeff.imag.num, loc);
+    return new NumberNode(new ComplexNumber(coeff.real.num, coeff.imag.num), loc);
   }
 
   // В самом крайнем случае, если это комплексные дроби, собираем их через базовую арифметику AST
   // (RealNum/RealDen) + (ImagNum/ImagDen)*i
-  const realPart = new BinaryOpNode('/', new NumberNode(RealNumber(coeff.real.num)), new NumberNode(RealNumber(coeff.real.den)));
-  const imagPart = new BinaryOpNode('/', new NumberNode(RealNumber(coeff.imag.num)), new NumberNode(RealNumber(coeff.imag.den)));
+  const realPart = new DivNode(new NumberNode(RealNumber(coeff.real.num)), new NumberNode(RealNumber(coeff.real.den)), loc);
+  const imagPart = new DivNode(new NumberNode(RealNumber(coeff.imag.num)), new NumberNode(RealNumber(coeff.imag.den)), loc);
   
-  return new BinaryOpNode('+', realPart, new BinaryOpNode('*', imagPart, new VariableNode('i')));
+  return new AddNode(realPart, new MulNode(imagPart, new VariableNode('i', loc), loc), loc);
 }
 
 function createLiteralNode(real, imag) {
   if (imag === 0n) return new NumberNode(RealNumber(real));
-  return new ComplexNode(RealNumber(real), RealNumber(imag));
+  return new NumberNode(new ComplexNumber(real, imag), loc);
 }
