@@ -15,7 +15,8 @@ import ASTNode, {
   AssignNode, 
   VariableNode, 
   PrintNode, 
-  ProgramNode, 
+  ProgramNode,
+  MatrixNode, 
   ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
