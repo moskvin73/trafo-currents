@@ -14,6 +14,11 @@ export const COMPILER_REGISTRY = new Map([
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' }
   ]],
 
+  ['abs', [
+    { types: [RealNumber], callType: 'instance', method: 'abs' },
+    { types: [ComplexNumber], callType: 'instance', method: 'abs' }
+  ]],
+
   // === ЛОГАРИФМЫ ===
   ['ln', [
     { types: [RealNumber], callType: 'instance', method: 'log' },
