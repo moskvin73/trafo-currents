@@ -145,12 +145,6 @@ export default class Matrix extends MathType {
    * @returns {Matrix}
    */
   multiply(other) {
-
-    /*if (typeof other === 'object' && other !== null && other.constructor.typeId === Symbol.for('Math.Matrix')) {
-      // Скалярное умножение коммутативно: k * M равно M * k
-      return other.multiply(this);
-    }*/
-
     // 1. Проверяем, является ли "other" матрицей/вектором
     // Используем Symbol.for, чтобы избежать циклических импортов
     const isMatrix = typeof other === 'object' && other !== null && 
