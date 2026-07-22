@@ -17,7 +17,7 @@ export function foldASTToTable(node) {
         return table;
       }
       else if (node.value.constructor.name === 'ComplexNumber') {
-        const coeff = new RationalComplexBigInt(BigInt(node.real), BigInt(node.imaginary));
+        const coeff = new RationalComplexBigInt(BigInt(node.value.real), BigInt(node.value.imaginary));
         table.addMonomial(coeff, new Map());
         return table;
       }
