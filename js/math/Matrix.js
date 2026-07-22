@@ -373,14 +373,28 @@ export default class Matrix extends MathType {
       return Matrix.identity(n);
     }
 
-    // СЛУЧАЙ 2: Отрицательная степень — вычисляем обратную матрицу и меняем знак степени
+    // Создаем локальные переменные, чтобы НЕ изменять входные параметры функции
     let base = this;
-    if (exp  0) {
-      if (exp % 2 === 1) {
+    let currentExp = exp;
+
+    // СЛУЧАЙ 2: Отрицательная степень
+    // Math.sign(currentExp) возвращает -1, если число отрицательное. Без знаков меньше/больше!
+    if (Math.sign(currentExp) === -1) {
+      base = this.invert();      // Вычисляем обратную матрицу ровно 1 раз!
+      currentExp = -currentExp;  // Превращаем, например, -2 в 2
+    }
+
+    // СЛУЧАЙ 3: Положительная степень (Алгоритм быстрого бинарного возведения за O(log N))
+    let result = Matrix.identity(n);
+    let currentPower = base; // Здесь лежит либо исходная матрица, либо уже обратная!
+
+    // Крутим цикл до тех пор, пока степень не уменьшится до нуля
+    while (currentExp !== 0) {
+      if (currentExp % 2 === 1) {
         result = result.multiply(currentPower);
       }
       currentPower = currentPower.multiply(currentPower);
-      exp = Math.floor(exp / 2);
+      currentExp = Math.floor(currentExp / 2); // Уменьшаем степень в два раза на каждом шаге
     }
 
     return result;
