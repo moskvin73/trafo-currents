@@ -96,9 +96,10 @@ export class TeXOutputFormatter {
    */
   static _isStaticLiteralTree(node) {
     // База: числа и системные константы (%pi, %inf) — это статика
-    if (node instanceof NumberNode || node instanceof MatrixNode || node instanceof ConstantNode) {
+    if (node.isLiteral) return true;
+    /*if (node instanceof NumberNode || node instanceof MatrixNode || node instanceof ConstantNode) {
       return true;
-    }
+    }*/
 
     // Унарные цепочки (+---10) — это тоже статика
     if (node instanceof UnaryOpNode) {
