@@ -228,8 +228,8 @@ export class MathParser {
           for (const stmtNode of statements) {
             if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
             {
-               const tab = foldASTToTable(stmtNode.node);
-               stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
+               //const tab = foldASTToTable(stmtNode.node);
+               //stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
                stmtNode.value = stmtNode.node.evaluate(evl_context);
             }
             else {
