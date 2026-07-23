@@ -57,7 +57,7 @@ export function foldASTToTable(node) {
      case 'PowNode': {
       const leftTable = foldASTToTable(node.left);
       const rightTable = foldASTToTable(node.right);
-       if (node.right.type !== 'NumberNode') {
+       if (node.right.constructor.name !== 'NumberNode') {
         throw new Error("Символьные степени требуют расширения CAS");
        }
        return leftTable.pow(node.right.value);
