@@ -97,30 +97,31 @@ export class PolynomialTable extends MathType {
    * @returns {PolynomialTable} Результат возведения в степень
    */
   pow(exponent) {
-    let exp = BigInt(exponent);
+    // Переводим в обычное целое число Number для работы со степенями мономов,
+    // так как в Map([[id, 1]]) мы храним степени как Number.
+    let exp = Number(exponent); 
     
-    if (exp < 0n) {
-      throw new Error("Отрицательные степени полиномиальных таблиц требуют деления (внедрение RationalExpression)");
+    if (exp < 0) {
+      throw new Error("Отрицательные степени полиномиальных таблиц требуют деления");
     }
 
-    // Любое выражение в степени 0 дает единичную константу
-    if (exp === 0n) {
+    if (exp === 0) {
       const unitTable = new PolynomialTable();
-      unitTable.addMonomial(new RationalBigInt(1n, 1n), new Map());
+      unitTable.addMonomial(new RationalComplexBigInt(1n, 0n), new Map());
       return unitTable;
     }
 
-    // Алгоритм быстрого возведения в степень (схож с тем, что мы делали для матриц)
     let base = this;
     let result = new PolynomialTable();
-    result.addMonomial(new RationalBigInt(1n, 1n), new Map()); // Инициализация единицей
+    result.addMonomial(new RationalComplexBigInt(1n, 0n), new Map()); // Инициализация единицей (1 + 0i)
 
-    while (exp > 0n) {
-      if (exp % 2n === 1n) {
+    // Чистый цикл на обычных числах Number, чтобы не смешивать типы внутри multiply()
+    while (exp > 0) {
+      if (exp % 2 === 1) {
         result = result.multiply(base);
       }
       base = base.multiply(base);
-      exp /= 2n;
+      exp = Math.floor(exp / 2);
     }
 
     return result;
