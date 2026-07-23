@@ -147,12 +147,12 @@ function unfoldMonomToAST(monom, loc) {
 function createLiteralNodeFromRationalComplex(coeff, loc) {
   // Если это простая целая дробь вида N/1 (чисто вещественная)
   if (coeff.imag.isZero() && coeff.real.den === 1n) {
-    return new NumberNode(RealNumber(coeff.real.num), loc);
+    return new NumberNode(new RealNumber(coeff.real.num), loc);
   }
   
   // Если это вещественная дробь N/D
   if (coeff.imag.isZero()) {
-    return new DivNode(new NumberNode(RealNumber(coeff.real.num), loc), new NumberNode(RealNumber(coeff.real.den), loc), loc);
+    return new DivNode(new NumberNode(new RealNumber(coeff.real.num), loc), new NumberNode(new RealNumber(coeff.real.den), loc), loc);
   }
 
   // Если это комплексное число без дробей
@@ -163,13 +163,13 @@ function createLiteralNodeFromRationalComplex(coeff, loc) {
 
   // В самом крайнем случае, если это комплексные дроби, собираем их через базовую арифметику AST
   // (RealNum/RealDen) + (ImagNum/ImagDen)*i
-  const realPart = new DivNode(new NumberNode(RealNumber(coeff.real.num)), new NumberNode(RealNumber(coeff.real.den)), loc);
-  const imagPart = new DivNode(new NumberNode(RealNumber(coeff.imag.num)), new NumberNode(RealNumber(coeff.imag.den)), loc);
+  const realPart = new DivNode(new NumberNode(new RealNumber(coeff.real.num)), new NumberNode(new RealNumber(coeff.real.den)), loc);
+  const imagPart = new DivNode(new NumberNode(new RealNumber(coeff.imag.num)), new NumberNode(new RealNumber(coeff.imag.den)), loc);
   
   return new AddNode(realPart, new MulNode(imagPart, new VariableNode('i', loc), loc), loc);
 }
 
 function createLiteralNode(real, imag) {
-  if (imag === 0n) return new NumberNode(RealNumber(real));
+  if (imag === 0n) return new NumberNode(new RealNumber(real));
   return new NumberNode(new ComplexNumber(real, imag), loc);
 }
