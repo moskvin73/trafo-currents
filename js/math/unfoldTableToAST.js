@@ -120,7 +120,7 @@ function unfoldMonomToAST(monom, loc) {
     if (exp !== 1) {
       // Если степень отрицательная или просто не равна 1, генерируем узел степени '^'
       // Заметьте: отрицательные степени вроде x^-1 запишутся как x^(-1)
-      factorNode = new PowNode(atomNode, new NumberNode(RealNumber(exp)));
+      factorNode = new PowNode(atomNode, new NumberNode(new RealNumber(Number(exp))));
     }
 
     // Собираем переменные последовательно через умножение
