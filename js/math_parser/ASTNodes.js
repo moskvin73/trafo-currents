@@ -142,36 +142,22 @@ export default class ASTNode {
   }
 }
 
-export class CodeNode extends ASTNode {
-  constructor(name, statements, loc) {
-    super(loc);
-    this.name = name;
+export class VarableCode
+{
+  constructor(statements) {
     this.statements = statements;
   }
 
-  get type_unit() { return TYPE_UNIT.CODE; }
+  toRawTeX(settings) { return "\\text{code}"; }
 
-  internal_evaluate(context) {
-    const executedStatements = [];
-    context.scope_context.enterScope();
-    try {
-      for (const stmtNode of this.statements) {
-        if (stmtNode.node.type_unit == TYPE_UNIT.CODE) {
-          const newStatementsArray = stmtNode.node.evaluate(evl_context);
-          executedStatements.push(...newStatementsArray);
-        } else {
-          stmtNode.value = stmtNode.node.evaluate(evl_context);
-          executedStatements.push(stmtNode);
-        }
-      }
-      return executedStatements;
-    } finally {
-      context.scope_context.exitScope();
+  evaluate(context) {
+    const excStatements = [];
+    for (const stmtNode of this.statements) {
+      stmtNode.value = stmtNode.node.evaluate(evl_context);
+      context.statements.push(stmtNode);
     }
   }
-
 }
-//const dispatcher = new SemanticDispatcher();
 
 export class MathNode extends ASTNode {
   constructor(loc) {

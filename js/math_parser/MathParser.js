@@ -18,6 +18,7 @@ import ASTNode, {
   ProgramNode,
   MatrixNode,
   IndexNode,
+  VarableCode,
   ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
@@ -57,22 +58,6 @@ export class StatementNode {
   toTeX() { return this.node.toTeX(); }
 }
 
-export class VarableCode
-{
-  constructor(statements) {
-    this.statements = statements;
-  }
-
-  toRawTeX(settings) { return "\\text{code}"; }
-
-  evaluate(context) {
-    const excStatements = [];
-    for (const stmtNode of this.statements) {
-      stmtNode.value = stmtNode.node.evaluate(evl_context);
-      context.statements.push(stmtNode);
-    }
-  }
-}
 
 export class TeXOutputFormatter {
   /**
@@ -718,7 +703,7 @@ export class MathParser {
         {
           const id =this.context.acquireId(name);
           const sym = this.context.getSymbolById(id);
-          sym.value = statements;
+          sym.value = new VarableCode(statements);
         }
       }
       else this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
