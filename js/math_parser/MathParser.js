@@ -701,6 +701,8 @@ export class MathParser {
         sym.value = statements;
         return error_value();
       }
+      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '{' блока кода "));
+      return error_value();
     }
     else
     {
