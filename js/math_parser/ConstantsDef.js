@@ -60,4 +60,5 @@ export const TYPE_UNIT = {
   EXPR: 1,
   PLOT: 2,
   EMPTY: 3,
+  CODE: 4,
 };

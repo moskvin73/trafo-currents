@@ -149,8 +149,12 @@ export class CodeNode extends ASTNode {
     this.statements = statements;
   }
 
+  get type_unit() { return TYPE_UNIT.CODE; }
+
   internal_evaluate(context) {
+
   }
+  
 }
 //const dispatcher = new SemanticDispatcher();
 
