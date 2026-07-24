@@ -343,7 +343,7 @@ export class MathParser {
         exprNode = this.#parsePlotVector();
         break;
       case TokenType.RW_LET:
-        exprNode = #parseDeclarationStatement();
+        exprNode = this.#parseDeclarationStatement();
         break;
       default:
         exprNode = this.#parseExpression();
@@ -666,7 +666,7 @@ export class MathParser {
   }
 
   #parseDeclarationStatement() {
-    /*this.#consume();
+    this.#consume();
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
 
@@ -688,10 +688,13 @@ export class MathParser {
           }
         } 
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
-        const id =this.context.acquireId(name);
-        const sym = context.getSymbolById(id);
-        sym.value = statements;
-        return error_value();
+        if (this.errors.length === 0)
+        {
+          const id =this.context.acquireId(name);
+          const sym = context.getSymbolById(id);
+          sym.value = statements;
+          return error_value();
+        }
       }
       if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '{' блока кода "));
       return error_value();
@@ -700,7 +703,7 @@ export class MathParser {
     {
       this.#error("Ожидалось '='", this.#location);
       return error_value();
-    }*/
+    }
   }
   // =======================================================
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
