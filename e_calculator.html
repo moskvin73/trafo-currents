@@ -551,7 +551,59 @@
         /* Динамическая смена цвета стрелочки в выпадающем списке для темной темы */
         [data-theme="dark"] .modal-select {
             background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2339ff14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        }        
+        }
+        
+/* Панель ошибок внутри терминала */
+.terminal-error-panel {
+    background-color: rgba(255, 77, 79, 0.06); /* Тонкий полупрозрачный красный оттенок */
+    border-top: 1px dashed rgba(255, 77, 79, 0.3); /* Пунктирная аккуратная граница сверху */
+    max-height: 120px; /* Ограничиваем по высоте, чтобы не распирало терминал */
+    overflow-y: auto; /* Включаем скролл, если ошибок много */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Класс-хелпер для скрытия панели */
+.terminal-error-panel.hidden {
+    display: none !important;
+}
+
+/* Список ошибок */
+.error-list {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+/* Строка конкретной ошибки */
+.error-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 6px 16px; /* Отступы согласуем с вашими отступами в textarea/статусбаре */
+    font-family: monospace; /* Моноширинный шрифт для кода и локаций */
+    font-size: 13px;
+    color: #ff4d4f; /* Цвет ошибки, адаптируйте под вашу палитру */
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+/* Подсветка при наведении — намек пользователю, что на ошибку можно кликнуть */
+.error-item:hover {
+    background-color: rgba(255, 77, 79, 0.12);
+}
+
+/* Метка локации [Стр:Кол] */
+.error-item .error-loc {
+    font-weight: bold;
+    margin-right: 12px;
+    color: #cf1322;
+    white-space: nowrap; /* Чтобы локация не переносилась на другую строку */
+}
+
+/* Текст сообщения об ошибке */
+.error-item .error-text {
+    word-break: break-word; /* Если текст ошибки длинный, аккуратно переносим */
+}        
     </style>
 </head>
 
@@ -578,6 +630,13 @@
                             <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                         </div>
 
+                        <!-- ЭЛЕГАНТНАЯ ПАНЕЛЬ ОШИБОК (Встраивается внутрь монолита) -->
+                        <div id="calc-error-panel" class="terminal-error-panel hidden">
+                            <div id="calc-error-list" class="error-list">
+                                <!-- Ошибки будут рендериться динамически через JS -->
+                            </div>
+                        </div>
+                                                
                         <!-- ФИКСИРОВАННАЯ ПАНЕЛЬ СТАТУСА (Status Bar) -->
                         <div class="terminal-status-bar">
                             <!-- Кнопка запуска слева (теперь она аккуратная и встроенная) -->
