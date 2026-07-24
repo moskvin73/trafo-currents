@@ -689,7 +689,7 @@ export class MathParser {
              statements.push(new StatementNode(stmt.node, stmt.isSilent));
           }
         } 
-        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "))ж
+        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
       }
     }
     else
