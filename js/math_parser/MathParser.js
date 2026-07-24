@@ -674,12 +674,11 @@ export class MathParser {
   #parseDeclarationStatement() {
     this.#consume();
     const token_loc = this.#location;
-    const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
 
     const varToken = this.c_token;
     if (this.c_token !== TokenType.VARIABLE) {
       this.#error("Ожидалось имя (идентификатор) после 'let'", this.#location);
-      return error_value();
+      return null;
     }
     const name = this.lexer.stringValue();
     this.#consume();
@@ -700,17 +699,15 @@ export class MathParser {
           const id =this.context.acquireId(name);
           const sym = this.context.getSymbolById(id);
           sym.value = statements;
-          return error_value();
         }
       }
       if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '{' блока кода "));
-      return error_value();
     }
     else
     {
       this.#error("Ожидалось '='", this.#location);
-      return error_value();
     }
+    return null;
   }
   // =======================================================
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
