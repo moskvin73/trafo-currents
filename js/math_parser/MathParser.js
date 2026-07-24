@@ -356,10 +356,14 @@ export class MathParser {
       case TokenType.EOF:
       case TokenType.SEMICOLON:
         this.#consume();
-        return { node: exprNode, isSilent: false };
+        if (exprNode !== null)
+          return { node: exprNode, isSilent: false };
+        break;
       case TokenType.SILENT:
         this.#consume();
-        return { node: exprNode, isSilent: exprNode instanceof AssignNode };
+        if (exprNode !== null)
+          return { node: exprNode, isSilent: exprNode instanceof AssignNode };
+        break;
       default:
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
@@ -367,7 +371,9 @@ export class MathParser {
         while (true)
         {
           if (MathParser.parseStatement_FIRST.has(this.c_token)) {
-            return { node: exprNode, isSilent: false };
+            if (exprNode !== null)
+              return { node: exprNode, isSilent: false };
+            break;
           }
           this.#consume();
           if (MathParser.parseStatement_FALLOW.has(this.c_token)) break;
