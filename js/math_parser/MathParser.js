@@ -742,7 +742,7 @@ export class MathParser {
             break;
           }
         }
-        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка ')'"));
+        if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
         if (this.c_token === TokenType.LBRACE) {
             const statements =this.#codeParse();
              if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));

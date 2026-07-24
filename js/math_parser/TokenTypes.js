@@ -12,7 +12,7 @@ const tokenNames = [
   'LPAREN', // (
   'LSQUARE', // [
   'RSQUARE', // ]
-  'PARENR', // )
+  'RPAREN', // )
   'LBRACE', // {
   'RBRACE', // }
   'VARIABLE',
