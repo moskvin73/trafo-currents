@@ -701,7 +701,7 @@ export class MathParser {
           sym.value = statements;
         }
       }
-      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '{' блока кода "));
+      else this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
     }
     else
     {
