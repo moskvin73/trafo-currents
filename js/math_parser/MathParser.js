@@ -698,6 +698,8 @@ export class MathParser {
              statements.push(new StatementNode(stmt.node, stmt.isSilent));
           }
         } 
+        if (statements.length === 0) 
+            this.#error("Блок кода не может быть пустым", this.#location);
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
