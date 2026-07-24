@@ -364,7 +364,6 @@ export class MathParser {
       case TokenType.SEMICOLON:
         this.#consume();
         return { node: exprNode, isSilent: false };
-        //return new StatementNode(exprNode, false);
       case TokenType.SILENT:
         this.#consume();
         return { node: exprNode, isSilent: exprNode instanceof AssignNode };
