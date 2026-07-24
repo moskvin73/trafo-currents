@@ -855,15 +855,15 @@
 
                     // Проверяем наличие ошибок лексики или синтаксиса
                     if (parser.errors.length > 0) {
-                        /*card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
+                        card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
                         
                         let errorHTML = "<strong>Ошибка разбора выражения:</strong><br>";
                         parser.errors.forEach(err => {
                             errorHTML += `${err.toString()}<br>`;
                         });
-                        resultBlock.innerHTML = errorHTML;*/
+                        resultBlock.innerHTML = errorHTML;
 
-                        if (errorPanel && errorList) {
+                        /*if (errorPanel && errorList) {
                             errorPanel.classList.remove("hidden");
                             
                             parser.errors.forEach(err => {
@@ -898,7 +898,7 @@
                                 errorList.appendChild(item);
                             });
                         }
-                        return; // Прерываем выполнение, не отправляя карточку в ленту
+                        return; // Прерываем выполнение, не отправляя карточку в ленту*/
                         
                     } else {
                         // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
