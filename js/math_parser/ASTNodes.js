@@ -144,7 +144,8 @@ export default class ASTNode {
 
 export class VarableCode
 {
-  constructor(statements, params) {
+  constructor(statements, params, loc) {
+    this.loc = loc;
     this.statements = statements;
     this.params = params;
   }
@@ -152,9 +153,18 @@ export class VarableCode
   toRawTeX(settings) { return "\\text{code}"; }
 
   evaluate(context, args) {
+    if (args.length !== this.params.length)
+    {
+      context.error("Неверное кол. вызова функции ", loc, "Code");
+    }
     let end;
     context.scope_context.enterScope();
     try {
+      for (let i = 0; i < args.length; i++) {
+        context.scope_context.acquireId(this.params[i]);
+        const sym = context.scope_context.getSymbolById(id);
+        sym.value = args[i];
+      }
       for (const stmtNode of this.statements) {
         end = stmtNode.value = stmtNode.node.evaluate(context);
         context.statements.push(stmtNode);
