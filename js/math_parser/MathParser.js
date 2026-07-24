@@ -677,6 +677,21 @@ export class MathParser {
       return error_value();
   }
 
+  #codeParse() {
+      this.#consume();
+      const statements = [];
+      while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
+        const stmt = this.#parseStatement();
+        if (stmt) {
+            statements.push(new StatementNode(stmt.node, stmt.isSilent));
+        }
+      } 
+      if (statements.length === 0) 
+          this.#error("Блок кода не может быть пустым", this.#location);
+      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+      return tatements;
+  }
+
   #parseDeclarationStatement() {
     this.#consume();
     const token_loc = this.#location;
@@ -691,7 +706,8 @@ export class MathParser {
     if (this.c_token === TokenType.ASSIGN) {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
-        this.#consume();
+        const statements =this.#codeParse();
+        /*this.#consume();
         const statements = [];
         while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
           const stmt = this.#parseStatement();
@@ -700,14 +716,45 @@ export class MathParser {
           }
         } 
         if (statements.length === 0) 
-            this.#error("Блок кода не может быть пустым", this.#location);
+            this.#error("Блок кода не может быть пустым", this.#location);*/
+
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
           return new DefineVarableCodeNode(name, statements, token_loc);
         }
+        return null;
       }
-      else this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
+      else if (this.c_token === TokenType.LPAREN) {
+        this.#consume();
+        const params = [];
+        if (this.c_token !== TokenType.RPAREN) {
+          while (true) {
+            if (this.c_token !== TokenType.VARIABLE) {
+              this.#error("Ожидалось имя параметра в круглых скобках");
+            }
+            params.push(this.lexer.stringValue());
+            this.#consume();
+            
+            if (this.c_token === TokenType.COMMA) {
+              this.#consume(); // Сожрали запятую ','
+              continue;
+            }
+            break;
+          }
+        }
+        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка ')'"));
+        if (this.c_token === TokenType.LBRACE) {
+            const statements =this.#codeParse();
+             if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+        }
+        if (this.errors.length === 0)
+        {
+          return new DefineVarableCodeNode(name, statements, token_loc);
+        }
+        return null;
+      }
+      this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
     }
     else
     {
@@ -715,6 +762,7 @@ export class MathParser {
     }
     return null;
   }
+
   // =======================================================
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
   // =======================================================
