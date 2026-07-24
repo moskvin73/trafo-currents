@@ -155,7 +155,7 @@ export class VarableCode
   evaluate(context, args) {
     if (args.length !== this.params.length)
     {
-      context.error("Неверное кол. вызова функции ", loc, "Code");
+      context.error("Неверное кол. пораметров вызова функции ", loc, "Code");
     }
     let end;
     context.scope_context.enterScope();
