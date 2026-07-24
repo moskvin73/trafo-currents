@@ -350,7 +350,7 @@ export class MathParser {
         exprNode = this.#parsePlotVector();
         break;
       case TokenType.RW_LET:
-        #parseDeclarationStatement();
+        exprNode = #parseDeclarationStatement();
         break;
       default:
         exprNode = this.#parseExpression();
