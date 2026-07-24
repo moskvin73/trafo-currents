@@ -844,6 +844,10 @@
                 resultBlock.className = "result-side";
                 card.appendChild(resultBlock);                
 
+                // Сразу очищаем предыдущие ошибки перед новым запуском
+                if (errorList) errorList.innerHTML = "";
+                if (errorPanel) errorPanel.classList.add("hidden");
+
                 try {
                     // Запускаем наш потоковый LL(1) компилятор
                     const parser = new MathParser(rawCode, globalScope);
