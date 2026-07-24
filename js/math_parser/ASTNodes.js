@@ -151,11 +151,12 @@ export class VarableCode
   toRawTeX(settings) { return "\\text{code}"; }
 
   evaluate(context) {
-    const excStatements = [];
+    let end;
     for (const stmtNode of this.statements) {
-      stmtNode.value = stmtNode.node.evaluate(evl_context);
+      end = stmtNode.value = stmtNode.node.evaluate(evl_context);
       context.statements.push(stmtNode);
     }
+    return end;
   }
 }
 
