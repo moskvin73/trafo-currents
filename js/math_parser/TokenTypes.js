@@ -9,10 +9,12 @@ const tokenNames = [
   'DIV',
   'POW',
   'ASSIGN',
-  'LPAREN',
-  'LSQUARE',
-  'RSQUARE',
-  'PARENR',
+  'LPAREN', // (
+  'LSQUARE', // [
+  'RSQUARE', // ]
+  'PARENR', // )
+  'LBRACE', // {
+  'RBRACE', // }
   'VARIABLE',
   'TEXT_BLOCK',
   'COMMENT',
