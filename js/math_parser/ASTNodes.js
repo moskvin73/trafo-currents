@@ -157,10 +157,11 @@ export class VarableCode
     {
       context.error("Неверное кол. пораметров вызова функции ", loc, "Code");
     }
+    const p_len = Math.min(args.length, this.params.length);
     let end;
     context.scope_context.enterScope();
     try {
-      for (let i = 0; i < args.length; i++) {
+      for (let i = 0; i < p_len; i++) {
         const id = context.scope_context.acquireId(this.params[i]);
         const sym = context.scope_context.getSymbolById(id);
         sym.value = args[i];
