@@ -688,7 +688,7 @@ export class MathParser {
       } 
       if (statements.length === 0) 
           this.#error("Блок кода не может быть пустым", this.#location);
-      return tatements;
+      return statements;
   }
 
   #parseDeclarationStatement() {
