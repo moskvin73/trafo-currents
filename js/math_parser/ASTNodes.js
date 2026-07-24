@@ -154,8 +154,13 @@ export class CodeNode extends ASTNode {
   internal_evaluate(context) {
     const executedStatements = [];
     for (const stmtNode of this.statements) {
-      stmtNode.value = stmtNode.node.evaluate(evl_context);
-      executedStatements.push(stmtNode);
+      if (stmtNode.node.type_unit == TYPE_UNIT.CODE) {
+        const newStatementsArray = stmtNode.node.evaluate(evl_context);
+        executedStatements.push(...newStatementsArray);
+      } else {
+        stmtNode.value = stmtNode.node.evaluate(evl_context);
+        executedStatements.push(stmtNode);
+      }
     }
     return executedStatements;
   }
