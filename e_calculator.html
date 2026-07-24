@@ -884,36 +884,40 @@
             function scrollToCodeLine(line, column) {
                 if (!line) return;
 
-                // Фокусируем textarea БЕЗ нативного прыжка страницы
+                // 1. Фокусируем textarea БЕЗ автоматического нативного прыжка страницы
                 inputArea.focus({ preventScroll: true });
 
+                // 2. Рассчитываем точный индекс символа для установки курсора
                 const text = inputArea.value;
                 const lines = text.split('\n');
-
-                // Считаем индекс символа для курсора
                 let charIndex = 0;
                 for (let i = 0; i < Math.min(line - 1, lines.length); i++) {
-                    charIndex += lines[i].length + 1;
+                    charIndex += lines[i].length + 1; // +1 для символа переноса строки \n
                 }
                 charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
+                
+                // Ставим курсор
                 inputArea.setSelectionRange(charIndex, charIndex);
 
-                // Расчет точного Y положения строки внутри гигантского textarea (с учетом field-sizing)
+                // 3. ТОЧНЫЙ ГЕОМЕТРИЧЕСКИЙ РАСЧЕТ КООРДИНАТ
                 const computedStyle = window.getComputedStyle(inputArea);
                 const fontSize = parseFloat(computedStyle.fontSize) || 14;
+                
+                // Вычисляем чистую высоту одной строки в пикселях (например, 14 * 1.5 = 21px)
                 const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);
                 const paddingTop = parseFloat(computedStyle.paddingTop) || 12;
 
-                // Абсолютная координата начала textarea на странице
-                const inputTopOffset = inputArea.getBoundingClientRect().top + window.scrollY;
+                // Находим честную статическую координату Y начала редактора от самого верха документа
+                const inputTopOffset = inputArea.offsetTop;
                 
-                // Координата нужной нам строки
+                // Считаем точную координату ошибочной строки на странице
                 const lineY = inputTopOffset + paddingTop + ((line - 1) * lineHeight);
 
-                // Скроллим ВСЮ страницу так, чтобы строка оказалась в верхней половине экрана,
-                // оставляя место внизу для открытой панели ошибок
+                // 4. ПЛАВНЫЙ СКРОЛЛ ВСЕЙ СТРАНИЦЫ К СТРОКЕ
+                // Делаем отступ сверху в 120px, чтобы целевая строка стояла в верхней трети экрана,
+                // а нижняя часть огромного кода и плавающая панель ошибок не мешали обзору
                 window.scrollTo({
-                    top: lineY - 100, 
+                    top: lineY - 120, 
                     behavior: 'smooth'
                 });
             }
