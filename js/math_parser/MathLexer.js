@@ -17,7 +17,7 @@ const reservedWordsMap = {
   'plot_layer': TokenType.RW_PLOT_LAYER,
   'plot_vector': TokenType.RW_PLOT_VECTOR,
   'plot_chord': TokenType.RW_PLOT_CHORD,
-
+  'let': TokenType.RW_LET,
 };
 
 // const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
@@ -88,7 +88,7 @@ asciiMap[39] = C_QUOTE;   // Кавычка '
 asciiMap[37] = C_PERCENT; // Процент %
 
 // Операторы фиксированной длины (+, -, *, /, =, (, ), ;, $, , , ^)
-for (let c of ['+', '-', '*', '/', '=', '(', ')', ';', '$', ',' , '^', '[', ']']) {
+for (let c of ['+', '-', '*', '/', '=', '(', ')', ';', '$', ',' , '^', '[', ']', '{', '}']) {
   asciiMap[c.charCodeAt(0)] = C_OPERATOR;
 }
 
