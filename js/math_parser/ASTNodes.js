@@ -1232,12 +1232,12 @@ export class CallNode extends MathNode {
       else if (sym.type === SYM_UNDEFINED) {
         this.error(context, `Переменная "${this.name}" не инициализирована.`);
         return this.errorValue();
-      }
+      } else if (sym.value instanceof VarableCode) {
+        return sym.value.evaluate(context);
+      } else {
       else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
         return this.errorValue();
-      } else if (sym.value instanceof VarableCode) {
-        return sym.value.evaluate(context);
       } else {
         const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
         return MathRegistry.execute(sym.value, evaluatedArgs, this.loc);

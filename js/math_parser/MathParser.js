@@ -242,7 +242,7 @@ export class MathParser {
             }
             evl_context.statements.push(stmtNode);           
           }
-        this.#program.statements = statements;
+        this.#program.statements = evl_context.statements;
       }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
