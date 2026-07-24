@@ -155,7 +155,7 @@ export class VarableCode
     context.scope_context.enterScope();
     try {
       for (const stmtNode of this.statements) {
-        end = stmtNode.value = stmtNode.node.evaluate(evl_context);
+        end = stmtNode.value = stmtNode.node.evaluate(context);
         context.statements.push(stmtNode);
       }
       return end;
