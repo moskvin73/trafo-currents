@@ -155,7 +155,7 @@ export class VarableCode
   evaluate(context, args) {
     if (args.length !== this.params.length)
     {
-      context.error("Неверное кол. пораметров вызова функции ", loc, "Code");
+      context.error("Неверное кол. пораметров вызова функции ", this.loc, "Code");
     }
     const p_len = Math.min(args.length, this.params.length);
     let end;
