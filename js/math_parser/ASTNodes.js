@@ -151,7 +151,7 @@ export class VarableCode
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  evaluate(context) {
+  evaluate(context, args) {
     let end;
     context.scope_context.enterScope();
     try {
