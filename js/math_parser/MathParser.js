@@ -697,7 +697,10 @@ export class MathParser {
           }
         } 
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
-        //return new AssignNode(name, statements, token_loc);
+        const id =this.context.acquireId(name);
+        const sym = context.getSymbolById(id);
+        sym.value = statements;
+        return error_value();
       }
     }
     else
