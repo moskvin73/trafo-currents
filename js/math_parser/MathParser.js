@@ -243,6 +243,7 @@ export class MathParser {
       }
       if (this.errors.length === 0) {
           const evl_context = this.#create_evl_context();
+          evl_context.statements = [];
           for (const stmtNode of statements) {
             if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
             {
@@ -253,7 +254,8 @@ export class MathParser {
             else {
               // Вычисляем значение для каждого сохраненного узла
               stmtNode.value = stmtNode.node.evaluate(evl_context);
-            }           
+            }
+            evl_context.statements.push(stmtNode);           
           }
         this.#program.statements = statements;
       }
