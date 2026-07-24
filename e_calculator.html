@@ -636,7 +636,7 @@
                                 <!-- Ошибки будут рендериться динамически через JS -->
                             </div>
                         </div>
-                                                
+
                         <!-- ФИКСИРОВАННАЯ ПАНЕЛЬ СТАТУСА (Status Bar) -->
                         <div class="terminal-status-bar">
                             <!-- Кнопка запуска слева (теперь она аккуратная и встроенная) -->
@@ -759,7 +759,8 @@
             // Первичный расчет (на случай, если в поле уже есть текст при загрузке страницы)
             adjustHeight();
         }
-
+        
+        
         document.addEventListener("DOMContentLoaded", () => {
             const inputArea = document.getElementById("calc-terminal-input");
             const submitBtn = document.getElementById("calc-submit-btn");
@@ -769,6 +770,30 @@
                 console.error("[Calculator UI]: Не удалось найти критические элементы интерфейса на странице.");
                 return;
             }
+
+            // Получаем новые элементы интерфейса для панели ошибок
+            const errorPanel = document.getElementById("calc-error-panel");
+            const errorList = document.getElementById("calc-error-list");
+
+            // Хелпер для фокуса и перехода к нужной строке в textarea
+            function goToLineAndColumn(line, column) {
+                if (!line) return;
+                inputArea.focus();
+                const text = inputArea.value;
+                const lines = text.split('\n');
+                
+                let charIndex = 0;
+                for (let i = 0; i < Math.min(line - 1, lines.length); i++) {
+                    charIndex += lines[i].length + 1; // +1 для \n
+                }
+                charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
+                
+                inputArea.setSelectionRange(charIndex, charIndex);
+                
+                // Прокрутка textarea, если текст объемный
+                const lineHeight = parseInt(window.getComputedStyle(inputArea).lineHeight) || 18;
+                inputArea.scrollTop = (line - 1) * lineHeight - (inputArea.clientHeight / 2);
+            }            
 
             // Главная функция обработки введенной команды
             function executeCurrentCommand() {
