@@ -743,12 +743,12 @@ export class MathParser {
         }
         if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
         if (this.c_token === TokenType.LBRACE) {
-            const statements =this.#codeParse();
-             if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
-        }
-        if (this.errors.length === 0)
-        {
-          return new DefineVarableCodeNode(name, statements, params, token_loc);
+          const statements =this.#codeParse();
+          if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+          if (this.errors.length === 0)
+          {
+            return new DefineVarableCodeNode(name, statements, params, token_loc);
+          }
         }
       }
       this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
