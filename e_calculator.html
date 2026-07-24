@@ -986,42 +986,35 @@
                         });
                         resultBlock.innerHTML = errorHTML;*/
 
-                        if (errorPanel && errorList) {
-                            errorPanel.classList.remove("hidden");
+                         if (floatPanel && floatList) {
+                            floatPanel.classList.remove("hidden"); // Показываем панель поверх контента
                             
                             parser.errors.forEach(err => {
                                 const item = document.createElement("div");
-                                item.className = "error-item";
+                                item.className = "floating-error-item";
                                 
-                                // Вытаскиваем локацию из ошибки. 
-                                // Поддерживаем варианты: err.loc, err.location или если свойства лежат прямо в err
                                 const loc = err.loc || err.location || err;
-                                
-                                // Мягко берем line и column. Если их нет (мало ли, глобальная ошибка), ставим 1
                                 const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
                                 const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;
                                 
                                 const locSpan = document.createElement("span");
-                                locSpan.className = "error-loc";
-                                locSpan.textContent = `[${line}:${col}]`;
+                                locSpan.className = "err-loc";
+                                locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
                                 
                                 const textSpan = document.createElement("span");
-                                textSpan.className = "error-text";
-                                
-                                // Если у ошибки есть свой toString() (например, выводящий сообщение), берем его,
-                                // иначе выводим стандартный текст ошибки message
-                                textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка разбора");
+                                textSpan.className = "err-text";
+                                textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");
                                 
                                 item.appendChild(locSpan);
                                 item.appendChild(textSpan);
                                 
-                                // При клике на ошибку переносим курсор в текстовом поле на строку и колонку
-                                item.onclick = () => goToLineAndColumn(line, col);
+                                // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
+                                item.onclick = () => scrollToCodeLine(line, col);
                                 
-                                errorList.appendChild(item);
+                                floatList.appendChild(item);
                             });
                         }
-                        return; // Прерываем выполнение, не отправляя карточку в ленту
+                        return; // Прерываем, код не отправляется в ленту, textarea НЕ очищается!
                         
                     } else {
                         // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
