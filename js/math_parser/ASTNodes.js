@@ -144,8 +144,9 @@ export default class ASTNode {
 
 export class VarableCode
 {
-  constructor(statements) {
+  constructor(statements, params) {
     this.statements = statements;
+    this.params = params;
   }
 
   toRawTeX(settings) { return "\\text{code}"; }
@@ -166,10 +167,11 @@ export class VarableCode
 }
 
 export class DefineVarableCodeNode extends ASTNode {
-    constructor(name, statements, loc) {
+    constructor(name, statements, params, loc) {
     super(loc);
     this.name = name;
     this.statements = statements;
+    this.params = params;
   }
 
   get type_unit() { return TYPE_UNIT.EMPTY; }
@@ -177,7 +179,7 @@ export class DefineVarableCodeNode extends ASTNode {
   internal_evaluate(context) {
     const id = context.scope_context.acquireId(this.name);
     const sym = context.scope_context.getSymbolById(id);
-    sym.value = new VarableCode(this.statements);
+    sym.value = new VarableCode(this.statements, this.params);
     return this.errorValue();
   }
 }
