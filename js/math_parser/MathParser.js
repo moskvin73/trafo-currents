@@ -697,6 +697,7 @@ export class MathParser {
           }
         } 
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+        //return new AssignNode(name, statements, token_loc);
       }
     }
     else
