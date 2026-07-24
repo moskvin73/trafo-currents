@@ -699,6 +699,23 @@
 		</div>	
 	</div>
 
+    <!-- Изолированная плавающая панель ошибок (IDE-style) -->
+    <div id="calc-floating-error-panel" class="floating-error-panel hidden">
+        <!-- Зона изменения размера (верхняя граница панели) -->
+        <div id="error-panel-resize-handle" class="panel-resize-handle"></div>
+        
+        <!-- Шапка панели управления -->
+        <div class="error-panel-header">
+            <div class="panel-title">⚠️ Список обнаруженных ошибок</div>
+            <button id="close-error-panel-btn" class="close-panel-btn" title="Закрыть панель (Esc)">&times;</button>
+        </div>
+        
+        <!-- Контейнер для списка ошибок -->
+        <div id="calc-floating-error-list" class="floating-error-list">
+            <!-- Сюда JS будет динамически рендерить ошибки -->
+        </div>
+    </div>
+
     <!-- Контейнер группы кнопок по вашему стилю -->
     <div class="fab-container" id="calc-fab-container">
         
