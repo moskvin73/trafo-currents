@@ -682,7 +682,13 @@ export class MathParser {
     {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
-        #parseStatement();
+        const statements = [];
+        while (this.c_token !== TokenType.EOF || this.c_token !== TokenType.RBRACE) {
+          const stmt = this.#parseStatement();
+          if (stmt) {
+             statements.push(new StatementNode(stmt.node, stmt.isSilent));
+          }
+        } 
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "))ж
       }
     }
