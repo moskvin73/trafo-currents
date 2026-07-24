@@ -1234,8 +1234,7 @@ export class CallNode extends MathNode {
         return this.errorValue();
       } else if (sym.value instanceof VarableCode) {
         return sym.value.evaluate(context);
-      } else {
-      else if (sym.type !== SYM_BUILTIN) {
+      } else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
         return this.errorValue();
       } else {
