@@ -778,49 +778,21 @@
             // Хелпер для фокуса и перехода к нужной строке в textarea
             function goToLineAndColumn(line, column) {
                 if (!line) return;
-
-                // 1. Измеряем, где сейчас находится страница по вертикали
-                const currentScrollY = window.scrollY;
-
-                // 2. Фокусируем поле ввода, СТРОГО запрещая браузеру прыгать скроллом
-                inputArea.focus({ preventScroll: true });
-
+                inputArea.focus();
                 const text = inputArea.value;
                 const lines = text.split('\n');
-
-                // 3. Высчитываем индекс символа для установки курсора
+                
                 let charIndex = 0;
                 for (let i = 0; i < Math.min(line - 1, lines.length); i++) {
                     charIndex += lines[i].length + 1; // +1 для \n
                 }
                 charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
-
-                // 4. Ставим курсор (после этого браузер может попытаться прыгнуть, но мы это контролируем)
+                
                 inputArea.setSelectionRange(charIndex, charIndex);
-
-                // 5. Возвращаем скролл страницы на место, если нативный механизм всё же дёрнул экран
-                window.scrollTo(0, currentScrollY);
-
-                // 6. УМНЫЙ ПЛАВНЫЙ ДОСКРОЛЛ К СТРОКЕ
-                // Считаем высоту одной строки на основе стилей вашего textarea
-                const computedStyle = window.getComputedStyle(inputArea);
-                const fontSize = parseFloat(computedStyle.fontSize) || 14;
-                const lineHeightMultiplier = parseFloat(computedStyle.lineHeight) || 1.5;
-                const lineHeight = fontSize * lineHeightMultiplier; // Точная высота строки в пикселях
-                const paddingTop = parseFloat(computedStyle.paddingTop) || 12;
-
-                // Находим верхнюю границу самого текстового поля на странице
-                const inputTopOffset = inputArea.getBoundingClientRect().top + window.scrollY;
-
-                // Высчитываем точную координату Y на странице, где находится ошибочная строка
-                // Добавляем небольшой отступ (-40px), чтобы строка не прилипала к самому верху экрана
-                const targetScrollY = inputTopOffset + paddingTop + ((line - 1) * lineHeight) - 40;
-
-                // Плавно перемещаем экран к этой строке. Теперь пользователь видит и код, и контекст!
-                window.scrollTo({
-                    top: targetScrollY,
-                    behavior: 'smooth'
-                });
+                
+                // Прокрутка textarea, если текст объемный
+                const lineHeight = parseInt(window.getComputedStyle(inputArea).lineHeight) || 18;
+                inputArea.scrollTop = (line - 1) * lineHeight - (inputArea.clientHeight / 2);
             }            
 
             // Главная функция обработки введенной команды
