@@ -32,6 +32,7 @@ const tokenNames = [
   'RW_PLOT_LAYER',
   'RW_PLOT_VECTOR',
   'RW_PLOT_CHORD',
+  'RW_LET',
 ];
 
 // Создаем пустой объект перечисления
