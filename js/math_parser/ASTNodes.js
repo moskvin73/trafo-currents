@@ -152,10 +152,12 @@ export class CodeNode extends ASTNode {
   get type_unit() { return TYPE_UNIT.CODE; }
 
   internal_evaluate(context) {
+    const executedStatements = [];
     for (const stmtNode of this.statements) {
       stmtNode.value = stmtNode.node.evaluate(evl_context);
+      executedStatements.push(stmtNode);
     }
-    return this.statements;
+    return executedStatements;
   }
 
 }
