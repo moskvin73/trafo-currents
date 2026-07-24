@@ -358,12 +358,12 @@ export class MathParser {
         this.#consume();
         if (exprNode !== null)
           return { node: exprNode, isSilent: false };
-        break;
+        return null;
       case TokenType.SILENT:
         this.#consume();
         if (exprNode !== null)
           return { node: exprNode, isSilent: exprNode instanceof AssignNode };
-        break;
+        return null;
       default:
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
@@ -373,7 +373,7 @@ export class MathParser {
           if (MathParser.parseStatement_FIRST.has(this.c_token)) {
             if (exprNode !== null)
               return { node: exprNode, isSilent: false };
-            break;
+            return null;
           }
           this.#consume();
           if (MathParser.parseStatement_FALLOW.has(this.c_token)) break;
