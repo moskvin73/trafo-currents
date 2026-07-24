@@ -51,7 +51,35 @@ export class SymbolTableContext {
     this.varNames = [];
     this.varSymbols = [];
     // Тоже очищаем от прототипов, чтобы x = "toString" не ломал рантайм
-    this.varHash = Object.create(null); 
+    this.varHash = Object.create(null);
+
+    // --- СТЕК ЛОКАЛЬНЫХ ОБЛАСТЕЙ ВИДИМОСТИ (NEW) ---
+    // Каждый элемент стека — это объект { hash: Object.create(null), symbols: [] }
+    this.scopes = []; 
+    // Смещение для локальных ID, чтобы они никогда не пересекались с глобальными.
+    // Локальный ID = LOCAL_MARKER + (индекс_слоя << 16) + индекс_переменной_в_слое
+    this.LOCAL_MARKER = 1000000;     
+  }
+
+  // ============================================================================
+  // УПРАВЛЕНИЕ СТЕКОМ ОБЛАСТЕЙ ВИДИМОСТИ (NEW)
+  // ============================================================================
+
+  /** Создает новую локальную область (например, при входе в функцию) */
+  enterScope() {
+    this.scopes.push({
+      hash: Object.create(null),
+      names: [],
+      symbols: []
+    });
+  }
+
+  /** Удаляет текущую локальную область (при выходе из функции) */
+  exitScope() {
+    if (this.scopes.length === 0) {
+      throw new Error("Внутренняя ошибка: Попытка удалить корневой Scope.");
+    }
+    this.scopes.pop();
   }
 
   /**
@@ -64,6 +92,36 @@ export class SymbolTableContext {
       throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой. Получено: ${String(name)}`);
     }
 
+    // 1. Пытаемся найти по всей цепочке (включая глубокие локальные слои и глобальный)
+    const existingId = this.getIdByName(name);
+    if (existingId !== null) {
+      return existingId;
+    }
+
+    // 2. Если не нашли, и у нас АКТИВЕН локальный scope — создаем переменную в ТЕКУЩЕМ ВЕРХНЕМ слое
+    if (this.scopes.length > 0) {
+      const currentScopeIdx = this.scopes.length - 1;
+      const scope = this.scopes[currentScopeIdx];
+
+      const state = { type: SYM_UNDEFINED, value: 0 };
+      const localSymbol = {
+        get type() { return state.type; },
+        set type(t) { state.type = t; },
+        get value() { return state.value; },
+        set value(v) {
+          state.value = v;
+          state.type = SYM_VARIABLE;
+        }
+      };
+
+      const newLocalIdx = scope.symbols.length;
+      scope.names.push(name);
+      scope.symbols.push(localSymbol);
+      scope.hash[name] = newLocalIdx;
+
+      // Возвращаем уникальный локальный ID для этого слоя
+      return this.LOCAL_MARKER + (currentScopeIdx << 16) + newLocalIdx;
+    }    
 
     // 1. Ищем в предопределенной части через быстрое сравнение с undefined
     const fixedIdx = this.fixedHash[name];
@@ -109,6 +167,16 @@ export class SymbolTableContext {
    * @returns {number|null} ID символа или null, если не найден
    */
   getIdByName(name) {
+    // 1. Ищем в локальных областях видимости (идем с конца стека к началу)
+    for (let i = this.scopes.length - 1; i >= 0; i--) {
+      const scope = this.scopes[i];
+      const localIdx = scope.hash[name];
+      if (localIdx !== undefined) {
+        // Кодируем ID: маркер локальности + индекс слоя + индекс внутри слоя
+        return this.LOCAL_MARKER + (i << 16) + localIdx;
+      }
+    }
+
     // 1. Ищем в фиксированной части
     const fixedIdx = this.fixedHash[name];
     if (fixedIdx !== undefined) return fixedIdx;
@@ -143,6 +211,12 @@ export class SymbolTableContext {
    * @returns {string} Имя переменной или функции
    */
   getNameById(id) {
+    if (id >= this.LOCAL_MARKER) {
+      const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
+      const localIdx = (id - this.LOCAL_MARKER) & 0xFFFF;
+      return this.scopes[scopeIdx]?.names[localIdx] || `[Уничтоженный Local ID: ${id}]`;
+    }
+
     if (id < this.CD) {
       return this.fixedNames[id];
     }
@@ -160,6 +234,18 @@ export class SymbolTableContext {
    * @returns {Object} Объект свойств ({type, value} для переменных или {type, overloads} для функций)
    */
   getSymbolById(id) {
+    // Если ID локальный — мгновенно декодируем координаты в стеке за O(1)
+    if (id >= this.LOCAL_MARKER) {
+      const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
+      const localIdx = (id - this.LOCAL_MARKER) & 0xFFFF;
+      
+      const scope = this.scopes[scopeIdx];
+      if (!scope || localIdx >= scope.symbols.length) {
+        throw new Error(`Ошибка рантайма: Обращение к несуществующей локальной области.`);
+      }
+      return scope.symbols[localIdx];
+    }
+
     if (id < this.CD) {
       return this.fixedSymbols[id];
     }
