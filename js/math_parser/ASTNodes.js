@@ -152,11 +152,16 @@ export class VarableCode
 
   evaluate(context) {
     let end;
-    for (const stmtNode of this.statements) {
-      end = stmtNode.value = stmtNode.node.evaluate(evl_context);
-      context.statements.push(stmtNode);
+    context.scope_context.enterScope();
+    try {
+      for (const stmtNode of this.statements) {
+        end = stmtNode.value = stmtNode.node.evaluate(evl_context);
+        context.statements.push(stmtNode);
+      }
+      return end;
+    } finally {
+      context.scope_context.exitScope();
     }
-    return end;
   }
 }
 
