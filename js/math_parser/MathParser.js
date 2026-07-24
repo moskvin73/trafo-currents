@@ -680,8 +680,9 @@ export class MathParser {
     if (this.c_token === TokenType.ASSIGN) {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
+        this.#consume();
         const statements = [];
-        while (this.c_token !== TokenType.EOF || this.c_token !== TokenType.RBRACE) {
+        while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
           const stmt = this.#parseStatement();
           if (stmt) {
              statements.push(new StatementNode(stmt.node, stmt.isSilent));
