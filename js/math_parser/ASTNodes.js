@@ -175,7 +175,7 @@ export class DefineVarableCodeNode extends ASTNode {
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
-    const id = context.scope_context.acquireId(name);
+    const id = context.scope_context.acquireId(this.name);
     const sym = context.scope_context.getSymbolById(id);
     sym.value = new VarableCode(statements);
     return this.errorValue();
