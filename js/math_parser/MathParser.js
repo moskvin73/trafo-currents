@@ -224,20 +224,27 @@ export class MathParser {
           }
       }
       if (this.errors.length === 0) {
+          const executedStatements = [];
           const evl_context = this.#create_evl_context();
           for (const stmtNode of statements) {
-            if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
+            if (stmtNode.node.type_unit == TYPE_UNIT.CODE) {
+              const newStatementsArray = stmtNode.node.evaluate(evl_context);
+              executedStatements.push(...newStatementsArray);
+            }
+            else if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
             {
                //const tab = foldASTToTable(stmtNode.node);
                //stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
                stmtNode.value = stmtNode.node.evaluate(evl_context);
+               executedStatements.push(stmtNode);
             }
             else {
               // Вычисляем значение для каждого сохраненного узла
               stmtNode.value = stmtNode.node.evaluate(evl_context);
+              executedStatements.push(stmtNode);
             }           
           }
-        this.#program.statements = statements;
+        this.#program.statements = executedStatements;
       }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
