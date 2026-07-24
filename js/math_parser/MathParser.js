@@ -692,7 +692,7 @@ export class MathParser {
         if (this.errors.length === 0)
         {
           const id =this.context.acquireId(name);
-          const sym = context.getSymbolById(id);
+          const sym = this.context.getSymbolById(id);
           sym.value = statements;
           return error_value();
         }
