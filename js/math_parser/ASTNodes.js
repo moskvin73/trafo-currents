@@ -815,19 +815,19 @@ export class IndexNode extends MathNode {
   }
 
   toTeX(context) {
-  let targetTeX = this.#target.toTeX(context);
-  const rowTeX = this.#rowExpr.toTeX(context);
-  const colTeX = this.#colExpr ? `, ${this.#colExpr.toTeX(context)}` : '';
-  const matrixIndex = `${rowTeX}${colTeX}`;
+    let targetTeX = this.#target.toTeX(context);
+    const rowTeX = this.#rowExpr.toTeX(context);
+    const colTeX = this.#colExpr ? `, ${this.#colExpr.toTeX(context)}` : '';
+    const matrixIndex = `${rowTeX}${colTeX}`;
 
-  // Проверяем, заканчивается ли имя на } (признак того, что там уже есть индекс)
-  if (targetTeX.endsWith('}')) {
-    // Отрезаем закрывающую скобку и вставляем матричный индекс через запятую
-    return `${targetTeX.slice(0, -1)}, ${matrixIndex}}`;
-  } else {
-    // Если индекса не было, создаем новый
-    return `${targetTeX}_{{${matrixIndex}}}`;
-  }
+    // Проверяем, заканчивается ли имя на } (признак того, что там уже есть индекс)
+    if (targetTeX.endsWith('}')) {
+      // Отрезаем закрывающую скобку и вставляем матричный индекс через запятую
+      return `${targetTeX.slice(0, -1)}, ${matrixIndex}}`;
+    } else {
+      // Если индекса не было, создаем новый
+      return `${targetTeX}_{{${matrixIndex}}}`;
+    }
   }
 
   internal_evaluate(context) {
