@@ -686,7 +686,6 @@ export class MathParser {
     const name = this.lexer.stringValue();
     this.#consume();
     if (this.c_token === TokenType.ASSIGN) {
-    {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
         const statements = [];
