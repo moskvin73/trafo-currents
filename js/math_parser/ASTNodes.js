@@ -142,6 +142,16 @@ export default class ASTNode {
   }
 }
 
+export class CodeNode extends ASTNode {
+  constructor(name, statements, loc) {
+    super(loc);
+    this.name = name;
+    this.statements = statements;
+  }
+
+  internal_evaluate(context) {
+  }
+}
 //const dispatcher = new SemanticDispatcher();
 
 export class MathNode extends ASTNode {
