@@ -824,6 +824,7 @@
         }
         
         
+
         document.addEventListener("DOMContentLoaded", () => {
             const inputArea = document.getElementById("calc-terminal-input");
             const submitBtn = document.getElementById("calc-submit-btn");
@@ -834,29 +835,88 @@
                 return;
             }
 
-            // Получаем новые элементы интерфейса для панели ошибок
-            const errorPanel = document.getElementById("calc-error-panel");
-            const errorList = document.getElementById("calc-error-list");
+           // Инициализация элементов новой плавающей панели ошибок
+            const floatPanel = document.getElementById("calc-floating-error-panel");
+            const floatList = document.getElementById("calc-floating-error-list");
+            const closePanelBtn = document.getElementById("close-error-panel-btn");
+            const resizeHandle = document.getElementById("error-panel-resize-handle");
 
-            // Хелпер для фокуса и перехода к нужной строке в textarea
-            function goToLineAndColumn(line, column) {
+            // --- 1. ЛОГИКА ИЗМЕНЕНИЯ РАЗМЕРА (RESIZE) ---
+            let isResizing = false;
+            let startY = 0;
+            let startHeight = 0;
+
+            resizeHandle.addEventListener("mousedown", (e) => {
+                isResizing = true;
+                startY = e.clientY;
+                startHeight = parseInt(document.defaultView.getComputedStyle(floatPanel).height, 10);
+                document.documentElement.style.cursor = "row-resize";
+                document.body.style.userSelect = "none"; // Запрещаем выделение текста при таскании
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                if (!isResizing) return;
+                // Так как панель зафиксирована снизу, движение мыши вверх уменьшает Y, увеличивая высоту панели
+                const deltaY = startY - e.clientY;
+                const newHeight = startHeight + deltaY;
+                
+                // Проверяем лимиты по высоте (от 80px до 80% экрана)
+                if (newHeight > 80 && newHeight < window.innerHeight * 0.8) {
+                    floatPanel.style.height = `${newHeight}px`;
+                }
+            });
+
+            window.addEventListener("mouseup", () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.documentElement.style.cursor = "";
+                    document.body.style.userSelect = "";
+                }
+            });
+
+            // Кнопка ручного закрытия
+            closePanelBtn.addEventListener("click", () => {
+                floatPanel.classList.add("hidden");
+            });
+
+
+            // --- 2. УМНЫЙ СКРОЛЛ К СТРОКЕ КОДА ---
+            function scrollToCodeLine(line, column) {
                 if (!line) return;
-                inputArea.focus();
+
+                // Фокусируем textarea БЕЗ нативного прыжка страницы
+                inputArea.focus({ preventScroll: true });
+
                 const text = inputArea.value;
                 const lines = text.split('\n');
-                
+
+                // Считаем индекс символа для курсора
                 let charIndex = 0;
                 for (let i = 0; i < Math.min(line - 1, lines.length); i++) {
-                    charIndex += lines[i].length + 1; // +1 для \n
+                    charIndex += lines[i].length + 1;
                 }
                 charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
-                
                 inputArea.setSelectionRange(charIndex, charIndex);
+
+                // Расчет точного Y положения строки внутри гигантского textarea (с учетом field-sizing)
+                const computedStyle = window.getComputedStyle(inputArea);
+                const fontSize = parseFloat(computedStyle.fontSize) || 14;
+                const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);
+                const paddingTop = parseFloat(computedStyle.paddingTop) || 12;
+
+                // Абсолютная координата начала textarea на странице
+                const inputTopOffset = inputArea.getBoundingClientRect().top + window.scrollY;
                 
-                // Прокрутка textarea, если текст объемный
-                const lineHeight = parseInt(window.getComputedStyle(inputArea).lineHeight) || 18;
-                inputArea.scrollTop = (line - 1) * lineHeight - (inputArea.clientHeight / 2);
-            }            
+                // Координата нужной нам строки
+                const lineY = inputTopOffset + paddingTop + ((line - 1) * lineHeight);
+
+                // Скроллим ВСЮ страницу так, чтобы строка оказалась в верхней половине экрана,
+                // оставляя место внизу для открытой панели ошибок
+                window.scrollTo({
+                    top: lineY - 100, 
+                    behavior: 'smooth'
+                });
+            }
 
             // Главная функция обработки введенной команды
             function executeCurrentCommand() {
