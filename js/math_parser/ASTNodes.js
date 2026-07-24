@@ -165,6 +165,23 @@ export class VarableCode
   }
 }
 
+export class DefineVarableCodeNode extends ASTNode {
+    constructor(name, statements, loc) {
+    super(loc);
+    this.name = name;
+    this.statements = statements;
+  }
+
+  get type_unit() { return TYPE_UNIT.EMPTY; }
+
+  internal_evaluate(context) {
+    const id =this.context.scope_context.acquireId(name);
+    const sym = this.context.scope_context.getSymbolById(id);
+    sym.value = new VarableCode(statements);
+    return this.errorValue();
+  }
+}
+
 export class MathNode extends ASTNode {
   constructor(loc) {
     super(loc);
