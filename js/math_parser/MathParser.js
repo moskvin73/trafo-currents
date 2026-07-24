@@ -723,7 +723,6 @@ export class MathParser {
         {
           return new DefineVarableCodeNode(name, statements, token_loc);
         }
-        return null;
       }
       else if (this.c_token === TokenType.LPAREN) {
         this.#consume();
@@ -750,9 +749,8 @@ export class MathParser {
         }
         if (this.errors.length === 0)
         {
-          return new DefineVarableCodeNode(name, statements, token_loc);
+          return new DefineVarableCodeNode(name, statements, params, token_loc);
         }
-        return null;
       }
       this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
     }
