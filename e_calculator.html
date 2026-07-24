@@ -855,13 +855,45 @@
 
                     // Проверяем наличие ошибок лексики или синтаксиса
                     if (parser.errors.length > 0) {
-                        card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
+                        /*card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
                         
                         let errorHTML = "<strong>Ошибка разбора выражения:</strong><br>";
                         parser.errors.forEach(err => {
                             errorHTML += `${err.toString()}<br>`;
                         });
-                        resultBlock.innerHTML = errorHTML;
+                        resultBlock.innerHTML = errorHTML;*/
+
+                        if (errorPanel && errorList) {
+                            errorPanel.classList.remove("hidden");
+                            
+                            parser.errors.forEach(err => {
+                                const item = document.createElement("div");
+                                item.className = "error-item";
+                                
+                                // Извлекаем локацию, если она есть у объекта ошибки (например, err.line и err.column)
+                                const line = err.line || 1;
+                                const col = err.column || 1;
+                                
+                                const locSpan = document.createElement("span");
+                                locSpan.className = "error-loc";
+                                locSpan.textContent = `[${line}:${col}]`;
+                                
+                                const textSpan = document.createElement("span");
+                                textSpan.className = "error-text";
+                                // Используем toString() или message вашего объекта ошибки
+                                textSpan.textContent = err.toString ? err.toString() : err.message;
+                                
+                                item.appendChild(locSpan);
+                                item.appendChild(textSpan);
+                                
+                                // При клике на ошибку переносим курсор в редакторе на проблемное место
+                                item.onclick = () => goToLineAndColumn(line, col);
+                                
+                                errorList.appendChild(item);
+                            });
+                        }
+                        return; // Прерываем выполнение! Не спамим пустой/сломанной карточкой в ленту                        
+                        
                     } else {
                         // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
                         resultBlock.innerHTML = "";
