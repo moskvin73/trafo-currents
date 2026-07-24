@@ -57,6 +57,23 @@ export class StatementNode {
   toTeX() { return this.node.toTeX(); }
 }
 
+export class VarableCode
+{
+  constructor(statements) {
+    this.statements = statements;
+  }
+
+  toRawTeX(settings) { return "\\text{code}"; }
+
+  evaluate(context) {
+    const excStatements = [];
+    for (const stmtNode of this.statements) {
+      stmtNode.value = stmtNode.node.evaluate(evl_context);
+      context.statements.push(stmtNode);
+    }
+  }
+}
+
 export class TeXOutputFormatter {
   /**
    * Главный метод, возвращающий финальную строку для MathJax
@@ -140,6 +157,7 @@ class out_errors
   constructor(scope_context, errors) {
     this.errors = errors;
     this.scope_context = scope_context;
+    this.statements = null;
   }
 
   get count() { return this.errors.length; }
