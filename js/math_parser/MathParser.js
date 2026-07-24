@@ -673,7 +673,7 @@ export class MathParser {
   }
 
   #parseDeclarationStatement() {
-    this.#consume();
+    /*this.#consume();
     const token_loc = this.#location;
     const error_value = () => { return new NumberNode(new RealNumber(0), token_loc); };
 
@@ -707,7 +707,7 @@ export class MathParser {
     {
       this.#error("Ожидалось '='", this.#location);
       return error_value();
-    }
+    }*/
   }
   // =======================================================
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
