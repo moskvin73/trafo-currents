@@ -161,7 +161,7 @@ export class VarableCode
     context.scope_context.enterScope();
     try {
       for (let i = 0; i < args.length; i++) {
-        context.scope_context.acquireId(this.params[i]);
+        const id = context.scope_context.acquireId(this.params[i]);
         const sym = context.scope_context.getSymbolById(id);
         sym.value = args[i];
       }
