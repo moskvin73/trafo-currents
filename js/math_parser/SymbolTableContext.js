@@ -92,16 +92,16 @@ export class SymbolTableContext {
       throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой. Получено: ${String(name)}`);
     }
 
-    // 1. Пытаемся найти по всей цепочке (включая глубокие локальные слои и глобальный)
-    const existingId = this.getIdByName(name);
-    if (existingId !== null) {
-      return existingId;
-    }
-
     // 2. Если не нашли, и у нас АКТИВЕН локальный scope — создаем переменную в ТЕКУЩЕМ ВЕРХНЕМ слое
     if (this.scopes.length > 0) {
       const currentScopeIdx = this.scopes.length - 1;
       const scope = this.scopes[currentScopeIdx];
+      // Ищем в текущей области
+      const localIdx = scope.hash[name];
+      if (localIdx !== undefined) {
+        // Кодируем ID: маркер локальности + индекс слоя + индекс внутри слоя
+        return this.LOCAL_MARKER + (i << 16) + localIdx;
+      }
 
       const state = { type: SYM_UNDEFINED, value: 0 };
       const localSymbol = {
