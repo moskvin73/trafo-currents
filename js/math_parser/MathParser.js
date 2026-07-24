@@ -19,6 +19,7 @@ import ASTNode, {
   MatrixNode,
   IndexNode,
   VarableCode,
+  DefineVarableCodeNode,
   ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
@@ -703,9 +704,7 @@ export class MathParser {
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
-          const id =this.context.acquireId(name);
-          const sym = this.context.getSymbolById(id);
-          sym.value = new VarableCode(statements);
+          return new DefineVarableCodeNode(name, statements, token_loc);
         }
       }
       else this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
