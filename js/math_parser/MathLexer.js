@@ -22,6 +22,8 @@ const reservedWordsMap = {
   'and': TokenType.RW_AND,
   'or': TokenType.RW_OR,
   'xor': TokenType.RW_XOR,
+  'if': TokenType.RW_IF,
+  'else': TokenType.RW_ELSE,
 };
 
 
