@@ -330,6 +330,10 @@ export class MathParser {
     TokenType.MINUS,
   ]));
 
+  #parseCode(code) {
+    while (this.c_token !== TokenType.EOF) #parseStatement(code);
+  }
+
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
