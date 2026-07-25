@@ -414,6 +414,11 @@ export class UnaryOpNodeNot extends UnaryOpNode {
     const argVal = this.argument.internal_evaluate(context);
     return argVal.not();
   }
+
+  toTeX(context) {
+    const argTex = this.argument.toTeX(context);
+    return `\overline{${argTex}}`;
+  }
 }
 
 /**
@@ -618,6 +623,23 @@ export class AddNode extends BinaryOpNode {
   internal_evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.add(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} + ${r}`;
+  }
+}
+
+export class AndNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, 'and', right, loc);
+  }
+
+  getPriority() { return OpPriority.ADD_SUB; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.and(r);
   }
 
   simpleTeX(l, r) {
