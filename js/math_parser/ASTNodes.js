@@ -1099,10 +1099,10 @@ export class IndexNode extends RefNode {
 
     // 3. Возвращаем готовый MathType объект из ячейки матрицы
     //return matrixObj.get(rowIndex, colIndex);
-    return evaluate_command(matrixObj, rowIndex, colIndex);
+    return evaluate_command(context, matrixObj, rowIndex, colIndex);
   }
 
-  evaluate_command(matrixObj, rowIndex, colIndex) {
+  evaluate_command(context, matrixObj, rowIndex, colIndex) {
     return matrixObj.get(rowIndex, colIndex);
   }
 
@@ -1121,9 +1121,10 @@ export class AssignIndexNode extends IndexNode {
   }
 
   evaluate_command(matrixObj, rowIndex, colIndex) {
-    return matrixObj.get(rowIndex, colIndex);
+    const elm = matrixObj.get(0, 0);
+    const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
+    return matrixObj.set(rowIndex, colIndex, l);
   }
-1
 }
 
 /**
