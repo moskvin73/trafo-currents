@@ -919,6 +919,10 @@ export class MathParser {
         loc = this.#location;
         this.#consume();
         return new UnaryOpNodeMinus(this.#parseUnary(), loc);
+      case TokenType.RW_NOT:
+        loc = this.#location;
+        this.#consume();
+        return new UnaryOpNodeNot(this.#parseUnary(), loc);
       default: return this.#parsePower();
     }
   }
