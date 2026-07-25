@@ -76,21 +76,21 @@ export default class RealNumber extends MathType {
    * Внутренний метод вычитания двух вещественных чисел
    */
   subtract(other) {
-    return new RealNumber(this.#value - RealNumber.from(other).#value);
+    return new RealNumber(this.#value - RealNumber.from(other).value);
   }
 
   /**
    * Внутренний метод умножения двух вещественных чисел
    */
   multiply(other) {
-    return new RealNumber(this.#value * RealNumber.from(other).#value);
+    return new RealNumber(this.#value * RealNumber.from(other).value);
   }
 
   /**
    * Внутренний метод деления двух вещественных чисел
    */
   divide(other) {
-    return new RealNumber(this.#value / RealNumber.from(other).#value);
+    return new RealNumber(this.#value / RealNumber.from(other).value);
   }
 
   // ==========================================
@@ -112,7 +112,7 @@ export default class RealNumber extends MathType {
       // Object.is — стандартный способ JS проверить абсолютную идентичность:
       // 1. Object.is(NaN, NaN) -> true
       // 2. Object.is(0, -0) -> false (сохраняет знак для комплексных разрезов)
-      return Object.is(this.#value, o.#value);
+      return Object.is(this.#value, o.value);
     } catch {
       return false; // Если тип не приводимый, числа заведомо не равны
     }
@@ -123,12 +123,12 @@ export default class RealNumber extends MathType {
   // ==========================================
 
   eq(other) {
-    const right = RealNumber.from(other).#value;
+    const right = RealNumber.from(other).value;
     return this.#value === right; 
   }
 
   not_eq(other) {
-    const right = RealNumber.from(other).#value;
+    const right = RealNumber.from(other).value;
     return this.#value !== right; 
   }
 
@@ -138,7 +138,7 @@ export default class RealNumber extends MathType {
    * @returns {boolean}
    */
   lt(other) {
-    const right = RealNumber.from(other).#value;
+    const right = RealNumber.from(other).value;
     return this.#value < right; 
   }
 
@@ -148,7 +148,7 @@ export default class RealNumber extends MathType {
    * @returns {boolean}
    */
   gt(other) {
-    const right = RealNumber.from(other).#value;
+    const right = RealNumber.from(other).value;
     return this.#value > right; 
   }
 
@@ -158,7 +158,7 @@ export default class RealNumber extends MathType {
    * @returns {boolean}
    */
   lte(other) { 
-    const right = RealNumber.from(other).#value;
+    const right = RealNumber.from(other).value;
     return this.#value <= right; 
    }
 
