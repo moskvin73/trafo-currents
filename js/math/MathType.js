@@ -64,11 +64,11 @@ export default class MathType {
 
   not() { this.#notImplemented('!'); }
 
-  and(other) { this.#notImplemented('&'); }
+  and(other) { this.#notImplemented('and'); }
 
-  or(other) { this.#notImplemented('|'); }
+  or(other) { this.#notImplemented('or'); }
 
-  xor(other) { this.#notImplemented('^^'); }
+  xor(other) { this.#notImplemented('xor'); }
 
   // ==========================================
   // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
