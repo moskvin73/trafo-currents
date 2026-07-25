@@ -118,6 +118,60 @@ export default class RealNumber extends MathType {
     }
   }
 
+   // ==========================================
+  // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
+  // ==========================================
+
+  eq(other) {
+    const right = RealNumber.from(other).#value;
+    return this.#value === right; 
+  }
+
+  not_eq(other) {
+    const right = RealNumber.from(other).#value;
+    return this.#value !== right; 
+  }
+
+  /**
+   * Операция "Меньше" (<). false (0) меньше, чем true (1).
+   * @param {*} other - Значение для сравнения.
+   * @returns {boolean}
+   */
+  lt(other) {
+    const right = RealNumber.from(other).#value;
+    return this.#value < right; 
+  }
+
+  /**
+   * Операция "Больше" (>). true (1) больше, чем false (0).
+   * @param {*} other - Значение для сравнения.
+   * @returns {boolean}
+   */
+  gt(other) {
+    const right = RealNumber.from(other).#value;
+    return this.#value > right; 
+  }
+
+  /**
+   * Операция "Меньше или равно" (<=).
+   * @param {*} other - Значение для сравнения.
+   * @returns {boolean}
+   */
+  lte(other) { 
+    const right = RealNumber.from(other).#value;
+    return this.#value <= right; 
+   }
+
+  /**
+   * Операция "Больше или равно" (>=).
+   * @param {*} other - Значение для сравнения.
+   * @returns {boolean}
+   */
+  gte(other) {
+    const right = BoolValue.from(other).#value;
+    return this.value >= right; 
+  }   
+
   // ==========================================
   // ЭКСПАНСИЯ: СТЕПЕНИ, КОРНИ, ЛОГАРИФМЫ (Instance)
   // ==========================================
