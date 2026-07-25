@@ -166,40 +166,6 @@ export default class SemanticDispatcher {
     }
 
     return { l, r };
-
-    /*const leftId = this.#getTypeId(leftVal);
-    const rightId = this.#getTypeId(rightVal);
-
-    const leftConfig = this.#registry.get(leftId);
-    const rightConfig = this.#registry.get(rightId);
-
-    // СЛУЧАЙ 1: Типы абсолютно одинаковы (например, number и number)
-    if (leftId === rightId) {
-      // Проверяем, есть ли декларативное правило авто-повышения для этого типа
-      if (leftConfig?.selfPromote) {
-        return { 
-          l: leftConfig.selfPromote(leftVal), 
-          r: leftConfig.selfPromote(rightVal) 
-        };
-      }
-      // Если правила нет (например, RealNumber и RealNumber), возвращаем как есть
-      return { l: leftVal, r: rightVal };
-    }
-
-    // СЛУЧАЙ 2: Типы разные (стандартное семантическое повышение)
-    const leftRank = leftConfig ? leftConfig.rank : 0;
-    const rightRank = rightConfig ? rightConfig.rank : 0;
-
-    let l = leftVal;
-    let r = rightVal;
-
-    if (leftRank < rightRank && rightConfig) {
-      l = this.#cast(l, leftId, rightId, leftConfig);
-    } else if (rightRank < leftRank && leftConfig) {
-      r = this.#cast(r, rightId, leftId, rightConfig);
-    }
-
-    return { l, r };*/
   }
 
   #cast(value, currentTypeId, targetTypeId, currentConfig) {
