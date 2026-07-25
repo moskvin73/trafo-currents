@@ -44,13 +44,9 @@ export default class BoolValue extends MathType {
         return this.#value;
     }
    
-    toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
-        throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
-    }
+    toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) { return `\\mathrm{${this.#value}}` }
 
-    toString(settings) {
-        return String(this.value);
-    }
+    toString(settings) { return String(this.#value); }
   
   // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
