@@ -145,12 +145,29 @@ export class TeXOutputFormatter {
 
 class out_errors
 {
+  #items = [];
+
   constructor(scope_context, errors) {
     this.errors = errors;
     this.scope_context = scope_context;
     this.statements = null;
     this.code = null;
     this.index_code = 0;
+  }
+
+  push_code(code, index = 0) {
+    this.#items({code: this.code, index: this.index_code});
+    this.code = code;
+    this.index_code = index;
+  }
+
+  pop_code() {
+    if (this.#items.length !== 0)
+    {
+       const data = this.#items[this.#items.length - 1];
+       this.code = data.code;
+       this.index_code = data.index;
+    }
   }
 
   get count() { return this.errors.length; }
