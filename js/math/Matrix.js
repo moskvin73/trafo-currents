@@ -244,7 +244,7 @@ export default class Matrix extends MathType {
     return new BoolValue(true);
   }
 
-  not_eq(other) { return !this.eq(other); }
+  not_eq(other) { return this.eq(other).not(); }
 
   /**
    * Транспонирование матрицы (поворот: строки становятся столбцами)
