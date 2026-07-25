@@ -42,7 +42,7 @@ const tokenNames = [
   'EQU', // ==
   'NOT_EQU', // !=
   'LT', // <
-  'GT'  // >
+  'GT',  // >
   'LTE', // <=
   'GTE', // >=
 ];
