@@ -685,6 +685,39 @@ export class AndNode extends BinaryOpNode {
   }
 }
 
+export class EquNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '==', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.eq(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} = ${r}`;
+  }
+}
+
+export class NotEquNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '!=', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.not_eq(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} \\neq ${r}`;
+  }
+}
 
 export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
