@@ -252,8 +252,12 @@ export class MathParser {
             evl_context.code = statements;
             while (evl_context.index_code < evl_context.code.length) {
               const ast_op = evl_context.code[evl_context.index_code++];
-              ast_op.value = ast_op.node.evaluate(evl_context);
-              evl_context.statements.push(ast_op);
+              if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
+              {
+                ast_op.value = ast_op.node.evaluate(evl_context);
+                evl_context.statements.push(ast_op);
+              }
+              else ast_op.node.evaluate(evl_context);
             }
           this.#program.statements = evl_context.statements;
         }
