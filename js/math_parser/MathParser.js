@@ -771,7 +771,7 @@ export class MathParser {
    */
   #parseAssignment() {
     // Сначала парсим левую часть как обычное сложение/вычитание
-    let expr = this.#parseAddition();
+    let expr = this.#parseOR();
 
     // Если следующим токеном идёт знак равенства '='
     if (this.c_token === TokenType.ASSIGN) {
@@ -790,6 +790,84 @@ export class MathParser {
     return expr;
   }
 
+    // Множество FIRST для знаков сложения/вычитания
+  #parseOR() {
+    let expr = this.#parseXor();
+    let loc;
+    while (true) switch (this.c_token) {
+      case TokenType.RW_OR:
+        loc = this.#location;
+        this.#consume();
+        expr = new OrNode(expr, this.#parseXor(), loc);
+        break;
+      default: return expr;
+    }
+  }
+
+  #parseXor() {
+    let expr = this.#parseAnd();
+    let loc;
+    while (true) switch (this.c_token) {
+      case TokenType.RW_XOR:
+        loc = this.#location;
+        this.#consume();
+        expr = new XorNode(expr, this.#parseAnd(), loc);
+        break;
+      default: return expr;
+    }
+  }
+
+   #parseAnd() {
+    let expr = this.#parseRelational();
+    let loc;
+    while (true) switch (this.c_token) {
+      case TokenType.RW_AND:
+        loc = this.#location;
+        this.#consume();
+        expr = new AndNode(expr, this.#parseRelational(), loc);
+        break;
+      default: return expr;
+    }
+  }
+
+   #parseRelational() {
+    let expr = this.#parseAddition();
+    let loc;
+    while (true) switch (this.c_token) {
+      case TokenType.EQU:
+        loc = this.#location;
+        this.#consume();
+        expr = new EquNode(expr, this.#parseAddition(), loc);
+        break;
+      case TokenType.NOT_EQU:
+        loc = this.#location;
+        this.#consume();
+        expr = new NotEquNode(expr, this.#parseAddition(), loc);
+        break;
+      case TokenType.LT:
+        loc = this.#location;
+        this.#consume();
+        expr = new LtNode(expr, this.#parseAddition(), loc);
+        break;
+      case TokenType.LTE:
+        loc = this.#location;
+        this.#consume();
+        expr = new LteNode(expr, this.#parseAddition(), loc);
+        break;
+      case TokenType.GT:
+        loc = this.#location;
+        this.#consume();
+        expr = new GtNode(expr, this.#parseAddition(), loc);
+        break;
+      case TokenType.GTE:
+        loc = this.#location;
+        this.#consume();
+        expr = new GteNode(expr, this.#parseAddition(), loc);
+        break;
+      default: return expr;
+    }
+  }
+  
   // Множество FIRST для знаков сложения/вычитания
   #parseAddition() {
     let expr = this.#parseMultiplication();
