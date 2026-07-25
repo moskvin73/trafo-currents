@@ -173,7 +173,7 @@ export class ReturnCodeNode extends ASTNode {
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
-    
+    context.pop_code();
   }
 }
 
