@@ -127,12 +127,12 @@ export default class BoolValue extends MathType {
 
   eq(other) {
     const right = BoolValue.from(other).value;
-    return this.#value === right; 
+    return new BoolValue(this.#value === right); 
   }
 
   not_eq(other) {
     const right = BoolValue.from(other).value;
-    return this.#value !== right; 
+    return new BoolValue(this.#value !== right); 
   }
 
   /**
@@ -142,7 +142,7 @@ export default class BoolValue extends MathType {
    */
   lt(other) {
     const right = BoolValue.from(other).value;
-    return this.#value < right; 
+    return new BoolValue(this.#value < right); 
   }
 
   /**
@@ -152,7 +152,7 @@ export default class BoolValue extends MathType {
    */
   gt(other) {
     const right = BoolValue.from(other).value;
-    return this.#value > right; 
+    return new BoolValue(this.#value > right); 
   }
 
   /**
@@ -162,7 +162,7 @@ export default class BoolValue extends MathType {
    */
   lte(other) { 
     const right = BoolValue.from(other).value;
-    return this.#value <= right; 
+    return new BoolValue(this.#value <= right); 
    }
 
   /**
@@ -172,6 +172,6 @@ export default class BoolValue extends MathType {
    */
   gte(other) {
     const right = BoolValue.from(other).value;
-    return this.#value >= right; 
+    return new BoolValue(this.#value >= right); 
   }  
 }
