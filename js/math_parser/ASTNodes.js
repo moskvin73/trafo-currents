@@ -144,18 +144,17 @@ export default class ASTNode {
 
 export class VarableCode
 {
-  constructor(statements, params, loc) {
-    this.loc = loc;
+  constructor(statements, params) {
     this.statements = statements;
     this.params = params;
   }
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  evaluate(context, args) {
+  evaluate(context, args, loc) {
     if (args.length !== this.params.length)
     {
-      context.error("Неверное кол. пораметров вызова функции ", this.loc, "Code");
+      context.error("Неверное кол. пораметров вызова функции ", loc, "Code");
     }
     const p_len = Math.min(args.length, this.params.length);
     let end;
