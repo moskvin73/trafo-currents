@@ -941,7 +941,7 @@ export class RefNode extends MathNode {
   createAssign(expression) { throw new Error("[ASTNode]: Метод createAssign() не реализован."); }
 }
 
-export class IdentifierNode extends MathNode {
+export class IdentifierNode extends RefNode {
   constructor(name, loc) {
     super(loc);
     this.name = name;
@@ -1015,7 +1015,7 @@ export class AssignNode extends IdentifierNode {
   }
 }
 
-export class IndexNode extends MathNode {
+export class IndexNode extends RefNode {
   #target;
   #rowExpr;
   #colExpr;
