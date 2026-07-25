@@ -232,6 +232,11 @@ export class MathParser {
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context();
             evl_context.statements = [];
+            evl_context.code = statements;
+            while (evl_context.index_code < evl_context.code.length) {
+              const stmtNode = evl_context.code[evl_context.index_code++];
+              evl_context.statements.push(stmtNode);
+            }
             /*for (const stmtNode of statements) {
               if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
               {
