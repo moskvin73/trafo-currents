@@ -155,7 +155,7 @@ export class VarableCode
         const sym = context.scope_context.getSymbolById(id);
         sym.value = args[i];
       }
-      push_code(this.statements);
+      context.push_code(this.statements);
       /*for (const stmtNode of this.statements) {
         end = stmtNode.value = stmtNode.node.evaluate(context);
         context.statements.push(stmtNode);
