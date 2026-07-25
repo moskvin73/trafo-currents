@@ -1,4 +1,5 @@
 import MathType from './MathType.js';
+import BoolValue from './BoolValue.js';
 
 export default class Matrix extends MathType {
   static typeId = Symbol.for('Math.Matrix');
