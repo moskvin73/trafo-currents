@@ -596,6 +596,20 @@ export default class ComplexNumber extends MathType {
     }
   }
 
+  // ==========================================
+  // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
+  // ==========================================
+
+  eq(other) {
+    const right = ComplexNumber.from(other);
+    return this.#real === right.real && this.#imaginary, right.imaginary; 
+  }
+
+  not_eq(other) {
+    const right = ComplexNumber.from(other).#value;
+    return this.#real !== right.real || this.#imaginary !== right.imaginary;  
+  }
+
   // #endregion
 
   // #region МЕТОДЫ СРАВНЕНИЯ
