@@ -18,6 +18,10 @@ const reservedWordsMap = {
   'plot_vector': TokenType.RW_PLOT_VECTOR,
   'plot_chord': TokenType.RW_PLOT_CHORD,
   'let': TokenType.RW_LET,
+  'not': TokenType.RW_NOT,
+  'and': TokenType.RW_AND,
+  'or': TokenTypes.RW_OR,
+  'xor': TokenType.RW_XOR,
 };
 
 // const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
