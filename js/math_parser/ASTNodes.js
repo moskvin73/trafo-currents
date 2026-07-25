@@ -13,11 +13,15 @@ Matrix.registerRealNumberClass(RealNumber);
 
 const OpPriority = { 
     ASSIGN: 1,       // '='
-    ADD_SUB: 2,  // '+', '-'
-    MUL_DIV: 3,  // '*', '/'
-    UNARY: 4,        // унарные '+' и '-'
-    POW: 5,          // '^'
-    PRIMARY: 6       // Числа, переменные
+    OR: 2,
+    XOR: 3,
+    AND: 4,
+    RELATIONAL: 5,  
+    ADD_SUB: 6,      // '+', '-'
+    MUL_DIV: 7,      // '*', '/'
+    UNARY: 8,        // унарные '+' и '-'
+    POW: 9,          // '^'
+    PRIMARY: 10       // Числа, переменные
 };
 
 /**
