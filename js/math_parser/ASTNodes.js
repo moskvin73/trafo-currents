@@ -147,7 +147,7 @@ export class VarableCode
   toRawTeX(settings) { return "\\text{code}"; }
 
   evaluate(context, args) {
-    let end;
+    //let end;
     context.scope_context.enterScope();
     try {
       for (let i = 0; i < args.length; i++) {
@@ -155,11 +155,12 @@ export class VarableCode
         const sym = context.scope_context.getSymbolById(id);
         sym.value = args[i];
       }
-      for (const stmtNode of this.statements) {
+      push_code(this.statements);
+      /*for (const stmtNode of this.statements) {
         end = stmtNode.value = stmtNode.node.evaluate(context);
         context.statements.push(stmtNode);
       }
-      return end;
+      return end;*/
     } finally {
       context.scope_context.exitScope();
     }
@@ -170,6 +171,7 @@ export class ReturnCodeNode extends ASTNode {
   constructor(loc) {
     super(loc);
   }
+  
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
@@ -183,6 +185,7 @@ export class DefineVarableCodeNode extends ASTNode {
     this.name = name;
     this.statements = statements;
     this.params = params;
+    this.statements.push(new ReturnCodeNode(loc));
   }
 
   get type_unit() { return TYPE_UNIT.EMPTY; }
