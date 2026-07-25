@@ -77,8 +77,7 @@ export default class BoolValue extends MathType {
    */
   equals(other) {
     try {
-      const o = BoolValue.from(other);
-      return Object.is(this.#value, o.#value);
+      return this.value === BoolValue.from(other).value;
     } catch {
       return false; // Если тип не приводимый, числа заведомо не равны
     }
