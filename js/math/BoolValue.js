@@ -69,10 +69,8 @@ export default class BoolValue extends MathType {
   // ==========================================
 
   /**
-   * Строгое математическое равенство (IEEE 754)
-   * Корректно различает +0 и -0 для точных фазовых переходов 
-   * и позволяет проверять идентичность NaN в юнит-тестах.
-   * @param {BoolValue|oolean} other 
+   * Строгое равенство
+   * @param {BoolValue|boolean} other 
    * @returns {boolean}
    */
   equals(other) {
