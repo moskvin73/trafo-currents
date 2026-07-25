@@ -62,7 +62,7 @@ export default class MathType {
   // ОСНОВНЫЕ ЛОГИЧЕСКИЕ ОПЕРАЦИИ (СТРОКОВЫЕ КОМАНДЫ)
   // ==========================================
 
-  not() { this.#notImplemented('!'); }
+  not() { this.#notImplemented('not'); }
 
   and(other) { this.#notImplemented('and'); }
 
