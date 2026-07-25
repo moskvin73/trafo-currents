@@ -169,7 +169,7 @@ export default class RealNumber extends MathType {
    * @returns {boolean}
    */
   gte(other) {
-    const right = BoolValue.from(other).value;
+    const right = RealNumber.from(other).value;
     return new BoolValue(this.value >= right); 
   }   
 
