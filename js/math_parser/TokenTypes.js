@@ -40,7 +40,7 @@ const tokenNames = [
   'RW_OR',
   'RW_XOR',
   'RW_IF',
-  'RW_ELSE'.
+  'RW_ELSE',
   'EQU', // ==
   'NOT_EQU', // !=
   'LT', // <
