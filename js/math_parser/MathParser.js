@@ -716,7 +716,7 @@ export class MathParser {
         if (this.c_token !== TokenType.RPAREN) {
           while (true) {
             if (this.c_token !== TokenType.VARIABLE) {
-              this.#error("Ожидалось имя параметра в круглых скобках");
+              this.#error("Ожидалось имя параметра в круглых скобках", this.#location);
             }
             params.push(this.lexer.stringValue());
             this.#consume();
