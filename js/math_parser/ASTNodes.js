@@ -401,6 +401,21 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
   }
 }
 
+export class UnaryOpNodeNot extends UnaryOpNode {
+  /**
+   * @param {ASTNode} argument - Узел, к которому применяется операция
+   * @param {SourceLocation} loc 
+   */
+  constructor(argument, loc) {
+    super('!', argument, loc);
+  }
+
+  internal_evaluate(context) { 
+    const argVal = this.argument.internal_evaluate(context);
+    return argVal.not();
+  }
+}
+
 /**
  * Узел бинарной операции (+, -, *, /, ^)
  */
