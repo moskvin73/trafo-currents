@@ -1080,8 +1080,8 @@ const PRECOMPUTED_CONSTANTS = {
   PHI: new RealNumber((1 + Math.sqrt(5)) / 2),
   INF: new RealNumber(Infinity),
   NAN: new RealNumber(NaN),
-  TRUE: true,
-  FALSE: false,
+  TRUE: new BoolValue(true),
+  FALSE: new BoolValue(false),
 };
 
 // 2. Декларативная таблица, использующая TokenType напрямую в роли ключей
