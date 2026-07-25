@@ -31,7 +31,7 @@ export default class MathType {
    * Возвращает стандартное текстовое представление объекта.
    * @returns {string}
    */
-  toString(settings) { this.#notImplemented('toString'); } }
+  toString(settings) { this.#notImplemented('toString'); }
 
   /**
    * Вспомогательный метод для полной TeX-обёртки (для обратной совместимости).
