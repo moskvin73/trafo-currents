@@ -184,7 +184,7 @@ export class DefineVarableCodeNode extends ASTNode {
   internal_evaluate(context) {
     const id = context.scope_context.acquireId(this.name);
     const sym = context.scope_context.getSymbolById(id);
-    sym.value = new VarableCode(this.statements, this.params, this.loc);
+    sym.value = new VarableCode(this.statements, this.params);
     return this.errorValue();
   }
 }
@@ -1263,7 +1263,7 @@ export class CallNode extends MathNode {
           this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${ym.value.params.length}]"`);
           return this.errorValue();
         }
-        return sym.value.evaluate(context, evaluatedArgs, this.loc);
+        return sym.value.evaluate(context, evaluatedArgs);
       } else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
         return this.errorValue();
