@@ -673,7 +673,7 @@ export class AndNode extends BinaryOpNode {
     super(left, 'and', right, loc);
   }
 
-  getPriority() { return OpPriority.XOR; }
+  getPriority() { return OpPriority.AND; }
 
   internal_evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
