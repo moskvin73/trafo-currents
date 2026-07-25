@@ -166,6 +166,16 @@ export class VarableCode
   }
 }
 
+export class ReturnCodeNode extends ASTNode {
+  constructor(loc) {
+    super(loc);
+  }
+  get type_unit() { return TYPE_UNIT.EMPTY; }
+
+  internal_evaluate(context) {
+  }
+}
+
 export class DefineVarableCodeNode extends ASTNode {
     constructor(name, statements, params, loc) {
     super(loc);
