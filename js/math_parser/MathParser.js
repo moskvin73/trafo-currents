@@ -227,30 +227,24 @@ export class MathParser {
     try {
         const statements = [];
         this.#parseCode(statements);
-        /*while (this.c_token !== TokenType.EOF) {
-          const stmt = this.#parseStatement();
-          if (stmt) {
-             statements.push(new StatementNode(stmt.node, stmt.isSilent));
-          }*/
-      }
-      if (this.errors.length === 0) {
-          const evl_context = this.#create_evl_context();
-          evl_context.statements = [];
-          for (const stmtNode of statements) {
-            if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
-            {
-               //const tab = foldASTToTable(stmtNode.node);
-               //stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
-               stmtNode.value = stmtNode.node.evaluate(evl_context);
+        if (this.errors.length === 0) {
+            const evl_context = this.#create_evl_context();
+            evl_context.statements = [];
+            for (const stmtNode of statements) {
+              if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
+              {
+                //const tab = foldASTToTable(stmtNode.node);
+                //stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
+                stmtNode.value = stmtNode.node.evaluate(evl_context);
+              }
+              else {
+                // Вычисляем значение для каждого сохраненного узла
+                stmtNode.value = stmtNode.node.evaluate(evl_context);
+              }
+              evl_context.statements.push(stmtNode);           
             }
-            else {
-              // Вычисляем значение для каждого сохраненного узла
-              stmtNode.value = stmtNode.node.evaluate(evl_context);
-            }
-            evl_context.statements.push(stmtNode);           
-          }
-        this.#program.statements = evl_context.statements;
-      }
+          this.#program.statements = evl_context.statements;
+        }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
       }
