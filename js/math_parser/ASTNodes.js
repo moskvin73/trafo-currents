@@ -622,7 +622,7 @@ export class AddNode extends BinaryOpNode {
     super(left, '+', right, loc);
   }
 
-  getPriority() { return OpPriority.ADD_SUB; }
+  getPriority() { return OpPriority.OR; }
 
   internal_evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
@@ -634,12 +634,46 @@ export class AddNode extends BinaryOpNode {
   }
 }
 
+export class OrNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, 'or', right, loc);
+  }
+
+  getPriority() { return OpPriority.OR; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.or(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} \\vee ${r}`;
+  }
+}
+
+export class XorNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, 'xor', right, loc);
+  }
+
+  getPriority() { return OpPriority.XOR; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.xor(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} \\oplus ${r}`;
+  }
+}
+
 export class AndNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, 'and', right, loc);
   }
 
-  getPriority() { return OpPriority.ADD_SUB; }
+  getPriority() { return OpPriority.XOR; }
 
   internal_evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
@@ -647,9 +681,10 @@ export class AndNode extends BinaryOpNode {
   }
 
   simpleTeX(l, r) {
-    return `${l} + ${r}`;
+    return `${l} \\wedge ${r}`;
   }
 }
+
 
 export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
