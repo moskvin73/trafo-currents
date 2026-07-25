@@ -235,6 +235,7 @@ export class MathParser {
             evl_context.code = statements;
             while (evl_context.index_code < evl_context.code.length) {
               const stmtNode = evl_context.code[evl_context.index_code++];
+              stmtNode.value = stmtNode.node.evaluate(evl_context);
               evl_context.statements.push(stmtNode);
             }
             /*for (const stmtNode of statements) {
