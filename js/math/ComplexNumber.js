@@ -606,7 +606,7 @@ export default class ComplexNumber extends MathType {
   }
 
   not_eq(other) {
-    const right = ComplexNumber.from(other).#value;
+    const right = ComplexNumber.from(other);
     return this.#real !== right.real || this.#imaginary !== right.imaginary;  
   }
 
