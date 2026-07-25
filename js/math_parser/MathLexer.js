@@ -325,6 +325,8 @@ export class MathLexer {
             else if (code === 42) type = TokenType.MUL;
             else if (code === 123) type = TokenType.LBRACE;
             else if (code === 125) type = TokenType.RBRACE;
+            else if (code === 60) type = TokenType.LT;
+            else if (code === 62) type = TokenType.GT;
 
             return commitOperator(type, 1);
           }
