@@ -156,7 +156,7 @@ class out_errors
   }
 
   push_code(code, index = 0) {
-    this.#items({code: this.code, index: this.index_code});
+    this.#items.push({code: this.code, index: this.index_code});
     this.code = code;
     this.index_code = index;
   }
@@ -165,6 +165,7 @@ class out_errors
     if (this.#items.length !== 0)
     {
        const data = this.#items[this.#items.length - 1];
+       this.#items.pop();
        this.code = data.code;
        this.index_code = data.index;
     }
