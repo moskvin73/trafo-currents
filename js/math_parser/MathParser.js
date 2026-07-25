@@ -226,7 +226,7 @@ export class MathParser {
   parse() {
     try {
         const statements = [];
-        #parseCode(statements);
+        this.#parseCode(statements);
         /*while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) {
@@ -332,7 +332,7 @@ export class MathParser {
   ]));
 
   #parseCode(code) {
-    while (this.c_token !== TokenType.EOF) #parseStatement(code);
+    while (this.c_token !== TokenType.EOF) this.#parseStatement(code);
   }
 
   #parseStatement(code, f_out = false) {
