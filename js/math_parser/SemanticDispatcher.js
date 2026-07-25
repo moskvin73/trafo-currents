@@ -1,4 +1,5 @@
 import MathType from '../math/MathType.js';
+import MathType from '../math/MathType.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import Matrix from '../math/Matrix.js';
@@ -15,9 +16,18 @@ export const TYPE_REGISTRY = new Map([
     ])
   }],
 
+  ['bool', {
+    rank: 2,
+    // ЕСЛИ тип встретился сам с собой, принудительно трансформируем его:
+    selfPromote: (val) => new BoolValue(val), 
+    casts: new Map([
+      [BoolValue, (val) => new BoolValue(val)]
+    ])
+  }],
+
   // 2. Вещественное число.
   [RealNumber, {
-    rank: 2,
+    rank: 3,
     selfPromote: null, // Уже объект, повышать самого до себя не нужно
     casts: new Map([
       [ComplexNumber, (obj) => new ComplexNumber(obj.value, 0)]
@@ -26,13 +36,13 @@ export const TYPE_REGISTRY = new Map([
 
   // 3. Комплексное число.
   [ComplexNumber, {
-    rank: 3,
+    rank: 4,
     selfPromote: null,
     casts: new Map()
   }],
 
   [Matrix, {
-    rank: 4,          // Самый высокий ранг, чтобы диспетчер не пытался превратить матрицу в число
+    rank: 5,          // Самый высокий ранг, чтобы диспетчер не пытался превратить матрицу в число
     selfPromote: null,
     casts: new Map()   // Касты пусты, так как число нельзя неявно превратить в матрицу
   }]
