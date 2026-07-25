@@ -35,6 +35,16 @@ const tokenNames = [
   'RW_PLOT_VECTOR',
   'RW_PLOT_CHORD',
   'RW_LET',
+  'RW_NOT',
+  'RW_AND',
+  'RW_OR',
+  'RW_XOR',
+  'EQU', // ==
+  'NOT_EQU', // !=
+  'LT', // <
+  'GT'  // >
+  'LTE', // <=
+  'GTE', // >=
 ];
 
 // Создаем пустой объект перечисления
