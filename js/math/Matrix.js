@@ -79,6 +79,13 @@ export default class Matrix extends MathType {
     return typeof element;
   }
 
+  static #getTypeName(typeA) {
+    if (typeof typeA === 'function') {
+      return typeA.name; // Вернет имя класса, например 'BoolValue' или 'Matrix'
+    }
+    return typeA; // Если это уже строка примитива (например 'number' или 'boolean'), возвращаем её
+  }
+
   set(row, col, value) {
     if (row < 0 || row >= this.rowCount || col < 0 || col >= this.colCount) {
       throw new RangeError("[Matrix]: Индексы выходят за границы матрицы.");
@@ -87,7 +94,7 @@ export default class Matrix extends MathType {
     const t_v = Matrix.#getElementType(value);
     if (t_m === t_v)
       return this.#rows[row][col] = value;
-    else throw new TypeError(`[Matrix]: Несоответсвие типов элимента матрицы '${t_m}' и типа элемента '${t_v}'.`)
+    else throw new TypeError(`[Matrix]: Несоответсвие типов элимента матрицы '${Matrix.#getTypeName(t_m)}' и типа элемента '${Matrix.#getTypeName(t_v)}'.`)
   }
 
   /**
