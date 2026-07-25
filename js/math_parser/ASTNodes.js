@@ -1110,7 +1110,10 @@ export class IndexNode extends RefNode {
 }
 
 export class AssignIndexNode extends IndexNode {
-
+  constructor(target, rowExpr, colExpr, expression, loc) {
+    super(target, rowExpr, colExpr, loc);
+    this.expression = expression;
+  }
 }
 
 /**
