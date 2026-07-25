@@ -961,7 +961,7 @@ export class VariableNode extends IdentifierNode {
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(name, expression, loc);
+    return new AssignNode(this.name, expression, loc);
   }
 
   getPriority()  { return OpPriority.PRIMARY; }
@@ -998,7 +998,7 @@ export class AssignNode extends IdentifierNode {
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(name, expression, loc);
+    return new AssignNode(this.name, expression, loc);
   }  
 
   getPriority() { return OpPriority.ASSIGN; }
