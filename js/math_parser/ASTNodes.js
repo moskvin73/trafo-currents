@@ -1103,7 +1103,7 @@ export class IndexNode extends RefNode {
 
     // 3. Возвращаем готовый MathType объект из ячейки матрицы
     //return matrixObj.get(rowIndex, colIndex);
-    return evaluate_command(context, matrixObj, rowIndex, colIndex);
+    return this.evaluate_command(context, matrixObj, rowIndex, colIndex);
   }
 
   evaluate_command(context, matrixObj, rowIndex, colIndex) {
