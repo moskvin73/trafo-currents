@@ -135,50 +135,26 @@ export default class BoolValue extends MathType {
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  lt(other) {
-    try {
-      return this.value < BoolValue.from(other).value;
-    } catch {
-      return false;
-    }
-  }
+  lt(other) { return this.value < BoolValue.from(other).#value; }
 
   /**
    * Операция "Больше" (>). true (1) больше, чем false (0).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  gt(other) {
-    try {
-      return this.value > BoolValue.from(other).value;
-    } catch {
-      return false;
-    }
-  }
+  gt(other) { return this.value > BoolValue.from(other).#value; }
 
   /**
    * Операция "Меньше или равно" (<=).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  lte(other) {
-    try {
-      return this.value <= BoolValue.from(other).value;
-    } catch {
-      return false;
-    }
-  }
+  lte(other) { return this.value <= BoolValue.from(other).#value; }
 
   /**
    * Операция "Больше или равно" (>=).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  gte(other) {
-    try {
-      return this.value >= BoolValue.from(other).value;
-    } catch {
-      return false;
-    }
-  }  
+  gte(other) { return this.value >= BoolValue.from(other).#value; }  
 }
