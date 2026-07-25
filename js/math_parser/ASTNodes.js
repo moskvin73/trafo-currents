@@ -149,7 +149,7 @@ export class VarableCode
   evaluate(context, args) {
     //let end;
     context.scope_context.enterScope();
-    try {
+   // try {
       for (let i = 0; i < args.length; i++) {
         const id = context.scope_context.acquireId(this.params[i]);
         const sym = context.scope_context.getSymbolById(id);
@@ -161,9 +161,9 @@ export class VarableCode
         context.statements.push(stmtNode);
       }
       return end;*/
-    } finally {
+    /*} finally {
       context.scope_context.exitScope();
-    }
+    }*/
   }
 }
 
@@ -171,10 +171,11 @@ export class ReturnCodeNode extends ASTNode {
   constructor(loc) {
     super(loc);
   }
-  
+
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
+    context.scope_context.exitScope();
     context.pop_code();
   }
 }
