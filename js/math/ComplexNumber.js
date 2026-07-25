@@ -603,7 +603,7 @@ export default class ComplexNumber extends MathType {
 
   eq(other) {
     const right = ComplexNumber.from(other);
-    return new BoolValue(this.#real === right.real && this.#imaginary, right.imaginary); 
+    return new BoolValue(this.#real === right.real && this.#imaginary === right.imaginary); 
   }
 
   not_eq(other) { 
