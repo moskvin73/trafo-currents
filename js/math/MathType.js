@@ -13,22 +13,25 @@ export default class MathType {
     }
   }
 
+  // Универсальный хелпер для генерации ошибок
+  #notImplemented(methodName) {
+    throw new Error(`[MathType]: Метод ${methodName} не реализован в классе ${this.constructor.name}`);
+  }
+
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
    * @returns {string}
    */
   toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
-    throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
+    this.#notImplemented('toRawTeX');
   }
 
   /**
    * Возвращает стандартное текстовое представление объекта.
    * @returns {string}
    */
-  toString(settings) {
-    throw new Error(`[MathType]: Метод toString() не реализован в классе ${this.constructor.name}`);
-  }
+  toString(settings) { this.#notImplemented('toString'); } }
 
   /**
    * Вспомогательный метод для полной TeX-обёртки (для обратной совместимости).
@@ -43,34 +46,45 @@ export default class MathType {
   // ==========================================
   // АБСТРАКТНАЯ БАЗОВАЯ АРИФМЕТИКА
   // ==========================================
+  negate() { this.#notImplemented('-'); }
 
-  add(other) {
-    throw new Error(`[MathType]: Метод add() не реализован в классе ${this.constructor.name}`);
-  }
+  add(other) { this.#notImplemented('+'); }
 
-  subtract(other) {
-    throw new Error(`[MathType]: Метод subtract() не реализован в классе ${this.constructor.name}`);
-  }
+  subtract(other) { this.#notImplemented('-'); }
 
-  multiply(other) {
-    throw new Error(`[MathType]: Метод multiply() не реализован в классе ${this.constructor.name}`);
-  }
+  multiply(other) { this.#notImplemented('*'); }
 
-  divide(other) {
-    throw new Error(`[MathType]: Метод divide() не реализован в классе ${this.constructor.name}`);
-  }
+  divide(other) { this.#notImplemented('/'); }
 
-  pow(other) {
-    throw new Error(`[MathType]: Метод pow() не реализован в классе ${this.constructor.name}`);
-  }
+  pow(other) { this.#notImplemented('^'); }
    
-   /**
-   * Возвращает новый математический объект с инвертированным знаком.
-   * @returns {MathType}
-   */
-  negate() {
-    throw new Error(`[MathType]: Метод negate() не реализован в классе ${this.constructor.name}`);
-  }
+ // ==========================================
+  // ОСНОВНЫЕ ЛОГИЧЕСКИЕ ОПЕРАЦИИ (СТРОКОВЫЕ КОМАНДЫ)
+  // ==========================================
+
+  not() { this.#notImplemented('!'); }
+
+  and(other) { this.#notImplemented('&&'); }
+
+  or(other) { this.#notImplemented('||'); }
+
+  xor(other) { this.#notImplemented('^^'); }
+
+  // ==========================================
+  // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
+  // ==========================================
+
+  eq(other) { this.#notImplemented('=='); }
+
+  not_eq(other) { this.#notImplemented('!='); }
+
+  lt(other) { this.#notImplemented('<'); }
+
+  gt(other) { this.#notImplemented('>'); }
+
+  lte(other) { this.#notImplemented('<='); }
+
+  gte(other) { this.#notImplemented('>='); }    
 
   /**
    * Преобразует число в формат TeX с учетом системной локали и научной нотации.
