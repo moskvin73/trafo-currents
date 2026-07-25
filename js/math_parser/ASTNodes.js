@@ -1,6 +1,7 @@
 // Импортируем наш базовый математический тип, чтобы использовать в проверках, 
 // если потребуется расширение, или для явного понимания типов
 import RealNumber from '../math/RealNumber.js';
+import BoolValue from '../math/BoolValue.js';
 import Matrix from '../math/Matrix.js';
 import { MathRegistry } from './MathRegistry.js';
 import { dispatcher } from './SemanticDispatcher.js';
