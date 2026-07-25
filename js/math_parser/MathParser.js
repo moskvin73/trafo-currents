@@ -780,13 +780,14 @@ export class MathParser {
       this.#consume(); // сожрали '='
 
       // КРИТИЧЕСКАЯ СЕМАНТИЧЕСКАЯ ПРОВЕРКА: слева ОБЯЗАНА быть переменная!
-      if (!(expr instanceof VariableNode)) {
+      if (!(expr instanceof RefNode)) {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось имя переменной.`,  opToken_loc);
       }
 
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      return new AssignNode(expr.name, right, opToken_loc);
+      return expr.createAssign(right, opToken_loc);
+      //return new AssignNode(expr.name, right, opToken_loc);
     }
     return expr;
   }
