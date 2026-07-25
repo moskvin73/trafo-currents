@@ -50,4 +50,18 @@ export default class BoolValue extends MathType {
   ]);
 
   static get converters() { return BoolValue.#localConverters; }
+
+ // ==========================================
+  // ОСНОВНЫЕ ЛОГИЧЕСКИЕ ОПЕРАЦИИ (СТРОКОВЫЕ КОМАНДЫ)
+  // ==========================================
+
+  /**
+   * Логическое НЕ (Инверсия).
+   * Команда: 'not' или оператор '!'
+   * @returns {BoolValue} Инвертированное значение.
+   */
+  not() {
+    return new BoolValue(!this.value);
+  }
+
 }
