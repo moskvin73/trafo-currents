@@ -226,11 +226,12 @@ export class MathParser {
   parse() {
     try {
         const statements = [];
-        while (this.c_token !== TokenType.EOF) {
+        #parseCode(statements);
+        /*while (this.c_token !== TokenType.EOF) {
           const stmt = this.#parseStatement();
           if (stmt) {
              statements.push(new StatementNode(stmt.node, stmt.isSilent));
-          }
+          }*/
       }
       if (this.errors.length === 0) {
           const evl_context = this.#create_evl_context();
