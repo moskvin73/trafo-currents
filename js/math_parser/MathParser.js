@@ -331,8 +331,8 @@ export class MathParser {
     TokenType.MINUS,
   ]));
 
-  #parseCode(code, f_out = false) {
-    while (this.c_token !== TokenType.EOF) #parseStatement(code, f_out);
+  #parseCode(code) {
+    while (this.c_token !== TokenType.EOF) #parseStatement(code);
   }
 
   #parseStatement(code, f_out = false) {
