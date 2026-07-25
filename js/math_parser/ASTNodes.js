@@ -151,16 +151,11 @@ export class VarableCode
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  evaluate(context, args, loc) {
-    if (args.length !== this.params.length)
-    {
-      context.error("Неверное кол. пораметров вызова функции ", loc, "Code");
-    }
-    const p_len = Math.min(args.length, this.params.length);
+  evaluate(context, args) {
     let end;
     context.scope_context.enterScope();
     try {
-      for (let i = 0; i < p_len; i++) {
+      for (let i = 0; i < args.length; i++) {
         const id = context.scope_context.acquireId(this.params[i]);
         const sym = context.scope_context.getSymbolById(id);
         sym.value = args[i];
