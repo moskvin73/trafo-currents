@@ -697,10 +697,6 @@ export class MathParser {
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
         this.#parseStatement(statements, true);
-        /*const stmt = this.#parseStatement(true);
-        if (stmt) {
-            statements.push(new StatementNode(stmt.node, stmt.isSilent));
-        }*/
       } 
       if (statements.length === 0) 
           this.#error("Блок кода не может быть пустым", this.#location);
