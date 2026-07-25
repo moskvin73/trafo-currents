@@ -1261,8 +1261,13 @@ export class CallNode extends MathNode {
       else if (sym.type === SYM_UNDEFINED) {
         this.error(context, `Переменная "${this.name}" не инициализирована.`);
         return this.errorValue();
-      } else if (sym.value instanceof VarableCode) {
+      } else if (sym.value instanceof VarableCode) {        
         const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
+        if (evaluatedArgs.length !== sym.value.params.length)
+        {
+          this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${ym.value.params.length}]"`);
+          return this.errorValue();
+        }
         return sym.value.evaluate(context, evaluatedArgs, this.loc);
       } else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
