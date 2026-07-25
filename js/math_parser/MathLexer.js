@@ -24,7 +24,6 @@ const reservedWordsMap = {
   'xor': TokenType.RW_XOR,
 };
 
-// const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 /**
  * Превращает невидимые, управляющие или битые символы в строку вида U+XXXX,
@@ -92,7 +91,7 @@ asciiMap[39] = C_QUOTE;   // Кавычка '
 asciiMap[37] = C_PERCENT; // Процент %
 
 // Операторы фиксированной длины (+, -, *, /, =, (, ), ;, $, , , ^)
-for (let c of ['+', '-', '*', '/', '=', '(', ')', ';', '$', ',' , '^', '[', ']', '{', '}']) {
+for (let c of ['+', '-', '*', '/', '=', '(', ')', ';', '$', ',' , '^', '[', ']', '{', '}', '!', '<', '>']) {
   asciiMap[c.charCodeAt(0)] = C_OPERATOR;
 }
 
