@@ -1258,9 +1258,10 @@ export class CallNode extends MathNode {
         return this.errorValue();
       } else if (sym.value instanceof VarableCode) {        
         const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-        if (evaluatedArgs.length !== sym.value.params.length)
+        const p_c = sym.value.params.length;
+        if (evaluatedArgs.length !== p_c)
         {
-          this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${ym.value.params.length}]"`);
+          this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${p_c}]"`);
           return this.errorValue();
         }
         return sym.value.evaluate(context, evaluatedArgs);
