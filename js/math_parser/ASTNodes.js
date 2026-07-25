@@ -1109,6 +1109,10 @@ export class IndexNode extends RefNode {
   }
 }
 
+export class AssignIndexNode extends IndexNode {
+
+}
+
 /**
  * Узел для всей программы (блокнота/интерфейса вычислений)
  */
