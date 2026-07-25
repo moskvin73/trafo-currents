@@ -299,9 +299,18 @@ export class MathLexer {
 
             // Степень **
             if (code === 42 && src.charCodeAt(this.i + 1) === 42) return commitOperator(TokenType.POW, 2);
+            // <=
+            if (code === 60 && src.charCodeAt(this.i + 1) === 61) return commitOperator(TokenType.LTE, 2);
+            // ==
+            if (code === 61 && src.charCodeAt(this.i + 1) === 61) return commitOperator(TokenType.EQU, 2);
+            // !=
+            if (code === 33 && src.charCodeAt(this.i + 1) === 61) return commitOperator(TokenType.NOT_EQU, 2);
+            // >=
+            if (code === 62 && src.charCodeAt(this.i + 1) === 61) return commitOperator(TokenType.GTE, 2);
 
             let type;
             if (code === 43) type = TokenType.PLUS;
+            else if (code === 33) type = TokenType.RW_NOT;
             else if (code === 45) type = TokenType.MINUS;
             else if (code === 47) type = TokenType.DIV;
             else if (code === 61) type = TokenType.ASSIGN;
