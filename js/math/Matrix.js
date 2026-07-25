@@ -237,7 +237,7 @@ export default class Matrix extends MathType {
       const rowB = o.#rows[i]; // Предполагается наличие геттера или доступа к внутренним строкам
 
       for (let j = 0; j < this.colCount; j++) {
-        if (rowA[j] !== rowB[j]) return new BoolValue(false);
+        if (rowA[j].not_eq(rowB[j])) return new BoolValue(false);
       }
     }
 
