@@ -64,9 +64,9 @@ export default class MathType {
 
   not() { this.#notImplemented('!'); }
 
-  and(other) { this.#notImplemented('&&'); }
+  and(other) { this.#notImplemented('&'); }
 
-  or(other) { this.#notImplemented('||'); }
+  or(other) { this.#notImplemented('|'); }
 
   xor(other) { this.#notImplemented('^^'); }
 
