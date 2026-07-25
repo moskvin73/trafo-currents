@@ -1,4 +1,5 @@
 import MathType from './MathType.js';
+import BoolValue from './BoolValue.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/ConstantsDef.js';
 
 /**
@@ -602,12 +603,12 @@ export default class ComplexNumber extends MathType {
 
   eq(other) {
     const right = ComplexNumber.from(other);
-    return this.#real === right.real && this.#imaginary, right.imaginary; 
+    return new BoolValue(this.#real === right.real && this.#imaginary, right.imaginary); 
   }
 
   not_eq(other) { 
     const right = ComplexNumber.from(other);
-    return this.#real !== right.real || this.#imaginary !== right.imaginary;  
+    return new BoolValue(this.#real !== right.real || this.#imaginary !== right.imaginary);  
   }
 
   // #endregion

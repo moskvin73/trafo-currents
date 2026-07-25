@@ -1,4 +1,5 @@
 import MathType from './MathType.js';
+import BoolValue from './BoolValue.js';
 import ComplexNumber from './ComplexNumber.js';
 
 /**
@@ -124,12 +125,12 @@ export default class RealNumber extends MathType {
 
   eq(other) {
     const right = RealNumber.from(other).value;
-    return this.#value === right; 
+    return new BoolValue(this.#value === right); 
   }
 
   not_eq(other) {
     const right = RealNumber.from(other).value;
-    return this.#value !== right; 
+    return new BoolValue(this.#value !== right); 
   }
 
   /**
@@ -139,7 +140,7 @@ export default class RealNumber extends MathType {
    */
   lt(other) {
     const right = RealNumber.from(other).value;
-    return this.#value < right; 
+    return new BoolValue(this.#value < right); 
   }
 
   /**
@@ -149,7 +150,7 @@ export default class RealNumber extends MathType {
    */
   gt(other) {
     const right = RealNumber.from(other).value;
-    return this.#value > right; 
+    return new BoolValue(this.#value > right); 
   }
 
   /**
@@ -159,7 +160,7 @@ export default class RealNumber extends MathType {
    */
   lte(other) { 
     const right = RealNumber.from(other).value;
-    return this.#value <= right; 
+    return new BoolValue(this.#value <= right); 
    }
 
   /**
@@ -169,7 +170,7 @@ export default class RealNumber extends MathType {
    */
   gte(other) {
     const right = BoolValue.from(other).#value;
-    return this.value >= right; 
+    return new BoolValue(this.value >= right); 
   }   
 
   // ==========================================
