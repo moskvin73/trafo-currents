@@ -330,7 +330,7 @@ export class MathParser {
     TokenType.MINUS,
   ]));
 
-  #parseStatement(f_out = false) {
+  #parseStatement(code, f_out = false) {
     let exprNode = null;
 
     switch(this.c_token)
@@ -368,13 +368,17 @@ export class MathParser {
       case TokenType.SEMICOLON:
         this.#consume();
         if (exprNode !== null)
-          return { node: exprNode, isSilent: false };
-        return null;
+          code.push(new new StatementNode(sxprNode, false));
+        return;
+          //return { node: exprNode, isSilent: false };
+        //return null;
       case TokenType.SILENT:
         this.#consume();
         if (exprNode !== null)
-          return { node: exprNode, isSilent: exprNode instanceof AssignNode || f_out};
-        return null;
+          code.push(new new StatementNode(sxprNode, exprNode instanceof AssignNode || f_out));
+          ///return { node: exprNode, isSilent: exprNode instanceof AssignNode || f_out};
+        //return null;
+        return;
       default:
         this.#error(
           `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
@@ -382,9 +386,10 @@ export class MathParser {
         while (true)
         {
           if (MathParser.parseStatement_FIRST.has(this.c_token)) {
-            if (exprNode !== null)
+            /*if (exprNode !== null)
               return { node: exprNode, isSilent: false };
-            return null;
+            return null;*/
+            return;
           }
           this.#consume();
           if (MathParser.parseStatement_FALLOW.has(this.c_token)) break;
