@@ -238,19 +238,6 @@ export class MathParser {
               ast_op.value = ast_op.node.evaluate(evl_context);
               evl_context.statements.push(ast_op);
             }
-            /*for (const stmtNode of statements) {
-              if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
-              {
-                //const tab = foldASTToTable(stmtNode.node);
-                //stmtNode.node = unfoldTableToAST(tab, stmtNode.node.loc);
-                stmtNode.value = stmtNode.node.evaluate(evl_context);
-              }
-              else {
-                // Вычисляем значение для каждого сохраненного узла
-                stmtNode.value = stmtNode.node.evaluate(evl_context);
-              }
-              evl_context.statements.push(stmtNode);           
-            }*/
           this.#program.statements = evl_context.statements;
         }
       } catch (error) {
