@@ -95,8 +95,8 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции И.
    */
   and(other) {
-    const rightBool = BoolValue.from(other).#value;
-    return new BoolValue(this.value && rightBool);
+   const right = RealNumber.from(other).value;
+    return new BoolValue(this.#value && rightBool);
   }
 
   /**
@@ -106,8 +106,8 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции ИЛИ.
    */
   or(other) {
-    const rightBool = BoolValue.from(other).#value;
-    return new BoolValue(this.value || rightBool);
+   const right = RealNumber.from(other).value;
+    return new BoolValue(this.#value || rightBool);
   }
 
   /**
@@ -117,8 +117,8 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции XOR.
    */
   xor(other) {
-    const rightBool = BoolValue.from(other).#value;
-    return new BoolValue(this.value !== rightBool);
+   const right = RealNumber.from(other).value;
+    return new BoolValue(this.#value !== rightBool);
   }
 
   // ==========================================
@@ -126,12 +126,12 @@ export default class BoolValue extends MathType {
   // ==========================================
 
   eq(other) {
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value === rightBool; 
   }
 
   not_eq(other) {
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value !== rightBool; 
   }
 
@@ -141,7 +141,7 @@ export default class BoolValue extends MathType {
    * @returns {boolean}
    */
   lt(other) {
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value < rightBool; 
   }
 
@@ -151,7 +151,7 @@ export default class BoolValue extends MathType {
    * @returns {boolean}
    */
   gt(other) {
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value > rightBool; 
   }
 
@@ -161,7 +161,7 @@ export default class BoolValue extends MathType {
    * @returns {boolean}
    */
   lte(other) { 
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value <= rightBool; 
    }
 
@@ -171,7 +171,7 @@ export default class BoolValue extends MathType {
    * @returns {boolean}
    */
   gte(other) {
-    const rightBool = BoolValue.from(other).#value;
+   const right = RealNumber.from(other).value;
     return this.#value >= rightBool; 
   }  
 }
