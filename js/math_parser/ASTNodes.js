@@ -879,9 +879,6 @@ export class DivNode extends StrictRightBinNode {
     }
 
     return l.divide(r);
-
-    /*const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
-    return l.divide(r);*/
   } 
 
   toTeX(context) { return super._renderFractionChain(context); }
@@ -934,6 +931,14 @@ export class PowNode extends BinaryOpNode {
     const r = this.right.toTeX(context);
     return `{${l}}^{${r}}`;
   }
+}
+
+export class RefNode extends MathNode {
+  constructor(loc) {
+    super(loc);
+  }
+
+  createAssign(expression) { throw new Error("[ASTNode]: Метод createAssign() не реализован."); }
 }
 
 export class IdentifierNode extends MathNode {
