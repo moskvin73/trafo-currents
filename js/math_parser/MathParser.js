@@ -367,14 +367,14 @@ export class MathParser {
       case TokenType.SEMICOLON:
         this.#consume();
         if (exprNode !== null)
-          code.push(new new StatementNode(sxprNode, false));
+          code.push(new new StatementNode(exprNode, false));
         return;
           //return { node: exprNode, isSilent: false };
         //return null;
       case TokenType.SILENT:
         this.#consume();
         if (exprNode !== null)
-          code.push(new new StatementNode(sxprNode, exprNode instanceof AssignNode || f_out));
+          code.push(new new StatementNode(exprNode, exprNode instanceof AssignNode || f_out));
           ///return { node: exprNode, isSilent: exprNode instanceof AssignNode || f_out};
         //return null;
         return;
