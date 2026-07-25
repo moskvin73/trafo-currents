@@ -20,7 +20,7 @@ const reservedWordsMap = {
   'let': TokenType.RW_LET,
   'not': TokenType.RW_NOT,
   'and': TokenType.RW_AND,
-  'or': TokenTypes.RW_OR,
+  'or': TokenType.RW_OR,
   'xor': TokenType.RW_XOR,
 };
 
