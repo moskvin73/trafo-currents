@@ -325,7 +325,7 @@ export class MathParser {
     TokenType.MINUS,
   ]));
 
-  #parseStatement() {
+  #parseStatement(f_out = false) {
     let exprNode = null;
 
     switch(this.c_token)
@@ -368,7 +368,7 @@ export class MathParser {
       case TokenType.SILENT:
         this.#consume();
         if (exprNode !== null)
-          return { node: exprNode, isSilent: exprNode instanceof AssignNode };
+          return { node: exprNode, isSilent: exprNode instanceof AssignNode || f_out};
         return null;
       default:
         this.#error(
