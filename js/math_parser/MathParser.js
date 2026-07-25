@@ -692,7 +692,7 @@ export class MathParser {
       return error_value();
   }
 
-  #codeParse() {
+  #parseBlock() {
       this.#consume();
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
@@ -718,7 +718,7 @@ export class MathParser {
     if (this.c_token === TokenType.ASSIGN) {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
-        const statements =this.#codeParse();
+        const statements =this.#parseBlock();
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
@@ -745,7 +745,7 @@ export class MathParser {
         }
         if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
         if (this.c_token === TokenType.LBRACE) {
-          const statements =this.#codeParse();
+          const statements =this.#parseBlock();
           if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
           if (this.errors.length === 0)
           {
