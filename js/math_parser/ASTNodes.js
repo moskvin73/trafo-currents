@@ -421,7 +421,7 @@ export class UnaryOpNodeNot extends UnaryOpNode {
 
   toTeX(context) {
     const argTex = this.argument.toTeX(context);
-    return `\overline{${argTex}}`;
+    return `\\overline{${argTex}}`;
   }
 }
 
