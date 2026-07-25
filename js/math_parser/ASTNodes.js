@@ -938,7 +938,7 @@ export class RefNode extends MathNode {
     super(loc);
   }
 
-  createAssign(expression) { throw new Error("[ASTNode]: Метод createAssign() не реализован."); }
+  createAssign(expression, loc) { throw new Error("[ASTNode]: Метод createAssign() не реализован."); }
 }
 
 export class IdentifierNode extends RefNode {
@@ -958,6 +958,10 @@ export class IdentifierNode extends RefNode {
 export class VariableNode extends IdentifierNode {
   constructor(name, loc) {
     super(name, loc);
+  }
+
+  createAssign(expression, loc) {
+    return new AssignNode(name, expression, loc);
   }
 
   getPriority()  { return OpPriority.PRIMARY; }
