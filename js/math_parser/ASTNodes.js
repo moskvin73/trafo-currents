@@ -32,16 +32,6 @@ export default class ASTNode {
     if (this.constructor === ASTNode) {
       throw new TypeError("[ASTNode]: Нельзя создать экземпляр абстрактного базового класса.");
     }
-     // Проверяем тип локации и инициализируемthis.location
-    /*if (loc instanceof IndependentSourceLocation) {
-      this.loc = loc;
-    } else if (loc instanceof SourceLocation) {
-      this.loc = new IndependentSourceLocation(loc);
-    } else {
-      throw new TypeError(
-        "Параметр location должен быть экземпляром SourceLocation или IndependentSourceLocation"
-      );
-    }*/ 
    this.loc = loc;
   }
 
