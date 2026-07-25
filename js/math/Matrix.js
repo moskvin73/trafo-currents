@@ -87,7 +87,7 @@ export default class Matrix extends MathType {
     const t_v = Matrix.#getElementType(value);
     if (t_m === t_v)
       return this.#rows[row][col] = value;
-    else throw new TypeError(`[Matrix]: Несоответсвие типов элимента матрицы '${t_m}' и типа элемента '${t_v}'.')
+    else throw new TypeError(`[Matrix]: Несоответсвие типов элимента матрицы '${t_m}' и типа элемента '${t_v}'.`)
   }
 
   /**
