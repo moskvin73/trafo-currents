@@ -706,17 +706,6 @@ export class MathParser {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
         const statements =this.#codeParse();
-        /*this.#consume();
-        const statements = [];
-        while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
-          const stmt = this.#parseStatement();
-          if (stmt) {
-             statements.push(new StatementNode(stmt.node, stmt.isSilent));
-          }
-        } 
-        if (statements.length === 0) 
-            this.#error("Блок кода не может быть пустым", this.#location);*/
-
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
