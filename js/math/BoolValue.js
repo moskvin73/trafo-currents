@@ -95,7 +95,8 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции И.
    */
   and(other) {
-    return new BoolValue(this.value && BoolValue.from(other).#value);
+    const rightBool = BoolValue.from(other).#value;
+    return new BoolValue(this.value && rightBool);
   }
 
   /**
@@ -105,7 +106,8 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции ИЛИ.
    */
   or(other) {
-    return new BoolValue(this.value || BoolValue.from(other).#value);
+    const rightBool = BoolValue.from(other).#value;
+    return new BoolValue(this.value || rightBool);
   }
 
   /**
@@ -115,42 +117,61 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Результат операции XOR.
    */
   xor(other) {
-    return new BoolValue(this.value !== BoolValue.from(other).#value);
+    const rightBool = BoolValue.from(other).#value;
+    return new BoolValue(this.value !== rightBool);
   }
 
   // ==========================================
   // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
   // ==========================================
 
-  eq(other) { return this.value === BoolValue.from(other).#value; }
+  eq(other) {
+    const rightBool = BoolValue.from(other).#value;
+    return this.value === rightBool; 
+  }
 
-  not_eq(other) { return this.value !== BoolValue.from(other).#value; }
+  not_eq(other) {
+    const rightBool = BoolValue.from(other).#value;
+    return this.value !== rightBool; 
+  }
 
   /**
    * Операция "Меньше" (<). false (0) меньше, чем true (1).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  lt(other) { return this.value < BoolValue.from(other).#value; }
+  lt(other) {
+    const rightBool = BoolValue.from(other).#value;
+    return this.value < rightBool; 
+  }
 
   /**
    * Операция "Больше" (>). true (1) больше, чем false (0).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  gt(other) { return this.value > BoolValue.from(other).#value; }
+  gt(other) {
+    const rightBool = BoolValue.from(other).#value;
+    return this.value > rightBool; 
+  }
 
   /**
    * Операция "Меньше или равно" (<=).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  lte(other) { return this.value <= BoolValue.from(other).#value; }
+  lte(other) { 
+    const rightBool = BoolValue.from(other).#value;
+    return this.value <= rightBool; 
+   }
 
   /**
    * Операция "Больше или равно" (>=).
    * @param {*} other - Значение для сравнения.
    * @returns {boolean}
    */
-  gte(other) { return this.value >= BoolValue.from(other).#value; }  
+  gte(other) {
+    const rightBool = BoolValue.from(other).#value;
+    return this.value >= rightBool; 
+  }  
 }
