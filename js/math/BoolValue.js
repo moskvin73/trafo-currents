@@ -92,9 +92,7 @@ export default class BoolValue extends MathType {
    * Команда: 'not' или оператор '!'
    * @returns {BoolValue} Инвертированное значение.
    */
-  not() {
-    return new BoolValue(!this.#value);
-  }
+  not() { return new BoolValue(!this.#value); }
 
   /**
    * Логическое И (Конъюнкция).
