@@ -681,7 +681,7 @@ export class MathParser {
       this.#consume();
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
-        const stmt = this.#parseStatement();
+        const stmt = this.#parseStatement(true);
         if (stmt) {
             statements.push(new StatementNode(stmt.node, stmt.isSilent));
         }
