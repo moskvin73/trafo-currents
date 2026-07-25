@@ -72,6 +72,24 @@ export default class Matrix extends MathType {
     return this.#rows[row][col];
   }
 
+  static #getElementType(element)
+  {
+    if (element === null || element === undefined) return String(element);
+    if (typeof element === 'object') return element.constructor; // Возвращает класс (н-р, BoolValue)
+    return typeof element;
+  }
+
+  set(row, col, value) {
+    if (row < 0 || row >= this.rowCount || col < 0 || col >= this.colCount) {
+      throw new RangeError("[Matrix]: Индексы выходят за границы матрицы.");
+    }
+    const t_m = Matrix.#getElementType(this.#rows[row][col]);
+    const t_v = Matrix.#getElementType(value);
+    if (t_m === t_v)
+      return this.#rows[row][col] = value;
+    else throw new TypeError(`[Matrix]: Несоответсвие типов элимента матрицы '${t_m}' и типа элемента '${t_v}'.')
+  }
+
   /**
    * Возвращает копию внутренней структуры
    */
