@@ -695,7 +695,7 @@ export class MathParser {
     this.#consume();
     const token_loc = this.#location;
     if (this.c_token !== TokenType.VARIABLE) {
-      this.#error("Ожидалось имя (идентификатор) после 'let'", this.#location);
+      this.#error("Ожидалось имя (идентификатор) после 'let'", token_loc);
       return null;
     }
     const name = this.lexer.stringValue();
