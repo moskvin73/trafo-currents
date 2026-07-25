@@ -1035,6 +1035,10 @@ export class IndexNode extends RefNode {
     this.#colExpr = colExpr; // Может быть null
   }
 
+  createAssign(expression, loc = this.loc) {
+    return new AssignIndexNode(this.#target, this.#rowExpr, this.#colExpr, expression, loc);
+  }    
+
   getPriority() {
     return  OpPriority.PRIMARY;
   }
