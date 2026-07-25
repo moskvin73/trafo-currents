@@ -216,6 +216,35 @@ export default class Matrix extends MathType {
     return new Matrix(resultElements);
   }
 
+  // ==========================================
+  // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
+  // ==========================================
+
+  eq(other) {
+    const o = Matrix.from(other);
+    // 1. Проверка на идентичность ссылок
+    if (this === o) return new BoolValue(true);
+
+    // 2. Быстрая проверка по размерам (rowCount и colCount)
+    if (this.rowCount !== o.rowCount || this.colCount !== o.colCount) {
+      return new BoolValue(false);
+    }
+
+    // 3. Быстрый обход вложенных массивов (построчно)
+    for (let i = 0; i < this.rowCount; i++) {
+      const rowA = this.#rows[i];
+      const rowB = o.#rows[i]; // Предполагается наличие геттера или доступа к внутренним строкам
+
+      for (let j = 0; j < this.colCount; j++) {
+        if (rowA[j] !== rowB[j]) return new BoolValue(false);
+      }
+    }
+
+    return new BoolValue(true);
+  }
+
+  not_eq(other) { return !this.eq(other); }
+
   /**
    * Транспонирование матрицы (поворот: строки становятся столбцами)
    * @returns {Matrix} Новая прямоугольная транспонированная матрица
