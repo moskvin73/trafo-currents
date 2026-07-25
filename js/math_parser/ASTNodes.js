@@ -1120,7 +1120,7 @@ export class AssignIndexNode extends IndexNode {
     this.expression = expression;
   }
 
-  evaluate_command(matrixObj, rowIndex, colIndex) {
+  evaluate_command(context, matrixObj, rowIndex, colIndex) {
     const elm = matrixObj.get(0, 0);
     const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
     return matrixObj.set(rowIndex, colIndex, l);
