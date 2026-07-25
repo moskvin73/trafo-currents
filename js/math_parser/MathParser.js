@@ -149,6 +149,8 @@ class out_errors
     this.errors = errors;
     this.scope_context = scope_context;
     this.statements = null;
+    this.code = null;
+    this.index_code = 0;
   }
 
   get count() { return this.errors.length; }
@@ -230,7 +232,7 @@ export class MathParser {
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context();
             evl_context.statements = [];
-            for (const stmtNode of statements) {
+            /*for (const stmtNode of statements) {
               if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
               {
                 //const tab = foldASTToTable(stmtNode.node);
@@ -242,7 +244,7 @@ export class MathParser {
                 stmtNode.value = stmtNode.node.evaluate(evl_context);
               }
               evl_context.statements.push(stmtNode);           
-            }
+            }*/
           this.#program.statements = evl_context.statements;
         }
       } catch (error) {
