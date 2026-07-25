@@ -234,9 +234,9 @@ export class MathParser {
             evl_context.statements = [];
             evl_context.code = statements;
             while (evl_context.index_code < evl_context.code.length) {
-              const stmtNode = evl_context.code[evl_context.index_code++];
-              stmtNode.value = stmtNode.node.evaluate(evl_context);
-              evl_context.statements.push(stmtNode);
+              const ast_op = evl_context.code[evl_context.index_code++];
+              ast_op.value = ast_op.node.evaluate(evl_context);
+              evl_context.statements.push(ast_op);
             }
             /*for (const stmtNode of statements) {
               if (stmtNode.node.type_unit == TYPE_UNIT.EXPR && !(stmtNode.node instanceof AssignNode))
