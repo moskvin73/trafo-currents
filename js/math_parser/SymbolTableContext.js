@@ -92,6 +92,13 @@ export class SymbolTableContext {
       throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой. Получено: ${String(name)}`);
     }
 
+    // 1. Ищем в предопределенной части через быстрое сравнение с undefined
+    const fixedIdx = this.fixedHash[name];
+    if (fixedIdx !== undefined) {
+      return fixedIdx; // Возвращаем чистый индекс [0 ... CD-1]
+    }
+
+    
     // 2. Если не нашли, и у нас АКТИВЕН локальный scope — создаем переменную в ТЕКУЩЕМ ВЕРХНЕМ слое
     if (this.scopes.length > 0) {
       const currentScopeIdx = this.scopes.length - 1;
@@ -122,12 +129,6 @@ export class SymbolTableContext {
       // Возвращаем уникальный локальный ID для этого слоя
       return this.LOCAL_MARKER + (currentScopeIdx << 16) + newLocalIdx;
     }    
-
-    // 1. Ищем в предопределенной части через быстрое сравнение с undefined
-    const fixedIdx = this.fixedHash[name];
-    if (fixedIdx !== undefined) {
-      return fixedIdx; // Возвращаем чистый индекс [0 ... CD-1]
-    }
 
     // 2. Ищем в вариативной части пользователя
     const varIdx = this.varHash[name];
@@ -167,6 +168,11 @@ export class SymbolTableContext {
    * @returns {number|null} ID символа или null, если не найден
    */
   getIdByName(name) {
+    // 1. Ищем в фиксированной части
+    const fixedIdx = this.fixedHash[name];
+    if (fixedIdx !== undefined) return fixedIdx;
+
+
     // 1. Ищем в локальных областях видимости (идем с конца стека к началу)
     for (let i = this.scopes.length - 1; i >= 0; i--) {
       const scope = this.scopes[i];
@@ -176,10 +182,6 @@ export class SymbolTableContext {
         return this.LOCAL_MARKER + (i << 16) + localIdx;
       }
     }
-
-    // 1. Ищем в фиксированной части
-    const fixedIdx = this.fixedHash[name];
-    if (fixedIdx !== undefined) return fixedIdx;
 
     // 2. Ищем в вариативной части
     const varIdx = this.varHash[name];
@@ -211,15 +213,16 @@ export class SymbolTableContext {
    * @returns {string} Имя переменной или функции
    */
   getNameById(id) {
+    if (id < this.CD) {
+      return this.fixedNames[id];
+    }
+
     if (id >= this.LOCAL_MARKER) {
       const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
       const localIdx = (id - this.LOCAL_MARKER) & 0xFFFF;
       return this.scopes[scopeIdx]?.names[localIdx] || `[Уничтоженный Local ID: ${id}]`;
     }
 
-    if (id < this.CD) {
-      return this.fixedNames[id];
-    }
     const varIdx = id - this.CD;
     if (varIdx >= this.varNames.length || varIdx < 0) {
       return `[Неизвестный ID: ${id}]`;
@@ -234,6 +237,10 @@ export class SymbolTableContext {
    * @returns {Object} Объект свойств ({type, value} для переменных или {type, overloads} для функций)
    */
   getSymbolById(id) {
+    if (id < this.CD) {
+      return this.fixedSymbols[id];
+    }
+
     // Если ID локальный — мгновенно декодируем координаты в стеке за O(1)
     if (id >= this.LOCAL_MARKER) {
       const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
@@ -246,9 +253,6 @@ export class SymbolTableContext {
       return scope.symbols[localIdx];
     }
 
-    if (id < this.CD) {
-      return this.fixedSymbols[id];
-    }
     const varIdx = id - this.CD;
     if (varIdx >= this.varSymbols.length || varIdx < 0) {
       throw new Error(`Внутренняя ошибка рантайма: Выход за границы таблицы по ID ${id}`);
