@@ -122,6 +122,10 @@ export default class BoolValue extends MathType {
   // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
   // ==========================================
 
+  eq(other) { return this.value === BoolValue.from(other).#value; }
+
+  not_eq(other) { return this.value !== BoolValue.from(other).#value; }
+
   /**
    * Операция "Меньше" (<). false (0) меньше, чем true (1).
    * @param {*} other - Значение для сравнения.
