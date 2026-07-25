@@ -32,7 +32,7 @@ export default class BoolValue extends MathType {
         );}
     
         // Безопасно сохраняем чистое значение true/false
-        this.#value = isBoolValueInstance ? jsValue.value : jsValue; 
+        this.#value = isBoolValueInstance ? jsValue.#value : jsValue; 
     }
    
     get isBoolValue() { return true; }
