@@ -997,6 +997,10 @@ export class AssignNode extends IdentifierNode {
     this.expression = expression;
   }
 
+  createAssign(expression, loc = this.loc) {
+    return new AssignNode(name, expression, loc);
+  }  
+
   getPriority() { return OpPriority.ASSIGN; }
 
   toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
