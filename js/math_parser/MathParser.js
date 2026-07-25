@@ -82,16 +82,10 @@ export class TeXOutputFormatter {
 
     // 2. Если пользователь ввёл просто константу или комплексное число (например, 10 + 3i)
     if (this._isStaticLiteralTree(inputTree)) {
-      if (typeof resultValue === 'boolean') {
-        return inputTree.toTeX(context);
-      }
       return resultValue.toRawTeX(context.settings); // Гасим левую часть, выводим только ответ
     }
 
-    if (typeof resultValue === 'boolean') {
-      resultValue = `\\mathrm{${resultValue}}`
-    }
-    else resultValue = resultValue.toRawTeX(context.settings);
+    resultValue = resultValue.toRawTeX(context.settings);
 
     // 3. Для полноценных вычислений выводим классическую цепочку (например, 2 * 5 = 10)
     return `${inputTree.toTeX(context)} = ${resultValue}`;
