@@ -719,6 +719,75 @@ export class NotEquNode extends BinaryOpNode {
   }
 }
 
+export class LtNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '<', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.lt(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} < ${r}`;
+  }
+}
+
+export class GtNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '>', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.gt(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} > ${r}`;
+  }
+}
+
+export class LteNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '<=', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.lte(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} \\leqslant ${r}`;
+  }
+}
+
+export class GteNode extends BinaryOpNode {
+  constructor(left, right, loc) {
+    super(left, '>=', right, loc);
+  }
+
+  getPriority() { return OpPriority.RELATIONAL; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.gte(r);
+  }
+
+  simpleTeX(l, r) {
+    return `${l} \\geqslant ${r}`;
+  }
+}
+
+
 export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
