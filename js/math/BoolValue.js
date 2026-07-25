@@ -8,6 +8,10 @@ import MathType from './MathType.js';
 export default class BoolValue extends MathType {
 
   static typeId = Symbol.for('Math.BoolValue');  
+
+  // Приватное поле для хранения вещественного значения
+  #value;
+
    /**
    * Создает экземпляр логического значения.
    * @param {boolean|BoolValue} jsValue - Только нативный boolean или другой экземпляр BoolValue.
@@ -28,16 +32,25 @@ export default class BoolValue extends MathType {
         );}
     
         // Безопасно сохраняем чистое значение true/false
-        this.value = isBoolValueInstance ? jsValue.value : jsValue; 
+        this.#value = isBoolValueInstance ? jsValue.value : jsValue; 
     }
    
-  toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
-    throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
-  }
+    get isBoolValue() { return true; }
 
-  toString(settings) {
-    return String(this.value);
-  }
+    /**
+     * Геттер для получения значения примитива
+     */
+    get value() {
+        return this.#value;
+    }
+   
+    toRawTeX(settings, locale = new Intl.NumberFormat().resolvedOptions().locale) {
+        throw new Error(`[MathType]: Метод toRawTeX() не реализован в классе ${this.constructor.name}`);
+    }
+
+    toString(settings) {
+        return String(this.value);
+    }
   
   // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
@@ -46,12 +59,32 @@ export default class BoolValue extends MathType {
   // Переменная для кэширования таблицы конвертеров
   static #localConverters = new Map([
     [Symbol.for('Math.BoolValue'), (val) => val],
-    ['bool',                         (val) => new BoolValue(val)],
+    ['bool',                       (val) => new BoolValue(val)],
   ]);
 
   static get converters() { return BoolValue.#localConverters; }
 
- // ==========================================
+  // ==========================================
+  // МЕТОДЫ СРАВНЕНИЯ (Equality)
+  // ==========================================
+
+  /**
+   * Строгое математическое равенство (IEEE 754)
+   * Корректно различает +0 и -0 для точных фазовых переходов 
+   * и позволяет проверять идентичность NaN в юнит-тестах.
+   * @param {BoolValue|oolean} other 
+   * @returns {boolean}
+   */
+  equals(other) {
+    try {
+      const o = BoolValue.from(other);
+      return Object.is(this.#value, o.#value);
+    } catch {
+      return false; // Если тип не приводимый, числа заведомо не равны
+    }
+  }
+
+  // ==========================================
   // ОСНОВНЫЕ ЛОГИЧЕСКИЕ ОПЕРАЦИИ (СТРОКОВЫЕ КОМАНДЫ)
   // ==========================================
 
@@ -61,7 +94,36 @@ export default class BoolValue extends MathType {
    * @returns {BoolValue} Инвертированное значение.
    */
   not() {
-    return new BoolValue(!this.value);
+    return new BoolValue(!this.#value);
   }
 
+  /**
+   * Логическое И (Конъюнкция).
+   * Команда: 'and' или оператор '&&'
+   * @param {*} other - Второе значение (автоматически приводится к BoolValue).
+   * @returns {BoolValue} Результат операции И.
+   */
+  and(other) {
+    return new BoolValue(this.value && BoolValue.from(other).#value);
+  }
+
+  /**
+   * Логическое ИЛИ (Дизъюнкция).
+   * Команда: 'or' или оператор '||'
+   * @param {*} other - Второе значение (автоматически приводится к BoolValue).
+   * @returns {BoolValue} Результат операции ИЛИ.
+   */
+  or(other) {
+    return new BoolValue(this.value || BoolValue.from(other).#value);
+  }
+
+  /**
+   * Исключающее ИЛИ (XOR).
+   * Команда: 'xor'
+   * @param {*} other - Второе значение.
+   * @returns {BoolValue} Результат операции XOR.
+   */
+  xor(other) {
+    return new BoolValue(this.value !== BoolValue.from(other).#value);
+  }
 }
