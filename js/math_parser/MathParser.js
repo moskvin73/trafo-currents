@@ -872,6 +872,18 @@ export class MathParser {
     } else this.#consume();
 
     this.#match(TokenType.RPAREN, "Ожидалась ')'");
+
+    // Тело цикла
+    if (this.c_token === TokenType.LBRACE)
+    {
+      loopBody =this.#parseBlock(f_out);
+      this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода ");
+    }
+    else {
+      this.#parseStatement(loopBody, f_out);
+    }
+    
+    
   }
 
   #parseBlock(f_out = true) {
