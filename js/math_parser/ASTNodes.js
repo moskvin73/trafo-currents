@@ -175,6 +175,19 @@ export class IF_Node extends ASTNode {
   }
 }
 
+export class Goto_Node extends ASTNode {
+  constructor(len_code, loc) {
+    super(loc);
+    this.len_code = len_code;
+  }
+
+  get type_unit() { return TYPE_UNIT.EMPTY; }
+
+  internal_evaluate(context) {
+      context.index_code += this.len_code;
+  }
+}
+
 export class DefineVarableCodeNode extends ASTNode {
     constructor(name, statements, params, loc) {
     super(loc);
