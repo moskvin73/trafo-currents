@@ -433,7 +433,7 @@ export class MathParser {
           this.#consume();
           return;
         }
-        exprNode = new Goto_Node({ type: 'break' }, this.#location);
+        exprNode = new Goto_Node({ type: MathParser.ALLOW_BREAK }, this.#location);
         this.#consume();
         break;
       case TokenType.RW_CONTINUE:
@@ -443,7 +443,7 @@ export class MathParser {
           this.#consume();
           return;
         }
-        exprNode = new Goto_Node({ type: 'continue' }, this.#location);
+        exprNode = new Goto_Node({ type: MathParser.ALLOW_CONTINUE }, this.#location);
         this.#consume();
         break;
       case TokenType.RW_RETUTN:
