@@ -739,14 +739,13 @@ export class MathParser {
     if (this.errors.length === 0)
     {
       // Собираем код
-      code.push(new StatementNode(new IF_Node(exp, trueStatement.length, token_cond), f_out));
-      code.push(... trueStatement);
       const false_len = falseStatement.length;
-      if (false_len)
+      if (false_len !== 0)
       {
-        code.push(new StatementNode(new Goto_Node(false_len, token_else), f_out));
-        code.push(... falseStatement);
+        trueStatement.push(new StatementNode(new Goto_Node(false_len, token_else), f_out));
       }
+      code.push(new StatementNode(new IF_Node(exp, trueStatement.length, token_cond), f_out));
+      code.push(... trueStatement, ... falseStatement);
     }
   }
 
