@@ -144,7 +144,7 @@ export class TeXOutputFormatter {
   }
 }
 
-class out_errors
+class context_evallution
 {
   #items = [];
 
@@ -237,7 +237,7 @@ export class MathParser {
   }
 
   #create_evl_context() {
-    return new out_errors(this.context, this.errors);
+    return new context_evallution(this.context, this.errors);
   }
 
   /**
