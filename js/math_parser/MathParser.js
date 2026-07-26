@@ -151,7 +151,6 @@ class out_errors
   constructor(scope_context, errors) {
     this.errors = errors;
     this.scope_context = scope_context;
-    this.statements = null;
     this.code = null;
     this.index_code = 0;
   }
@@ -246,12 +245,12 @@ export class MathParser {
    */
   parse() {
     try {
-        const statements = [];
-        this.#parseCode(statements);
+        const code = [];
+        this.#parseCode(code);
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context();
-            evl_context.statements = [];
-            evl_context.code = statements;
+            const statements = [];
+            evl_context.code = code;
             while (evl_context.index_code < evl_context.code.length) {
               const ast_op = evl_context.code[evl_context.index_code++];
               if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
@@ -259,12 +258,12 @@ export class MathParser {
                 const value = ast_op.node.evaluate(evl_context);
                 if (value) {
                   ast_op.value = value;
-                  evl_context.statements.push(ast_op);
+                  statements.push(ast_op);
                 }
               }
               else ast_op.node.evaluate(evl_context);
             }
-          this.#program.statements = evl_context.statements;
+          this.#program.statements = statements;
         }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
