@@ -860,7 +860,7 @@ export class MathParser {
 
     this.#match(TokenType.LPAREN, "Ожидалась '('");
 
-    let expInit = null; bool f_out_expInit = false;
+    let expInit = null; let f_out_expInit = false;
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       const exp_init_loc = this.#location;
@@ -871,7 +871,7 @@ export class MathParser {
       f_out_expInit = end_expr();
     } else this.#consume();
 
-    let expCond = null; bool f_out_expCond = false; 
+    let expCond = null; let f_out_expCond = false; 
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       expCond = this.#parseExpression();
@@ -897,7 +897,7 @@ export class MathParser {
       this.#parseStatement(loopBody, f_out);
     }
     
-    /*if (this.errors.length === 0)
+    if (this.errors.length === 0)
     {
       if (expInc)
       {
@@ -914,7 +914,7 @@ export class MathParser {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, token_cond), f_out || f_out_expCond));
       }
       code.push(... loopBody);
-    }*/
+    }
   }
 
   #parseBlock(f_out = true) {
