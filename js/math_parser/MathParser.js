@@ -878,6 +878,7 @@ export class MathParser {
       f_out_expCond = end_expr();
     } else this.#consume();
 
+    const exp_inc_loc = this.#location;
     let expInc = null; 
     if (this.c_token !== TokenType.RPAREN)
     {
@@ -902,7 +903,7 @@ export class MathParser {
       {
         loopBody.push(new StatementNode(expInc, f_out));
       }
-      code.push(new StatementNode(new Goto_Node(-(loopBody.length + (expCond ? 2 : 1)), this.#location), f_out));
+      loopBody.push(new StatementNode(new Goto_Node(-(loopBody.length + (expCond ? 2 : 1)), exp_inc_loc), f_out));
 
       if (expInit)
       {
@@ -912,6 +913,7 @@ export class MathParser {
       {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, token_cond), f_out || f_out_expCond));
       }
+      code.push(... loopBody);
     }
   }
 
