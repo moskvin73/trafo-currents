@@ -856,7 +856,6 @@ export class MathParser {
                         this.#location);
           return false;
       }
-
     };
 
     this.#match(TokenType.LPAREN, "Ожидалась '('");
@@ -864,9 +863,10 @@ export class MathParser {
     let expInit = null; bool f_out_expLet = false;
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
+      const exp_init_loc = this.#location;
       expInit = this.#parseExpression();
-      if (!(expr instanceof RefNode)) {
-        this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось ссылка.`,  opToken_loc);
+      if (!expr.isAssigned) {
+        this.#error(`[Semantic Error]: Неверное выражение`, exp_init_loc);
       }
       f_out_expLet = end_expr();
     } else this.#consume();
