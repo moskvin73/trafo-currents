@@ -792,7 +792,7 @@ export class MathParser {
     if (this.c_token === TokenType.LBRACE)
     {
       loopBody =this.#parseBlock(f_out);
-      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+      this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода ");
     }
     else {
       this.#parseStatement(loopBody, f_out);
@@ -803,6 +803,34 @@ export class MathParser {
       loopBody.push(new StatementNode(new Goto_Node(-(loopBody.length + 2), this.#location), f_out));
       code.push(new StatementNode(new IF_Node(exp, loopBody.length, token_cond), f_out));
       code.push(... loopBody);
+    }
+  }
+
+  #parseDoWhere(code, f_out) {
+    let loopBody = [];
+    this.#consume();
+
+    // Тело цикла
+    if (this.c_token === TokenType.LBRACE)
+    {
+      loopBody =this.#parseBlock(f_out);
+      this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода ");
+    }
+    else {
+      this.#parseStatement(loopBody, f_out);
+    }
+
+    if (this.#match(TokenType.RW_WHERE, "Ожидалась 'where' в конце блока кода")) {
+      this.#consume();
+      if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
+      const token_cond = this.#location;
+      const exp = this.#parseExpression();
+      if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
+
+      if (this.errors.length === 0)
+      {
+        
+      }
     }
   }
 
