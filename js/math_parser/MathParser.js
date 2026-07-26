@@ -431,8 +431,11 @@ export class MathParser {
         {
           this.#error("Недопустимый оператор 'break'", this.#location);
           this.#consume();
+          return;
         }
-        return;
+        exprNode = new Goto_Node(null, this.#location);
+        this.#consume();
+        break;
       case TokenType.RW_CONTINUE:
         if (!this.isAllowed(MathParser.ALLOW_CONTINUE))
         {
