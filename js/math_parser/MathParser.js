@@ -265,7 +265,6 @@ export class MathParser {
         this.#parseCode(code);
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context();
-            //const statements = [];
             evl_context.code = code;
             evl_context.run();
             this.#program.statements = evl_context.report;
