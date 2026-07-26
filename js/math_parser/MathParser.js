@@ -177,13 +177,13 @@ class context_evallution
       const ast_op = this.code[this.index_code++];
       if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
       {
-        const value = ast_op.node.evaluate(evl_context);
+        const value = ast_op.node.evaluate(this);
         if (value) {
           ast_op.value = value;
           this.report.push(ast_op);
         }
       }
-      else ast_op.node.evaluate(evl_context);
+      else ast_op.node.evaluate(this);
     }
   }
 
