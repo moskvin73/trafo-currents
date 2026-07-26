@@ -52,7 +52,6 @@ import { unfoldTableToAST } from '../math/unfoldTableToAST.js'
 export class StatementNode {
   constructor(node, isSilent) {
     this.node = node;
-    this.value = null;
     this.isSilent = isSilent;
   }
 
@@ -142,6 +141,13 @@ export class TeXOutputFormatter {
       }
     }
     return this._isStaticLiteralTree(node);
+  }
+}
+
+class reportRecord {
+  constructor(node, value) {
+    this.node = node;
+    this.value = value;
   }
 }
 
