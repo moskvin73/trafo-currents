@@ -382,7 +382,7 @@ export class MathParser {
         break;
       case TokenType.RW_IF:
         this.#parseIF(code, f_out);
-        break;
+        return;
       default:
         exprNode = this.#parseExpression();
         break;
