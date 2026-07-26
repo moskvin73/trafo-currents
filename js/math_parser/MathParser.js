@@ -396,6 +396,9 @@ export class MathParser {
       case TokenType.RW_DO:
         this.#parseDoWhere(code, f_out);
         break; // Требуем ; или $
+      case TokenType.RW_FOR:
+        this.#parseFor(code, f_out);
+        return;
       case TokenType.SEMICOLON:
       case TokenType.SILENT:
         // Проопускаем пустые ;;; $$$$ разделители операторов
@@ -833,6 +836,42 @@ export class MathParser {
           code.push(new StatementNode(new Goto_Node(-(loopBody.length + 2), this.#location), f_out));
       }
     }
+  }
+
+  #parseFor(code, f_out) {
+    let loopBody = [];
+    this.#consume();
+
+    this.#match(TokenType.LPAREN, "Ожидалась '('");
+
+    let expLet = null; 
+    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+    {
+      expLet = this.#parseExpression();
+      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
+      else  his.#consume();
+    } else this.#consume();
+
+    let expCond = null; 
+    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+    {
+      expCond = this.#parseExpression();
+      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
+      else  his.#consume();
+    } else this.#consume();
+
+    let expInc = null; 
+    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+    {
+      expInc = this.#parseExpression();
+      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
+      else  his.#consume();
+    } else this.#consume();
+
+    this.#match(TokenType.RPAREN, "Ожидалась ')'");
   }
 
   #parseBlock(f_out = true) {
