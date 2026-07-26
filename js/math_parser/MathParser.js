@@ -735,7 +735,7 @@ export class MathParser {
       }
     }
     // Собираем код
-    code.push(new IF_Node(exp, trueStatement.length, token_loc);
+    code.push(new IF_Node(exp, trueStatement.length, token_loc));
     code.push(... trueStatement, ... falseStatement);
   }
 
