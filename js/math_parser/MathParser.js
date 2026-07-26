@@ -396,9 +396,9 @@ export class MathParser {
       case TokenType.RW_DO:
         this.#parseDoWhere(code, f_out);
         break; // Требуем ; или $
-      case TokenType.RW_FOR:
+      /*case TokenType.RW_FOR:
         this.#parseFor(code, f_out);
-        return;
+        return;*/
       case TokenType.SEMICOLON:
       case TokenType.SILENT:
         // Проопускаем пустые ;;; $$$$ разделители операторов
