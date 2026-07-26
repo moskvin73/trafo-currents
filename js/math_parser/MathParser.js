@@ -865,7 +865,7 @@ export class MathParser {
     {
       const exp_init_loc = this.#location;
       expInit = this.#parseExpression();
-      if (!expr.isAssigned) {
+      if (!expInit.isAssigned) {
         this.#error(`[Semantic Error]: Выражение должно быть присвоением`, exp_init_loc);
       }
       f_out_expInit = end_expr();
