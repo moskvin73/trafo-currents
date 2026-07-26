@@ -843,8 +843,8 @@ export class MathParser {
 
     // Собираем только Goto_Node, относящиеся к текущему циклу
     if (node instanceof Goto_Node) {
-      if (node.target.type === MathParser.ALLOW_BREAK || 
-          node.target.type === MathParser.ALLOW_CONTINUE) {
+      if (node.len_code.type === MathParser.ALLOW_BREAK || 
+          node.len_code.type === MathParser.ALLOW_CONTINUE) {
         jumps.push({
           node: node, // Ссылка на узел, чтобы изменить его len_code
           index: i    // Индекс этого узла в массиве loopBody
