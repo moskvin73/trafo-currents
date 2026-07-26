@@ -842,34 +842,44 @@ export class MathParser {
     let loopBody = [];
     this.#consume();
 
+    const end_expr = () => {
+      switch(this.c_token)
+      {
+        case TokenType.SEMICOLON:
+          this.#consume();
+          return false;
+        case TokenType.SILENT:
+          this.#consume();
+          return true;
+        default:
+          this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, 
+                        this.#location);
+          return false;
+      }
+
+    };
+
     this.#match(TokenType.LPAREN, "Ожидалась '('");
 
-    let expLet = null; 
+    let expLet = null; bool f_out_expLet = false;
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       expLet = this.#parseExpression();
-      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
-        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
-      else  his.#consume();
+      f_out_expLet = end_expr();
     } else this.#consume();
 
-    let expCond = null; 
+    let expCond = null; bool f_out_expCond = false; 
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       expCond = this.#parseExpression();
-      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
-        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
-      else  his.#consume();
+      f_out_expCond = end_expr();
     } else this.#consume();
 
     let expInc = null; 
-    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
+    if (this.c_token !== TokenType.RPAREN)
     {
       expInc = this.#parseExpression();
-      if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
-        this.#error(`Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`, this.#location);
-      else  his.#consume();
-    } else this.#consume();
+    }
 
     this.#match(TokenType.RPAREN, "Ожидалась ')'");
 
