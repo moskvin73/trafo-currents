@@ -147,23 +147,13 @@ export class VarableCode
   toRawTeX(settings) { return "\\text{code}"; }
 
   evaluate(context, args) {
-    //let end;
     context.scope_context.enterScope();
-   // try {
-      for (let i = 0; i < args.length; i++) {
-        const id = context.scope_context.acquireId(this.params[i]);
-        const sym = context.scope_context.getSymbolById(id);
-        sym.value = args[i];
-      }
-      context.push_code(this.statements);
-      /*for (const stmtNode of this.statements) {
-        end = stmtNode.value = stmtNode.node.evaluate(context);
-        context.statements.push(stmtNode);
-      }
-      return end;*/
-    /*} finally {
-      context.scope_context.exitScope();
-    }*/
+    for (let i = 0; i < args.length; i++) {
+      const id = context.scope_context.acquireId(this.params[i]);
+      const sym = context.scope_context.getSymbolById(id);
+      sym.value = args[i];
+    }
+    context.push_code(this.statements);
   }
 }
 
