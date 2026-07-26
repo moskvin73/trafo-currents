@@ -1001,7 +1001,7 @@ export class MathParser {
       const jumps = MathParser.#collectLoopJumps(loopBody);
       if (jumps.length > 0)
       {
-        const switchEndIndex = switchBody.length + (expCond ? 1 : 0);
+        const switchEndIndex = loopBody.length + (expCond ? 1 : 0);
         for (let i = 0; i < jumps.length; i++) {
           const jump = jumps[i];
           if (jump.node.len_code.type === MathParser.ALLOW_BREAK) {
