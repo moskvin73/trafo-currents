@@ -270,9 +270,11 @@ export class MathParser {
         this.#parseCode(code);
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context();
-            const statements = [];
+            //const statements = [];
             evl_context.code = code;
-            while (evl_context.index_code < evl_context.code.length) {
+            evl_context.run();
+            this.#program.statements = evl_context.report;
+            /*while (evl_context.index_code < evl_context.code.length) {
               const ast_op = evl_context.code[evl_context.index_code++];
               if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
               {
@@ -284,7 +286,7 @@ export class MathParser {
               }
               else ast_op.node.evaluate(evl_context);
             }
-          this.#program.statements = statements;
+          this.#program.statements = statements;*/
         }
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
