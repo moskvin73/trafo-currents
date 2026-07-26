@@ -708,7 +708,10 @@ export class MathParser {
 
   #parseIF(code, f_out) {
     this.#consume();
-
+    if (this.c_token === TokenType.LBRACE)
+    {
+      const statements =this.#parseBlock();
+    }
   }
 
   #parseBlock() {
