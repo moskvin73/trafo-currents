@@ -998,7 +998,7 @@ export class MathParser {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, exp_cond_loc), f_out || f_out_expCond));
       }
 
-      const jumps = MathParser.1#collectLoopJumps(loopBody);
+      const jumps = MathParser.#collectLoopJumps(loopBody);
       if (jumps.length > 0)
       {
         const switchEndIndex = switchBody.length + (expCond ? 1 : 0);
