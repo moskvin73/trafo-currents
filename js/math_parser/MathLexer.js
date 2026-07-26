@@ -24,7 +24,7 @@ const reservedWordsMap = {
   'xor': TokenType.RW_XOR,
   'if': TokenType.RW_IF,
   'else': TokenType.RW_ELSE,
-  'where': TokenType.RW_WHERE,
+  'while': TokenType.RW_WHILE,
   'do': TokenType.RW_DO,
   'for': TokenType.RW_FOR,
   'return': TokenType.RW_RETUTN,

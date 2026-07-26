@@ -417,11 +417,11 @@ export class MathParser {
       case TokenType.RW_IF:
         this.#parseIF(code, f_out);
         return;
-      case TokenType.RW_WHERE:
-        this.#parseWhere(code, f_out);
+      case TokenType.RW_WHILE:
+        this.#parseWhile(code, f_out);
         return;
       case TokenType.RW_DO:
-        this.#parseDoWhere(code, f_out);
+        this.#parseDoWhile(code, f_out);
         break; // Требуем ; или $
       case TokenType.RW_FOR:
         this.#parseFor(code, f_out);
@@ -856,7 +856,7 @@ export class MathParser {
   }
 
 
-  #parseWhere(code, f_out) {
+  #parseWhile(code, f_out) {
     let loopBody = [];
     this.#consume();
     // Условие
@@ -902,7 +902,7 @@ export class MathParser {
     }
   }
 
-  #parseDoWhere(code, f_out) {
+  #parseDoWhile(code, f_out) {
     let loopBody = [];
     this.#consume();
 
@@ -916,7 +916,7 @@ export class MathParser {
       this.#parseStatement(loopBody, f_out);
     }
 
-    if (this.#match(TokenType.RW_WHERE, "Ожидалась 'where' в конце блока кода")) {
+    if (this.#match(TokenType.RW_WHILE, "Ожидалась 'where' в конце блока кода")) {
       this.#match(TokenType.LPAREN, "Ожидалась '('");
       const token_cond = this.#location;
       const exp = this.#parseExpression();

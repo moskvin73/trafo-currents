@@ -41,7 +41,7 @@ const tokenNames = [
   'RW_XOR',
   'RW_IF',
   'RW_ELSE',
-  'RW_WHERE',
+  'RW_WHILE',
   'RW_DO',
   'RW_FOR',
   'RW_RETUTN',
