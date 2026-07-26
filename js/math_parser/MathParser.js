@@ -755,7 +755,7 @@ export class MathParser {
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
-          statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
+          //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
           return new DefineVarableCodeNode(name, statements, null, token_loc);
         }
       }
@@ -784,7 +784,7 @@ export class MathParser {
           if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
           if (this.errors.length === 0)
           {
-            statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
+            //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
             return new DefineVarableCodeNode(name, statements, params, token_loc);
           }
         }
