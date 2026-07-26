@@ -707,17 +707,26 @@ export class MathParser {
   }
 
   #parseIF(code, f_out) {
+    let trueStatement = [];
+    let falseStatement = [];
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
     const exp = this.#parseExpression();
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
     if (this.c_token === TokenType.LBRACE)
     {
-      const statements =this.#parseBlock(f_out);
+      trueStatement =this.#parseBlock(f_out);
       if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
     }
     else {
-      this.#parseStatement(code, f_out);
+      this.#parseStatement(trueStatement, f_out);
+    }
+    if (this.c_token === TokenType.RW_ELSE)
+    {
+      if (this.c_token === TokenType.LBRACE)
+      {
+
+      }
     }
   }
 
