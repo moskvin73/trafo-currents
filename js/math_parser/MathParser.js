@@ -871,7 +871,8 @@ export class MathParser {
       f_out_expInit = end_expr();
     } else this.#consume();
 
-    let expCond = null; let f_out_expCond = false; 
+    let expCond = null; let f_out_expCond = false;
+    const exp_cond_loc = this.#location;
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       expCond = this.#parseExpression();
@@ -911,7 +912,7 @@ export class MathParser {
       }
       if (expCond)
       {
-        code.push(new StatementNode(new IF_Node(expCond, loopBody.length, token_cond), f_out || f_out_expCond));
+        code.push(new StatementNode(new IF_Node(expCond, loopBody.length, exp_cond_loc), f_out || f_out_expCond));
       }
       code.push(... loopBody);
     }
