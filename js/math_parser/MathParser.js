@@ -426,6 +426,27 @@ export class MathParser {
       case TokenType.RW_FOR:
         this.#parseFor(code, f_out);
         return;
+      case TokenType.RW_BREAK:
+        if (!this.isAllowed(MathParser.ALLOW_BREAK))
+        {
+          this.#error("Недопустимый оператор 'break'", this.#location);
+          this.#consume();
+        }
+        return;
+      case TokenType.RW_CONTINUE:
+        if (!this.isAllowed(MathParser.ALLOW_CONTINUE))
+        {
+          this.#error("Недопустимый оператор 'continue': нет окружающего цикла", this.#location);
+          this.#consume();
+        }
+        return;
+      case TokenType.RW_RETUTN:
+        if (!this.isAllowed(MathParser.ALLOW_RETURN))
+        {
+          this.#error("Оператор 'return' может использоваться только внутри тела функции", this.#location);
+          this.#consume();
+        }
+        return;
       case TokenType.SEMICOLON:
       case TokenType.SILENT:
         // Проопускаем пустые ;;; $$$$ разделители операторов
