@@ -27,6 +27,9 @@ const reservedWordsMap = {
   'where': TokenType.RW_WHERE,
   'do': TokenType.RW_DO,
   'for': TokenType.RW_FOR,
+  'return': TokenType.RW_RETUTN;
+  'break': TokenType.RW_BREAK,
+  'continue': TokenType.RW_CONTINUE,
 };
 
 
