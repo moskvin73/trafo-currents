@@ -880,10 +880,16 @@ export class MathParser {
     } else this.#consume();
 
     const exp_inc_loc = this.#location;
-    let expInc = null; 
+    let expInc = null; let f_out_expInc = false;
     if (this.c_token !== TokenType.RPAREN)
-    {
+    {      
       expInc = this.#parseExpression();
+      // Разрешается вводить символ $ полсе оператора прирощения
+      if (this.c_token !== TokenType.SILENT)
+      {
+        f_out_expInc = true;
+        this.#consume();
+      }
     }
 
     this.#match(TokenType.RPAREN, "Ожидалась ')'");
@@ -902,7 +908,7 @@ export class MathParser {
     {
       if (expInc)
       {
-        loopBody.push(new StatementNode(expInc, f_out));
+        loopBody.push(new StatementNode(expInc, f_out || f_out_expInc));
       }
       loopBody.push(new StatementNode(new Goto_Node(-(loopBody.length + (expCond ? 2 : 1)), exp_inc_loc), f_out));
 
