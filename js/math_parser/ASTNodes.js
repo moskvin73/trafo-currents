@@ -157,16 +157,21 @@ export class VarableCode
   }
 }
 
-export class ReturnCodeNode extends ASTNode {
-  constructor(loc) {
+export class IF_Node extends ASTNode {
+  constructor(if_expr, len_code_false, loc) {
     super(loc);
+    this.if_expr = if_expr;
+    this.len_code_false = len_code_false;
   }
 
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
-    context.scope_context.exitScope();
-    context.pop_code();
+    const if_result = this.if_expr.internal_evaluate(context);
+    b_value = BoolValue.from(if_result).value;
+    if (!b_value) {
+      context.index_code += this.len_code_false;
+    }
   }
 }
 

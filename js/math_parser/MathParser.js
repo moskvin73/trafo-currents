@@ -734,7 +734,7 @@ export class MathParser {
       }
     }
     // Собираем код
-
+    code.push(... trueStatement, ... falseStatement);
   }
 
   #parseBlock(f_out = true) {
