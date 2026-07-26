@@ -720,6 +720,7 @@ export class MathParser {
     const token_cond = this.#location;
     const exp = this.#parseExpression();
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
+    const token_then = this.#location;
     if (this.c_token === TokenType.LBRACE)
     {
       trueStatement =this.#parseBlock(f_out);
@@ -740,6 +741,10 @@ export class MathParser {
       else {
         this.#parseStatement(falseStatement, f_out);
       }
+    }
+    if (trueStatement.length === 0)
+    {
+      this.#error("Пустое тело оператора 'if'", token_then);
     }
     if (this.errors.length === 0)
     {
