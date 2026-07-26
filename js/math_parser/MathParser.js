@@ -149,6 +149,8 @@ class reportRecord {
     this.node = node;
     this.value = value;
   }
+
+  get type_unit() { return this.node.type_unit; }
 }
 
 class context_evallution
@@ -287,7 +289,6 @@ export class MathParser {
     }
 
     return this.#program.statements
-      .filter((stmt) => !stmt.isSilent && stmt.node.type_unit !== TYPE_UNIT.EMPTY)
       .map((stmt) => {
         switch (stmt.type_unit)
         {
