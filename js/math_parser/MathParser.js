@@ -739,8 +739,12 @@ export class MathParser {
     // Собираем код
     code.push(new StatementNode(new IF_Node(exp, trueStatement.length, token_cond), f_out));
     code.push(... trueStatement);
-    code.push(new StatementNode(new Goto_Node(falseStatement.length, token_else), f_out));
-    code.push(... falseStatement);
+    const false_len = falseStatement.length;
+    if (false_len)
+    {
+      code.push(new StatementNode(new Goto_Node(false_len, token_else), f_out));
+      code.push(... falseStatement);
+    }
   }
 
   #parseBlock(f_out = true) {
