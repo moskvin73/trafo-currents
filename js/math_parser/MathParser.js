@@ -396,9 +396,9 @@ export class MathParser {
       case TokenType.RW_DO:
         this.#parseDoWhere(code, f_out);
         break; // Требуем ; или $
-      /*case TokenType.RW_FOR:
+      case TokenType.RW_FOR:
         this.#parseFor(code, f_out);
-        return;*/
+        return;
       case TokenType.SEMICOLON:
       case TokenType.SILENT:
         // Проопускаем пустые ;;; $$$$ разделители операторов
@@ -838,7 +838,7 @@ export class MathParser {
     }
   }
 
- /* #parseFor(code, f_out) {
+ #parseFor(code, f_out) {
     let loopBody = [];
     this.#consume();
 
@@ -897,7 +897,7 @@ export class MathParser {
       this.#parseStatement(loopBody, f_out);
     }
     
-    if (this.errors.length === 0)
+    /*if (this.errors.length === 0)
     {
       if (expInc)
       {
@@ -914,8 +914,8 @@ export class MathParser {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, token_cond), f_out || f_out_expCond));
       }
       code.push(... loopBody);
-    }
-  }*/
+    }*/
+  }
 
   #parseBlock(f_out = true) {
       
