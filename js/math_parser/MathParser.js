@@ -842,7 +842,7 @@ export class MathParser {
     const node = loopBody[i].node;
 
     // Собираем только Goto_Node, относящиеся к текущему циклу
-    if (node instanceof Goto_Node) {
+    if (node instanceof Goto_Node && typeof node.len_code === 'object') {
       if (node.len_code.type === MathParser.ALLOW_BREAK || 
           node.len_code.type === MathParser.ALLOW_CONTINUE) {
         jumps.push({
