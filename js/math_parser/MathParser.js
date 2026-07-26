@@ -999,6 +999,19 @@ export class MathParser {
       }
 
       const jumps = #collectLoopJumps(loopBody);
+      if (jumps)
+      {
+        const switchEndIndex = switchBody.length;
+        for (let i = 0; i < jumps.length; i++) {
+          const jump = jumps[i];
+          if (jump.node.len_code.type === MathParser.ALLOW_BREAK) {
+            jump.node.len_code = switchEndIndex - jump.index;
+          }
+          else if (jump.node.len_code.type === MathParser.ALLOW_CONTINUE) {
+            jump.node.len_code = jump.index - switchEndIndex;
+          }
+        }
+      }
 
       code.push(... loopBody);
     }
