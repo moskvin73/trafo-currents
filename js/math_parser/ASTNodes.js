@@ -186,7 +186,6 @@ export class DefineVarableCodeNode extends ASTNode {
     this.name = name;
     this.statements = statements;
     this.params = params;
-    this.statements.push(new ReturnCodeNode(loc));
   }
 
   get type_unit() { return TYPE_UNIT.EMPTY; }
