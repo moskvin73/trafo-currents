@@ -720,6 +720,7 @@ export class MathParser {
     const token_cond = this.#location;
     const exp = this.#parseExpression();
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
+    
     const token_then = this.#location;
     if (this.c_token === TokenType.LBRACE)
     {
