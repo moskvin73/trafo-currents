@@ -2,6 +2,7 @@ import { TokenType } from './TokenTypes.js';
 import { CompilerError } from './CompilerErrors.js';
 import ASTNode, {
   IF_Node,
+  Goto_Node,
   NumberNode,
   UnaryOpNode, 
   UnaryOpNodePlus,
@@ -709,9 +710,9 @@ export class MathParser {
   #parseIF(code, f_out) {
     let trueStatement = [];
     let falseStatement = [];
-    const token_loc = this.#location;
     this.#consume();
     if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
+    const token_cond = this.#location;
     const exp = this.#parseExpression();
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
     if (this.c_token === TokenType.LBRACE)
@@ -722,6 +723,7 @@ export class MathParser {
     else {
       this.#parseStatement(trueStatement, f_out);
     }
+    const token_else = this.#location;
     if (this.c_token === TokenType.RW_ELSE)
     {
        this.#consume();
@@ -735,8 +737,10 @@ export class MathParser {
       }
     }
     // Собираем код
-    code.push(new StatementNode(new IF_Node(exp, trueStatement.length, token_loc), f_out));
-    code.push(... trueStatement, ... falseStatement);
+    code.push(new StatementNode(new IF_Node(exp, trueStatement.length, token_cond), f_out));
+    code.push(... trueStatement);
+    code.push(new StatementNode(new Goto_Node(falseStatement.length, token_else), f_out));
+    code.push(... falseStatement);
   }
 
   #parseBlock(f_out = true) {
