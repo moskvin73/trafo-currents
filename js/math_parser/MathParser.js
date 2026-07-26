@@ -396,14 +396,10 @@ export class MathParser {
         if (exprNode !== null)
           code.push(new StatementNode(exprNode, false));
         return;
-          //return { node: exprNode, isSilent: false };
-        //return null;
       case TokenType.SILENT:
         this.#consume();
         if (exprNode !== null)
           code.push(new StatementNode(exprNode, exprNode instanceof AssignNode || f_out));
-          ///return { node: exprNode, isSilent: exprNode instanceof AssignNode || f_out};
-        //return null;
         return;
       default:
         this.#error(
@@ -412,9 +408,6 @@ export class MathParser {
         while (true)
         {
           if (MathParser.parseStatement_FIRST.has(this.c_token)) {
-            /*if (exprNode !== null)
-              return { node: exprNode, isSilent: false };
-            return null;*/
             return;
           }
           this.#consume();
