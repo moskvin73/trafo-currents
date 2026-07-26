@@ -167,7 +167,7 @@ class context_evallution
     this.index_code = sw_index;
   }
 
-  pop_code() {
+  /*pop_code() {
     if (this.#items.length !== 0)
     {
        const data = this.#items[this.#items.length - 1];
@@ -175,7 +175,7 @@ class context_evallution
        this.code = data.code;
        this.index_code = data.index;
     }
-  }
+  }*/
 
   run() {
     while (this.index_code < this.code.length) {
