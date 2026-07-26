@@ -41,6 +41,9 @@ const tokenNames = [
   'RW_XOR',
   'RW_IF',
   'RW_ELSE',
+  'RW_WHERE',
+  'RW_DO',
+  'RW_FOR',
   'EQU', // ==
   'NOT_EQU', // !=
   'LT', // <
