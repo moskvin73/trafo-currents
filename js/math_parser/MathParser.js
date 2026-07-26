@@ -146,8 +146,6 @@ export class TeXOutputFormatter {
 
 class context_evallution
 {
-  #items = [];
-
   constructor(scope_context, errors) {
     this.errors = errors;
     this.scope_context = scope_context;
@@ -157,7 +155,6 @@ class context_evallution
   }
 
   push_code(code, index = 0) {
-    //this.#items.push({code: this.code, index: this.index_code});
     const sw_code = this.code;
     const sw_index = this.index_code;
     this.code = code;
@@ -174,16 +171,6 @@ class context_evallution
       return data.value;
     }
   }
-
-  /*pop_code() {
-    if (this.#items.length !== 0)
-    {
-       const data = this.#items[this.#items.length - 1];
-       this.#items.pop();
-       this.code = data.code;
-       this.index_code = data.index;
-    }
-  }*/
 
   run() {
     while (this.index_code < this.code.length) {
