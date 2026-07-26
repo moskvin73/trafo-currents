@@ -945,6 +945,7 @@ export class MathParser {
 
     this.#match(TokenType.RPAREN, "Ожидалась ')'");
 
+    const old_flag = this.flags;
     this.setFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     // Тело цикла
     if (this.c_token === TokenType.LBRACE)
@@ -955,7 +956,8 @@ export class MathParser {
     else {
       this.#parseStatement(loopBody, f_out);
     }
-    this.clearFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
+    this.flags = old_flag;
+    //this.clearFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     
     if (this.errors.length === 0)
     {
