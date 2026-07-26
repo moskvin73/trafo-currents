@@ -708,6 +708,9 @@ export class MathParser {
 
   #parseIF(code, f_out) {
     this.#consume();
+    if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
+    const exp = this.#parseExpression();
+    if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
     if (this.c_token === TokenType.LBRACE)
     {
       const statements =this.#parseBlock(f_out);
