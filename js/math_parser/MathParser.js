@@ -729,6 +729,7 @@ export class MathParser {
     else {
       this.#parseStatement(trueStatement, f_out);
     }
+    
     const token_else = this.#location;
     if (this.c_token === TokenType.RW_ELSE)
     {
