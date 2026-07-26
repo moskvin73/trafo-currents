@@ -153,6 +153,7 @@ class context_evallution
     this.scope_context = scope_context;
     this.code = null;
     this.index_code = 0;
+    this.report = [];
   }
 
   push_code(code, index = 0) {
@@ -168,6 +169,21 @@ class context_evallution
        this.#items.pop();
        this.code = data.code;
        this.index_code = data.index;
+    }
+  }
+
+  run() {
+    while (this.index_code < this.code.length) {
+      const ast_op = this.code[this.index_code++];
+      if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
+      {
+        const value = ast_op.node.evaluate(evl_context);
+        if (value) {
+          ast_op.value = value;
+          this.report.push(ast_op);
+        }
+      }
+      else ast_op.node.evaluate(evl_context);
     }
   }
 
