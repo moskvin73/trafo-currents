@@ -860,15 +860,15 @@ export class MathParser {
 
     this.#match(TokenType.LPAREN, "Ожидалась '('");
 
-    let expInit = null; bool f_out_expLet = false;
+    let expInit = null; bool f_out_expInit = false;
     if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
     {
       const exp_init_loc = this.#location;
       expInit = this.#parseExpression();
       if (!expr.isAssigned) {
-        this.#error(`[Semantic Error]: Неверное выражение`, exp_init_loc);
+        this.#error(`[Semantic Error]: Выражение должно быть присвоением`, exp_init_loc);
       }
-      f_out_expLet = end_expr();
+      f_out_expInit = end_expr();
     } else this.#consume();
 
     let expCond = null; bool f_out_expCond = false; 
@@ -898,7 +898,10 @@ export class MathParser {
     
     if (this.errors.length === 0)
     {
-      
+      if (expInit)
+      {
+        code.push(new StatementNode(expInit, f_out || f_out_expInit));
+      }
     }
   }
 
