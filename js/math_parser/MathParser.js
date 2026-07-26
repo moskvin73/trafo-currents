@@ -169,7 +169,7 @@ class context_evallution
     // Если код чтото вывел в отчёт
     if (len !== this.report.length) {
       // Удаляем последнию команду
-      data = this.report[this.report.length - 1];
+      const data = this.report[this.report.length - 1];
       this.report.pop();
       return data.value;
     }
