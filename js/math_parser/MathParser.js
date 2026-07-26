@@ -885,7 +885,7 @@ export class MathParser {
     {      
       expInc = this.#parseExpression();
       // Разрешается вводить символ $ полсе оператора прирощения
-      if (this.c_token !== TokenType.SILENT)
+      if (this.c_token === TokenType.SILENT)
       {
         f_out_expInc = true;
         this.#consume();
