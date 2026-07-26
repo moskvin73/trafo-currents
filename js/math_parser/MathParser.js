@@ -154,7 +154,7 @@ class context_evallution
     this.report = [];
   }
 
-  push_code(code, index = 0) {
+  call_code(code, index = 0) {
     const sw_code = this.code;
     const sw_index = this.index_code;
     this.code = code;
