@@ -838,7 +838,7 @@ export class MathParser {
     }
   }
 
-  #parseFor(code, f_out) {
+ /* #parseFor(code, f_out) {
     let loopBody = [];
     this.#consume();
 
@@ -915,7 +915,7 @@ export class MathParser {
       }
       code.push(... loopBody);
     }
-  }
+  }*/
 
   #parseBlock(f_out = true) {
       
