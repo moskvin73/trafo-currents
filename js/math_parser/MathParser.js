@@ -379,6 +379,8 @@ export class MathParser {
       case TokenType.RW_LET:
         exprNode = this.#parseDeclarationStatement();
         break;
+      case TokenType.RW_IF:
+        break;
       default:
         exprNode = this.#parseExpression();
         break;
@@ -708,6 +710,10 @@ export class MathParser {
       return new PlotChordNode(diagram_id, exp, data, layer_id, token_loc);
     else
       return error_value();
+  }
+
+  #parseIF(code, f_out) {
+    
   }
 
   #parseBlock() {
