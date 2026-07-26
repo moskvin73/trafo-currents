@@ -836,7 +836,7 @@ export class MathParser {
     }
   }
 
-  #collectLoopJumps(loopBody) {
+  static #collectLoopJumps(loopBody) {
   const jumps = [];
   for (let i = 0; i < loopBody.length; i++) {
     const node = loopBody[i].node;
@@ -998,7 +998,7 @@ export class MathParser {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, exp_cond_loc), f_out || f_out_expCond));
       }
 
-      const jumps = #collectLoopJumps(loopBody);
+      const jumps = MathParser.1#collectLoopJumps(loopBody);
       if (jumps.length > 0)
       {
         const switchEndIndex = switchBody.length + (expCond ? 1 : 0);
