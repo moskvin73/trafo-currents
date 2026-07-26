@@ -162,9 +162,17 @@ class context_evallution
     const sw_index = this.index_code;
     this.code = code;
     this.index_code = index;
+    const len = this.report.length;
     this.run();
     this.code = sw_code;
     this.index_code = sw_index;
+    // Если код чтото вывел в отчёт
+    if (len !== this.report.length) {
+      // Удаляем последнию команду
+      data = this.report[this.report.length - 1];
+      this.report.pop();
+      return data.value;
+    }
   }
 
   /*pop_code() {

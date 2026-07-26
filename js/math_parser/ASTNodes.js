@@ -153,7 +153,7 @@ export class VarableCode
       const sym = context.scope_context.getSymbolById(id);
       sym.value = args[i];
     }
-    context.push_code(this.statements);
+    return context.push_code(this.statements);
   }
 }
 
