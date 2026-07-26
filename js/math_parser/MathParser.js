@@ -256,8 +256,11 @@ export class MathParser {
               const ast_op = evl_context.code[evl_context.index_code++];
               if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
               {
-                ast_op.value = ast_op.node.evaluate(evl_context);
-                evl_context.statements.push(ast_op);
+                const value = ast_op.node.evaluate(evl_context);
+                if (value) {
+                  ast_op.value = value;
+                  evl_context.statements.push(ast_op);
+                }
               }
               else ast_op.node.evaluate(evl_context);
             }
