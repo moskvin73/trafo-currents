@@ -46,7 +46,7 @@ const tokenNames = [
   'RW_FOR',
   'RW_RETUTN',
   'RW_BREAK',
-  'RW_CONTINUE'
+  'RW_CONTINUE',
   'EQU', // ==
   'NOT_EQU', // !=
   'LT', // <
