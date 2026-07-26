@@ -821,10 +821,10 @@ export class MathParser {
     }
 
     if (this.#match(TokenType.RW_WHERE, "Ожидалась 'where' в конце блока кода")) {
-      if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
+      this.#match(TokenType.LPAREN, "Ожидалась '('");
       const token_cond = this.#location;
       const exp = this.#parseExpression();
-      if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
+      this.#match(TokenType.RPAREN, "Ожидалась ')'");
 
       if (this.errors.length === 0)
       {
