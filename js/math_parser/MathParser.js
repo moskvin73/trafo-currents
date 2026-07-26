@@ -184,7 +184,7 @@ class context_evallution
   run() {
     while (this.index_code < this.code.length) {
       const ast_op = this.code[this.index_code++];
-      if (!ast_op.isSilent && ast_op.node.type_unit !== TYPE_UNIT.EMPTY)
+      if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
       {
         const value = ast_op.node.evaluate(this);
         if (value) {
