@@ -209,6 +209,12 @@ class context_evallution
  */
 export class MathParser {
   #program;
+
+  // 1. Определяем константы флагов (степени двойки)
+  static ALLOW_BREAK = 1;    // 001 в двоичной
+  static ALLOW_CONTINUE = 2; // 010 в двоичной
+  static ALLOW_RETURN = 4;   // 100 в двоичной
+
   /**
    * Создает экземпляр парсера/анализатора выражений.
    * 
@@ -238,6 +244,27 @@ export class MathParser {
     this.context = context;
     this.#consume();
     this.#program = new ProgramNode();
+    this.flags = 0; // Изначально все запрещено (000)
+  }
+
+    // 2. Метод для установки (включения) флагов
+  setFlags(flagMask) {
+    this.flags |= flagMask; // Побитовое ИЛИ
+  }
+
+  // 3. Метод для сброса (выключения) флагов
+  clearFlags(flagMask) {
+    this.flags &= ~flagMask; // Побитовое И-НЕ
+  }
+
+  // 4. Метод для полной очистки всех флагов
+  resetAll() {
+    this.flags = 0;
+  }
+
+  // 5. Метод проверки, разрешена ли команда
+  isAllowed(flag) {
+    return (this.flags & flag) !== 0; // Побитовое И
   }
 
   // Возвращает положение текущий лексемы
