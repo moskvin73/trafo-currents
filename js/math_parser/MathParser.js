@@ -821,7 +821,6 @@ export class MathParser {
     }
 
     if (this.#match(TokenType.RW_WHERE, "Ожидалась 'where' в конце блока кода")) {
-      this.#consume();
       if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
       const token_cond = this.#location;
       const exp = this.#parseExpression();
