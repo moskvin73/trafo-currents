@@ -710,15 +710,19 @@ export class MathParser {
     this.#consume();
     if (this.c_token === TokenType.LBRACE)
     {
-      const statements =this.#parseBlock();
+      const statements =this.#parseBlock(f_out);
+      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+    }
+    else {
+      this.#parseStatement(code, f_out);
     }
   }
 
-  #parseBlock() {
+  #parseBlock(f_out = true) {
       this.#consume();
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
-        this.#parseStatement(statements, true);
+        this.#parseStatement(statements, f_out);
       } 
       if (statements.length === 0) 
           this.#error("Блок кода не может быть пустым", this.#location);
