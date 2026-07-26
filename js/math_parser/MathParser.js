@@ -836,6 +836,26 @@ export class MathParser {
     }
   }
 
+  #collectLoopJumps(loopBody) {
+  const jumps = [];
+  for (let i = 0; i < loopBody.length; i++) {
+    const node = loopBody[i].node;
+
+    // Собираем только Goto_Node, относящиеся к текущему циклу
+    if (node instanceof Goto_Node) {
+      if (node.target.type === MathParser.ALLOW_BREAK || 
+          node.target.type === MathParser.ALLOW_CONTINUE) {
+        jumps.push({
+          node: node, // Ссылка на узел, чтобы изменить его len_code
+          index: i    // Индекс этого узла в массиве loopBody
+        });
+      }
+    }
+  }
+  return jumps;
+}
+
+
   #parseWhere(code, f_out) {
     let loopBody = [];
     this.#consume();
@@ -977,6 +997,9 @@ export class MathParser {
       {
         code.push(new StatementNode(new IF_Node(expCond, loopBody.length, exp_cond_loc), f_out || f_out_expCond));
       }
+
+      const jumps = #collectLoopJumps(loopBody);
+
       code.push(... loopBody);
     }
   }
