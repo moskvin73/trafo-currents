@@ -883,7 +883,10 @@ export class MathParser {
       this.#parseStatement(loopBody, f_out);
     }
     
-    
+    if (this.errors.length === 0)
+    {
+
+    }
   }
 
   #parseBlock(f_out = true) {
