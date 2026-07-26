@@ -790,7 +790,7 @@ export class MathParser {
 
     if (this.errors.length === 0)
     {
-      loopBody.push(new StatementNode(new Goto_Node(-(loopBody.length + 1), this.#location), f_out));
+      loopBody.push(new StatementNode(new Goto_Node(-loopBody.length, this.#location), f_out));
       code.push(new StatementNode(new IF_Node(exp, loopBody.length, token_cond), f_out));
       code.push(... loopBody);
     }
