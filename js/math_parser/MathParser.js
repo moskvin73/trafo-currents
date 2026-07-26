@@ -836,24 +836,24 @@ export class MathParser {
     }
   }
 
-  static #collectLoopJumps(loopBody) {
-  const jumps = [];
-  for (let i = 0; i < loopBody.length; i++) {
-    const node = loopBody[i].node;
+    static #collectLoopJumps(loopBody) {
+    const jumps = [];
+    for (let i = 0; i < loopBody.length; i++) {
+      const node = loopBody[i].node;
 
-    // Собираем только Goto_Node, относящиеся к текущему циклу
-    if (node instanceof Goto_Node && typeof node.len_code === 'object') {
-      if (node.len_code.type === MathParser.ALLOW_BREAK || 
-          node.len_code.type === MathParser.ALLOW_CONTINUE) {
-        jumps.push({
-          node: node, // Ссылка на узел, чтобы изменить его len_code
-          index: i    // Индекс этого узла в массиве loopBody
-        });
+      // Собираем только Goto_Node, относящиеся к текущему циклу
+      if (node instanceof Goto_Node && typeof node.len_code === 'object') {
+        if (node.len_code.type === MathParser.ALLOW_BREAK || 
+            node.len_code.type === MathParser.ALLOW_CONTINUE) {
+          jumps.push({
+            node: node, // Ссылка на узел, чтобы изменить его len_code
+            index: i    // Индекс этого узла в массиве loopBody
+          });
+        }
       }
     }
+    return jumps;
   }
-  return jumps;
-}
 
 
   #parseWhere(code, f_out) {
@@ -866,6 +866,8 @@ export class MathParser {
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
 
     // Тело цикла
+    const old_flag = this.flags;
+    this.setFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     if (this.c_token === TokenType.LBRACE)
     {
       loopBody =this.#parseBlock(f_out);
@@ -874,6 +876,7 @@ export class MathParser {
     else {
       this.#parseStatement(loopBody, f_out);
     }
+    this.flags = old_flag;
 
     if (this.errors.length === 0)
     {
