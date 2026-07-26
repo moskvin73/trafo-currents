@@ -893,7 +893,7 @@ export class MathParser {
             jump.node.len_code = switchEndIndex - jump.index - 1;
           }
           else if (jump.node.len_code.type === MathParser.ALLOW_CONTINUE) {
-            jump.node.len_code = -(switchEndIndex - jump.index + (expCond ? 1 : 0));
+            jump.node.len_code = -(switchEndIndex - jump.index + 1);
           }
         }
       }
