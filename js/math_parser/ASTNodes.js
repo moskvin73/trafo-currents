@@ -43,6 +43,8 @@ export default class ASTNode {
     return false; // По умолчанию большинство узлов динамические (переменные, функции и т.д.)
   }
 
+  get isAssigned() { return false; }
+
   getPriority() { throw new Error("Not implemented"); }
 
   toString(context) { throw new Error("Not implemented"); }
@@ -1023,6 +1025,8 @@ export class AssignNode extends IdentifierNode {
     return new AssignNode(this.name, expression, loc);
   }  
 
+  get isAssigned() { return true; }
+
   getPriority() { return OpPriority.ASSIGN; }
 
   toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
@@ -1146,6 +1150,8 @@ export class AssignIndexNode extends IndexNode {
     this.expression = expression;
   }
 
+  get isAssigned() { return true; }
+  
   evaluate_command(context, matrixObj, rowIndex, colIndex) {
     const elm = matrixObj.get(0, 0);
     const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
