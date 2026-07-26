@@ -157,9 +157,14 @@ class context_evallution
   }
 
   push_code(code, index = 0) {
-    this.#items.push({code: this.code, index: this.index_code});
+    //this.#items.push({code: this.code, index: this.index_code});
+    const sw_code = this.code;
+    const sw_index = this.index_code;
     this.code = code;
     this.index_code = index;
+    run();
+    this.code = sw_code;
+    this.index_code = sw_index;
   }
 
   pop_code() {
