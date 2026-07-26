@@ -383,6 +383,9 @@ export class MathParser {
       case TokenType.RW_IF:
         this.#parseIF(code, f_out);
         return;
+      case TokenType.RW_WHERE:
+        this.#parseWhere(code, f_out);
+        return;
       case TokenType.SEMICOLON:
       case TokenType.SILENT:
         // Проопускаем пустые ;;; $$$$ разделители операторов
@@ -766,7 +769,35 @@ export class MathParser {
     }
   }
 
+  #parseWhere(code, f_out) {
+    let loopBody = [];
+    this.#consume();
+    // Условие
+    if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
+    const token_cond = this.#location;
+    const exp = this.#parseExpression();
+    if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
+
+    // Тело цикла
+    if (this.c_token === TokenType.LBRACE)
+    {
+      loopBody =this.#parseBlock(f_out);
+      if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+    }
+    else {
+      this.#parseStatement(loopBody, f_out);
+    }
+
+    if (this.errors.length === 0)
+    {
+      loopBody.push(new StatementNode(new Goto_Node(-(loopBody.length + 1), this.#location), f_out));
+      code.push(new StatementNode(new IF_Node(exp, loopBody.length, token_cond), f_out));
+      code.push(... loopBody);
+    }
+  }
+
   #parseBlock(f_out = true) {
+      
       this.#consume();
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
