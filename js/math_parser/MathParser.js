@@ -716,11 +716,13 @@ export class MathParser {
     let trueStatement = [];
     let falseStatement = [];
     this.#consume();
+    // Условие
     if (!this.#match(TokenType.LPAREN, "Ожидалась '('"));
     const token_cond = this.#location;
     const exp = this.#parseExpression();
     if (!this.#match(TokenType.RPAREN, "Ожидалась ')'"));
-    
+
+    // Блок Then
     const token_then = this.#location;
     if (this.c_token === TokenType.LBRACE)
     {
@@ -731,6 +733,7 @@ export class MathParser {
       this.#parseStatement(trueStatement, f_out);
     }
     
+    // Блок Else
     const token_else = this.#location;
     if (this.c_token === TokenType.RW_ELSE)
     {
@@ -744,6 +747,8 @@ export class MathParser {
         this.#parseStatement(falseStatement, f_out);
       }
     }
+
+    // Симантика
     if (trueStatement.length === 0)
     {
       this.#error("Пустое тело оператора 'if'", token_then);
