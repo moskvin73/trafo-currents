@@ -172,7 +172,7 @@ class context_evallution
     this.run();
     this.code = sw_code;
     this.index_code = sw_index;
-    // Если код чтото вывел в отчёт
+    // Если код что то вывел в отчёт
     if (len !== this.report.length) {
       // Удаляем последнию команду
       const data = this.report[this.report.length - 1];
