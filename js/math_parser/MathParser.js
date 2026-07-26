@@ -723,11 +723,17 @@ export class MathParser {
     }
     if (this.c_token === TokenType.RW_ELSE)
     {
+       this.#consume();
       if (this.c_token === TokenType.LBRACE)
       {
-
+        falseStatement =this.#parseBlock(f_out);
+        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
+      }
+      else {
+        this.#parseStatement(falseStatement, f_out);
       }
     }
+    
   }
 
   #parseBlock(f_out = true) {
