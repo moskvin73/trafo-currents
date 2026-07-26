@@ -168,7 +168,7 @@ export class IF_Node extends ASTNode {
 
   internal_evaluate(context) {
     const if_result = this.if_expr.internal_evaluate(context);
-    b_value = BoolValue.from(if_result).value;
+    const b_value = BoolValue.from(if_result).value;
     if (!b_value) {
       context.index_code += this.len_code_false;
     }
