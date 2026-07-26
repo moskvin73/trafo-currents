@@ -433,7 +433,7 @@ export class MathParser {
           this.#consume();
           return;
         }
-        exprNode = new Goto_Node(null, this.#location);
+        exprNode = new Goto_Node({ type: 'break' }, this.#location);
         this.#consume();
         break;
       case TokenType.RW_CONTINUE:
@@ -441,8 +441,11 @@ export class MathParser {
         {
           this.#error("Недопустимый оператор 'continue': нет окружающего цикла", this.#location);
           this.#consume();
+          return;
         }
-        return;
+        exprNode = new Goto_Node({ type: 'continue' }, this.#location);
+        this.#consume();
+        break;
       case TokenType.RW_RETUTN:
         if (!this.isAllowed(MathParser.ALLOW_RETURN))
         {
