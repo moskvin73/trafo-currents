@@ -186,8 +186,8 @@ class context_evallution
       {
         const value = ast_op.node.evaluate(this);
         if (value) {
-          ast_op.value = value;
-          this.report.push(ast_op);
+          const rn = new reportRecord(ast_op.node, value);
+          this.report.push(rn);
         }
       }
       else ast_op.node.evaluate(this);
