@@ -107,7 +107,7 @@ export class SymbolTableContext {
       const localIdx = scope.hash[name];
       if (localIdx !== undefined) {
         // Кодируем ID: маркер локальности + индекс слоя + индекс внутри слоя
-        return this.LOCAL_MARKER + (i << 16) + localIdx;
+        return this.LOCAL_MARKER + (currentScopeIdx << 16) + localIdx;
       }
 
       const state = { type: SYM_UNDEFINED, value: 0 };
