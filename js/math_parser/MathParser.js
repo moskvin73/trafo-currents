@@ -1005,7 +1005,7 @@ export class MathParser {
         for (let i = 0; i < jumps.length; i++) {
           const jump = jumps[i];
           if (jump.node.len_code.type === MathParser.ALLOW_BREAK) {
-            jump.node.len_code = switchEndIndex - jump.index;
+            jump.node.len_code = switchEndIndex - jump.index - 1;
           }
           else if (jump.node.len_code.type === MathParser.ALLOW_CONTINUE) {
             jump.node.len_code = -(switchEndIndex - jump.index + (expCond ? 1 : 0));
