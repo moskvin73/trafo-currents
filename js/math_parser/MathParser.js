@@ -380,6 +380,7 @@ export class MathParser {
         exprNode = this.#parseDeclarationStatement();
         break;
       case TokenType.RW_IF:
+        this.#parseIF(code, f_out);
         break;
       default:
         exprNode = this.#parseExpression();
@@ -713,7 +714,8 @@ export class MathParser {
   }
 
   #parseIF(code, f_out) {
-    
+    this.#consume();
+
   }
 
   #parseBlock() {
