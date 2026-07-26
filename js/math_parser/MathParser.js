@@ -383,6 +383,11 @@ export class MathParser {
       case TokenType.RW_IF:
         this.#parseIF(code, f_out);
         return;
+      case TokenType.SEMICOLON:
+      case TokenType.SILENT:
+        // Проопускаем пустые ;;; $$$$ разделители операторов
+        this.#consume();
+        return;
       default:
         exprNode = this.#parseExpression();
         break;
