@@ -898,9 +898,19 @@ export class MathParser {
     
     if (this.errors.length === 0)
     {
+      if (expInc)
+      {
+        loopBody.push(new StatementNode(expInc, f_out));
+      }
+      code.push(new StatementNode(new Goto_Node(-(loopBody.length + (expCond ? 2 : 1)), this.#location), f_out));
+
       if (expInit)
       {
         code.push(new StatementNode(expInit, f_out || f_out_expInit));
+      }
+      if (expCond)
+      {
+        code.push(new StatementNode(new IF_Node(expCond, loopBody.length, token_cond), f_out || f_out_expCond));
       }
     }
   }
