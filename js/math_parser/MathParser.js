@@ -733,7 +733,8 @@ export class MathParser {
         this.#parseStatement(falseStatement, f_out);
       }
     }
-    
+    // Собираем код
+
   }
 
   #parseBlock(f_out = true) {
