@@ -960,7 +960,6 @@ export class MathParser {
       this.#parseStatement(loopBody, f_out);
     }
     this.flags = old_flag;
-    //this.clearFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     
     if (this.errors.length === 0)
     {
