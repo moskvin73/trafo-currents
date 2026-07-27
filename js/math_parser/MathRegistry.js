@@ -51,11 +51,12 @@ export const COMPILER_REGISTRY = new Map([
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' }
   ]],
 
-  /*['round', [
-    { types: [RealNumber], callType: 'instance', method: 'sqrt' },
-    { types: [ComplexNumber], callType: 'instance', method: 'sqrt' },
-    { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' }
-  ]],*/
+  ['round', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(roundNumber(x.value)) },
+    { types: [RealNumber, RealNumber], callType: 'custom', execute: ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
+    { types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
+  ]],
 
 
   ['abs', [
