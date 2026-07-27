@@ -567,9 +567,9 @@ export default class Matrix extends MathType {
     }
 
     const elements = [];
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < n_size; i++) {
       const row = [];
-      for (let j = 0; j < size; j++) {
+      for (let j = 0; j < m_size; j++) {
         if (Matrix.RealNumberRef) {
           row.push(Matrix.RealNumberRef.from(0));
         } else {
