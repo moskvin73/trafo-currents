@@ -29,6 +29,11 @@ function matrix_abs(x) {
   throw new Error("Неподдерживаемый тип для функции abs");
 }
 
+function roundNumber(value, decimals = 0) {
+  const factor = Math.pow(10, decimals);
+  return Math.round(value * factor) / factor;
+}
+
 const mathClasses = {
     RealNumber,
     ComplexNumber,
