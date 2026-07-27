@@ -408,7 +408,7 @@ export class IsOpNode extends MathNode {
     if (this.argument.getPriority() < this.getPriority()) {
           innerCode = `(${innerCode})`;
     }
-    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    const name = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     return `${innerCode} is ${name}`;
   }
 
@@ -482,13 +482,13 @@ export class CastOpNode extends MathNode {
 
   toString(context) {
     let innerCode = this.argument.toString(context);
-    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    const name = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     return `${name}(${innerCode})`;
   }
 
   toTeX(context) {
     let innerCode = this.argument.toTeX(context);
-    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    const name = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     return `\\text{${name}}\\left(${innerCode}\\right)`;
   }
 
