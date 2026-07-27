@@ -155,7 +155,9 @@ export class VarableCode
       const sym = context.scope_context.getSymbolById(id);
       sym.value = args[i];
     }
-    return context.call_code(this.statements);
+    const ret = context.call_code(this.statements);
+    context.scope_context.exitScope();
+    return ret;
   }
 }
 
@@ -1151,7 +1153,7 @@ export class AssignIndexNode extends IndexNode {
   }
 
   get isAssigned() { return true; }
-  
+
   evaluate_command(context, matrixObj, rowIndex, colIndex) {
     const elm = matrixObj.get(0, 0);
     const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
