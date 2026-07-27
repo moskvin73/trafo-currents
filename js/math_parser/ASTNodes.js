@@ -395,26 +395,26 @@ export class IsOpNode extends MathNode {
 // Реализация таблицы через объект объектов (или Map)
 const CAST_TABLE = new Map([
   // Правила конвертации ИЗ типа 'bool'
-  BoolValue: {
+  [ BoolValue, {
     BoolValue:      (value) => value, 
-  },
+  }],
   // Правила конвертации ИЗ типа 'real'
-  RealNumber: {
+  [ RealNumber, {
     BoolValue:      (value) => new BoolValue(value.equals(0)), 
     RealNumber:     (value) => value,      
     ComplexNumber:  (value) => ComplexNumber.from(value),
     Matrix:         (value) => new Matrix([value]),
-  },
+  }],
   // Правила конвертации ИЗ типа 'complex'
-  ComplexNumber: {
+  [ComplexNumber, {
     BoolValue:      (value) => new BoolValue(value.equals(0)),
     RealNumber:     (value) => RealNumber.from(value.real),      
     ComplexNumber:  (value) => value,
     Matrix:         (value) => new Matrix([value]),
-  },
-  Matrix: {
+  }],
+  [Matrix, {
     Matrix:         (value) => value,
-  },
+  }],
 ]);
 
 export class CastOpNode extends MathNode {
