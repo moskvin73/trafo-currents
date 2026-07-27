@@ -221,6 +221,28 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  ['is_square', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return new BoolValue(inputMatrix.isSquare);
+      }
+    }
+  ]],
+
+  ['is_vector', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return new BoolValue(inputMatrix.isVector);
+      }
+    }
+  ]],
+
   ['min', [
     {
       types: [Matrix],
