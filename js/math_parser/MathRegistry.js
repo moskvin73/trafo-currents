@@ -353,35 +353,43 @@ function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
 // =========================================================================
 let roundRules = [];
 roundRules =
-  [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
-    { types: [RealNumber, RealNumber], callType: 'custom', execute: 
-                                        ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
-          const r = Math.round(x.real);
-          const i = Math.round(x.imaginary);
-          return new ComplexNumber(r, i) }},
-    { types: [ComplexNumber, RealNumber], callType: 'custom', execute: ([x, y]) => { 
-          const r = roundNumber(x.real, y);
-          const i = roundNumber(x.imaginary, y);
-          return new ComplexNumber(r, i) }},
-    { 
-      types: [Matrix], 
-      callType: 'custom', 
-      execute: (args) => {
-        const [matrix, ...restArgs] = args; 
-        return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
-      }
-    },
-    { 
-      types: [Matrix, RealNumber], 
-      callType: 'custom', 
-      execute: (args) => {
-        const [matrix, ...restArgs] = args; 
-        return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
-      }
-    },
-  ];
+[
+  { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
+  { types: [RealNumber, RealNumber], callType: 'custom', execute: 
+                                      ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
+  { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
+        const r = Math.round(x.real);
+        const i = Math.round(x.imaginary);
+        return new ComplexNumber(r, i) }},
+  { types: [ComplexNumber, RealNumber], callType: 'custom', execute: ([x, y]) => { 
+        const r = roundNumber(x.real, y);
+        const i = roundNumber(x.imaginary, y);
+        return new ComplexNumber(r, i) }},
+  { 
+    types: [Matrix], 
+    callType: 'custom', 
+    execute: (args) => {
+      const [matrix, ...restArgs] = args; 
+      return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
+    }
+  },
+  { 
+    types: [Matrix, RealNumber], 
+    callType: 'custom', 
+    execute: (args) => {
+      const [matrix, ...restArgs] = args; 
+      return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
+    }
+  },
+];
+
+let absRules = [];
+absRules =
+[
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
+    { types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
+];
 
 export const COMPILER_REGISTRY = new Map([
   // === ФУНКЦИЯ SQRT (1 или 2 аргумента) ===
