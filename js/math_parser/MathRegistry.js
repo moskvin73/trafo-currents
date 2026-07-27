@@ -73,37 +73,61 @@ function roundNumber(value, decimals = 0) {
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
-function executeMatrixRoundUniversal(matrix, yArg = null, allRules) {
+function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
   const rawData = matrix.unsafeRows;
   const rows = rawData.length;
   if (rows === 0) return new Matrix([]);
-  const cols = rawData.length;
+  const cols = rawData[0].length;
   if (cols === 0) return new Matrix([]);
 
-  // 1. Определяем тип элементов матрицы
   const firstElement = rawData[0][0];
-  const elementType = firstElement?.constructor;
+  const elementType = typeof firstElement === 'object' && firstElement !== null 
+    ? firstElement.constructor 
+    : typeof firstElement;
 
-  const targetLength = yArg ? 2 : 1;
-  const targetRule = allRules.find(rule => 
-    rule.types.length === targetLength && 
-    rule.types[0] === elementType
-  );
-
-  if (!targetRule) {
-    throw new Error(`В таблице не найдено правило округления для элементов типа "${elementType?.name || 'unknown'}".`);
+  // 1. РЕКУРСИЯ: Матрица матриц
+  if (elementType === Matrix) {
+    const newData = new Array(rows);
+    for (let i = 0; i < rows; i++) {
+      newData[i] = new Array(cols);
+      for (let j = 0; j < cols; j++) {
+        newData[i][j] = executeMatrixOperationUniversal(rawData[i][j], extraArgs, overloads);
+      }
+    }
+    return new Matrix(newData);
   }
 
-  const executeFn = targetRule.execute;
+  // 2. ОПРЕДЕЛЯЕМ ПРАВИЛО И КАСТЫ ОДИН РАЗ НА ВСЮ МАТРИЦУ
+  // Имитируем аргументы для первой ячейки: [Ячейка, ...допАргументы]
+  const pilotArgs = [firstElement, ...extraArgs];
+  const { overload, castFunctions } = MathRegistry.resolve(overloads, pilotArgs, "внутри Matrix");
 
-  // 4. Сверхбыстрый вычислительный цикл
+  // Кэшируем функции каста для дополнительных аргументов (они одинаковы для всех ячеек!)
+  // Нам не нужно кастить extraArgs на каждой итерации. Сделаем это один раз прямо сейчас:
+  const finalizedExtraArgs = extraArgs.map((arg, idx) => {
+    const castFn = castFunctions[idx + 1]; // idx + 1 так как первый аргумент — ячейка матрицы
+    return castFn ? castFn(arg) : arg;
+  });
+
+  // Смотрим, нужен ли каст для самой ячейки матрицы (первый элемент сигнатуры)
+  const cellCastFn = castFunctions[0];
+
+  // 3. СВЕРХБЫСТРЫЙ ВЫЧИСЛИТЕЛЬНЫЙ ЦИКЛ (Чистый Runtime по готовой ссылке)
   const newData = new Array(rows);
   for (let i = 0; i < rows; i++) {
     newData[i] = new Array(cols);
     for (let j = 0; j < cols; j++) {
-      // Собираем аргументы для конкретной ячейки
-      const cellArgs = yArg ? [rawData[i][j], yArg] : [rawData[i][j]];
-      newData[i][j] = executeFn(cellArgs);
+      // Извлекаем значение ячейки
+      let cellValue = rawData[i][j];
+      
+      // Если для типа ячейки нужен каст согласно выбранной сигнатуре — выполняем
+      if (cellCastFn) cellValue = cellCastFn(cellValue);
+
+      // Собираем готовый массив аргументов для вызова
+      const finalCellArgs = [cellValue, ...finalizedExtraArgs];
+
+      // Мгновенный вызов метода по готовой ссылке на перегрузку! Без поиска!
+      newData[i][j] = MathRegistry.invoke(overload, finalCellArgs, "внутри Matrix");
     }
   }
 
