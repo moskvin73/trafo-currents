@@ -41,6 +41,18 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(180 / Math.PI) },
   ]],
 
+  // Радианы (rad) в Градусы (deg)
+  ['grad', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
+  ]],
+
+  // Радианы (rad) в Градусы (deg)
+  ['rev', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.divide(2 * Math.PI) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.divide(2 * Math.PI) },
+  ]],
+
   // === ЛОГАРИФМЫ ===
   ['ln', [
     { types: [RealNumber], callType: 'instance', method: 'log' },
