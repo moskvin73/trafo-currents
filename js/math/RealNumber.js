@@ -102,6 +102,13 @@ export default class RealNumber extends MathType {
     return new RealNumber(this.#value / RealNumber.from(other).value);
   }
 
+  // Остаток от деления
+  mod(other) {
+    const rightValue = RealNumber.from(other).value;
+    const leftValue = this.#value;
+    return new RealNumber(((leftValue % rightValue) + rightValue) % rightValue);
+  }
+
   // ==========================================
   // МЕТОДЫ СРАВНЕНИЯ (Equality)
   // ==========================================
