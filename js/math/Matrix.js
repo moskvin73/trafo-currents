@@ -554,6 +554,33 @@ export default class Matrix extends MathType {
     return new Matrix(elements);
   }
 
+  static create(n, m) {
+    const n_size = Math.floor(n);
+    const m_size = Math.floor(n);
+
+    if (n_size <= 0) {
+      throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть целым числом больше 0.");
+    }
+
+    if (m_size <= 0) {
+      throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть целым числом больше 0.");
+    }
+
+    const elements = [];
+    for (let i = 0; i < size; i++) {
+      const row = [];
+      for (let j = 0; j < size; j++) {
+        if (Matrix.RealNumberRef) {
+          row.push(Matrix.RealNumberRef.from(0));
+        } else {
+          row.push(this.converters.get(Symbol.for('Math.RealNumber'))?.(0) || 0);
+        }
+      }
+      elements.push(row);
+    }
+    return new Matrix(elements);
+  }
+
   /**
    * Создает диагональную матрицу на основе массива готовых MathType объектов
    * @param {MathType[]} diagonalElements - Массив элементов главной диагонали
