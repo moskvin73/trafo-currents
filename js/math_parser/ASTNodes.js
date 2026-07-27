@@ -354,6 +354,36 @@ const REVERSE_TYPE_CLASSES = new Map(
   Object.entries(TYPE_CLASSES).map(([name, ClassRef]) => [ClassRef, name])
 );
 
+/**
+ * Функция-обертка для получения строкового имени типа.
+ * @param {string|Function|null|undefined} typeRef - Строка ('number', 'boolean') или класс (Matrix, RealNumber)
+ * @param {Map} reverseMap - Ваш словарь REVERSE_TYPE_CLASSES (Маппинг: Класс -> Строка)
+ * @returns {string} - Понятное имя типа для пользователя
+ */
+function getTypeNameString(typeRef, reverseMap) {
+  // 1. Защита от пустых значений (если что-то пошло не так в AST)
+  if (typeRef === null || typeRef === undefined) {
+    return 'empty';
+  }
+
+  // 2. Если это уже строка (например, 'number', 'boolean', 'string')
+  if (typeof typeRef === 'string') {
+    return typeRef;
+  }
+
+  // 3. Если это функция-конструктор (ваш класс типа Matrix, ComplexNumber и т.д.)
+  if (typeof typeRef === 'function') {
+    return reverseMap.get(typeRef) || typeRef.name || 'unknown_class';
+  }
+
+  // 4. На случай, если передан сам объект-экземпляр вместо его типа/класса
+  if (typeof typeRef === 'object' && typeRef.constructor) {
+    return reverseMap.get(typeRef.constructor) || typeRef.constructor.name || 'unknown_object';
+  }
+
+  return 'unknown';
+}
+
 export class IsOpNode extends MathNode {
   constructor(argument, targetType, loc) {
     super(loc);
@@ -387,7 +417,7 @@ export class IsOpNode extends MathNode {
     if (this.argument.getPriority() < this.getPriority()) {
           innerCode = `\\left(${innerCode}\\right)`;
     }
-    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    const name = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     return `${innerCode}\\text{ is ${name}}`;
   }
 }
@@ -475,9 +505,8 @@ export class CastOpNode extends MathNode {
       return castFunction(valueToCast);
     }
 
-    const name_sourceType = REVERSE_TYPE_CLASSES.get(sourceType) || 'unknown'
-    const name_targetType = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
-
+    const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
+    const name_sourceType = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
   }
 }
