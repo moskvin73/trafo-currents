@@ -162,18 +162,16 @@ roundRules =
       types: [Matrix], 
       callType: 'custom', 
       execute: (args) => {
-        // args[0] — это матрица, args[1] — это опциональный RealNumber (количество знаков)
-        const [matrix] = args; 
-        return executeMatrixRoundUniversal(matrix, 0, roundRules);
+        const [matrix, ...restArgs] = args; 
+        return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
       }
     },
     { 
       types: [Matrix, RealNumber], 
       callType: 'custom', 
       execute: (args) => {
-        // args[0] — это матрица, args[1] — это опциональный RealNumber (количество знаков)
-        const [matrix, y] = args; 
-        return executeMatrixRoundUniversal(matrix, y, roundRules);
+        const [matrix, ...restArgs] = args; 
+        return executeMatrixOperationUniversal(matrix, restArgs, roundRules);
       }
     },
   ];
