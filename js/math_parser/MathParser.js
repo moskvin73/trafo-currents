@@ -1248,8 +1248,9 @@ export class MathParser {
           loc = this.#location;
           this.#consume();
           return new IsOpNode(expr, 'matrix', loc);
-        default: 
-          this.#error("Ожидался тип.", this.#location);
+        default:
+          loc = this.#location;
+          this.#error("Ожидался тип.", loc);
           return new IsOpNode(expr, 'bool', loc);
       }
     } else return expr;
