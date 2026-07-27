@@ -407,6 +407,7 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   ['round', roundRules],
+  ['abs',   absRules],
 
   /*['abs', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
