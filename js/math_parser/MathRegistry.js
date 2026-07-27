@@ -4,7 +4,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
 
-function matrix_abs(x) {
+/*function matrix_abs(x) {
   // 1. Если это обычное число JS
   if (typeof x === 'number') {
     return new RealNumber(Math.abs(x));
@@ -27,7 +27,7 @@ function matrix_abs(x) {
   }
 
   throw new Error("Неподдерживаемый тип для функции abs");
-}
+}*/
 
 const POWERS_OF_10 = [
   1,           // 10^0
