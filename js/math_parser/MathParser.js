@@ -3,6 +3,7 @@ import { CompilerError } from './CompilerErrors.js';
 import ASTNode, {
   IF_Node,
   Goto_Node,
+  IsOpNode,
   NumberNode,
   UnaryOpNode, 
   UnaryOpNodePlus,
