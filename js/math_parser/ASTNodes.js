@@ -367,7 +367,7 @@ export class IsOpNode extends MathNode {
     if (leftValue === null || leftValue === undefined) return false;
 
     const targetClass = this.targetType;
-    return leftValue instanceof targetClass;
+    return new BoolValue(leftValue instanceof targetClass);
   }
 
   toString(context) {

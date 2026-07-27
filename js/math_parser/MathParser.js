@@ -1189,38 +1189,76 @@ export class MathParser {
   }
 
    #parseRelational() {
-    let expr = this.#parseAddition();
+    let expr = this.#parseIS();
     let loc;
     while (true) switch (this.c_token) {
       case TokenType.EQU:
         loc = this.#location;
         this.#consume();
-        expr = new EquNode(expr, this.#parseAddition(), loc);
+        expr = new EquNode(expr, this.#parseIS(), loc);
         break;
       case TokenType.NOT_EQU:
         loc = this.#location;
         this.#consume();
-        expr = new NotEquNode(expr, this.#parseAddition(), loc);
+        expr = new NotEquNode(expr, this.#parseIS(), loc);
         break;
       case TokenType.LT:
         loc = this.#location;
         this.#consume();
-        expr = new LtNode(expr, this.#parseAddition(), loc);
+        expr = new LtNode(expr, this.#parseIS(), loc);
         break;
       case TokenType.LTE:
         loc = this.#location;
         this.#consume();
-        expr = new LteNode(expr, this.#parseAddition(), loc);
+        expr = new LteNode(expr, this.#parseIS(), loc);
         break;
       case TokenType.GT:
         loc = this.#location;
         this.#consume();
-        expr = new GtNode(expr, this.#parseAddition(), loc);
+        expr = new GtNode(expr, this.#parseIS(), loc);
         break;
       case TokenType.GTE:
         loc = this.#location;
         this.#consume();
-        expr = new GteNode(expr, this.#parseAddition(), loc);
+        expr = new GteNode(expr, this.#parseIS(), loc);
+        break;
+      default: return expr;
+    }
+  }
+
+  #parseIS() {
+    let expr = this.#parseAddition();
+    let loc;
+    while (true) switch (this.c_token) {
+      case TokenType.RW_BOOL:
+        loc = this.#location;
+        this.#consume();
+        expr = new IsOpNode(expr, 'bool', loc);
+        break;
+      case TokenType.NOT_EQU:
+        loc = this.#location;
+        this.#consume();
+        expr = new NotEquNode(expr, this.#parseIS(), loc);
+        break;
+      case TokenType.LT:
+        loc = this.#location;
+        this.#consume();
+        expr = new LtNode(expr, this.#parseIS(), loc);
+        break;
+      case TokenType.LTE:
+        loc = this.#location;
+        this.#consume();
+        expr = new LteNode(expr, this.#parseIS(), loc);
+        break;
+      case TokenType.GT:
+        loc = this.#location;
+        this.#consume();
+        expr = new GtNode(expr, this.#parseIS(), loc);
+        break;
+      case TokenType.GTE:
+        loc = this.#location;
+        this.#consume();
+        expr = new GteNode(expr, this.#parseIS(), loc);
         break;
       default: return expr;
     }
