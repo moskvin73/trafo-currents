@@ -73,6 +73,59 @@ function roundNumber(value, decimals = 0) {
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
+function executeMatrixRoundUniversal(matrix, yArg = null, allRules) {
+  const rawData = matrix.unsafeRows;
+  const rows = rawData.length;
+  if (rows === 0) return new Matrix([]);
+  const cols = rawData.length;
+  if (cols === 0) return new Matrix([]);
+
+  // 1. Определяем тип элементов матрицы
+  const firstElement = rawData[0][0];
+  const elementType = firstElement?.constructor;
+
+  // 2. Поддержка вложенных матриц (рекурсия)
+  if (elementType === Matrix) {
+    const newData = new Array(rows);
+    for (let i = 0; i < rows; i++) {
+      newData[i] = new Array(cols);
+      for (let j = 0; j < cols; j++) {
+        newData[i][j] = executeMatrixRoundUniversal(rawData[i][j], yArg, allRules);
+      }
+    }
+    return new Matrix(newData);
+  }
+
+  // 3. Автоматический поиск правила по типу элемента из массива allRules
+  // Мы ищем правило, где:
+  // - Первый тип в массиве types совпадает с типом элемента матрицы (например, ComplexNumber)
+  // - Количество типов совпадает с количеством переданных аргументов (1 или 2)
+  const targetLength = yArg ? 2 : 1;
+  const targetRule = allRules.find(rule => 
+    rule.types.length === targetLength && 
+    rule.types[0] === elementType
+  );
+
+  if (!targetRule) {
+    throw new Error(`В таблице не найдено правило округления для элементов типа "${elementType?.name || 'unknown'}".`);
+  }
+
+  const executeFn = targetRule.execute;
+
+  // 4. Сверхбыстрый вычислительный цикл
+  const newData = new Array(rows);
+  for (let i = 0; i < rows; i++) {
+    newData[i] = new Array(cols);
+    for (let j = 0; j < cols; j++) {
+      // Собираем аргументы для конкретной ячейки
+      const cellArgs = yArg ? [rawData[i][j], yArg] : [rawData[i][j]];
+      newData[i][j] = executeFn(cellArgs);
+    }
+  }
+
+  return new Matrix(newData);
+}
+
 const mathClasses = {
     RealNumber,
     ComplexNumber,
@@ -82,6 +135,42 @@ const mathClasses = {
 // =========================================================================
 // 2. ДЕКЛАРАТИВНЫЙ РЕЕСТР СИГНАТУР ФУНКЦИЙ (COMPILER REGISTRY)
 // =========================================================================
+// Объявляем переменную для списка правил
+let roundRules = [];
+roundRules =
+  [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
+    { types: [RealNumber, RealNumber], callType: 'custom', execute: 
+                                        ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
+          const r = Math.round(x.real);
+          const i = Math.round(x.imaginary);
+          return new ComplexNumber(r, i) }},
+    { types: [ComplexNumber, RealNumber], callType: 'custom', execute: ([x, y]) => { 
+          const r = roundNumber(x.real, y);
+          const i = roundNumber(x.imaginary, y);
+          return new ComplexNumber(r, i) }},
+    { 
+      types: [Matrix], 
+      callType: 'custom', 
+      execute: (args) => {
+        // args[0] — это матрица, args[1] — это опциональный RealNumber (количество знаков)
+        const [matrix] = args; 
+        return executeMatrixRoundUniversal(matrix, 0, roundRules);
+      }
+    },
+    { 
+      types: [Matrix, RealNumber], 
+      callType: 'custom', 
+      execute: (args) => {
+        // args[0] — это матрица, args[1] — это опциональный RealNumber (количество знаков)
+        const [matrix, y] = args; 
+        return executeMatrixRoundUniversal(matrix, y, roundRules);
+      }
+    },
+  ];
+
+
 export const COMPILER_REGISTRY = new Map([
   // === ФУНКЦИЯ SQRT (1 или 2 аргумента) ===
   ['sqrt', [
@@ -90,7 +179,8 @@ export const COMPILER_REGISTRY = new Map([
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' }
   ]],
 
-  ['round', [
+  ['round', roundRules],
+  /*['round', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
     { types: [RealNumber, RealNumber], callType: 'custom', execute: 
                                         ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
@@ -103,7 +193,7 @@ export const COMPILER_REGISTRY = new Map([
           const i = roundNumber(x.imaginary, y);
           return new ComplexNumber(r, i) }},
     //{ types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
-  ]],
+  ]],*/
 
 
   ['abs', [
