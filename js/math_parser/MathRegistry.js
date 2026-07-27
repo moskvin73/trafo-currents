@@ -3,50 +3,8 @@ import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
+import { roundNumber } from '../math/util.js';
 
-const POWERS_OF_10 = [
-  1,           // 10^0
-  10,          // 10^1
-  100,         // 10^2
-  1000,        // 10^3
-  10000,       // 10^4
-  100000,      // 10^5
-  1000000,     // 10^6
-  10000000,    // 10^7
-  100000000,   // 10^8
-  1000000000,  // 10^9
-  10000000000, // 10^10
-  100000000000,
-  1000000000000,
-  10000000000000,
-  100000000000000,
-  1000000000000000,
-  10000000000000000,
-  100000000000000000,
-  1000000000000000000,
-  10000000000000000000,
-  100000000000000000000 // 10^20
-];
-
-function roundNumber(value, decimals = 0) {
-  // 1. Защита от NaN и бесконечностей самого числа
-  if (!Number.isFinite(value)) return value;
-
-  // 2. Защита от дробных чисел: отсекаем дробную часть у параметра decimals.
-  // Битовый оператор `~~` работает как Math.trunc, но делает это мгновенно на уровне процессора.
-  // Он превратит 2.5 в 2, а -1.2 в -1.
-  let cleanDecimals = ~~decimals;
-
-  // 3. Строгое ограничение диапазона индексов для нашей таблицы степеней
-  if (cleanDecimals < 0) cleanDecimals = 0;
-  if (cleanDecimals > 20) cleanDecimals = 20;
-
-  // 4. Мгновенное извлечение коэффициента из таблицы степеней
-  const factor = POWERS_OF_10[cleanDecimals];
-
-  // 5. Точное математическое округление
-  return Math.round((value + Number.EPSILON) * factor) / factor;
-}
 
 const mathClasses = {
     BoolValue,
