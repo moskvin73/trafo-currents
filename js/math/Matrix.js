@@ -556,7 +556,7 @@ export default class Matrix extends MathType {
 
   static create(n, m) {
     const n_size = Math.floor(n);
-    const m_size = Math.floor(n);
+    const m_size = Math.floor(m);
 
     if (n_size <= 0) {
       throw new RangeError("[Matrix]: Размерность единичной матрицы должна быть целым числом больше 0.");
