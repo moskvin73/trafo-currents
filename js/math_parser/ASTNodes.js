@@ -350,6 +350,10 @@ const TYPE_CLASSES = {
   'matrix':  Matrix
 };
 
+const REVERSE_TYPE_CLASSES = new Map(
+  Object.entries(TYPE_CLASSES).map(([name, ClassRef]) => [ClassRef, name])
+);
+
 export class IsOpNode extends MathNode {
   constructor(argument, targetType, loc) {
     super(loc);
@@ -375,7 +379,8 @@ export class IsOpNode extends MathNode {
     if (this.argument.getPriority() < this.getPriority()) {
           innerCode = `(${innerCode})`;
     }
-    return `${innerCode} is ${targetType}`;
+    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    return `${innerCode} is ${name}`;
   }
 
   toTeX(context) {
@@ -383,7 +388,8 @@ export class IsOpNode extends MathNode {
     if (this.argument.getPriority() < this.getPriority()) {
           innerCode = `\\left(${innerCode}\\right)`;
     }
-    return `${innerCode}\\text{ is }${targetType}`;
+    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    return `${innerCode}\\text{ is }${name}`;
   }
 }
 
