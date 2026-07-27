@@ -271,6 +271,13 @@ export default class Matrix extends MathType {
 
   not_eq(other) { return this.eq(other).not(); }
 
+  max() {
+    const negatedElements = this.#rows.map(row =>
+      row.map(cell => cell.negate())
+    );
+    return new Matrix(negatedElements);
+  }
+
   /**
    * Транспонирование матрицы (поворот: строки становятся столбцами)
    * @returns {Matrix} Новая прямоугольная транспонированная матрица

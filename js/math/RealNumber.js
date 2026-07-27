@@ -635,6 +635,13 @@ export default class RealNumber extends MathType {
     }
   }
 
+  static max(a, b) {
+    return Math.max(RealNumber.from(a).value, RealNumber.from(b).value);
+  } 
+
+  static min(a, b) {
+    return Math.min(RealNumber.from(a).value, RealNumber.from(b).value);
+  } 
   // ==========================================
   // МЕТОДЫ ВЫВОДА ФОРМАТА
   // ==========================================
