@@ -102,6 +102,20 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   // Единичная матрица: принимает размерность (вещественное число)
+  ['zeros', [
+    {
+      types: [RealNumber, RealNumber],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        // finalArgs[0] — это гарантированно RealNumber благодаря вашей системе скоринга
+        const n = finalArgs[0].value;
+        const m = finalArgs[1].value;
+        return Matrix.create(n, m);
+      }
+    }
+  ]],
+
+  // Единичная матрица: принимает размерность (вещественное число)
   ['ident', [
     {
       types: [RealNumber],
