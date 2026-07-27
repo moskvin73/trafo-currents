@@ -151,6 +151,29 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  ['min', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.min();
+      }
+    }
+  ]],
+
+  ['max', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.max();
+      }
+    }
+  ]],
+
+
   // Диагональная матрица
   ['diag', [
     {
