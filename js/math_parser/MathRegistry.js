@@ -504,7 +504,104 @@ export const COMPILER_REGISTRY = new Map([
 ]);
 
 export const MathRegistry = {
-execute(overloads, args, loc, context = {}) {
+
+  execute(overloads, args, loc, context = {}) {
+    const { overload, castFunctions } = this.resolve(overloads, args, loc);
+    
+    // Применяем касты к аргументам
+    const finalArgs = args.map((arg, i) => castFunctions[i] ? castFunctions[i](arg) : arg);
+    
+    return this.invoke(overload, finalArgs, loc);
+  },
+
+  // НОВЫЙ МЕТОД: Находит перегрузку один раз и готовит функции каста
+  resolve(overloads, args, loc) {
+    const arity = args.length;
+    let bestOverload = null;
+    let minConversionScore = Infinity;
+    let bestCastFunctions = new Array(arity).fill(null); // Сохраняем функции каста здесь
+
+    const actualTypes = args.map(arg => {
+      const type = typeof arg;
+      return type === 'object' && arg !== null ? arg.constructor : type;
+    });
+
+    for (const overload of overloads) {
+      if (overload.types.length !== arity) continue;
+
+      let isCompatible = true;
+      let currentScore = 0;
+      const currentCastFunctions = new Array(arity).fill(null);
+
+      for (let i = 0; i < arity; i++) {
+        const actualType = actualTypes[i];
+        const expectedType = overload.types[i];
+
+        if (actualType === expectedType) continue;
+
+        const actualConfig = TYPE_REGISTRY.get(actualType);
+        const expectedConfig = TYPE_REGISTRY.get(expectedType);
+        const actualRank = actualConfig ? actualConfig.rank : 0;
+        const expectedRank = expectedConfig ? expectedConfig.rank : 0;
+
+        if (actualRank > expectedRank) {
+          isCompatible = false;
+          break;
+        }
+
+        const castFn = actualConfig?.casts.get(expectedType);
+        if (!castFn) {
+          isCompatible = false;
+          break;
+        }
+
+        currentScore += (expectedRank - actualRank);
+        currentCastFunctions[i] = castFn; // Сохраняем ссылку на каст для этого аргумента
+      }
+
+      if (isCompatible) {
+        if (currentScore < minConversionScore) {
+          minConversionScore = currentScore;
+          bestOverload = overload;
+          bestCastFunctions = currentCastFunctions;
+        } else if (currentScore === minConversionScore && bestOverload !== null) {
+          throw new TypeError(`[Semantic Error]: Неоднозначность при вызове функции. Найдены несколько конфликтующих перегрузок на ${loc}`);
+        }
+      }
+    }
+
+    if (!bestOverload) {
+      const signatureStr = actualTypes.map(t => typeof t === 'function' ? t.name : t).join(', ');
+      throw new TypeError(`[Semantic Error]: Ни одна из существующих перегрузок не принимает параметры вида (${signatureStr}) на ${loc}`);
+    }
+
+    return { overload: bestOverload, castFunctions: bestCastFunctions };
+  },
+
+  // ВЫЗОВ (Шаг 4 из вашего кода вынесен сюда)
+  invoke(bestOverload, finalArgs, loc) {
+    switch (bestOverload.callType) {
+      case 'instance': {
+        const [instance, ...rest] = finalArgs;
+        return instance[bestOverload.method](...rest);
+      }
+      case 'static': {
+        const targetName = bestOverload.target;
+        const methodName = bestOverload.method;
+        const targetClass = mathClasses[targetName];
+        if (!targetClass || typeof targetClass[methodName] !== 'function') {
+          throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
+        }
+        return targetClass[methodName](...finalArgs);
+      }
+      case 'custom': {
+        return bestOverload.execute(finalArgs);
+      }
+      default:
+        throw new Error(`[Compiler Error]: Неизвестный callType "${bestOverload.callType}"`);
+    }
+  }  
+/*execute(overloads, args, loc, context = {}) {
   
     const arity = args.length;
     let bestOverload = null;
@@ -610,5 +707,5 @@ execute(overloads, args, loc, context = {}) {
       default:
         throw new Error(`[Compiler Error]: Критическая ошибка: неизвестный callType "${bestOverload.callType}"`);
     }
-  }
+  }*/
 };
