@@ -412,6 +412,9 @@ const CAST_TABLE = {
     ComplexNumber:  (value) => value,
     Matrix:         (value) => new Matrix([value]),
   },
+  Matrix: {
+    Matrix:         (value) => value,
+  },
 }
 
 export class CastOpNode extends MathNode {
