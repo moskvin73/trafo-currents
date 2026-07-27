@@ -84,10 +84,6 @@ function executeMatrixRoundUniversal(matrix, yArg = null, allRules) {
   const firstElement = rawData[0][0];
   const elementType = firstElement?.constructor;
 
-  // 3. Автоматический поиск правила по типу элемента из массива allRules
-  // Мы ищем правило, где:
-  // - Первый тип в массиве types совпадает с типом элемента матрицы (например, ComplexNumber)
-  // - Количество типов совпадает с количеством переданных аргументов (1 или 2)
   const targetLength = yArg ? 2 : 1;
   const targetRule = allRules.find(rule => 
     rule.types.length === targetLength && 
@@ -508,14 +504,6 @@ export const COMPILER_REGISTRY = new Map([
 ]);
 
 export const MathRegistry = {
-  /**
-   * Диспетчер сигнатур с алгоритмом автоматического скоринга и приведения типов
-   */
-  /*execute(name, args, loc, context = {}) {
-    const overloads = COMPILER_REGISTRY.get(name);
-    if (!overloads) {
-      throw new Error(`[Semantic Error]: Функция "${name}" не поддерживается вычислительным ядром на ${loc}`);
-    }*/
 execute(overloads, args, loc, context = {}) {
   
     const arity = args.length;
