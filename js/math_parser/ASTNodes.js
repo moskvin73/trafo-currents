@@ -360,7 +360,19 @@ export class IsOpNode extends MathNode {
   getPriority() { return OpPriority.IS; }
 
   toString(context) {
+    let innerCode = this.argument.toString(context);
+    if (this.argument.getPriority() < this.getPriority()) {
+          innerCode = `(${innerCode})`;
+    }
+    return `${innerCode} is ${targetType}`;
+  }
 
+  toTeX(context) {
+    let innerCode = this.argument.toTeX(context);
+    if (this.argument.getPriority() < this.getPriority()) {
+          innerCode = `\\left(${innerCode}\\right)`;
+    }
+    return `${innerCode}\\text{ is }${targetType}`;
   }
 }
 
