@@ -456,9 +456,8 @@ export class CastOpNode extends MathNode {
     const type = typeof valueToCast;
     const sourceType = type === 'object' && valueToCast !== null ? valueToCast.constructor : type;
 
-    const kkk =  CAST_TABLE.get(sourceType);
-    
-    const castFunction = CAST_TABLE[sourceType]?.[this.targetType];
+    const config =  CAST_TABLE.get(sourceType);
+    const castFunction = config?.casts.get(this.targetType);
     if (castFunction) {
       return castFunction(valueToCast);
     }
