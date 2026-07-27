@@ -419,7 +419,7 @@ const CAST_TABLE = new Map([
     [BoolValue,      (value) => BoolValue.from(!value.equals(0))], 
     [RealNumber,     (value) => value],      
     [ComplexNumber,  (value) => ComplexNumber.from(value)],
-    [Matrix,         (value) => new Matrix([value])],
+    [Matrix,         (value) => new Matrix([[value]])],
     ]),
   }],
   // Правила конвертации ИЗ типа 'complex'
@@ -428,7 +428,7 @@ const CAST_TABLE = new Map([
     [BoolValue,      (value) => BoolValue.from(!value.equals(0))],
     [RealNumber,     (value) => RealNumber.from(value.real)],      
     [ComplexNumber,  (value) => value],
-    [Matrix,         (value) => new Matrix([value])],
+    [Matrix,         (value) => new Matrix([[value]])],
     ]),
   }],
   [Matrix, {
