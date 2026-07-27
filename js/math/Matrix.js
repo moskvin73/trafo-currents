@@ -106,7 +106,7 @@ export default class Matrix extends MathType {
 
   // Единственный метод, который нужен для трансформаций
   map(fn) {
-    const newRows = this.rows.map(row => row.map(cell => fn(cell)));
+    const newRows = this.#rows.map(row => row.map(cell => fn(cell)));
     return new Matrix(newRows);
   }  
 
