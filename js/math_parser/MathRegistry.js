@@ -354,7 +354,8 @@ function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
 let roundRules = [];
 roundRules =
 [
-  { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
+  { types: [RealNumber], callType: 'custom', execute: ([x]) => 
+                                      new RealNumber(Math.round(x.value)) },
   { types: [RealNumber, RealNumber], callType: 'custom', execute: 
                                       ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
   { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
