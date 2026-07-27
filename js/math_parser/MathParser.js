@@ -1436,7 +1436,7 @@ export class MathParser {
              this.#consume();
              return new NumberNode(new ComplexNumber(0, value), token_loc);
          }
-         case RW_BOOL:
+         case TokenType.RW_BOOL:
          {
             this.#consume();
             this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
@@ -1444,7 +1444,7 @@ export class MathParser {
             this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
             return new CastOpNode(expr, 'bool', token_loc)
          }
-         case RW_REAL:
+         case TokenType.RW_REAL:
          {
             this.#consume();
             this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
@@ -1452,7 +1452,7 @@ export class MathParser {
             this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
             return new CastOpNode(expr, 'real', token_loc)
          }
-         case RW_COMPLEX:
+         case TokenType.RW_COMPLEX:
          {
             this.#consume();
             this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
@@ -1460,7 +1460,7 @@ export class MathParser {
             this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
             return new CastOpNode(expr, 'сomplex', token_loc)
          }
-         case RW_MATRIX:
+         case TokenType.RW_MATRIX:
          {
             this.#consume();
             this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
