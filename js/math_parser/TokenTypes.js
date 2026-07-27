@@ -45,6 +45,7 @@ const tokenNames = [
   'RW_XOR',
   'RW_IF',
   'RW_IS',
+  'RW_MOD',
   'RW_ELSE',
   'RW_WHILE',
   'RW_DO',
