@@ -1436,6 +1436,38 @@ export class MathParser {
              this.#consume();
              return new NumberNode(new ComplexNumber(0, value), token_loc);
          }
+         case RW_BOOL:
+         {
+            this.#consume();
+            this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
+            const expr = this.#parseExpression();
+            this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
+            return new CastOpNode(expr, 'bool', token_loc)
+         }
+         case RW_REAL:
+         {
+            this.#consume();
+            this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
+            const expr = this.#parseExpression();
+            this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
+            return new CastOpNode(expr, 'real', token_loc)
+         }
+         case RW_COMPLEX:
+         {
+            this.#consume();
+            this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
+            const expr = this.#parseExpression();
+            this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
+            return new CastOpNode(expr, 'сomplex', token_loc)
+         }
+         case RW_MATRIX:
+         {
+            this.#consume();
+            this.#match(TokenType.LPAREN, "Ожидалась открывающаяся скобка '('");
+            const expr = this.#parseExpression();
+            this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'");
+            return new CastOpNode(expr, 'matrix', token_loc)
+         }
          case TokenType.LPAREN:
              this.#consume();
              const expr = this.#parseExpression();
