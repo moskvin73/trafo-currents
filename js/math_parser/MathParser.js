@@ -1229,29 +1229,30 @@ export class MathParser {
   #parseIS() {
     let expr = this.#parseAddition();
     let loc;
-    while (true) switch (this.c_token) {
-      case TokenType.RW_BOOL:
-        loc = this.#location;
-        this.#consume();
-        expr = new IsOpNode(expr, 'bool', loc);
-        break;
-      case TokenType.RW_REAL:
-        loc = this.#location;
-        this.#consume();
-        expr = new IsOpNode(expr, 'real', loc);
-        break;
-      case TokenType.RW_COMPLEX:
-        loc = this.#location;
-        this.#consume();
-        expr = new IsOpNode(expr, 'сomplex', loc);
-        break;
-      case TokenType.RW_MATRIX:
-        loc = this.#location;
-        this.#consume();
-        expr = new IsOpNode(expr, 'matrix', loc);
-        break;
-      default: return expr;
-    }
+    if (this.c_token === TokenType.RW_IS) {
+      this.#consume();
+      while (true) switch (this.c_token) {
+        case TokenType.RW_BOOL:
+          loc = this.#location;
+          this.#consume();
+          return new IsOpNode(expr, 'bool', loc);
+        case TokenType.RW_REAL:
+          loc = this.#location;
+          this.#consume();
+          return new IsOpNode(expr, 'real', loc);
+        case TokenType.RW_COMPLEX:
+          loc = this.#location;
+          this.#consume();
+          return new IsOpNode(expr, 'сomplex', loc);
+        case TokenType.RW_MATRIX:
+          loc = this.#location;
+          this.#consume();
+          return new IsOpNode(expr, 'matrix', loc);
+        default: 
+          this.#error("Ожидался тип.", this.#location);
+          return new IsOpNode(expr, 'bool', loc);
+      }
+    } else return expr;
   }
   
   // Множество FIRST для знаков сложения/вычитания
