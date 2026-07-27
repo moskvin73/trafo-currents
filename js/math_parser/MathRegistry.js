@@ -388,7 +388,14 @@ absRules =
 [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
-    { types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
+    { 
+      types: [Matrix], 
+      callType: 'custom', 
+      execute: (args) => {
+        const [matrix, ...restArgs] = args; 
+        return executeMatrixOperationUniversal(matrix, restArgs, absRules);
+      }
+    },
 ];
 
 export const COMPILER_REGISTRY = new Map([
@@ -401,11 +408,11 @@ export const COMPILER_REGISTRY = new Map([
 
   ['round', roundRules],
 
-  ['abs', [
+  /*['abs', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
     { types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
-  ]],
+  ]],*/
 
   ['conjugate', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.conjugate },
