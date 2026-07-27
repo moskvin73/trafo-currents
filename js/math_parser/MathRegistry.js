@@ -30,6 +30,11 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.conjugate },
   ]],
 
+  ['phase', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.phase },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.phase) },
+  ]],
+
   // === ЛОГАРИФМЫ ===
   ['ln', [
     { types: [RealNumber], callType: 'instance', method: 'log' },
