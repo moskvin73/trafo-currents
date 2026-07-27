@@ -426,6 +426,16 @@ export class CastOpNode extends MathNode {
   
   getPriority() {  return OpPriority.PRIMARY; }
 
+  toString(context) {
+    let innerCode = this.argument.toString(context);
+    if (this.argument.getPriority() < this.getPriority()) {
+          innerCode = `(${innerCode})`;
+    }
+    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    return `${name}(${innerCode})`;
+  }
+
+
   internal_evaluate(context) { 
     const valueToCast = this.argument.internal_evaluate(context);
 
