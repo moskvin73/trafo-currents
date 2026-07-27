@@ -597,6 +597,14 @@ export default class ComplexNumber extends MathType {
     }
   }
 
+  mod(other) {
+    const rightValue = ComplexNumber.from(other).magnitude;
+    const leftValue = this.magnitude;
+    const left_p = this.phase;
+    const m = ((leftValue % rightValue) + rightValue) % rightValue;
+    return new ComplexNumber(m * Math.cos(left_p) , m * Math.sin(left_p));
+  }
+
   // ==========================================
   // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
   // ==========================================
