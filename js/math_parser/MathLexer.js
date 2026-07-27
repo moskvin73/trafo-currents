@@ -34,6 +34,7 @@ const reservedWordsMap = {
   'real': TokenType.RW_REAL,
   'complex': TokenType.RW_COMPLEX,
   'matrix': TokenType.RW_MATRIX,
+  'is': TokenType.RW_IS,
 };
 
 
