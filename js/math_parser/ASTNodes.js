@@ -415,6 +415,19 @@ const CAST_TABLE = {
   },
 }
 
+export class CastOpNode extends MathNode {
+  constructor(argument, targetType, loc) {
+    super(loc);
+    this.argument = argument;
+    this.targetType = TYPE_CLASSES[targetType];
+    if (!this.targetType) {
+      throw new Error(`Runtime Error: Тип данных "${typeKey}" не зарегистрирован в ядре калькулятора.`);
+    }
+  }
+  
+  getPriority() {  return OpPriority.PRIMARY; }
+}
+
 /**
  * Узел унарной операции (например: -x, +sin(i))
  */
