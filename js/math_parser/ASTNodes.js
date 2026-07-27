@@ -435,7 +435,7 @@ export class CastOpNode extends MathNode {
   toTeX(context) {
     let innerCode = this.argument.toTeX(context);
     const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
-    return `\\text{ is ${name}}\\left(${innerCode}\\right)`;
+    return `\\text{${name}}\\left(${innerCode}\\right)`;
   }
 
 
