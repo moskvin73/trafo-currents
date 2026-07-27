@@ -378,7 +378,7 @@ export const COMPILER_REGISTRY = new Map([
 
   ['round',   roundRules],
   ['floor',   floorRules],
-  ['ceill',   ceilRules],
+  ['ceil',    ceilRules],
   ['abs',     absRules],
 
   ['conjugate', [
