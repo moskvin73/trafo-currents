@@ -272,10 +272,25 @@ export default class Matrix extends MathType {
   not_eq(other) { return this.eq(other).not(); }
 
   max() {
-    const negatedElements = this.#rows.map(row =>
-      row.map(cell => cell.negate())
-    );
-    return new Matrix(negatedElements);
+    let max = -Infinity;
+
+    for (let i = 0; i < this.#rows.length; i++) {
+      for (let j = 0; j < this.#rows[i].length; j++) {
+        if (this.#rows[i][j].gt(max)) {
+          max = this.#rows[i][j];
+        }
+      }
+  }
+
+  min() {
+    let max = Infinity;
+
+    for (let i = 0; i < this.#rows.length; i++) {
+      for (let j = 0; j < this.#rows[i].length; j++) {
+        if (this.#rows[i][j].lt(max)) {
+          max = this.#rows[i][j];
+        }
+      }
   }
 
   /**
