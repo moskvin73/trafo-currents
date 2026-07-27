@@ -354,14 +354,15 @@ export class IsOpNode extends MathNode {
   constructor(argument, targetType, loc) {
     super(loc);
     this.argument = argument;
-    this.targetType =  TYPE_CLASSES[targetType';
+    this.targetType = TYPE_CLASSES[targetType];
   }
 
   getPriority() { return OpPriority.IS; }
 
   internal_evaluate(context) { 
     const lv = this.argument.internal_evaluate(context);
-    return lv instanceof this.targetClass;
+    const targetClass = this.targetType;
+    return lv instanceof targetClass;
   }
 
   toString(context) {
