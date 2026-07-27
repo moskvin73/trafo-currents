@@ -104,6 +104,12 @@ export default class Matrix extends MathType {
     return this.#rows.map(row => [...row]);
   }
 
+  // Единственный метод, который нужен для трансформаций
+  map(fn) {
+    const newRows = this.rows.map(row => row.map(cell => fn(cell)));
+    return new Matrix(newRows);
+  }  
+
   /**
    * Универсальное повышение типа всех элементов матрицы до целевого числового класса.
    * @param {Function} TargetNumberClass - Класс, к которому нужно привести элементы (например, ComplexNumber)
