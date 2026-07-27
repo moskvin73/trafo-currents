@@ -426,6 +426,15 @@ export class CastOpNode extends MathNode {
   }
   
   getPriority() {  return OpPriority.PRIMARY; }
+
+  internal_evaluate(context) { 
+    const valueToCast = this.argument.internal_evaluate(context);
+    
+
+    const targetClass = this.targetType;
+    return new BoolValue(leftValue instanceof targetClass);
+  }
+
 }
 
 /**
