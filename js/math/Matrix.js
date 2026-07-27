@@ -297,6 +297,20 @@ export default class Matrix extends MathType {
     return _min;
   }
 
+  avg() {
+    let sum = this.#rows[0][0].multiply(0);
+    let count = 0;
+
+    for (let i = 0; i < this.#rows.length; i++) {
+      const row = this.#rows[i];
+      for (let j = 0; j < row.length; j++) {
+        sum = sum.add(row[j]);
+        count++;
+      }
+    }
+    return sum.divide(count);
+  }
+
   /**
    * Транспонирование матрицы (поворот: строки становятся столбцами)
    * @returns {Matrix} Новая прямоугольная транспонированная матрица
