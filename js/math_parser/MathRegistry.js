@@ -62,6 +62,11 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.phase) },
   ]],
 
+  ['imag', [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(0) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.imaginary) },
+  ]],
+
   // Радианы (rad) в Градусы (deg)
   ['deg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(180 / Math.PI) },
