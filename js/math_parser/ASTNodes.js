@@ -16,12 +16,13 @@ const OpPriority = {
     OR: 2,
     XOR: 3,
     AND: 4,
-    RELATIONAL: 5,  
-    ADD_SUB: 6,      // '+', '-'
-    MUL_DIV: 7,      // '*', '/'
-    UNARY: 8,        // унарные '+' и '-'
-    POW: 9,          // '^'
-    PRIMARY: 10       // Числа, переменные
+    RELATIONAL: 5,
+    IS: 6,  
+    ADD_SUB: 7,      // '+', '-'
+    MUL_DIV: 8,      // '*', '/'
+    UNARY: 9,        // унарные '+' и '-'
+    POW: 10,          // '^'
+    PRIMARY: 11       // Числа, переменные
 };
 
 /**
