@@ -2,6 +2,7 @@
 // если потребуется расширение, или для явного понимания типов
 import BoolValue from '../math/BoolValue.js';
 import RealNumber from '../math/RealNumber.js';
+import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { MathRegistry } from './MathRegistry.js';
 import { dispatcher } from './SemanticDispatcher.js';
@@ -339,6 +340,27 @@ export class MatrixNode extends MathNode {
         node.collectMathExpressions(list);
       }
     }
+  }
+}
+
+const TYPE_CLASSES = {
+  'bool': BoolValue,
+  'real': RealNumber,
+  'сomplex': ComplexNumber,
+  'matrix':  Matrix
+};
+
+export class IsOpNode extends MathNode {
+  constructor(argument, targetType, loc) {
+    super(loc);
+    this.argument = argument;
+    this.targetType = targetType;
+  }
+
+  getPriority() { return OpPriority.IS; }
+
+  toString(context) {
+
   }
 }
 
