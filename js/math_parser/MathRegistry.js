@@ -84,18 +84,6 @@ function executeMatrixRoundUniversal(matrix, yArg = null, allRules) {
   const firstElement = rawData[0][0];
   const elementType = firstElement?.constructor;
 
-  // 2. Поддержка вложенных матриц (рекурсия)
-  /*if (elementType === Matrix) {
-    const newData = new Array(rows);
-    for (let i = 0; i < rows; i++) {
-      newData[i] = new Array(cols);
-      for (let j = 0; j < cols; j++) {
-        newData[i][j] = executeMatrixRoundUniversal(rawData[i][j], yArg, allRules);
-      }
-    }
-    return new Matrix(newData);
-  }*/
-
   // 3. Автоматический поиск правила по типу элемента из массива allRules
   // Мы ищем правило, где:
   // - Первый тип в массиве types совпадает с типом элемента матрицы (например, ComplexNumber)
