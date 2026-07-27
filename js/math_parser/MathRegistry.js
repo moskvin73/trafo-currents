@@ -53,7 +53,8 @@ export const COMPILER_REGISTRY = new Map([
 
   ['round', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(roundNumber(x.value)) },
-    { types: [RealNumber, RealNumber], callType: 'custom', execute: ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
+    { types: [RealNumber, RealNumber], callType: 'custom', execute: 
+                                        ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
           const r = roundNumber(x.real);
           const i = roundNumber(x.imaginary);
