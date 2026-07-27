@@ -135,7 +135,7 @@ export const COMPILER_REGISTRY = new Map([
       callType: 'custom',
       execute: (finalArgs) => {
         const [inputMatrix] = finalArgs;
-        return inputMatrix.colCount;
+        return new RealNumber(inputMatrix.colCount);
       }
     }
   ]],
@@ -146,7 +146,7 @@ export const COMPILER_REGISTRY = new Map([
       callType: 'custom',
       execute: (finalArgs) => {
         const [inputMatrix] = finalArgs;
-        return inputMatrix.rowCount;
+        return new RealNumber(inputMatrix.rowCount);
       }
     }
   ]],
