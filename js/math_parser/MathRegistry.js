@@ -73,6 +73,219 @@ function roundNumber(value, decimals = 0) {
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
+const mathClasses = {
+    RealNumber,
+    ComplexNumber,
+    Matrix,
+};
+
+export const MathRegistry = {
+
+  execute(overloads, args, loc, context = {}) {
+    const { overload, castFunctions } = this.resolve(overloads, args, loc);
+    
+    // Применяем касты к аргументам
+    const finalArgs = args.map((arg, i) => castFunctions[i] ? castFunctions[i](arg) : arg);
+    
+    return this.invoke(overload, finalArgs, loc);
+  },
+
+  // НОВЫЙ МЕТОД: Находит перегрузку один раз и готовит функции каста
+  resolve(overloads, args, loc) {
+    const arity = args.length;
+    let bestOverload = null;
+    let minConversionScore = Infinity;
+    let bestCastFunctions = new Array(arity).fill(null); // Сохраняем функции каста здесь
+
+    const actualTypes = args.map(arg => {
+      const type = typeof arg;
+      return type === 'object' && arg !== null ? arg.constructor : type;
+    });
+
+    for (const overload of overloads) {
+      if (overload.types.length !== arity) continue;
+
+      let isCompatible = true;
+      let currentScore = 0;
+      const currentCastFunctions = new Array(arity).fill(null);
+
+      for (let i = 0; i < arity; i++) {
+        const actualType = actualTypes[i];
+        const expectedType = overload.types[i];
+
+        if (actualType === expectedType) continue;
+
+        const actualConfig = TYPE_REGISTRY.get(actualType);
+        const expectedConfig = TYPE_REGISTRY.get(expectedType);
+        const actualRank = actualConfig ? actualConfig.rank : 0;
+        const expectedRank = expectedConfig ? expectedConfig.rank : 0;
+
+        if (actualRank > expectedRank) {
+          isCompatible = false;
+          break;
+        }
+
+        const castFn = actualConfig?.casts.get(expectedType);
+        if (!castFn) {
+          isCompatible = false;
+          break;
+        }
+
+        currentScore += (expectedRank - actualRank);
+        currentCastFunctions[i] = castFn; // Сохраняем ссылку на каст для этого аргумента
+      }
+
+      if (isCompatible) {
+        if (currentScore < minConversionScore) {
+          minConversionScore = currentScore;
+          bestOverload = overload;
+          bestCastFunctions = currentCastFunctions;
+        } else if (currentScore === minConversionScore && bestOverload !== null) {
+          throw new TypeError(`[Semantic Error]: Неоднозначность при вызове функции. Найдены несколько конфликтующих перегрузок на ${loc}`);
+        }
+      }
+    }
+
+    if (!bestOverload) {
+      const signatureStr = actualTypes.map(t => typeof t === 'function' ? t.name : t).join(', ');
+      throw new TypeError(`[Semantic Error]: Ни одна из существующих перегрузок не принимает параметры вида (${signatureStr}) на ${loc}`);
+    }
+
+    return { overload: bestOverload, castFunctions: bestCastFunctions };
+  },
+
+  // ВЫЗОВ (Шаг 4 из вашего кода вынесен сюда)
+  invoke(bestOverload, finalArgs, loc) {
+    switch (bestOverload.callType) {
+      case 'instance': {
+        const [instance, ...rest] = finalArgs;
+        return instance[bestOverload.method](...rest);
+      }
+      case 'static': {
+        const targetName = bestOverload.target;
+        const methodName = bestOverload.method;
+        const targetClass = mathClasses[targetName];
+        if (!targetClass || typeof targetClass[methodName] !== 'function') {
+          throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
+        }
+        return targetClass[methodName](...finalArgs);
+      }
+      case 'custom': {
+        return bestOverload.execute(finalArgs);
+      }
+      default:
+        throw new Error(`[Compiler Error]: Неизвестный callType "${bestOverload.callType}"`);
+    }
+  }  
+/*execute(overloads, args, loc, context = {}) {
+  
+    const arity = args.length;
+    let bestOverload = null;
+    let finalArgs = null;
+    let minConversionScore = Infinity; // Чем меньше счет, тем точнее совпадение типов
+
+    // Шаг 1: Извлекаем фактические типы переданных аргументов за O(1)
+    const actualTypes = args.map(arg => {
+      const type = typeof arg;
+      return type === 'object' && arg !== null ? arg.constructor : type;
+    });
+
+    // Шаг 2: Сканируем перегрузки и ищем наиболее совместимую
+    for (const overload of overloads) {
+      // Фильтр по количеству аргументов (арности)
+      if (overload.types.length !== arity) continue;
+
+      let isCompatible = true;
+      let currentScore = 0;
+      const candidatesArgs = [];
+
+      for (let i = 0; i < arity; i++) {
+        const actualType = actualTypes[i];
+        const expectedType = overload.types[i];
+
+        // Ситуация А: Точное совпадение типа (Идеальный случай, штраф = 0)
+        if (actualType === expectedType) {
+          candidatesArgs.push(args[i]);
+          continue;
+        }
+
+        // Ситуация Б: Неявное приведение типов на основе декларативных рангов
+        const actualConfig = TYPE_REGISTRY.get(actualType);
+        const expectedConfig = TYPE_REGISTRY.get(expectedType);
+
+        const actualRank = actualConfig ? actualConfig.rank : 0;
+        const expectedRank = expectedConfig ? expectedConfig.rank : 0;
+
+        // Запрещено: Попытка передать старший тип вместо младшего (например, Complex вместо Real)
+        if (actualRank > expectedRank) {
+          isCompatible = false;
+          break;
+        }
+
+        // Ищем функцию каста фактического типа к формальному типу сигнатуры
+        const castFn = actualConfig?.casts.get(expectedType);
+        if (!castFn) {
+          isCompatible = false;
+          break;
+        }
+
+        // Вычисляем "дистанцию" трансформации как штрафной балл компилятора
+        currentScore += (expectedRank - actualRank);
+        candidatesArgs.push(castFn(args[i]));
+      }
+
+      // Шаг 3: Разрешение неоднозначностей (Ambiguous Resolution)
+      if (isCompatible) {
+        if (currentScore < minConversionScore) {
+          minConversionScore = currentScore;
+          bestOverload = overload;
+          finalArgs = candidatesArgs;
+        } else if (currentScore === minConversionScore && bestOverload !== null) {
+          // Если две разные перегрузки требуют одинакового веса преобразований
+          throw new TypeError(`[Semantic Error]: Неоднозначность при вызове функции "${name}". Найдены несколько конфликтующих перегрузок с одинаковым приоритетом на ${loc}`);
+        }
+      }
+    }
+
+    // Если совместимая сигнатура так и не была найдена
+    if (!bestOverload) {
+      const signatureStr = actualTypes.map(t => typeof t === 'function' ? t.name : t).join(', ');
+      throw new TypeError(`[Semantic Error]: Ни одна из существующих перегрузок функции "${name}" не принимает параметры вида (${signatureStr}) на ${loc}`);
+    }
+
+    // Шаг 4: Выполнение вызова на основе разрешенного контекста сигнатуры
+    switch (bestOverload.callType) {
+      
+      // Вызов метода экземпляра класса: arg0.method(arg1, ...)
+      case 'instance': {
+        const [instance, ...rest] = finalArgs;
+        const methodName = bestOverload.method;
+        return instance[methodName](...rest);
+      }
+
+      // Вызов статического метода внешнего модуля: Module.method(arg0, arg1, ...)
+      case 'static': {
+        const targetName = bestOverload.target;
+        const methodName = bestOverload.method;
+        const targetClass = mathClasses[targetName];//context[targetName];
+        
+        if (!targetClass || typeof targetClass[methodName] !== 'function') {
+          throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
+        }
+        return targetClass[methodName](...finalArgs);
+      }
+
+      // Вызов изолированной логики, описанной замыканием прямо в таблице
+      case 'custom': {
+        return bestOverload.execute(finalArgs);
+      }
+
+      default:
+        throw new Error(`[Compiler Error]: Критическая ошибка: неизвестный callType "${bestOverload.callType}"`);
+    }
+  }*/
+};
+
 function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
   const rawData = matrix.unsafeRows;
   const rows = rawData.length;
@@ -133,12 +346,6 @@ function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
 
   return new Matrix(newData);
 }
-
-const mathClasses = {
-    RealNumber,
-    ComplexNumber,
-    Matrix,
-};
 
 // =========================================================================
 // 2. ДЕКЛАРАТИВНЫЙ РЕЕСТР СИГНАТУР ФУНКЦИЙ (COMPILER REGISTRY)
@@ -508,210 +715,3 @@ export const COMPILER_REGISTRY = new Map([
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
   ]]*/
 ]);
-
-export const MathRegistry = {
-
-  execute(overloads, args, loc, context = {}) {
-    const { overload, castFunctions } = this.resolve(overloads, args, loc);
-    
-    // Применяем касты к аргументам
-    const finalArgs = args.map((arg, i) => castFunctions[i] ? castFunctions[i](arg) : arg);
-    
-    return this.invoke(overload, finalArgs, loc);
-  },
-
-  // НОВЫЙ МЕТОД: Находит перегрузку один раз и готовит функции каста
-  resolve(overloads, args, loc) {
-    const arity = args.length;
-    let bestOverload = null;
-    let minConversionScore = Infinity;
-    let bestCastFunctions = new Array(arity).fill(null); // Сохраняем функции каста здесь
-
-    const actualTypes = args.map(arg => {
-      const type = typeof arg;
-      return type === 'object' && arg !== null ? arg.constructor : type;
-    });
-
-    for (const overload of overloads) {
-      if (overload.types.length !== arity) continue;
-
-      let isCompatible = true;
-      let currentScore = 0;
-      const currentCastFunctions = new Array(arity).fill(null);
-
-      for (let i = 0; i < arity; i++) {
-        const actualType = actualTypes[i];
-        const expectedType = overload.types[i];
-
-        if (actualType === expectedType) continue;
-
-        const actualConfig = TYPE_REGISTRY.get(actualType);
-        const expectedConfig = TYPE_REGISTRY.get(expectedType);
-        const actualRank = actualConfig ? actualConfig.rank : 0;
-        const expectedRank = expectedConfig ? expectedConfig.rank : 0;
-
-        if (actualRank > expectedRank) {
-          isCompatible = false;
-          break;
-        }
-
-        const castFn = actualConfig?.casts.get(expectedType);
-        if (!castFn) {
-          isCompatible = false;
-          break;
-        }
-
-        currentScore += (expectedRank - actualRank);
-        currentCastFunctions[i] = castFn; // Сохраняем ссылку на каст для этого аргумента
-      }
-
-      if (isCompatible) {
-        if (currentScore < minConversionScore) {
-          minConversionScore = currentScore;
-          bestOverload = overload;
-          bestCastFunctions = currentCastFunctions;
-        } else if (currentScore === minConversionScore && bestOverload !== null) {
-          throw new TypeError(`[Semantic Error]: Неоднозначность при вызове функции. Найдены несколько конфликтующих перегрузок на ${loc}`);
-        }
-      }
-    }
-
-    if (!bestOverload) {
-      const signatureStr = actualTypes.map(t => typeof t === 'function' ? t.name : t).join(', ');
-      throw new TypeError(`[Semantic Error]: Ни одна из существующих перегрузок не принимает параметры вида (${signatureStr}) на ${loc}`);
-    }
-
-    return { overload: bestOverload, castFunctions: bestCastFunctions };
-  },
-
-  // ВЫЗОВ (Шаг 4 из вашего кода вынесен сюда)
-  invoke(bestOverload, finalArgs, loc) {
-    switch (bestOverload.callType) {
-      case 'instance': {
-        const [instance, ...rest] = finalArgs;
-        return instance[bestOverload.method](...rest);
-      }
-      case 'static': {
-        const targetName = bestOverload.target;
-        const methodName = bestOverload.method;
-        const targetClass = mathClasses[targetName];
-        if (!targetClass || typeof targetClass[methodName] !== 'function') {
-          throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
-        }
-        return targetClass[methodName](...finalArgs);
-      }
-      case 'custom': {
-        return bestOverload.execute(finalArgs);
-      }
-      default:
-        throw new Error(`[Compiler Error]: Неизвестный callType "${bestOverload.callType}"`);
-    }
-  }  
-/*execute(overloads, args, loc, context = {}) {
-  
-    const arity = args.length;
-    let bestOverload = null;
-    let finalArgs = null;
-    let minConversionScore = Infinity; // Чем меньше счет, тем точнее совпадение типов
-
-    // Шаг 1: Извлекаем фактические типы переданных аргументов за O(1)
-    const actualTypes = args.map(arg => {
-      const type = typeof arg;
-      return type === 'object' && arg !== null ? arg.constructor : type;
-    });
-
-    // Шаг 2: Сканируем перегрузки и ищем наиболее совместимую
-    for (const overload of overloads) {
-      // Фильтр по количеству аргументов (арности)
-      if (overload.types.length !== arity) continue;
-
-      let isCompatible = true;
-      let currentScore = 0;
-      const candidatesArgs = [];
-
-      for (let i = 0; i < arity; i++) {
-        const actualType = actualTypes[i];
-        const expectedType = overload.types[i];
-
-        // Ситуация А: Точное совпадение типа (Идеальный случай, штраф = 0)
-        if (actualType === expectedType) {
-          candidatesArgs.push(args[i]);
-          continue;
-        }
-
-        // Ситуация Б: Неявное приведение типов на основе декларативных рангов
-        const actualConfig = TYPE_REGISTRY.get(actualType);
-        const expectedConfig = TYPE_REGISTRY.get(expectedType);
-
-        const actualRank = actualConfig ? actualConfig.rank : 0;
-        const expectedRank = expectedConfig ? expectedConfig.rank : 0;
-
-        // Запрещено: Попытка передать старший тип вместо младшего (например, Complex вместо Real)
-        if (actualRank > expectedRank) {
-          isCompatible = false;
-          break;
-        }
-
-        // Ищем функцию каста фактического типа к формальному типу сигнатуры
-        const castFn = actualConfig?.casts.get(expectedType);
-        if (!castFn) {
-          isCompatible = false;
-          break;
-        }
-
-        // Вычисляем "дистанцию" трансформации как штрафной балл компилятора
-        currentScore += (expectedRank - actualRank);
-        candidatesArgs.push(castFn(args[i]));
-      }
-
-      // Шаг 3: Разрешение неоднозначностей (Ambiguous Resolution)
-      if (isCompatible) {
-        if (currentScore < minConversionScore) {
-          minConversionScore = currentScore;
-          bestOverload = overload;
-          finalArgs = candidatesArgs;
-        } else if (currentScore === minConversionScore && bestOverload !== null) {
-          // Если две разные перегрузки требуют одинакового веса преобразований
-          throw new TypeError(`[Semantic Error]: Неоднозначность при вызове функции "${name}". Найдены несколько конфликтующих перегрузок с одинаковым приоритетом на ${loc}`);
-        }
-      }
-    }
-
-    // Если совместимая сигнатура так и не была найдена
-    if (!bestOverload) {
-      const signatureStr = actualTypes.map(t => typeof t === 'function' ? t.name : t).join(', ');
-      throw new TypeError(`[Semantic Error]: Ни одна из существующих перегрузок функции "${name}" не принимает параметры вида (${signatureStr}) на ${loc}`);
-    }
-
-    // Шаг 4: Выполнение вызова на основе разрешенного контекста сигнатуры
-    switch (bestOverload.callType) {
-      
-      // Вызов метода экземпляра класса: arg0.method(arg1, ...)
-      case 'instance': {
-        const [instance, ...rest] = finalArgs;
-        const methodName = bestOverload.method;
-        return instance[methodName](...rest);
-      }
-
-      // Вызов статического метода внешнего модуля: Module.method(arg0, arg1, ...)
-      case 'static': {
-        const targetName = bestOverload.target;
-        const methodName = bestOverload.method;
-        const targetClass = mathClasses[targetName];//context[targetName];
-        
-        if (!targetClass || typeof targetClass[methodName] !== 'function') {
-          throw new Error(`[Runtime Error]: Не найден статический контекст ${targetName}.${methodName} на ${loc}`);
-        }
-        return targetClass[methodName](...finalArgs);
-      }
-
-      // Вызов изолированной логики, описанной замыканием прямо в таблице
-      case 'custom': {
-        return bestOverload.execute(finalArgs);
-      }
-
-      default:
-        throw new Error(`[Compiler Error]: Критическая ошибка: неизвестный callType "${bestOverload.callType}"`);
-    }
-  }*/
-};
