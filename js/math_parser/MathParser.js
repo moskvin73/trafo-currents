@@ -1235,30 +1235,20 @@ export class MathParser {
         this.#consume();
         expr = new IsOpNode(expr, 'bool', loc);
         break;
-      case TokenType.NOT_EQU:
+      case TokenType.RW_REAL:
         loc = this.#location;
         this.#consume();
-        expr = new NotEquNode(expr, this.#parseIS(), loc);
+        expr = new IsOpNode(expr, 'real', loc);
         break;
-      case TokenType.LT:
+      case TokenType.RW_COMPLEX:
         loc = this.#location;
         this.#consume();
-        expr = new LtNode(expr, this.#parseIS(), loc);
+        expr = new IsOpNode(expr, 'сomplex', loc);
         break;
-      case TokenType.LTE:
+      case TokenType.RW_MATRIX:
         loc = this.#location;
         this.#consume();
-        expr = new LteNode(expr, this.#parseIS(), loc);
-        break;
-      case TokenType.GT:
-        loc = this.#location;
-        this.#consume();
-        expr = new GtNode(expr, this.#parseIS(), loc);
-        break;
-      case TokenType.GTE:
-        loc = this.#location;
-        this.#consume();
-        expr = new GteNode(expr, this.#parseIS(), loc);
+        expr = new IsOpNode(expr, 'matrix', loc);
         break;
       default: return expr;
     }
