@@ -5,7 +5,6 @@ import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
 import { roundNumber } from '../math/util.js';
 
-
 const mathClasses = {
     BoolValue,
     RealNumber,
