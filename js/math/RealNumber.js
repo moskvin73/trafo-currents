@@ -32,6 +32,10 @@ export default class RealNumber extends MathType {
     return this.#value;
   }
 
+  get phase() {
+    return new RealNumber(0);
+  }
+
   get conjugate() {
     return new RealNumber(this.#value);
   }

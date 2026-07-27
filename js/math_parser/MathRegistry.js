@@ -26,7 +26,7 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   ['conjugate', [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => x },
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.conjugate },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.conjugate },
   ]],
 
