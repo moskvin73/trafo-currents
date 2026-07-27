@@ -599,6 +599,8 @@ export default class ComplexNumber extends MathType {
 
   mod(other) {
     const rightValue = ComplexNumber.from(other).magnitude;
+    if (rightValue === 0) 
+      return new ComplexNumber(NaN, NaN); // Математически корректный деление на 0
     const leftValue = this.magnitude;
     const left_p = this.phase;
     const m = ((leftValue % rightValue) + rightValue) % rightValue;
