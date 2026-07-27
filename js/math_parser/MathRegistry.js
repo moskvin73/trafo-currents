@@ -17,7 +17,7 @@ function abs(x) {
   
   // 3. Если это комплексное число
   if (x instanceof ComplexNumber) {
-    return new ComplexNumber(x.magnitude); // модуль комплексного числа
+    return new RealNumber(x.magnitude); // модуль комплексного числа
   }
   
   // 4. ЕСЛИ ЭТО МАТРИЦА!
