@@ -335,19 +335,19 @@ floorRules =
 ];
 
 let ceillRules = [];
-ceillRules =
+ceilRules =
 [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.ceill(x.value)) },
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.ceil(x.value)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => {
-        const r = Math.ceill(x.real);
-        const i = Math.ceill(x.imaginary);
+        const r = Math.ceil(x.real);
+        const i = Math.ceil(x.imaginary);
         return new ComplexNumber(r, i) }},
     { 
       types: [Matrix], 
       callType: 'custom', 
       execute: (args) => {
         const [matrix, ...restArgs] = args; 
-        return executeMatrixOperationUniversal(matrix, restArgs, ceillRules);
+        return executeMatrixOperationUniversal(matrix, restArgs, ceilRules);
       }
     },
 ];
@@ -377,7 +377,7 @@ export const COMPILER_REGISTRY = new Map([
 
   ['round',   roundRules],
   ['floor',   floorRules],
-  ['ceill',   ceillRules],
+  ['ceill',   ceilRules],
   ['abs',     absRules],
 
   ['conjugate', [
