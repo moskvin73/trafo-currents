@@ -334,7 +334,7 @@ floorRules =
     },
 ];
 
-let ceillRules = [];
+let ceilRules = [];
 ceilRules =
 [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.ceil(x.value)) },
