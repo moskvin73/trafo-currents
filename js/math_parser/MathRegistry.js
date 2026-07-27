@@ -173,6 +173,16 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  ['avg', [
+    {
+      types: [Matrix],
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.avg();
+      }
+    }
+  ]],
 
   // Диагональная матрица
   ['diag', [
