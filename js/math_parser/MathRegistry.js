@@ -383,7 +383,6 @@ roundRules =
     },
   ];
 
-
 export const COMPILER_REGISTRY = new Map([
   // === ФУНКЦИЯ SQRT (1 или 2 аргумента) ===
   ['sqrt', [
