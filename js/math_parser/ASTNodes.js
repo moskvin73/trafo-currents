@@ -389,7 +389,7 @@ export class IsOpNode extends MathNode {
           innerCode = `\\left(${innerCode}\\right)`;
     }
     const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
-    return `${innerCode}\\text{ is }${name}`;
+    return `${innerCode}\\text{ is ${name}}`;
   }
 }
 
