@@ -983,7 +983,6 @@ export class GteNode extends BinaryOpNode {
   }
 }
 
-
 export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
@@ -1078,6 +1077,21 @@ export class DivNode extends StrictRightBinNode {
   } 
 
   toTeX(context) { return super._renderFractionChain(context); }
+}
+
+export class ModNode extends StrictRightBinNode {
+  constructor(left, right, loc) {
+    super(left, 'mod', right, loc);
+  }
+
+  getPriority() { return OpPriority.MUL_DIV; }
+
+  internal_evaluate(context) {
+    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+    return l.mod(r);
+  }
+
+  
 }
 
 export class PowNode extends BinaryOpNode {
