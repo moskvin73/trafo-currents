@@ -30,6 +30,10 @@ const reservedWordsMap = {
   'return': TokenType.RW_RETUTN,
   'break': TokenType.RW_BREAK,
   'continue': TokenType.RW_CONTINUE,
+  'bool': TokenType.RW_BOOL,
+  'real': TokenType.RW_REAL,
+  'complex': TokenType.RW_COMPLEX,
+  'matrix': TokenType.RW_MATRIX,
 };
 
 
