@@ -4,10 +4,10 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
 
-function abs(x) {
+function matrix_abs(x) {
   // 1. Если это обычное число JS
   if (typeof x === 'number') {
-    return Math.abs(x);
+    return new RealNumber(Math.abs(x));
   }
   
   // 2. Если это ваш класс RealNumber
