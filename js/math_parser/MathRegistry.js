@@ -132,16 +132,22 @@ export const COMPILER_REGISTRY = new Map([
   ['columns', [
     {
       types: [Matrix],
-      callType: 'instance',
-      method: 'colCount'
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.colCount;
+      }
     }
   ]],
 
   ['rows', [
     {
       types: [Matrix],
-      callType: 'instance',
-      method: 'rowCount'
+      callType: 'custom',
+      execute: (finalArgs) => {
+        const [inputMatrix] = finalArgs;
+        return inputMatrix.rowCount;
+      }
     }
   ]],
 
