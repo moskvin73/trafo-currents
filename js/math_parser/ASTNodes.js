@@ -355,14 +355,19 @@ export class IsOpNode extends MathNode {
     super(loc);
     this.argument = argument;
     this.targetType = TYPE_CLASSES[targetType];
+    if (!this.targetType) {
+      throw new Error(`Runtime Error: Тип данных "${typeKey}" не зарегистрирован в ядре калькулятора.`);
+    }
   }
 
   getPriority() { return OpPriority.IS; }
 
   internal_evaluate(context) { 
-    const lv = this.argument.internal_evaluate(context);
+    const leftValue = this.argument.internal_evaluate(context);
+    if (leftValue === null || leftValue === undefined) return false;
+
     const targetClass = this.targetType;
-    return lv instanceof targetClass;
+    return leftValue instanceof targetClass;
   }
 
   toString(context) {
