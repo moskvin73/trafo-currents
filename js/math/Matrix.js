@@ -276,7 +276,7 @@ export default class Matrix extends MathType {
 
     for (let i = 0; i < this.#rows.length; i++) {
       for (let j = 0; j < this.#rows[i].length; j++) {
-        if (this.#rows[i][j].gt(_max).value) {
+        if (this.#rows[i][j].gte(_max).value) {
           _max = this.#rows[i][j];
         }
       }
@@ -289,7 +289,7 @@ export default class Matrix extends MathType {
 
     for (let i = 0; i < this.#rows.length; i++) {
       for (let j = 0; j < this.#rows[i].length; j++) {
-        if (this.#rows[i][j].lt(_min).value) {
+        if (this.#rows[i][j].lte(_min).value) {
           _min = this.#rows[i][j];
         }
       }
