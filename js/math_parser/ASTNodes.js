@@ -403,7 +403,7 @@ const CAST_TABLE = new Map([
   // Правила конвертации ИЗ типа 'real'
   [ RealNumber, {
     casts: new Map([
-    [BoolValue,      (value) => new BoolValue(value.equals(0))], 
+    [BoolValue,      (value) => new BoolValue(!value.equals(0))], 
     [RealNumber,     (value) => value],      
     [ComplexNumber,  (value) => ComplexNumber.from(value)],
     [Matrix,         (value) => new Matrix([value])],
@@ -412,7 +412,7 @@ const CAST_TABLE = new Map([
   // Правила конвертации ИЗ типа 'complex'
   [ComplexNumber, {
     casts: new Map([
-    [BoolValue,      (value) => new BoolValue(value.equals(0))],
+    [BoolValue,      (value) => new BoolValue(!value.equals(0))],
     [RealNumber,     (value) => RealNumber.from(value.real)],      
     [ComplexNumber,  (value) => value],
     [Matrix,         (value) => new Matrix([value])],
