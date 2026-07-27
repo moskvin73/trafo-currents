@@ -297,7 +297,7 @@ export default class Matrix extends MathType {
     return _min;
   }
 
-  avg() {
+  avg() { 
     let sum = this.#rows[0][0].multiply(0);
     let count = 0;
 
