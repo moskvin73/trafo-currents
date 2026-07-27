@@ -1091,7 +1091,10 @@ export class ModNode extends StrictRightBinNode {
     return l.mod(r);
   }
 
-  
+  simpleTeX(l, r) {
+    return `${l} \\bmod ${r}`;
+  }
+
 }
 
 export class PowNode extends BinaryOpNode {
