@@ -454,9 +454,9 @@ export class CastOpNode extends MathNode {
     }
 
     const name_sourceType = REVERSE_TYPE_CLASSES.get(sourceType) || 'unknown'
-    const name_targetType = REVERSE_TYPE_CLASSES.get(sourceType) || 'unknown'
+    const name_targetType = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
 
-    this.error(context, `Невозможно привести тип "${ame_sourceType}" к типу "${this.targetType}".`);
+    this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
   }
 }
 
