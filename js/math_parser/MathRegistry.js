@@ -54,20 +54,23 @@ const POWERS_OF_10 = [
 ];
 
 function roundNumber(value, decimals = 0) {
-  // 1. Защита от NaN и бесконечностей самого проверяемого числа
+  // 1. Защита от NaN и бесконечностей самого числа
   if (!Number.isFinite(value)) return value;
 
-  // 2. Строгое ограничение диапазона знаков от 0 до 20
-  let cleanDecimals = decimals;
-  if (decimals < 0) cleanDecimals = 0;
-  if (decimals > 20) cleanDecimals = 20;
+  // 2. Защита от дробных чисел: отсекаем дробную часть у параметра decimals.
+  // Битовый оператор `~~` работает как Math.trunc, но делает это мгновенно на уровне процессора.
+  // Он превратит 2.5 в 2, а -1.2 в -1.
+  let cleanDecimals = ~~decimals;
 
-  // 3. Мгновенное извлечение коэффициента из таблицы вместо Math.pow
+  // 3. Строгое ограничение диапазона индексов для нашей таблицы степеней
+  if (cleanDecimals < 0) cleanDecimals = 0;
+  if (cleanDecimals > 20) cleanDecimals = 20;
+
+  // 4. Мгновенное извлечение коэффициента из таблицы степеней
   const factor = POWERS_OF_10[cleanDecimals];
 
-  // 4. Округление (с защитой от накопления погрешности плавающей точки)
+  // 5. Точное математическое округление
   return Math.round((value + Number.EPSILON) * factor) / factor;
-
 }
 
 const mathClasses = {
