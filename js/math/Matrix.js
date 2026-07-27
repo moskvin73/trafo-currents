@@ -559,11 +559,11 @@ export default class Matrix extends MathType {
     const m_size = Math.floor(m);
 
     if (n_size <= 0) {
-      throw new RangeError("[Matrix]: Размерность колонок матрицы должна быть целым числом больше 0.");
+      throw new RangeError("[Matrix]: Число строк матрицы должна быть целым числом больше 0.");
     }
 
     if (m_size <= 0) {
-      throw new RangeError("[Matrix]: Размерность строки матрицы должна быть целым числом больше 0.");
+      throw new RangeError("[Matrix]: Количество колонок матрицы должна быть целым числом больше 0.");
     }
 
     const elements = [];
