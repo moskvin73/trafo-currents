@@ -74,6 +74,7 @@ function roundNumber(value, decimals = 0) {
 }
 
 const mathClasses = {
+    BoolValue,
     RealNumber,
     ComplexNumber,
     Matrix,
