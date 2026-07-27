@@ -411,13 +411,17 @@ const CAST_TABLE = new Map([
   }],
   // Правила конвертации ИЗ типа 'complex'
   [ComplexNumber, {
+    casts: new Map([
     BoolValue:      (value) => new BoolValue(value.equals(0)),
     RealNumber:     (value) => RealNumber.from(value.real),      
     ComplexNumber:  (value) => value,
     Matrix:         (value) => new Matrix([value]),
+    ]),
   }],
   [Matrix, {
-    Matrix:         (value) => value,
+    casts: new Map([
+    [Matrix,         (value) => value],
+    ]),
   }],
 ]);
 
