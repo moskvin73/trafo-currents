@@ -32,6 +32,10 @@ export default class RealNumber extends MathType {
     return this.#value;
   }
 
+  get conjugate() {
+    return new RealNumber(this.#value);
+  }
+
   // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
