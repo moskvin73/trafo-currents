@@ -143,7 +143,6 @@ const mathClasses = {
 // =========================================================================
 // 2. ДЕКЛАРАТИВНЫЙ РЕЕСТР СИГНАТУР ФУНКЦИЙ (COMPILER REGISTRY)
 // =========================================================================
-// Объявляем переменную для списка правил
 let roundRules = [];
 roundRules =
   [
@@ -186,21 +185,6 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   ['round', roundRules],
-  /*['round', [
-    { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(Math.round(x.value)) },
-    { types: [RealNumber, RealNumber], callType: 'custom', execute: 
-                                        ([x, y]) => new RealNumber(roundNumber(x.value, y.value)) },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => { 
-          const r = Math.round(x.real);
-          const i = Math.round(x.imaginary);
-          return new ComplexNumber(r, i) }},
-    { types: [ComplexNumber, RealNumber], callType: 'custom', execute: ([x, y]) => { 
-          const r = roundNumber(x.real, y);
-          const i = roundNumber(x.imaginary, y);
-          return new ComplexNumber(r, i) }},
-    //{ types: [Matrix], callType: 'custom', execute: ([x]) => x.map(abs) },
-  ]],*/
-
 
   ['abs', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.abs()) },
