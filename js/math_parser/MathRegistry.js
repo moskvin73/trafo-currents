@@ -372,7 +372,7 @@ export const COMPILER_REGISTRY = new Map([
   ['sqrt', [
     { types: [RealNumber], callType: 'instance', method: 'sqrt' },
     { types: [ComplexNumber], callType: 'instance', method: 'sqrt' },
-    { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' }
+    { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'sqrt' },
   ]],
 
