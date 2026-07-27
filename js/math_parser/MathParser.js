@@ -4,6 +4,7 @@ import ASTNode, {
   IF_Node,
   Goto_Node,
   IsOpNode,
+  CastOpNode,
   NumberNode,
   UnaryOpNode, 
   UnaryOpNodePlus,
