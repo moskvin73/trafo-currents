@@ -29,9 +29,45 @@ function matrix_abs(x) {
   throw new Error("Неподдерживаемый тип для функции abs");
 }
 
+const POWERS_OF_10 = [
+  1,           // 10^0
+  10,          // 10^1
+  100,         // 10^2
+  1000,        // 10^3
+  10000,       // 10^4
+  100000,      // 10^5
+  1000000,     // 10^6
+  10000000,    // 10^7
+  100000000,   // 10^8
+  1000000000,  // 10^9
+  10000000000, // 10^10
+  100000000000,
+  1000000000000,
+  10000000000000,
+  100000000000000,
+  1000000000000000,
+  10000000000000000,
+  100000000000000000,
+  1000000000000000000,
+  10000000000000000000,
+  100000000000000000000 // 10^20
+];
+
 function roundNumber(value, decimals = 0) {
-  const factor = Math.pow(10, decimals);
-  return Math.round(value * factor) / factor;
+  // 1. Защита от NaN и бесконечностей самого проверяемого числа
+  if (!Number.isFinite(value)) return value;
+
+  // 2. Строгое ограничение диапазона знаков от 0 до 20
+  let cleanDecimals = decimals;
+  if (decimals < 0) cleanDecimals = 0;
+  if (decimals > 20) cleanDecimals = 20;
+
+  // 3. Мгновенное извлечение коэффициента из таблицы вместо Math.pow
+  const factor = POWERS_OF_10[cleanDecimals];
+
+  // 4. Округление (с защитой от накопления погрешности плавающей точки)
+  return Math.round((value + Number.EPSILON) * factor) / factor;
+
 }
 
 const mathClasses = {
