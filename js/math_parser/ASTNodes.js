@@ -393,6 +393,28 @@ export class IsOpNode extends MathNode {
   }
 }
 
+// Реализация таблицы через объект объектов (или Map)
+const CAST_TABLE = {
+  // Правила конвертации ИЗ типа 'bool'
+  BoolValue: {
+    BoolValue:      (value) => value, 
+  },
+  // Правила конвертации ИЗ типа 'real'
+  RealNumber: {
+    BoolValue:     (value) => new BoolValue(value.equals(0)), 
+    RealNumber:     (value) => value,      
+    ComplexNumber:  (value) => ComplexNumber.from(value),
+    Matrix:         (value) => new Matrix([value]),
+  },
+  // Правила конвертации ИЗ типа 'complex'
+  ComplexNumber: {
+    BoolValue:      (value) => new BoolValue(value.equals(0)),
+    RealNumber:     (value) => RealNumber.from(value.real),      
+    ComplexNumber:  (value) => value,
+    Matrix:         (value) => new Matrix([value]),
+  },
+}
+
 /**
  * Узел унарной операции (например: -x, +sin(i))
  */
