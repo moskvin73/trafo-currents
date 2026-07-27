@@ -369,7 +369,6 @@ export class IsOpNode extends MathNode {
   internal_evaluate(context) { 
     const leftValue = this.argument.internal_evaluate(context);
     if (leftValue === null || leftValue === undefined) return false;
-
     const targetClass = this.targetType;
     return new BoolValue(leftValue instanceof targetClass);
   }
@@ -429,12 +428,15 @@ export class CastOpNode extends MathNode {
 
   internal_evaluate(context) { 
     const valueToCast = this.argument.internal_evaluate(context);
-    
 
-    const targetClass = this.targetType;
-    return new BoolValue(leftValue instanceof targetClass);
+    const type = typeof valueToCast;
+    const sourceType = type === 'object' && arg !== null ? arg.constructor : type;
+
+    const castFunction = CAST_TABLE[sourceType]?.[this.targetType];
+    if (castFunction) {
+      return castFunction(valueToCast);
+    }
   }
-
 }
 
 /**
