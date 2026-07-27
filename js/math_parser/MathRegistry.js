@@ -4,31 +4,6 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { TYPE_REGISTRY, dispatcher } from './SemanticDispatcher.js';
 
-/*function matrix_abs(x) {
-  // 1. Если это обычное число JS
-  if (typeof x === 'number') {
-    return new RealNumber(Math.abs(x));
-  }
-  
-  // 2. Если это ваш класс RealNumber
-  if (x instanceof RealNumber) {
-    return new RealNumber(Math.abs(x.value)); // или возвращаем новый RealNumber, как вам нужно
-  }
-  
-  // 3. Если это комплексное число
-  if (x instanceof ComplexNumber) {
-    return new RealNumber(x.magnitude); // модуль комплексного числа
-  }
-  
-  // 4. ЕСЛИ ЭТО МАТРИЦА!
-  if (x instanceof Matrix) {
-    // Матрица просто прогоняет функцию abs (эту же самую!) через свой map
-    return x.map(cell => abs(cell)); 
-  }
-
-  throw new Error("Неподдерживаемый тип для функции abs");
-}*/
-
 const POWERS_OF_10 = [
   1,           // 10^0
   10,          // 10^1
