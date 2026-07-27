@@ -55,7 +55,7 @@ export default class BoolValue extends MathType {
   // Переменная для кэширования таблицы конвертеров
   static #localConverters = new Map([
     [Symbol.for('Math.BoolValue'), (val) => val],
-    ['bool',                       (val) => new BoolValue(val)],
+    ['boolean',                    (val) => new BoolValue(val)],
   ]);
 
   static get converters() { return BoolValue.#localConverters; }

@@ -395,7 +395,7 @@ export class IsOpNode extends MathNode {
 // Реализация таблицы через объект объектов (или Map)
 const CAST_TABLE = new Map([
   // Правила конвертации ИЗ типа 'bool'
-  [ 'bool', {
+  [ 'boolean', {
     casts: new Map([
     [BoolValue,      (value) => new BoolValue(value)],
     ]),

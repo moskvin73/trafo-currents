@@ -16,7 +16,7 @@ export const TYPE_REGISTRY = new Map([
     ])
   }],
 
-  ['bool', {
+  ['boolean', {
     rank: 2,
     // ЕСЛИ тип встретился сам с собой, принудительно трансформируем его:
     selfPromote: (val) => new BoolValue(val), 
