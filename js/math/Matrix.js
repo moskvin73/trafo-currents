@@ -272,25 +272,29 @@ export default class Matrix extends MathType {
   not_eq(other) { return this.eq(other).not(); }
 
   max() {
-    let max = -Infinity;
+    let _max = -Infinity;
 
     for (let i = 0; i < this.#rows.length; i++) {
       for (let j = 0; j < this.#rows[i].length; j++) {
-        if (this.#rows[i][j].gt(max)) {
-          max = this.#rows[i][j];
+        if (this.#rows[i][j].gt(_max)) {
+          _max = this.#rows[i][j];
         }
       }
+    }
+    return _max;
   }
 
   min() {
-    let max = Infinity;
+    let _min = Infinity;
 
     for (let i = 0; i < this.#rows.length; i++) {
       for (let j = 0; j < this.#rows[i].length; j++) {
-        if (this.#rows[i][j].lt(max)) {
-          max = this.#rows[i][j];
+        if (this.#rows[i][j].lt(_min)) {
+          _min = this.#rows[i][j];
         }
       }
+    }
+    return _min;
   }
 
   /**
