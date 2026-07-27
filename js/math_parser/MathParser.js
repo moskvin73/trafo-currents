@@ -24,6 +24,7 @@ import ASTNode, {
   SubNode,
   MulNode,
   DivNode,
+  ModNode,
   PowNode,
   CallNode,
   RefNode, 
@@ -1290,6 +1291,11 @@ export class MathParser {
         loc = this.#location;
         this.#consume();
         expr = new DivNode(expr, this.#parseUnary(), loc);
+        break;
+      case TokenType.RW_MOD:
+        loc = this.#location;
+        this.#consume();
+        expr = new ModNode(expr, this.#parseUnary(), loc);
         break;
       default: return expr;
     }
