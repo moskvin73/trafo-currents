@@ -428,11 +428,14 @@ export class CastOpNode extends MathNode {
 
   toString(context) {
     let innerCode = this.argument.toString(context);
-    if (this.argument.getPriority() < this.getPriority()) {
-          innerCode = `(${innerCode})`;
-    }
     const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
     return `${name}(${innerCode})`;
+  }
+
+  toTeX(context) {
+    let innerCode = this.argument.toTeX(context);
+    const name = REVERSE_TYPE_CLASSES.get(this.targetType) || 'unknown'
+    return `\\text{ is ${name}}\\left(${innerCode}\\right)`;
   }
 
 
