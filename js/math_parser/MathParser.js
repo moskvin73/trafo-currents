@@ -1152,9 +1152,8 @@ export class MathParser {
       const ret = expr.createAssign(right, opToken_loc);
       if (this.#listUndefinedIdentifiers.size > 0)
       {
-
+        // Ищем узел AssignNode в левой части, с именами из таблицы
       }
-      // Ищем узел AssignNode в левой части, с именами из таблицы
       return ret;
     }
     return expr;
