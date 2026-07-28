@@ -1127,6 +1127,8 @@ export class MathParser {
    * Правая ассоциативность: x = y = 5 означает x = (y = 5)
    */
   #parseAssignment() {
+    secondMap = this.#listUndefinedIdentifiers;
+    this.#listUndefinedIdentifiers = Object.create(null); 
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
 
@@ -1163,8 +1165,12 @@ export class MathParser {
         if (!foundAssignNode)
           this.#error(`Нет опредиления идентификатора "${name}"`, ret.loc);
       }
-      return ret;
+      return ret;      
     }
+    // Объединяем
+    this.#listUndefinedIdentifier.forEach((value, key) => {
+      secondMap.set(key, value);
+    });
     return expr;
   }
 
