@@ -1647,7 +1647,7 @@ export class MathParser {
           {
             id = list[0].id_name;
           } else {
-            const list = [];
+            list = [];
             id = -(this.#listUndefinedIdentifiers.size + 1);
           }
           const ret = new VariableNode(id, token_loc);
