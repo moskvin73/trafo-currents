@@ -1133,7 +1133,7 @@ export class MathParser {
    */
   #parseAssignment() {
     const secondMap = this.#listUndefinedIdentifiers;
-    this.#listUndefinedIdentifiers = Object.create(null); 
+    this.#listUndefinedIdentifiers = new Map();
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
 
