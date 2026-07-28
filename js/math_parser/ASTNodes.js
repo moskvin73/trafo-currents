@@ -223,7 +223,7 @@ export class VarableCode
       // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
       for (let i = 0; i < this.paramsCount; i++) {
         // Записываем переданный аргумент в ячейку symbols[i]
-        this.parentEnvironment.symbols[i].value = args[i];
+        currentFrame.symbols[i].value = args[i];
       }
 
       // 4. Запускаем выполнение тела функции
