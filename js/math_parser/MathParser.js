@@ -212,6 +212,7 @@ class context_evallution
  */
 export class MathParser {
   #program;
+  #listUndefinedIdentifiers = [];
 
   // 1. Определяем константы флагов (степени двойки)
   static ALLOW_BREAK = 1;    // 001 в двоичной
