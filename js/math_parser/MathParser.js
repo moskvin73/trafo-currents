@@ -1156,7 +1156,7 @@ export class MathParser {
         {
           del_index = -foundAssignNode.id_name - 1;
           const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);          
-          const id = context.acquireId(name);
+          const id = this.context.acquireId(name);
           foundAssignNode.id_name = id;
           const list = this.#listUndefinedIdentifiers.getValueByIndex(del_index);
           for (let i = 0; i < list.length; i++) {
