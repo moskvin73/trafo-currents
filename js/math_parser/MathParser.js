@@ -1594,7 +1594,6 @@ export class MathParser {
     }
   }
 
-
   #callFuncORVar() {
       const token_loc = this.#location;
       const name = this.lexer.stringValue();      
