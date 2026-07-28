@@ -1162,8 +1162,9 @@ export class MathParser {
           }
         });
         if (foundAssignNode)
-        {          
-          this.#listUndefinedIdentifiers.delete(foundAssignNode.name);
+        {
+          this.#listUndefinedIdentifiers.getByIndex(-foundAssignNode.id_name - 1)
+          ///this.#listUndefinedIdentifiers.delete(foundAssignNode.name);
           context.acquireId(foundAssignNode.name);
         }
       }
