@@ -1171,8 +1171,8 @@ export class MathParser {
       for (let i = 0; i < del_index; i++)
       {
         const list = this.#listUndefinedIdentifiers.getValueByIndex(i);
-        const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);
-        for (int j = 0; j < list.size; j++)
+        const name = this.#listUndefinedIdentifiers.getKeyByIndex(i);
+        for (let j = 0; j < list.size; j++)
         {
             this.#error(`Неопредилённы индентификатор "${name}"`, list[j].loc);
         }
@@ -1180,8 +1180,8 @@ export class MathParser {
       for (let i = del_index + 1; i < c; i++)
       {
         const list = this.#listUndefinedIdentifiers.getValueByIndex(i);
-        const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);
-        for (int j = 0; j < list.size; j++)
+        const name = this.#listUndefinedIdentifiers.getKeyByIndex(i);
+        for (let j = 0; j < list.size; j++)
         {
             this.#error(`Неопредилённы индентификатор "${name}"`, list[j].loc);
         }
