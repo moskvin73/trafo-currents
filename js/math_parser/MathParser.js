@@ -1617,7 +1617,7 @@ export class MathParser {
         const id = this.context.getIdByName(name);
         if (id) {
           // Возвращаем универсальный узел вызова
-          return new CallNode(name, args, token_loc);
+          return new CallNode(id, args, token_loc);
         }
         else {
           this.#error(`Неопредилённый идентификатор "${name}"`, token_loc);
@@ -1625,11 +1625,23 @@ export class MathParser {
         }
       }
 
-      const ret = new VariableNode(name, token_loc);
+      //const ret = new VariableNode(name, token_loc);
       const id = this.context.getIdByName(name);
       if (!id) {
-          this.#listUndefinedIdentifiers.set(name, ret);
+          const list = this.#listUndefinedIdentifiers.get(name);
+          if (list)
+          {
+            id = list[0].id_name;
+          } else {
+            const list = [];
+            id = -this.#listUndefinedIdentifiers.size;
+          }
+          const list = this.#listUndefinedIdentifiers.get(name) ?? [];
+          const ret = new VariableNode(id, token_loc);
+          list.push(ret)
+          this.#listUndefinedIdentifiers.set(name, list);
+          return ret;
       }
-      return ret;
+      return new VariableNode(id, token_loc);
   }
 }
