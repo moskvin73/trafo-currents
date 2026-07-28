@@ -1749,9 +1749,9 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 ]);
 
 export class CallNode extends MathNode {
-  constructor(name, args, loc) {
+  constructor(od_name, args, loc) {
     super(loc); 
-    this.name = name; // Имя функции (строка)
+    this.id_name = id_name; // Имя функции (строка)
     this.args = args; // Массив дочерних узлов ASTNode
   }
 
@@ -1759,7 +1759,7 @@ export class CallNode extends MathNode {
 
   toString(context) {
     const argsCode = this.args.map(arg => arg.toString(context)).join(", ");
-    return `${this.name}(${argsCode})`;
+    return `${context.getNameById(this.id_name)}(${argsCode})`;
   }
 
   *getChildren() {
@@ -1801,8 +1801,9 @@ export class CallNode extends MathNode {
 
   toTeX(context) {
     // Рендерим аргументы узла в LaTeX-строки
+    const name = context.getNameById(this.id_name);
     const argsTexArray = this.args.map(arg => arg.toTeX(context));
-    const config = TEX_FUNCTIONS_REGISTRY.get(this.name);
+    const config = TEX_FUNCTIONS_REGISTRY.get(name);
 
     // 1. Если задано сложное кастомное отображение (шаблон вроде pow, sqrt, floor, abs)
     if (config?.render) {
@@ -1818,6 +1819,6 @@ export class CallNode extends MathNode {
     // 3. Резервный фолбэк для будущих кастомных функций, которых еще нет в таблице.
     // Обертка \operatorname позволяет рендерить "myFunc(x)" правильным математическим шрифтом, а не курсивом переменных.
     const joinedArgs = argsTexArray.join(', ');
-    return `\\operatorname{${this.name}}\\left(${joinedArgs}\\right)`;
+    return `\\operatorname{${name}}\\left(${joinedArgs}\\right)`;
   }
 }
