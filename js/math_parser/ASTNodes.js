@@ -1244,7 +1244,7 @@ export class VariableNode extends IdentifierNode {
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(id_name, expression, loc);
+    return new AssignNode(this.id_name, expression, loc);
   }
 
   getPriority()  { return OpPriority.PRIMARY; }
