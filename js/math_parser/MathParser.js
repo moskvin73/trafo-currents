@@ -1599,6 +1599,7 @@ export class MathParser {
         }
         else {
           this.#error(`Неопредилённый идентификатор "${name}"`, token_loc);
+          return new NumberNode(new RealNumber(1), token_loc);
         }
       }
 
