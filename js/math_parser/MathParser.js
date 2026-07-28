@@ -958,8 +958,7 @@ export class MathParser {
     this.#match(TokenType.LPAREN, "Ожидалась '('");
 
     let expInit = null; let f_out_expInit = false;
-    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
-    {
+    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT) {
       const exp_init_loc = this.#location;
       expInit = this.#parseExpression();
       if (!expInit.isAssigned) {
@@ -970,16 +969,14 @@ export class MathParser {
 
     let expCond = null; let f_out_expCond = false;
     const exp_cond_loc = this.#location;
-    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT)
-    {
+    if (this.c_token !== TokenType.SEMICOLON && this.c_token !== TokenType.SILENT) {
       expCond = this.#parseExpression();
       f_out_expCond = end_expr();
     } else this.#consume();
 
     const exp_inc_loc = this.#location;
     let expInc = null; let f_out_expInc = false;
-    if (this.c_token !== TokenType.RPAREN)
-    {      
+    if (this.c_token !== TokenType.RPAREN) {      
       expInc = this.#parseExpression();
       // Разрешается вводить символ $ полсе оператора прирощения
       if (this.c_token === TokenType.SILENT)
@@ -994,8 +991,7 @@ export class MathParser {
     const old_flag = this.flags;
     this.setFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     // Тело цикла
-    if (this.c_token === TokenType.LBRACE)
-    {
+    if (this.c_token === TokenType.LBRACE) {
       loopBody =this.#parseBlock(f_out);
       this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода ");
     }
@@ -1004,8 +1000,7 @@ export class MathParser {
     }
     this.flags = old_flag;
     
-    if (this.errors.length === 0)
-    {
+    if (this.errors.length === 0) {
       if (expInc)
       {
         loopBody.push(new StatementNode(expInc, f_out || f_out_expInc));
