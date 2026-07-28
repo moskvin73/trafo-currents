@@ -1177,12 +1177,13 @@ export class MathParser {
           }
         }
       }
+      this.#listUndefinedIdentifiers = secondMap;
       return ret;      
     }
     // Объединяем
-    this.#listUndefinedIdentifiers.forEach((value, key) => {
-      secondMap.set(key, value);
-    });
+     for (const [key, value] of secondMap) {
+        this.#listUndefinedIdentifiers.set(key, value);
+    }
     return expr;
   }
 
