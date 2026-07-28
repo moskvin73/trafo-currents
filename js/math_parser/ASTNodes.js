@@ -1227,13 +1227,11 @@ export class RefNode extends MathNode {
 export class IdentifierNode extends RefNode {
   constructor(id_name, loc) {
     super(loc);
-    this.id_name = id;
+    this.id_name = id_name;
   }
 
-  get name() { return this.id_name; }
-
   getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(this.name);
+    return ASTNode.formatIdentifierToTeX(getNameById(this.id_name));
   }
 }
 
@@ -1255,7 +1253,8 @@ export class VariableNode extends IdentifierNode {
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
-    const sym = context.scope_context.getSymbolByName(this.name);
+    //const sym = context.scope_context.getSymbolByName(this.name);
+    const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym === null) {
       this.error(context, `Идентификатор "${this.name}" не опредилён.`);
     }
