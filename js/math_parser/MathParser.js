@@ -1140,15 +1140,22 @@ export class MathParser {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось ссылка.`,  opToken_loc);
       }
       
-      const undefinedNodesSet = new Set(Object.values(this.#listUndefinedIdentifiers));
+      /*const undefinedNodesSet = new Set(Object.values(this.#listUndefinedIdentifiers));
       const foundNodes = expr.findAll(node => {
         // Set.has() проверяет наличие объекта в памяти мгновенно
           return undefinedNodesSet.has(node);
-      });
+      });*/
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      return expr.createAssign(right, opToken_loc);
+      //return expr.createAssign(right, opToken_loc);
+      const ret = expr.createAssign(right, opToken_loc);
+      if (this.#listUndefinedIdentifiers.size > 0)
+      {
+
+      }
+      // Ищем узел AssignNode в левой части, с именами из таблицы
+      return ret;
     }
     return expr;
   }
