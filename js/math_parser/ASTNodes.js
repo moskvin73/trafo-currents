@@ -1249,7 +1249,7 @@ export class VariableNode extends IdentifierNode {
 
   getPriority()  { return OpPriority.PRIMARY; }
 
-  toString(context) { return context.getNameById(this.id_name) }
+  toString(context) { return context.getNameById(this.id_name); }
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
@@ -1276,25 +1276,25 @@ export class VariableNode extends IdentifierNode {
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends IdentifierNode {
-  constructor(name, expression, loc) {
-    super(name, loc);
+  constructor(id_name, expression, loc) {
+    super(id_name, loc);
     this.expression = expression;
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(this.name, expression, loc);
+    return new AssignNode(this.id_name, expression, loc);
   }  
 
   get isAssigned() { return true; }
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
+  toString(context) { return `${context.getNameById(this.id_name)} = ${this.expression.toString(context)}`; }
 
   internal_evaluate(context) {
     try {
-      const id = context.scope_context.acquireId(this.name);
-      const sym = context.scope_context.getSymbolById(id);
+      //const id = context.scope_context.acquireId(this.name);
+      const sym = context.scope_context.getSymbolById(this.id_name);
       return sym.value = this.expression.internal_evaluate(context);
     }
     catch (err)
