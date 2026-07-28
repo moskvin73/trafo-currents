@@ -1129,6 +1129,7 @@ export class MathParser {
   #parseAssignment() {
     const secondMap = this.#listUndefinedIdentifiers;
     this.#listUndefinedIdentifiers = new IndexedMap();
+    let del_index = -1;
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
 
@@ -1162,20 +1163,37 @@ export class MathParser {
         });
         if (foundAssignNode)
         {
-          const name = this.#listUndefinedIdentifiers.getKeyByIndex(-foundAssignNode.id_name - 1);          
+          del_index = -foundAssignNode.id_name - 1;
+          const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);          
           const id = context.acquireId(name);
           foundAssignNode.id_name = id;
-          const list = this.#listUndefinedIdentifiers.getValueByIndex();
-          for (int i = 0; i < list.length; i++) {
+          const list = this.#listUndefinedIdentifiers.getValueByIndex(del_index);
+          for (let i = 0; i < list.length; i++) {
             list[i].d_name = id;
           }
         }
       }
     }
-    if (this.#listUndefinedIdentifiers.size > 0)
+    const c = this.#listUndefinedIdentifiers.size;
+    if (c > 0)
     {
-      for (const [name, node] of this.#listUndefinedIdentifiers) {
-        this.#error(`Неопредилённы индентификатор "${name}"`, node[0].loc);
+      for (let i = 0; i < del_index; i++)
+      {
+        const list = this.#listUndefinedIdentifiers.getValueByIndex(i);
+        const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);
+        for (int j = 0; j < list.size; j++)
+        {
+            this.#error(`Неопредилённы индентификатор "${name}"`, list[j].loc);
+        }
+      }
+      for (let i = del_index + 1; i < c; i++)
+      {
+        const list = this.#listUndefinedIdentifiers.getValueByIndex(i);
+        const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);
+        for (int j = 0; j < list.size; j++)
+        {
+            this.#error(`Неопредилённы индентификатор "${name}"`, list[j].loc);
+        }
       }
     }
     this.#listUndefinedIdentifiers = secondMap;
