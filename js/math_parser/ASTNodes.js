@@ -215,6 +215,7 @@ export class VarableCode
     // 1. Спасаем текущий стек вызовов
     const previousScopes = scopeCtrl.scopes;
 
+    try {
     // 2. Строим изолированное окружение: родители + новый пустой кадр
     //const myCurrentFrame = scopeCtrl.createFrame();
     //scopeCtrl.scopes = [...this.parentEnvironment, myCurrentFrame];
@@ -229,11 +230,12 @@ export class VarableCode
 
     // 4. Запускаем выполнение тела функции
     const ret = context.call_code(this.statements);
-
+   } finally {
     // 5. Восстанавливаем стек вызовов обратно
     scopeCtrl.scopes = previousScopes;
 
     return ret;
+   }
   }
 }
 
