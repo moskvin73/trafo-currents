@@ -1143,12 +1143,6 @@ export class MathParser {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось ссылка.`,  opToken_loc);
       }
       
-      /*const undefinedNodesSet = new Set(Object.values(this.#listUndefinedIdentifiers));
-      const foundNodes = expr.findAll(node => {
-        // Set.has() проверяет наличие объекта в памяти мгновенно
-          return undefinedNodesSet.has(node);
-      });*/
-      
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
       expr = expr.createAssign(right, opToken_loc);
