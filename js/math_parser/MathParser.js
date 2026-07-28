@@ -1164,7 +1164,6 @@ export class MathParser {
         if (foundAssignNode)
         {
           this.#listUndefinedIdentifiers.getByIndex(-foundAssignNode.id_name - 1)
-          ///this.#listUndefinedIdentifiers.delete(foundAssignNode.name);
           context.acquireId(foundAssignNode.name);
         }
       }
@@ -1172,7 +1171,7 @@ export class MathParser {
     if (this.#listUndefinedIdentifiers.size > 0)
     {
       for (const [name, node] of this.#listUndefinedIdentifiers) {
-        this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
+        this.#error(`Неопредилённы индентификатор "${name}"`, node[0].loc);
       }
     }
     this.#listUndefinedIdentifiers = secondMap;
