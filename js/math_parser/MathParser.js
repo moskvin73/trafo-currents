@@ -1140,7 +1140,11 @@ export class MathParser {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось ссылка.`,  opToken_loc);
       }
       
-      const allBinaryNodes = astRoot.findAll(node => node instanceof  VariableNode);
+      const undefinedNodesSet = new Set(Object.values(this.#listUndefinedIdentifiers));
+      const foundNodes = astRoot.findAll(node => {
+        // Set.has() проверяет наличие объекта в памяти мгновенно
+          return undefinedNodesSet.has(node);
+      });
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
