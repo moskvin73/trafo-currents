@@ -1152,7 +1152,7 @@ export class MathParser {
         const foundAssignNode = expr.find(node => {
           if (node instanceof AssignNode)
           {
-            if (node.id_name < 0) return test;
+            if (node.id_name < 0) return node;
           }
         });
         if (foundAssignNode)
