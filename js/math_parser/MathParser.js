@@ -48,6 +48,7 @@ import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import { BuildVectorOperationDescription } from './VectorDeaign.js';
 import { foldASTToTable } from '../math/ASTToTableConverter.js'
 import { unfoldTableToAST } from '../math/unfoldTableToAST.js'
+import { IndexedMap } from '../math/util.js';
 
 /**
  * Единый узел для любой инструкции в коде
@@ -212,7 +213,7 @@ class context_evallution
  */
 export class MathParser {
   #program;
-  #listUndefinedIdentifiers = new Map();
+  #listUndefinedIdentifiers = new IndexedMap();
 
   // 1. Определяем константы флагов (степени двойки)
   static ALLOW_BREAK = 1;    // 001 в двоичной
@@ -1127,7 +1128,7 @@ export class MathParser {
    */
   #parseAssignment() {
     const secondMap = this.#listUndefinedIdentifiers;
-    this.#listUndefinedIdentifiers = new Map();
+    this.#listUndefinedIdentifiers = new IndexedMap();
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
 
@@ -1628,12 +1629,13 @@ export class MathParser {
       //const ret = new VariableNode(name, token_loc);
       let id = this.context.getIdByName(name);
       if (!id) {
-          let list = this.#listUndefinedIdentifiers.get(name);
+          let list = this.#listUndefinedIdentifiers.getByName(name);
           if (list)
           {
             id = list[0].id_name;
           } else {
             const list = [];
+            
             id = -(this.#listUndefinedIdentifiers.size + 1);
           }
           const ret = new VariableNode(id, token_loc);

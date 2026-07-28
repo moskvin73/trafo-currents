@@ -43,47 +43,42 @@ export function roundNumber(value, decimals = 0) {
 }
 
 export class IndexedMap {
-  #map = new Map();  // Имя -> Индекс в массиве
-  #store = [];       // Массив, где хранятся сами данные
+  #map = new Map();  // Хранит связь: Ключ -> Индекс
+  #store = [];       // Хранит только значения в порядке добавления
 
-  // 1. ДОБАВЛЕНИЕ (Возвращает полученный индекс) — O(1)
-  add(name, data) {
-    // Если имя уже есть, пушим в существующий массив данных
-    if (this.#map.has(name)) {
-      const index = this.#map.get(name);
-      this.#store[index].values.push(data);
-      return index; // Возвращаем тот же индекс
+  // Добавление: принимает ключ и Любое значение. Возвращает индекс.
+  set(key, value) {
+    if (this.#map.has(key)) {
+      const index = this.#map.get(key);
+      this.#store[index] = value; // Перезапись значения по существующему индексу
+      return index;
     }
 
-    // Если имени нет, создаем новую запись
     const newIndex = this.#store.length;
-    this.#store.push({ name, values: [data] });
-    this.#map.set(name, newIndex);
-    
-    return newIndex; // Возвращаем сгенерированный индекс
+    this.#store.push(value);
+    this.#map.set(key, newIndex);
+    return newIndex;
   }
 
-  // 2. БЫСТРЫЙ ПОИСК ПО ИМЕНИ — O(1)
-  getByName(name) {
-    const index = this.#map.get(name);
-    if (index === undefined) return undefined;
-    return this.#store[index].values; // Возвращает массив элементов
+  // Быстрый поиск по ключу за O(1)
+  get(key) {
+    const index = this.#map.get(key);
+    return index !== undefined ? this.#store[index] : undefined;
   }
 
-  // 3. БЫСТРЫЙ ПОИСК ПО ИНДЕКСУ — O(1)
+  // Быстрый поиск по индексу за O(1)
   getByIndex(index) {
-    if (index < 0 || index >= this.#store.length) return undefined;
-    return this.#store[index]; // Возвращает { name, values: [...] }
+    return this.#store[index];
   }
 
-  // 4. МГНОВЕННАЯ ОЧИСТКА — O(1)
+  // Проверка существования по ключу за O(1)
+  has(key) {
+    return this.#map.has(key);
+  }
+
+  // Полная очистка за O(1)
   clear() {
     this.#map.clear();
-    this.#store.length = 0; // Используем самый быстрый способ очистки массива
-  }
-
-  // Геттер для получения общего количества уникальных имен
-  get size() {
-    return this.#map.size;
+    this.#store.length = 0; // Наш самый быстрый способ
   }
 }
