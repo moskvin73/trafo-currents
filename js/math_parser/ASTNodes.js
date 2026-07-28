@@ -1227,8 +1227,10 @@ export class RefNode extends MathNode {
 export class IdentifierNode extends RefNode {
   constructor(name, loc) {
     super(loc);
-    this.name = name;
+    this.id_name = name;
   }
+
+  get name() { return this.id_name; }
 
   getTexName(context) {
     return ASTNode.formatIdentifierToTeX(this.name);
