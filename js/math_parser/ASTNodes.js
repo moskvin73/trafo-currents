@@ -216,8 +216,9 @@ export class VarableCode
     const previousScopes = scopeCtrl.scopes;
 
     // 2. Строим изолированное окружение: родители + новый пустой кадр
-    const myCurrentFrame = scopeCtrl.createFrame();
-    scopeCtrl.scopes = [...this.parentEnvironment, myCurrentFrame];
+    //const myCurrentFrame = scopeCtrl.createFrame();
+    //scopeCtrl.scopes = [...this.parentEnvironment, myCurrentFrame];
+    scopeCtrl.scopes = this.parentEnvironment;
 
     // 3. МГНОВЕННАЯ инициализация параметров по их порядковым индексам!
     // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
