@@ -1472,7 +1472,16 @@ export class PrintNode extends ASTNode {
         element.collectMathExpressions(list);
       }
     });
-  }  
+  }
+
+  *getChildren() {
+    for (const element of this.elements) {
+        // Проверяем: элемент существует, это объект (не строка) и это узел AST
+        if (element && typeof element === 'object' && element.type !== 'TEXT_BLOCK') {
+            yield element;
+        }
+    }
+  }
 
   internal_evaluate(context) {
     return this.elements.map(element => {
