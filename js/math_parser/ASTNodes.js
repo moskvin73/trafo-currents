@@ -202,6 +202,10 @@ export class IF_Node extends ASTNode {
       context.index_code += this.len_code_false;
     }
   }
+
+  getChildren() {
+      yield this.if_expr;
+  }
 }
 
 export class Goto_Node extends ASTNode {
