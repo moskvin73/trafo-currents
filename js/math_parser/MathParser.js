@@ -1099,6 +1099,10 @@ export class MathParser {
         if (this.c_token === TokenType.LBRACE) {
 
           this.context.enterScope();
+          for (let i = 0; i < params.length; i++) {
+            const pName = params[i];
+            this.context.acquireId(pName);
+          }
           // Задаём пораметры
           const statements =this.#parseBlock();
 
@@ -1109,7 +1113,7 @@ export class MathParser {
             //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
             //return new DefineVarableCodeNode(name, statements, params, token_loc);
 
-            const functionCompiledCode = new VarableCode(statements, 0, this.context);
+            const functionCompiledCode = new VarableCode(statements, params.length, this.context);
             this.context.exitScope();
 
             const funcId = this.context.acquireId(name);
