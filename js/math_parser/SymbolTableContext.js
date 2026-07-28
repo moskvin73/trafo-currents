@@ -202,10 +202,12 @@ export class SymbolTableContext {
         }
       }
     }
-
-    // 2. Ищем в вариативной части
-    const varIdx = this.varHash[name];
-    if (varIdx !== undefined) return varIdx + this.CD;
+    else
+    {
+      // 2. Ищем в вариативной части
+      const varIdx = this.varHash[name];
+      if (varIdx !== undefined) return varIdx + this.CD;
+    }
 
     return null; // Идентификатор вообще не зарегистрирован
   }
