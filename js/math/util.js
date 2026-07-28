@@ -81,4 +81,8 @@ export class IndexedMap {
     this.#map.clear();
     this.#store.length = 0; // Наш самый быстрый способ
   }
+
+  get size() {
+    return this.#map.size;
+  }  
 }
