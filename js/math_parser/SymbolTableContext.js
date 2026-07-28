@@ -188,6 +188,21 @@ export class SymbolTableContext {
     const fixedIdx = this.fixedHash[name];
     if (fixedIdx !== undefined) return fixedIdx;
 
+    if (this.scopes.length > 0) {
+      const currentScopeIdx = this.scopes.length - 1;
+
+      // Ищем вверх по цепочке функций (Паскаль-стиль для вложенных функций)
+      for (let i = currentScopeIdx; i >= 0; i--) {
+        const scope = this.scopes[i];
+        const localIdx = scope.hash[name];
+        
+        if (localIdx !== undefined) {
+          const delta = currentScopeIdx - i;
+          return this.LOCAL_MARKER + (delta << 16) + localIdx;
+        }
+      }
+    }
+
     // 2. Ищем в вариативной части
     const varIdx = this.varHash[name];
     if (varIdx !== undefined) return varIdx + this.CD;
