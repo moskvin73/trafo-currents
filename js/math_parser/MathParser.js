@@ -1629,13 +1629,12 @@ export class MathParser {
       //const ret = new VariableNode(name, token_loc);
       let id = this.context.getIdByName(name);
       if (!id) {
-          let list = this.#listUndefinedIdentifiers.getByName(name);
+          let list = this.#listUndefinedIdentifiers.get(name);
           if (list)
           {
             id = list[0].id_name;
           } else {
             const list = [];
-            
             id = -(this.#listUndefinedIdentifiers.size + 1);
           }
           const ret = new VariableNode(id, token_loc);

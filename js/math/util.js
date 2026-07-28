@@ -83,6 +83,6 @@ export class IndexedMap {
   }
 
   get size() {
-    return this.#map.size;
+    return this.#store.length;
   }  
 }
