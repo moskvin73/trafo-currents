@@ -220,7 +220,7 @@ export class VarableCode
 
     // Инициализируем пустые ячейки под локальные переменные
     // (Используйте localsCount, который мы обсуждали в прошлый раз, чтобы выделить память)
-    for (let i = 0; i < this.localsCount; i++) {
+    for (let i = 0; i < this.paramsCount; i++) {
         const state = { type: 0, value: 0 };
         myCurrentFrame.symbols[i] = {
             get type() { return state.type; },
