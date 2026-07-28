@@ -1141,7 +1141,7 @@ export class MathParser {
       }
       
       const undefinedNodesSet = new Set(Object.values(this.#listUndefinedIdentifiers));
-      const foundNodes = astRoot.findAll(node => {
+      const foundNodes = expr.findAll(node => {
         // Set.has() проверяет наличие объекта в памяти мгновенно
           return undefinedNodesSet.has(node);
       });
