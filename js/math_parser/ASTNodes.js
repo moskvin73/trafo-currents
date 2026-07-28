@@ -1231,7 +1231,7 @@ export class IdentifierNode extends RefNode {
   }
 
   getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(getNameById(this.id_name));
+    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
   }
 }
 
@@ -1239,12 +1239,12 @@ export class IdentifierNode extends RefNode {
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends IdentifierNode {
-  constructor(name, loc) {
-    super(name, loc);
+  constructor(id_name, loc) {
+    super(id_name, loc);
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(this.name, expression, loc);
+    return new AssignNode(id_name, expression, loc);
   }
 
   getPriority()  { return OpPriority.PRIMARY; }
