@@ -1770,7 +1770,8 @@ export class CallNode extends MathNode {
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
-      const sym = context.scope_context.getSymbolByName(this.name);
+      //const sym = context.scope_context.getSymbolByName(this.name);
+      const sym = context.scope_context.getSymbolById(this.id_name);
       if (sym === null) {
         this.error(context, `Идентификатор "${this.name}" не опредилён.`);
       }
