@@ -1168,7 +1168,7 @@ export class MathParser {
         });
         if (foundAssignNode)
         {
-          delete this.#listUndefinedIdentifiers[foundAssignNode.name]; 
+          this.#listUndefinedIdentifiers.delete(foundAssignNode.name); 
         }
         if (this.#listUndefinedIdentifiers.size > 0)
         {
