@@ -41,3 +41,49 @@ export function roundNumber(value, decimals = 0) {
   // 5. Точное математическое округление
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
+
+export class IndexedMap {
+  #map = new Map();  // Имя -> Индекс в массиве
+  #store = [];       // Массив, где хранятся сами данные
+
+  // 1. ДОБАВЛЕНИЕ (Возвращает полученный индекс) — O(1)
+  add(name, data) {
+    // Если имя уже есть, пушим в существующий массив данных
+    if (this.#map.has(name)) {
+      const index = this.#map.get(name);
+      this.#store[index].values.push(data);
+      return index; // Возвращаем тот же индекс
+    }
+
+    // Если имени нет, создаем новую запись
+    const newIndex = this.#store.length;
+    this.#store.push({ name, values: [data] });
+    this.#map.set(name, newIndex);
+    
+    return newIndex; // Возвращаем сгенерированный индекс
+  }
+
+  // 2. БЫСТРЫЙ ПОИСК ПО ИМЕНИ — O(1)
+  getByName(name) {
+    const index = this.#map.get(name);
+    if (index === undefined) return undefined;
+    return this.#store[index].values; // Возвращает массив элементов
+  }
+
+  // 3. БЫСТРЫЙ ПОИСК ПО ИНДЕКСУ — O(1)
+  getByIndex(index) {
+    if (index < 0 || index >= this.#store.length) return undefined;
+    return this.#store[index]; // Возвращает { name, values: [...] }
+  }
+
+  // 4. МГНОВЕННАЯ ОЧИСТКА — O(1)
+  clear() {
+    this.#map.clear();
+    this.#store.length = 0; // Используем самый быстрый способ очистки массива
+  }
+
+  // Геттер для получения общего количества уникальных имен
+  get size() {
+    return this.#map.size;
+  }
+}
