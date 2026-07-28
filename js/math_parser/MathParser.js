@@ -1139,7 +1139,6 @@ export class MathParser {
       if (!(expr instanceof RefNode)) {
         this.#error(`[Semantic Error]: Неверное выражение слева от оператора присваивания. Ожидалось ссылка.`,  opToken_loc);
       }
-
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
@@ -1593,9 +1592,14 @@ export class MathParser {
         }
 
         this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${name}"`);
-        
-        // Возвращаем универсальный узел вызова
-        return new CallNode(name, args, token_loc);
+        const id = this.context.getIdByName(name);
+        if (id) {
+          // Возвращаем универсальный узел вызова
+          return new CallNode(name, args, token_loc);
+        }
+        else {
+          this.#error(`Неопредилённый идентификатор "${name}"`, token_loc);
+        }
       }
 
       return new VariableNode(name, token_loc);
