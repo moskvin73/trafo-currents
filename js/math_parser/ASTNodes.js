@@ -1288,6 +1288,10 @@ export class AssignNode extends IdentifierNode {
     }
   }
 
+  *getChildren() {
+    yield this.expression;
+  }
+
   toTeX(context) {
     return `${this.getTexName(context)} = ${this.expression.toTeX(context)}`;
   }
@@ -1334,6 +1338,12 @@ export class IndexNode extends RefNode {
       // Если индекса не было, создаем новый
       return `${targetTeX}_{{${matrixIndex}}}`;
     }
+  }
+
+  *getChildren() {
+    yield this.#target;
+    yield this.#rowExpr;
+    yield this.#colExpr;
   }
 
   internal_evaluate(context) {
