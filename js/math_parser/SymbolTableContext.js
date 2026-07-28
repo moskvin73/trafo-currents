@@ -218,20 +218,29 @@ export class SymbolTableContext {
    * Достает ячейку памяти (объект-символ) по числовому ID.
    */
   getSymbolById(id) {
-    // А) Локальный ID функции
+    // А) Локальный ID (содержит delta и localIdx)
     if (id >= this.LOCAL_MARKER) {
       const payload = id - this.LOCAL_MARKER;
-      const delta = payload >> 16;       
-      const localIdx = payload & 0xFFFF; 
+      const delta = payload >> 16;       // На сколько уровней вверх по лексической цепочке подняться
+      const localIdx = payload & 0xFFFF; // Индекс переменной внутри целевого кадра
 
-      const targetScopeIdx = this.scopes.length - 1 - delta;
-      return this.scopes[targetScopeIdx].symbols[localIdx];
-    }
-    
-    // Б) Глобальный ID пользователя
-    if (id >= this.CD) {
-      const globalIdx = id - this.CD;
-      return this.varSymbols[globalIdx];
+      // Начинаем поиск с самого верхнего (текущего) кадра в стеке вызовов
+      let targetFrame = this.scopes[this.scopes.length - 1];
+
+      // Честно шагаем вверх по ссылкам родительских кадров ровно delta раз!
+      // Если delta = 0, мы останемся в текущем кадре. 
+      // Если delta = 1, мы перейдем в targetFrame.outer (живой кадр функции-родителя)
+      for (let i = 0; i < delta; i++) {
+        if (targetFrame) {
+          targetFrame = targetFrame.outer;
+        }
+      }
+
+      if (!targetFrame) {
+        throw new Error(`Внутренняя ошибка рантайма: Область видимости потеряна при декодировании ID: ${id}`);
+      }
+
+      return targetFrame.symbols[localIdx];
     }
 
     // В) Системная встроенная функция
