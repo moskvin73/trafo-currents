@@ -1156,7 +1156,7 @@ export class MathParser {
         const foundAssignNode = expr.find(node => {
           if (node instanceof AssignNode)
           {
-            const test = this.#listUndefinedIdentifiers[node.name];
+            const test = this.#listUndefinedIdentifiers.get(node.name);
             if (test) return test;
           }
         });
