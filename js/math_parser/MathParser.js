@@ -1070,8 +1070,8 @@ export class MathParser {
         {
           //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
           //return new DefineVarableCodeNode(name, statements, null, token_loc);
-          const functionCompiledCode = new VarableCode(statements, paramsCount, this.context);
-          this.context.exitScope();
+          const functionCompiledCode = new VarableCode(statements, 0, this.context);
+          this.context.exitScope();1
           const funcSymbol = this.scope_context.getSymbolById(funcId);
           funcSymbol.value = functionCompiledCode;
         } else this.context.exitScope();
