@@ -1603,6 +1603,11 @@ export class MathParser {
         }
       }
 
+      const id = this.context.getIdByName(name);
+      if (!id) {
+          this.#listUndefinedIdentifiers[name] = ret;
+      }
+
       return new VariableNode(name, token_loc);
   }
 }
