@@ -1059,7 +1059,11 @@ export class MathParser {
     if (this.c_token === TokenType.ASSIGN) {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
+
+        this.context.enterScope();
         const statements =this.#parseBlock();
+        this.context.exitScope();
+
         const ret_loc = this.#location;
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
