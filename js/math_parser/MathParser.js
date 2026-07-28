@@ -1548,15 +1548,8 @@ export class MathParser {
           }
          }
 
-         case TokenType.VARIABLE: {
-            const ret = this.#callFuncORVar();
-            // Проверяем есть ли такой идентификатор
-            const id = this.context.getIdByName(name);
-            if (!id) {
-              this.#listUndefinedIdentifiers[name] = ret;
-            }
-            return ret;
-         }
+         case TokenType.VARIABLE: 
+            return this.#callFuncORVar();
          default:
           this.#error(`Ожидался операнд "${this.lexer.stringValue()}"`, token_loc);
           while (true)
