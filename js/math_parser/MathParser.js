@@ -1166,7 +1166,7 @@ export class MathParser {
       return ret;      
     }
     // Объединяем
-    this.#listUndefinedIdentifier.forEach((value, key) => {
+    this.#listUndefinedIdentifiers.forEach((value, key) => {
       secondMap.set(key, value);
     });
     return expr;
