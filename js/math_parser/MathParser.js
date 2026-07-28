@@ -1172,7 +1172,7 @@ export class MathParser {
         this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
       }
     }
-    this.#listUndefinedIdentifiers.clear();
+    this.#listUndefinedIdentifiers = secondMap;
     return expr;
   }
 
