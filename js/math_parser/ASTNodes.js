@@ -216,26 +216,23 @@ export class VarableCode
     const previousScopes = scopeCtrl.scopes;
 
     try {
-    // 2. Строим изолированное окружение: родители + новый пустой кадр
-    //const myCurrentFrame = scopeCtrl.createFrame();
-    //scopeCtrl.scopes = [...this.parentEnvironment, myCurrentFrame];
-    scopeCtrl.scopes = this.parentEnvironment;
+      scopeCtrl.scopes = this.parentEnvironment;
 
-    // 3. МГНОВЕННАЯ инициализация параметров по их порядковым индексам!
-    // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
-    for (let i = 0; i < this.paramsCount; i++) {
-      // Записываем переданный аргумент в ячейку symbols[i]
-      this.parentEnvironment.symbols[i].value = args[i];
-    }
+      const currentFrame = this.parentEnvironment[this.parentEnvironment.length - 1];
+      // 3. МГНОВЕННАЯ инициализация параметров по их порядковым индексам!
+      // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
+      for (let i = 0; i < this.paramsCount; i++) {
+        // Записываем переданный аргумент в ячейку symbols[i]
+        this.parentEnvironment.symbols[i].value = args[i];
+      }
 
-    // 4. Запускаем выполнение тела функции
-    const ret = context.call_code(this.statements);
+      // 4. Запускаем выполнение тела функции
+      const ret = context.call_code(this.statements);
    } finally {
     // 5. Восстанавливаем стек вызовов обратно
     scopeCtrl.scopes = previousScopes;
-
-    return ret;
    }
+   return ret;
   }
 }
 
