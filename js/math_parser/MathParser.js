@@ -1153,6 +1153,15 @@ export class MathParser {
       if (this.#listUndefinedIdentifiers.size > 0)
       {
         // Ищем узел AssignNode в левой части, с именами из таблицы
+        const foundAssignNode = ret.find(node => {
+          if (node instanceof AssignNode)
+          {
+            const test = this.#listUndefinedIdentifiers[node.name];
+            if (test) return test;
+          }
+        });
+        if (!foundAssignNode)
+          this.#error(`Нет опредиления идентификатора "${name}"`, ret.loc);
       }
       return ret;
     }
