@@ -1170,6 +1170,12 @@ export class MathParser {
         {
           delete this.#listUndefinedIdentifiers[foundAssignNode.name]; 
         }
+        if (this.#listUndefinedIdentifiers.size > 0)
+        {
+          for (const [name, node] of this.#listUndefinedIdentifiers) {
+            this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
+          }
+        }
       }
       return ret;      
     }
