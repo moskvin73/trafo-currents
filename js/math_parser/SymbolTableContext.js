@@ -7,6 +7,9 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolTableContext {
+  // Сквозная скрытая карта: ID -> Строковое Имя для пошаговых отчетов LaTeX
+  #idToNameMap = new Map(); 
+
   constructor() {
     this.settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
@@ -28,17 +31,13 @@ export class SymbolTableContext {
       const overloads = COMPILER_REGISTRY.get(name);
 
       this.fixedSymbols[i] = {
-
         get type() { return SYM_BUILTIN; },
-
         set type(t) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
         },
-
         get value() { 
           return overloads; 
         },
-
         set value(val) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
         }
@@ -47,34 +46,45 @@ export class SymbolTableContext {
       this.fixedHash[name] = i; // Связываем имя с числовым ID
     }
  
-    // Динамическая часть пользователя
+    // Динамическая часть пользователя (Глобальный scope прямого кода)
     this.varNames = [];
     this.varSymbols = [];
     // Тоже очищаем от прототипов, чтобы x = "toString" не ломал рантайм
     this.varHash = Object.create(null);
 
-    // --- СТЕК ЛОКАЛЬНЫХ ОБЛАСТЕЙ ВИДИМОСТИ (NEW) ---
-    // Каждый элемент стека — это объект { hash: Object.create(null), symbols: [] }
+    // --- СТЕК ЛОКАЛЬНЫХ ОБЛАСТЕЙ ВИДИМОСТИ ---
+    // Каждый элемент стека — это объект { hash: Object.create(null), names: [], symbols: [] }
     this.scopes = []; 
     // Смещение для локальных ID, чтобы они никогда не пересекались с глобальными.
-    // Локальный ID = LOCAL_MARKER + (индекс_слоя << 16) + индекс_переменной_в_слое
+    // Локальный ID = LOCAL_MARKER + (инндекс_слоя << 16) + индекс_переменной_в_слое
     this.LOCAL_MARKER = 1000000;     
+
+    // Автоматически наполняем карту имен системными функциями из коробки
+    this.#initIdToNameMap();
   }
 
-  // ============================================================================
-  // УПРАВЛЕНИЕ СТЕКОМ ОБЛАСТЕЙ ВИДИМОСТИ (NEW)
-  // ============================================================================
+  /** Наполнение карты именами встроенных функций (вызывается в конструкторе) */
+  #initIdToNameMap() {
+    for (let i = 0; i < this.CD; i++) {
+      this.#idToNameMap.set(i, this.fixedNames[i]);
+    }
+  }
 
-  /** Создает новую локальную область (например, при входе в функцию) */
+  /** Создает новый локальный кадр (Scope) при вызове функции */
+  createFrame() {
+    return {
+      hash: Object.create(null), // имя -> локальный индекс внутри функции
+      names: [],                 // массив имен
+      symbols: []                // массив объектов-символов
+    };
+  }
+
+  /** Фаза парсинга: вход в новую функцию */
   enterScope() {
-    this.scopes.push({
-      hash: Object.create(null),
-      names: [],
-      symbols: []
-    });
+    this.scopes.push(this.createFrame());
   }
 
-  /** Удаляет текущую локальную область (при выходе из функции) */
+  /** Фаза парсинга: выход из функции */
   exitScope() {
     if (this.scopes.length === 0) {
       throw new Error("Внутренняя ошибка: Попытка удалить корневой Scope.");
@@ -82,87 +92,93 @@ export class SymbolTableContext {
     this.scopes.pop();
   }
 
+  /** Возвращает снимок лексического окружения для Замыкания (Closure) */
+  getLexicalEnvironment() {
+    return [...this.scopes];
+  }
+
   /**
+   * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
-   * Честная сложность O(1), полностью защищенная от системных имен JS.
+   * Запрещает глобальный пользовательский контекст внутри функций.
    */
   acquireId(name) {
-    // Валидация: имя должно быть строкой и не должно быть пустым
     if (typeof name !== 'string' || name.trim() === '') {
-      throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой. Получено: ${String(name)}`);
+      throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой.`);
     }
 
-    // 1. Ищем в предопределенной части через быстрое сравнение с undefined
+    // 1. Системные предопределенные функции (Доступны ВСЕГДА и везде)
     const fixedIdx = this.fixedHash[name];
     if (fixedIdx !== undefined) {
-      return fixedIdx; // Возвращаем чистый индекс [0 ... CD-1]
+      return fixedIdx; // Индекс в диапазоне [0 ... CD-1]
     }
 
-    
-    // 2. Если не нашли, и у нас АКТИВЕН локальный scope — создаем переменную в ТЕКУЩЕМ ВЕРХНЕМ слое
+    // 2. РЕЖИМ 1: Мы внутри ФУНКЦИИ (scopes не пустой) -> Полная изоляция от глобального кода!
     if (this.scopes.length > 0) {
       const currentScopeIdx = this.scopes.length - 1;
-      const scope = this.scopes[currentScopeIdx];
-      // Ищем в текущей области
-      const localIdx = scope.hash[name];
-      if (localIdx !== undefined) {
-        // Кодируем ID: маркер локальности + индекс слоя + индекс внутри слоя
-        return this.LOCAL_MARKER + (currentScopeIdx << 16) + localIdx;
+
+      // Ищем вверх по цепочке функций (Паскаль-стиль для вложенных функций)
+      for (let i = currentScopeIdx; i >= 0; i--) {
+        const scope = this.scopes[i];
+        const localIdx = scope.hash[name];
+        
+        if (localIdx !== undefined) {
+          const delta = currentScopeIdx - i;
+          return this.LOCAL_MARKER + (delta << 16) + localIdx;
+        }
       }
 
+      // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
+      const currentScope = this.scopes[currentScopeIdx];
+      
       const state = { type: SYM_UNDEFINED, value: 0 };
       const localSymbol = {
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
-        set value(v) {
-          state.value = v;
-          state.type = SYM_VARIABLE;
-        }
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };
 
-      const newLocalIdx = scope.symbols.length;
-      scope.names.push(name);
-      scope.symbols.push(localSymbol);
-      scope.hash[name] = newLocalIdx;
+      const newLocalIdx = currentScope.symbols.length;
+      currentScope.names.push(name);
+      currentScope.symbols.push(localSymbol);
+      currentScope.hash[name] = newLocalIdx;
 
-      // Возвращаем уникальный локальный ID для этого слоя
-      return this.LOCAL_MARKER + (currentScopeIdx << 16) + newLocalIdx;
+      const newLocalId = this.LOCAL_MARKER + (0 << 16) + newLocalIdx;
+      this.#idToNameMap.set(newLocalId, name); // Сохраняем имя для TeX
+
+      return newLocalId;
     }    
 
-    // 2. Ищем в вариативной части пользователя
+    // 3. РЕЖИМ 2: Мы в ПРЯМОМ КОДЕ (scopes пустой) -> Свободно работаем с глобальным scope пользователя
     const varIdx = this.varHash[name];
     if (varIdx !== undefined) {
-      return varIdx + this.CD; // Возвращаем индекс со смещением CD
+      return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
 
-    const state = {
-      type: SYM_UNDEFINED,
-      value: 0
-    };
-
+    // Создаем абсолютно новую глобальную переменную пользователя
+    const state = { type: SYM_UNDEFINED, value: 0 };
     const userSymbol = {
       get type() { return state.type; },
       set type(t) { state.type = t; },
-      
       get value() { return state.value; },
-      set value(v) {
-        state.value = v;
-        state.type = SYM_VARIABLE; // Авто-смена типа
-      }
+      set value(v) { state.value = v; state.type = SYM_VARIABLE; }
     };
     
-    // 3. Если имени нет — регистрируем как новую неопределенную переменную
-    const newVarIdx = this.varNames.length;
+    const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
     this.varSymbols.push(userSymbol);
     this.varHash[name] = newVarIdx;
 
-    return newVarIdx + this.CD; // Возвращаем новый ID со смещением CD
+    const newGlobalId = newVarIdx + this.CD;
+    this.#idToNameMap.set(newGlobalId, name); // Сохраняем имя для TeX
+
+    return newGlobalId;
   }
-  
+
   /**
-   * Чистый поиск ID по имени БЕЗ автоматической регистрации новой переменной.
+   * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
+   * Находит существующий ID или регистрирует новый.
    * Нужен парсеру, чтобы просто проверить, существует ли уже такой идентификатор.
    * @param {string} name - Имя для поиска
    * @returns {number|null} ID символа или null, если не найден
@@ -172,17 +188,6 @@ export class SymbolTableContext {
     const fixedIdx = this.fixedHash[name];
     if (fixedIdx !== undefined) return fixedIdx;
 
-
-    // 1. Ищем в локальных областях видимости (идем с конца стека к началу)
-    for (let i = this.scopes.length - 1; i >= 0; i--) {
-      const scope = this.scopes[i];
-      const localIdx = scope.hash[name];
-      if (localIdx !== undefined) {
-        // Кодируем ID: маркер локальности + индекс слоя + индекс внутри слоя
-        return this.LOCAL_MARKER + (i << 16) + localIdx;
-      }
-    }
-
     // 2. Ищем в вариативной части
     const varIdx = this.varHash[name];
     if (varIdx !== undefined) return varIdx + this.CD;
@@ -191,127 +196,39 @@ export class SymbolTableContext {
   }
 
   /**
-   * Находит содержимое (свойства) символа напрямую по его текстовому имени.
-   * @param {string} name - Имя для поиска
-   * @returns {Object|null} Объект свойств символа ({type, value} или {type, overloads})
-   */
-  getSymbolByName(name) {
-    const id = this.getIdByName(name);
-    if (id !== null) {
-      return this.getSymbolById(id); // Использует сверхбыстрый доступ по ID
-    }
-    return null;
-  }
-
-  // ============================================================================
-  // ОБРАТНЫЙ ДОСТУП (ДЛЯ ДЕРЕВА И РАНТАЙМА): ID -> ИМЯ ИЛИ СОДЕРЖИМОЕ
-  // ============================================================================
-
-  /**
-   * Возвращает текстовое имя идентификатора по его числовому ID за O(1).
-   * @param {number} id - Числовой идентификатор
-   * @returns {string} Имя переменной или функции
-   */
-  getNameById(id) {
-    if (id < this.CD) {
-      return this.fixedNames[id];
-    }
-
-    if (id >= this.LOCAL_MARKER) {
-      const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
-      const localIdx = (id - this.LOCAL_MARKER) & 0xFFFF;
-      return this.scopes[scopeIdx]?.names[localIdx] || `[Уничтоженный Local ID: ${id}]`;
-    }
-
-    const varIdx = id - this.CD;
-    if (varIdx >= this.varNames.length || varIdx < 0) {
-      return `[Неизвестный ID: ${id}]`;
-    }
-    return this.varNames[varIdx];
-  }
-
-  /**
-   * Возвращает всё содержимое (свойства), хранящееся под этим ID за O(1).
-   * Подходит как для извлечения значения переменной, так и для получения массива overloads функций.
-   * @param {number} id - Числовой идентификатор токена/символа
-   * @returns {Object} Объект свойств ({type, value} для переменных или {type, overloads} для функций)
+   * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ВЫПОЛНЕНИЯ (РАНТАЙМ) — Сложность O(1).
+   * Достает ячейку памяти (объект-символ) по числовому ID.
    */
   getSymbolById(id) {
-    if (id < this.CD) {
+    // А) Локальный ID функции
+    if (id >= this.LOCAL_MARKER) {
+      const payload = id - this.LOCAL_MARKER;
+      const delta = payload >> 16;       
+      const localIdx = payload & 0xFFFF; 
+
+      const targetScopeIdx = this.scopes.length - 1 - delta;
+      return this.scopes[targetScopeIdx].symbols[localIdx];
+    }
+    
+    // Б) Глобальный ID пользователя
+    if (id >= this.CD) {
+      const globalIdx = id - this.CD;
+      return this.varSymbols[globalIdx];
+    }
+
+    // В) Системная встроенная функция
+    if (id >= 0 && id < this.CD) {
       return this.fixedSymbols[id];
     }
 
-    // Если ID локальный — мгновенно декодируем координаты в стеке за O(1)
-    if (id >= this.LOCAL_MARKER) {
-      const scopeIdx = (id - this.LOCAL_MARKER) >> 16;
-      const localIdx = (id - this.LOCAL_MARKER) & 0xFFFF;
-      
-      const scope = this.scopes[scopeIdx];
-      if (!scope || localIdx >= scope.symbols.length) {
-        throw new Error(`Ошибка рантайма: Обращение к несуществующей локальной области.`);
-      }
-      return scope.symbols[localIdx];
-    }
-
-    const varIdx = id - this.CD;
-    if (varIdx >= this.varSymbols.length || varIdx < 0) {
-      throw new Error(`Внутренняя ошибка рантайма: Выход за границы таблицы по ID ${id}`);
-    }
-    return this.varSymbols[varIdx];
-  }
-    
-  // ============================================================================
-  // СИНХРОНИЗАЦИЯ С LOCALSTORAGE (Ультра-компактный формат)
-  // ============================================================================
-
-  /**
-   * Сериализует только вариативную часть пользователя в виде плоских массивов.
-   * На выходе чистый JSON, который весит в 3 раза меньше стандартного.
-   */
-  serialize() {
-    const len = this.varSymbols.length;
-    const types = new Int32Array(len);
-    const values = new Array(len);
-
-    for (let i = 0; i < len; i++) {
-      types[i] = this.varSymbols[i].type;
-      values[i] = this.varSymbols[i].value;
-    }
-
-    return {
-      settings: this.settings,
-      names: this.varNames,
-      types: Array.from(types), // Переводим в обычный массив для JSON
-      values: values
-    };
+    return undefined;
   }
 
   /**
-   * Восстанавливает контекст и мгновенно перестраивает быстрый varHash
+   * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ГЕНЕРАЦИИ ОТЧЕТА LaTeX — Сложность O(1).
+   * Мгновенно возвращает оригинальное строковое имя переменной или функции.
    */
-  deserialize(jsonData) {
-    if (!jsonData) return;
-
-    if (jsonData.settings) {
-      Object.assign(this.settings, jsonData.settings);
-    }
-
-    if (jsonData.names && jsonData.types && jsonData.values) {
-      this.varNames = jsonData.names;
-      const len = this.varNames.length;
-      
-      this.varSymbols = new Array(len);
-      this.varHash = Object.create(null); // Инициализируем чистый хэш
-
-      for (let i = 0; i < len; i++) {
-        // Собираем объект свойства обратно в память рантайма
-        this.varSymbols[i] = {
-          type: jsonData.types[i],
-          value: jsonData.values[i]
-        };
-        // Мгновенно восстанавливаем хэш-карту для поиска по имени
-        this.varHash[this.varNames[i]] = i;
-      }
-    }
+  getNameById(id) {
+    return this.#idToNameMap.get(id) ?? `?id_${id}?`;
   }
 }
