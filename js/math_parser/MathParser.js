@@ -212,7 +212,7 @@ class context_evallution
  */
 export class MathParser {
   #program;
-  #listUndefinedIdentifiers = [];
+  #listUndefinedIdentifiers = new Map();
 
   // 1. Определяем константы флагов (степени двойки)
   static ALLOW_BREAK = 1;    // 001 в двоичной
@@ -1112,7 +1112,7 @@ export class MathParser {
 
   #parseExpression() {
     // Сбрасываем массив идентификаторов
-    this.#listUndefinedIdentifiers.length = 0;
+    this.#listUndefinedIdentifiers = idList = Object.create(null); 
     const result = this.#parseAssignment();
     while (MathParser.Expr_FIRST.has(this.c_token))
     {
@@ -1570,6 +1570,8 @@ export class MathParser {
       const token_loc = this.#location;
       const name = this.lexer.stringValue();      
 
+
+      
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
       if (this.c_token === TokenType.LPAREN) {
