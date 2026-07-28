@@ -159,7 +159,7 @@ export default class ASTNode {
   }
 
   // Генератор детей, который каждый класс переопределяет под себя
-  getChildren() {
+  *getChildren() {
       // По умолчанию у абстрактного узла детей нет
   }
 }
@@ -203,7 +203,7 @@ export class IF_Node extends ASTNode {
     }
   }
 
-  getChildren() {
+  *getChildren() {
       yield this.if_expr;
   }
 }
@@ -319,7 +319,7 @@ export class MatrixNode extends MathNode {
     return `\\begin{${env}}\n${body}\n\\end{${env}}`;
   }
 
-  getChildren() {
+  *getChildren() {
       for (const row of this.#rows) {
           if (!row) continue; // На случай, если строка целиком пустая
           
@@ -330,7 +330,7 @@ export class MatrixNode extends MathNode {
           }
       }
   }
-  
+
   /**
    * Вычисление матрицы: вычисляет каждый узел внутри дерева
    * @returns {Matrix} Готовый математический объект матрицы
@@ -441,6 +441,8 @@ export class IsOpNode extends MathNode {
     const targetClass = this.targetType;
     return new BoolValue(leftValue instanceof targetClass);
   }
+
+
 
   toString(context) {
     let innerCode = this.argument.toString(context);
