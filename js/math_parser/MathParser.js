@@ -1132,7 +1132,7 @@ export class MathParser {
    * Правая ассоциативность: x = y = 5 означает x = (y = 5)
    */
   #parseAssignment() {
-    secondMap = this.#listUndefinedIdentifiers;
+    const secondMap = this.#listUndefinedIdentifiers;
     this.#listUndefinedIdentifiers = Object.create(null); 
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
