@@ -325,7 +325,7 @@ export class MatrixNode extends MathNode {
    */
   internal_evaluate(context) {
       // 1. Вычисляем все узлы AST внутри матрицы, получая атомарные объекты MathType
-    const evaluatedElements = this.#rows.map(row =>
+     const evaluatedElements = this.#rows.map(row =>
       row.map(node => node.evaluate(context))
     );
 
