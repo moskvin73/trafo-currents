@@ -1118,12 +1118,6 @@ export class MathParser {
         this.#error(`Ожидался оператор "${this.lexer.stringValue()}"`, this.#location);
         this.#parseAssignment();  
     }
-    if (this.#listUndefinedIdentifiers.size > 0)
-    {
-      for (const [name, node] of this.#listUndefinedIdentifiers) {
-        this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
-      }
-    }
     return result;
   }
 
@@ -1132,7 +1126,7 @@ export class MathParser {
    * Правая ассоциативность: x = y = 5 означает x = (y = 5)
    */
   #parseAssignment() {
-    const secondMap = this.#listUndefinedIdentifiers;
+    //const secondMap = this.#listUndefinedIdentifiers;
     this.#listUndefinedIdentifiers = new Map();
     // Сначала парсим левую часть как обычное сложение/вычитание
     let expr = this.#parseOR();
@@ -1155,11 +1149,11 @@ export class MathParser {
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      const ret = expr.createAssign(right, opToken_loc);
+      const expr = expr.createAssign(right, opToken_loc);
       if (this.#listUndefinedIdentifiers.size > 0)
       {
         // Ищем узел AssignNode в левой части, с именами из таблицы
-        const foundAssignNode = ret.find(node => {
+        const foundAssignNode = expr.find(node => {
           if (node instanceof AssignNode)
           {
             const test = this.#listUndefinedIdentifiers[node.name];
@@ -1170,20 +1164,15 @@ export class MathParser {
         {
           this.#listUndefinedIdentifiers.delete(foundAssignNode.name); 
         }
-        if (this.#listUndefinedIdentifiers.size > 0)
-        {
-          for (const [name, node] of this.#listUndefinedIdentifiers) {
-            this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
-          }
-        }
       }
-      this.#listUndefinedIdentifiers = secondMap;
-      return ret;      
     }
-    // Объединяем
-     for (const [key, value] of secondMap) {
-        this.#listUndefinedIdentifiers.set(key, value);
+    if (this.#listUndefinedIdentifiers.size > 0)
+    {
+      for (const [name, node] of this.#listUndefinedIdentifiers) {
+        this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
+      }
     }
+    this.#listUndefinedIdentifiers.clear();
     return expr;
   }
 
