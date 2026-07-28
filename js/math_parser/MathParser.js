@@ -1118,6 +1118,12 @@ export class MathParser {
         this.#error(`Ожидался оператор "${this.lexer.stringValue()}"`, this.#location);
         this.#parseAssignment();  
     }
+    if (this.#listUndefinedIdentifiers.size > 0)
+    {
+      for (const [name, node] of this.#listUndefinedIdentifiers) {
+        this.#error(`Неопредилённы индентификатор "${name}"`, node.loc);
+      }
+    }
     return result;
   }
 
