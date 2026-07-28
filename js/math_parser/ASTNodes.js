@@ -605,6 +605,10 @@ export class UnaryOpNode extends MathNode {
     return `${finalOperator}${argTex}`;
   }
 
+  *getChildren() {
+    yield this.argument;
+  }
+
   // Вспомогательный метод для размотки цепочки знаков +---++
   _collapseUnaryChain(node, signState) {
     // Если текущий узел — унарная операция, обрабатываем её и идём вглубь
@@ -698,6 +702,11 @@ export class BinaryOpNode extends MathNode {
     if (this.right.getPriority() < currentPriority) rightCode = `\\left(${rightCode}\\right)`;
 
     return this.simpleTeX(leftCode, rightCode);
+  }
+
+  *getChildren() {
+    yield this.left;
+    yield this.right;
   }
 
   /**
