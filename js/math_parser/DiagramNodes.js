@@ -65,6 +65,11 @@ export class PlotConfigNode extends PlotDataNode {
     this.valueNode = valueNode;
   }
 
+    *getChildren() {
+        yield this.valueNode;
+    }
+
+  
   internal_evaluate(context) {
     try
     {
@@ -92,6 +97,10 @@ export class PlotLayerNode extends PlotDataNode {
         this.layerId = layerId;
         this.color = color;
         this.strokeWidthNode = strokeWidthNode;
+    }
+
+    *getChildren() {
+        yield this.strokeWidthNode;
     }
 
     internal_evaluate(context) {
@@ -144,6 +153,10 @@ export class PlotChordNode extends PlotDataNode {
         this.expNode = expNode;
         this.data = data;
         this.layerId = layerId;
+    }
+
+    *getChildren() {
+        yield this.expNode;
     }
 
     internal_evaluate(context) {
