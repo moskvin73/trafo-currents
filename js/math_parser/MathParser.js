@@ -1060,7 +1060,6 @@ export class MathParser {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
 
-        const funcId = this.scope_context.acquireId(name);
         this.context.enterScope();
         const statements =this.#parseBlock();
 
@@ -1071,8 +1070,10 @@ export class MathParser {
           //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
           //return new DefineVarableCodeNode(name, statements, null, token_loc);
           const functionCompiledCode = new VarableCode(statements, 0, this.context);
-          this.context.exitScope();1
-          const funcSymbol = this.scope_context.getSymbolById(funcId);
+          this.context.exitScope();
+
+          const funcId = this.context.acquireId(name);
+          const funcSymbol = this.context.getSymbolById(funcId);
           funcSymbol.value = functionCompiledCode;
         } else this.context.exitScope();
       }
@@ -1096,14 +1097,26 @@ export class MathParser {
         }
         if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
         if (this.c_token === TokenType.LBRACE) {
+
+          this.context.enterScope();
+          // Задаём пораметры
           const statements =this.#parseBlock();
+
           const ret_loc = this.#location;
           if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
           if (this.errors.length === 0)
           {
             //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
-            return new DefineVarableCodeNode(name, statements, params, token_loc);
-          }
+            //return new DefineVarableCodeNode(name, statements, params, token_loc);
+
+            const functionCompiledCode = new VarableCode(statements, 0, this.context);
+            this.context.exitScope();
+
+            const funcId = this.context.acquireId(name);
+            const funcSymbol = this.context.getSymbolById(funcId);
+            funcSymbol.value = functionCompiledCode;
+
+          } else this.context.exitScope();
         }
       }
       this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
