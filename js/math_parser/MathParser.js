@@ -1165,6 +1165,10 @@ export class MathParser {
           const name = this.#listUndefinedIdentifiers.getKeyByIndex(-foundAssignNode.id_name - 1);          
           const id = context.acquireId(name);
           foundAssignNode.id_name = id;
+          const list = this.#listUndefinedIdentifiers.getValueByIndex();
+          for (int i = 0; i < list.length; i++) {
+            list[i].d_name = id;
+          }
         }
       }
     }
