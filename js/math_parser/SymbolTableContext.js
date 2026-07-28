@@ -243,6 +243,12 @@ export class SymbolTableContext {
       return targetFrame.symbols[localIdx];
     }
 
+    // Б) Глобальный ID пользователя
+    if (id >= this.CD) {
+      const globalIdx = id - this.CD;
+      return this.varSymbols[globalIdx];
+    }
+
     // В) Системная встроенная функция
     if (id >= 0 && id < this.CD) {
       return this.fixedSymbols[id];
