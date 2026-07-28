@@ -1570,7 +1570,11 @@ export class MathParser {
       const token_loc = this.#location;
       const name = this.lexer.stringValue();      
 
-
+      // Проверяем есть ли такой идентификатор
+      const id = this.context.getIdByName(name);
+      if (!id) {
+        this.#listUndefinedIdentifiers[name] = 0;
+      }
       
       this.#consume();
       // СИНТАКСИЧЕСКИЙ ВЫБОР ВЫЗОВА: Если сразу за идентификатором идет '('
