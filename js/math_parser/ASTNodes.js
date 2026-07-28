@@ -158,6 +158,21 @@ export default class ASTNode {
       return null;
   }
 
+  findAll(condition, accumulator = []) {
+      // 1. Если текущий узел подходит, добавляем его в результаты
+      if (condition(this)) {
+          accumulator.push(this);
+      }
+
+      // 2. Продолжаем обход детей в любом случае (не прерываем цикл)
+      for (const child of this.getChildren()) {
+          child.findAll(condition, accumulator);
+      }
+
+      // 3. Возвращаем итоговый массив наружу
+      return accumulator;
+  }  
+
   // Генератор детей, который каждый класс переопределяет под себя
   *getChildren() {
       // По умолчанию у абстрактного узла детей нет
@@ -1750,7 +1765,7 @@ export class CallNode extends MathNode {
       // yield* (со звездочкой) берет массив elements и выдает каждый узел по очереди
       yield* this.args;
   }
-  
+
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
