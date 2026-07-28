@@ -1169,7 +1169,7 @@ export class MathParser {
           foundAssignNode.id_name = id;
           const list = this.#listUndefinedIdentifiers.getValueByIndex(del_index);
           for (let i = 0; i < list.length; i++) {
-            list[i].d_name = id;
+            list[i].id_name = id;
           }
         }
       }
