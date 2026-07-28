@@ -1149,7 +1149,7 @@ export class MathParser {
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      const expr = expr.createAssign(right, opToken_loc);
+      expr = expr.createAssign(right, opToken_loc);
       if (this.#listUndefinedIdentifiers.size > 0)
       {
         // Ищем узел AssignNode в левой части, с именами из таблицы
