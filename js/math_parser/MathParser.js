@@ -1163,7 +1163,7 @@ export class MathParser {
         if (foundAssignNode)
         {
           this.#listUndefinedIdentifiers.delete(foundAssignNode.name);
-          context.acquireId(this.name);
+          context.acquireId(foundAssignNode.name);
         }
       }
     }
