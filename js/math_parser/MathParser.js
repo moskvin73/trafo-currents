@@ -1112,7 +1112,7 @@ export class MathParser {
 
   #parseExpression() {
     // Сбрасываем массив идентификаторов
-    this.#listUndefinedIdentifiers = idList = Object.create(null); 
+    this.#listUndefinedIdentifiers = Object.create(null); 
     const result = this.#parseAssignment();
     while (MathParser.Expr_FIRST.has(this.c_token))
     {
