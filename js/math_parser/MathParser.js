@@ -1110,7 +1110,9 @@ export class MathParser {
   // МАТЕМАТИЧЕСКАЯ ГРАММАТИКА (Строгий детерминированный спуск)
   // =======================================================
 
-  #parseExpression() { 
+  #parseExpression() {
+    // Сбрасываем массив идентификаторов
+    this.#listUndefinedIdentifiers.length = 0;
     const result = this.#parseAssignment();
     while (MathParser.Expr_FIRST.has(this.c_token))
     {
