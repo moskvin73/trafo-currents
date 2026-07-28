@@ -208,7 +208,7 @@ export class VarableCode
     context.scope_context.exitScope();
     return ret;
   }*/
- 
+
   evaluate(context, args) {
     const scopeCtrl = context.scope_context;
 
@@ -1815,7 +1815,8 @@ export class CallNode extends MathNode {
         return this.errorValue();
       } else if (sym.value instanceof VarableCode) {        
         const evaluatedArgs = this.args.map(arg => arg.internal_evaluate(context));
-        const p_c = sym.value.params.length;
+        //const p_c = sym.value.params.length;
+        const p_c = sym.value.paramsCount;
         if (evaluatedArgs.length !== p_c)
         {
           this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${p_c}]"`);
