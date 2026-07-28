@@ -859,7 +859,6 @@ export class MathParser {
     return jumps;
   }
 
-
   #parseWhile(code, f_out) {
     let loopBody = [];
     this.#consume();
