@@ -1626,9 +1626,9 @@ export class MathParser {
       }
 
       //const ret = new VariableNode(name, token_loc);
-      const id = this.context.getIdByName(name);
+      let id = this.context.getIdByName(name);
       if (!id) {
-          const list = this.#listUndefinedIdentifiers.get(name);
+          let list = this.#listUndefinedIdentifiers.get(name);
           if (list)
           {
             id = list[0].id_name;
