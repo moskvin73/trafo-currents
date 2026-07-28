@@ -181,14 +181,23 @@ export default class ASTNode {
 
 export class VarableCode
 {
-  constructor(statements, params) {
+  /*constructor(statements, params) {
     this.statements = statements;
     this.params = params;
+  }*/
+
+  // На этапе парсинга передаем statements и число — сколько у функции аргументов
+  constructor(statements, paramsCount, scope_context) {
+    this.statements = statements;
+    this.paramsCount = paramsCount; // Просто число (например, 2 для f(x, y))
+    
+    // Замыкание (цепочка родительских кадров)
+    this.parentEnvironment = scope_context.getLexicalEnvironment();
   }
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  evaluate(context, args) {
+  /*evaluate(context, args) {
     context.scope_context.enterScope();
     for (let i = 0; i < args.length; i++) {
       const id = context.scope_context.acquireId(this.params[i]);
@@ -197,6 +206,32 @@ export class VarableCode
     }
     const ret = context.call_code(this.statements);
     context.scope_context.exitScope();
+    return ret;
+  }*/
+ 
+  evaluate(context, args) {
+    const scopeCtrl = context.scope_context;
+
+    // 1. Спасаем текущий стек вызовов
+    const previousScopes = scopeCtrl.scopes;
+
+    // 2. Строим изолированное окружение: родители + новый пустой кадр
+    const myCurrentFrame = scopeCtrl.createFrame();
+    scopeCtrl.scopes = [...this.parentEnvironment, myCurrentFrame];
+
+    // 3. МГНОВЕННАЯ инициализация параметров по их порядковым индексам!
+    // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
+    for (let i = 0; i < this.paramsCount; i++) {
+      // Записываем переданный аргумент в ячейку symbols[i]
+      myCurrentFrame.symbols[i].value = args[i];
+    }
+
+    // 4. Запускаем выполнение тела функции
+    const ret = context.call_code(this.statements);
+
+    // 5. Восстанавливаем стек вызовов обратно
+    scopeCtrl.scopes = previousScopes;
+
     return ret;
   }
 }
