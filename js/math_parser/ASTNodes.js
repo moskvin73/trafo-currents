@@ -442,7 +442,9 @@ export class IsOpNode extends MathNode {
     return new BoolValue(leftValue instanceof targetClass);
   }
 
-
+  *getChildren() {
+    yield this.argument;
+  }
 
   toString(context) {
     let innerCode = this.argument.toString(context);
@@ -533,6 +535,9 @@ export class CastOpNode extends MathNode {
     return `\\text{${name}}\\left(${innerCode}\\right)`;
   }
 
+  *getChildren() {
+    yield this.argument;
+  }
 
   internal_evaluate(context) { 
     const valueToCast = this.argument.internal_evaluate(context);
