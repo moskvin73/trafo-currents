@@ -1749,7 +1749,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 ]);
 
 export class CallNode extends MathNode {
-  constructor(od_name, args, loc) {
+  constructor(id_name, args, loc) {
     super(loc); 
     this.id_name = id_name; // Имя функции (строка)
     this.args = args; // Массив дочерних узлов ASTNode
