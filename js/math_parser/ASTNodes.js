@@ -189,10 +189,11 @@ export class VarableCode
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
   constructor(statements, paramsCount, scope_context) {
     this.statements = statements;
-    this.paramsCount = paramsCount; // Просто число (например, 2 для f(x, y))
+    this.paramsCount = paramsCount;
     
-    // Замыкание (цепочка родительских кадров)
-    this.parentEnvironment = scope_context.getLexicalEnvironment();
+    // Запоминаем ОДИН конкретный кадр-родитель, активный в момент компиляции/создания
+    const currentScopes = scope_context.scopes;
+    this.closureParentFrame = currentScopes[currentScopes.length - 1] || null;
   }
 
   toRawTeX(settings) { return "\\text{code}"; }
@@ -210,29 +211,43 @@ export class VarableCode
   }*/
 
   evaluate(context, args) {
-    const scopeCtrl = context.scope_context;
+     const scopeCtrl = context.scope_context;
+    let ret;
 
-    // 1. Спасаем текущий стек вызовов
-    const previousScopes = scopeCtrl.scopes;
+    // 1. Создаем НОВЫЙ кадр для этого вызова функции.
+    // И передаем туда её лексического родителя из замыкания!
+    const myCurrentFrame = scopeCtrl.createFrame(this.closureParentFrame);
+
+    // Инициализируем пустые ячейки под локальные переменные
+    // (Используйте localsCount, который мы обсуждали в прошлый раз, чтобы выделить память)
+    for (let i = 0; i < this.localsCount; i++) {
+        const state = { type: 0, value: 0 };
+        myCurrentFrame.symbols[i] = {
+            get type() { return state.type; },
+            set type(t) { state.type = t; },
+            get value() { return state.value; },
+            set value(v) { state.value = v; state.type = 1; }
+        };
+    }
+
+    // Записываем переданные аргументы в первые ячейки symbols
+    for (let i = 0; i < this.paramsCount; i++) {
+        myCurrentFrame.symbols[i].value = args[i];
+    }
+
+    // 2. Просто ПУШИМ новый кадр в текущий живой стек рантайма. 
+    // Стек растет честно, ничего из родительских данных не стирается!
+    scopeCtrl.scopes.push(myCurrentFrame);
 
     try {
-      scopeCtrl.scopes = this.parentEnvironment;
+        // 3. Выполняем тело функции
+        ret = context.call_code(this.statements);
+    } finally {
+        // 4. Выходим из функции: просто СБРАСЫВАЕМ самый верхний кадр
+        scopeCtrl.scopes.pop();
+    }
 
-      const currentFrame = this.parentEnvironment[this.parentEnvironment.length - 1];
-      // 3. МГНОВЕННАЯ инициализация параметров по их порядковым индексам!
-      // Никаких строк, никаких хэш-таблиц. Прямая запись в массив.
-      for (let i = 0; i < this.paramsCount; i++) {
-        // Записываем переданный аргумент в ячейку symbols[i]
-        currentFrame.symbols[i].value = args[i];
-      }
-
-      // 4. Запускаем выполнение тела функции
-      const ret = context.call_code(this.statements);
-   } finally {
-    // 5. Восстанавливаем стек вызовов обратно
-    scopeCtrl.scopes = previousScopes;
-   }
-   return ret;
+    return ret;
   }
 }
 

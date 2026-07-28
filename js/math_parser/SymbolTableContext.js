@@ -71,11 +71,12 @@ export class SymbolTableContext {
   }
 
   /** Создает новый локальный кадр (Scope) при вызове функции */
-  createFrame() {
+  createFrame(outerFrame = null) {
     return {
       hash: Object.create(null), // имя -> локальный индекс внутри функции
       names: [],                 // массив имен
       symbols: []                // массив объектов-символов
+      outer: outerFrame // <--- Ссылка на живой кадр родителя в стеке!
     };
   }
 
