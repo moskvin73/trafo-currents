@@ -1746,6 +1746,11 @@ export class CallNode extends MathNode {
     return `${this.name}(${argsCode})`;
   }
 
+  *getChildren() {
+      // yield* (со звездочкой) берет массив elements и выдает каждый узел по очереди
+      yield* this.args;
+  }
+  
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
