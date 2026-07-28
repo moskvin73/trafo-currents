@@ -1076,6 +1076,7 @@ export class MathParser {
           const funcSymbol = this.context.getSymbolById(funcId);
           funcSymbol.value = functionCompiledCode;
         } else this.context.exitScope();
+        return null;
       }
       else if (this.c_token === TokenType.LPAREN) {
         this.#consume();
@@ -1121,6 +1122,7 @@ export class MathParser {
             funcSymbol.value = functionCompiledCode;
 
           } else this.context.exitScope();
+          return null;
         }
       }
       this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
