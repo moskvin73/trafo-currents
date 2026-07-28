@@ -1166,8 +1166,10 @@ export class MathParser {
             if (test) return test;
           }
         });
-        if (!foundAssignNode)
-          this.#error(`Нет опредиления идентификатора "${name}"`, ret.loc);
+        if (foundAssignNode)
+        {
+          delete this.#listUndefinedIdentifiers[foundAssignNode.name]; 
+        }
       }
       return ret;      
     }
