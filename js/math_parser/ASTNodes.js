@@ -1249,7 +1249,7 @@ export class VariableNode extends IdentifierNode {
 
   getPriority()  { return OpPriority.PRIMARY; }
 
-  toString(context) { return this.name; }
+  toString(context) { return context.getNameById(this.id_name) }
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
