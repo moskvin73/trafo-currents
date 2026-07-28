@@ -319,6 +319,18 @@ export class MatrixNode extends MathNode {
     return `\\begin{${env}}\n${body}\n\\end{${env}}`;
   }
 
+  getChildren() {
+      for (const row of this.#rows) {
+          if (!row) continue; // На случай, если строка целиком пустая
+          
+          for (const node of row) {
+              if (node) { 
+                  yield node; // Выдаем только существующие узлы
+              }
+          }
+      }
+  }
+  
   /**
    * Вычисление матрицы: вычисляет каждый узел внутри дерева
    * @returns {Matrix} Готовый математический объект матрицы
