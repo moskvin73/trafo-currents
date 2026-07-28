@@ -1225,9 +1225,9 @@ export class RefNode extends MathNode {
 }
 
 export class IdentifierNode extends RefNode {
-  constructor(name, loc) {
+  constructor(id_name, loc) {
     super(loc);
-    this.id_name = name;
+    this.id_name = id;
   }
 
   get name() { return this.id_name; }
