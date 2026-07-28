@@ -1149,7 +1149,6 @@ export class MathParser {
       
       // Рекурсивно парсим правую часть (поддержка цепочек присваивания x = y = 5)
       const right = this.#parseAssignment();
-      //return expr.createAssign(right, opToken_loc);
       const ret = expr.createAssign(right, opToken_loc);
       if (this.#listUndefinedIdentifiers.size > 0)
       {
