@@ -1060,17 +1060,21 @@ export class MathParser {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
 
+        const funcId = this.scope_context.acquireId(name);
         this.context.enterScope();
         const statements =this.#parseBlock();
-        this.context.exitScope();
 
         const ret_loc = this.#location;
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
           //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
-          return new DefineVarableCodeNode(name, statements, null, token_loc);
-        }
+          //return new DefineVarableCodeNode(name, statements, null, token_loc);
+          const functionCompiledCode = new VarableCode(statements, paramsCount, this.context);
+          this.context.exitScope();
+          const funcSymbol = this.scope_context.getSymbolById(funcId);
+          funcSymbol.value = functionCompiledCode;
+        } else this.context.exitScope();
       }
       else if (this.c_token === TokenType.LPAREN) {
         this.#consume();
