@@ -43,45 +43,50 @@ export function roundNumber(value, decimals = 0) {
 }
 
 export class IndexedMap {
-  #map = new Map();  // Хранит связь: Ключ -> Индекс
-  #store = [];       // Хранит только значения в порядке добавления
+  #map = new Map();  // Связь: Ключ -> Индекс
+  #store = [];       // Список контейнеров { key, value }
 
-  // Добавление: принимает ключ и Любое значение. Возвращает индекс.
+  // Добавление / Обновление. Возвращает индекс.
   set(key, value) {
     if (this.#map.has(key)) {
       const index = this.#map.get(key);
-      this.#store[index] = value; // Перезапись значения по существующему индексу
+      this.#store[index].value = value; // Обновили значение
       return index;
     }
 
     const newIndex = this.#store.length;
-    this.#store.push(value);
+    this.#store.push({ key, value });  // Сохраняем и ключ, и значение
     this.#map.set(key, newIndex);
     return newIndex;
   }
 
-  // Быстрый поиск по ключу за O(1)
+  // Получить ИМЯ (ключ) по индексу — O(1)
+  getKeyByIndex(index) {
+    return this.#store[index]?.key;
+  }
+
+  // Получить ЗНАЧЕНИЕ по индексу — O(1)
+  getValueByIndex(index) {
+    return this.#store[index]?.value;
+  }
+
+  // Получить ЗНАЧЕНИЕ по имени (ключу) — O(1)
   get(key) {
     const index = this.#map.get(key);
-    return index !== undefined ? this.#store[index] : undefined;
+    return index !== undefined ? this.#store[index].value : undefined;
   }
 
-  // Быстрый поиск по индексу за O(1)
-  getByIndex(index) {
-    return this.#store[index];
-  }
-
-  // Проверка существования по ключу за O(1)
+  // Проверить наличие по имени — O(1)
   has(key) {
     return this.#map.has(key);
   }
 
-  // Полная очистка за O(1)
+  // Полная очистка структуры — O(1)
   clear() {
     this.#map.clear();
-    this.#store.length = 0; // Наш самый быстрый способ
+    this.#store.length = 0; // Самая быстрая очистка массива
   }
-
+  
   get size() {
     return this.#store.length;
   }  
