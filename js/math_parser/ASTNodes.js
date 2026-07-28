@@ -139,6 +139,29 @@ export default class ASTNode {
       `[Abstract Error]: Класс "${this.constructor.name}" обязан реализовать метод collectMathExpressions(list).`
     );
   }
+
+  // Виртуальный метод поиска
+  find(condition) {
+      // 1. Проверяем сам текущий узел
+      if (condition(this)) {
+          return this;
+      }
+
+      // 2. Рекурсивно обходим детей
+      for (const child of this.getChildren()) {
+          if (!child) continue;
+
+          const found = child.find(condition);
+          if (found) return found; // Нашли — возвращаем вверх по стеку
+      }
+
+      return null;
+  }
+
+  // Генератор детей, который каждый класс переопределяет под себя
+  getChildren() {
+      // По умолчанию у абстрактного узла детей нет
+  }
 }
 
 export class VarableCode
