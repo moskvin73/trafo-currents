@@ -1150,10 +1150,7 @@ export class MathParser {
       {
         // Ищем узел AssignNode в левой части, с именами из таблицы
         const foundAssignNode = expr.find(node => {
-          if (node instanceof AssignNode)
-          {
-            if (node.id_name < 0) return node;
-          }
+          if (node instanceof AssignNode && node.id_name < 0) return node;
         });
         if (foundAssignNode)
         {
