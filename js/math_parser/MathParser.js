@@ -839,7 +839,7 @@ export class MathParser {
     }
   }
 
-    static #collectLoopJumps(loopBody) {
+  static #collectLoopJumps(loopBody) {
     const jumps = [];
     for (let i = 0; i < loopBody.length; i++) {
       const node = loopBody[i].node;
@@ -1037,7 +1037,7 @@ export class MathParser {
 
       code.push(... loopBody);
     }
-  }
+  } 
 
   #parseBlock(f_out = true) {
       
