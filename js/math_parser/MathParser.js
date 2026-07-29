@@ -1108,7 +1108,7 @@ export class MathParser {
               return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
             else {
               const sym = this.context.getParseSymbolById(funcId);
-              sym.value = new new VarableCode(statements, 0, localsCount, null);
+              sym.value = new new VarableCode(statements, params.length, localsCount, null);
             }
           }
           return null;
