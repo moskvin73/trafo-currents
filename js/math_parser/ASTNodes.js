@@ -246,24 +246,31 @@ export class Goto_Node extends ASTNode {
 }
 
 export class DefineVarableCodeNode extends ASTNode {
-    constructor(name, statements, params, loc) {
+    constructor(funcId, statements, paramsCount, localsCount, loc) {
     super(loc);
-    this.name = name;
+    this.funcId = funcId;
     this.statements = statements;
-    this.params = params;
+    this.paramsCount = paramsCount;
+    this.localsCount = localsCount;
   }
 
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
     try {
-      const id = context.scope_context.acquireId(this.name);
-      const sym = context.scope_context.getSymbolById(id);
-      sym.value = new VarableCode(this.statements, this.params);
-      return this.errorValue();
+      const scopeCtrl = context.scope_context;
+
+      // Находим живой кадр, в котором мы СЕЙЧАС находимся (кадр родителя)
+      const currentLiveFrame = scopeCtrl.currentScope;
+
+      // Создаем замыкание, передавая ему жесткий указатель на этот кадр
+      const closure = new VarableCode(this.statements, this.paramsCount, this.localsCount, currentLiveFrame);
+
+      // Записываем это замыкание в символ функции
+      const funcSymbol = scopeCtrl.getSymbolById(this.funcId);
+      funcSymbol.value = closure;
     } catch(err) {
        this.error(context, err);
-       return this.errorValue();
     }
   }
 }
