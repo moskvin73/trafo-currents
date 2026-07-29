@@ -107,11 +107,6 @@ export class SymbolTableContext {
     this.scopes.pop();
   }
 
-  /** Возвращает снимок лексического окружения для Замыкания (Closure) */
-  /*getLexicalEnvironment() {
-    return [...this.scopes];
-  }*/
-
   get currentScope() {
     const len = this.scopes.length;
     return len > 0 ? this.scopes[len - 1] : null;
@@ -122,7 +117,7 @@ export class SymbolTableContext {
    * Находит существующий ID или регистрирует новый.
    * Запрещает глобальный пользовательский контекст внутри функций.
    */
-  acquireId(name) {
+  acquireId(name, def = false) {
     if (typeof name !== 'string' || name.trim() === '') {
       throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой.`);
     }
@@ -137,8 +132,17 @@ export class SymbolTableContext {
     if (this.scopes.length > 0) {
       const currentScopeIdx = this.scopes.length - 1;
 
+      if (def)
+      {
+        const scope = this.scopes[currentScopeIdx];
+        const localIdx = scope.hash[name];
+        if (localIdx !== undefined) {
+          const delta = currentScopeIdx - i;
+          return this.LOCAL_MARKER + (delta << 16) + localIdx;
+        }
+      }
       // Ищем вверх по цепочке функций (Паскаль-стиль для вложенных функций)
-      for (let i = currentScopeIdx; i >= 0; i--) {
+      else for (let i = currentScopeIdx; i >= 0; i--) {
         const scope = this.scopes[i];
         const localIdx = scope.hash[name];
         
@@ -151,13 +155,6 @@ export class SymbolTableContext {
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
-      /*const state = { type: SYM_UNDEFINED, value: 0 };
-      const localSymbol = {
-        get type() { return state.type; },
-        set type(t) { state.type = t; },
-        get value() { return state.value; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
-      };*/
       const localSymbol = SymbolTableContext.#initVarable();
 
       const newLocalIdx = currentScope.symbols.length;
