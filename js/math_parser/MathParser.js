@@ -404,6 +404,9 @@ export class MathParser {
       case TokenType.RW_PLOT_CONFIG:
         exprNode = this.#parsePlotConfig();
         break;
+      case TokenType.RW_ERROR:
+        exprNode = this.#parseError();
+        break;
       case TokenType.RW_PLOT_LAYER:
         exprNode = this.#parsePlotLayer();
         break;
