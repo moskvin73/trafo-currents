@@ -104,6 +104,10 @@ export class SymbolTableContext {
     return this.scopes.length > 0;
   }
 
+  is_define(id) {
+    return id >= 0 && id < this.CD;
+  }
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
@@ -112,12 +116,6 @@ export class SymbolTableContext {
   acquireId(name, def = false) {
     if (typeof name !== 'string' || name.trim() === '') {
       throw new TypeError(`Внутренняя ошибка: Идентификатор должен быть непустой строкой.`);
-    }
-
-    // 1. Системные предопределенные функции (Доступны ВСЕГДА и везде)
-    const fixedIdx = this.fixedHash[name];
-    if (fixedIdx !== undefined) {
-      return fixedIdx; // Индекс в диапазоне [0 ... CD-1]
     }
 
     // 2. РЕЖИМ 1: Мы внутри ФУНКЦИИ (scopes не пустой) -> Полная изоляция от глобального кода!
@@ -157,7 +155,12 @@ export class SymbolTableContext {
       return newLocalId;
     }    
 
-    // 3. РЕЖИМ 2: Мы в ПРЯМОМ КОДЕ (scopes пустой) -> Свободно работаем с глобальным scope пользователя
+    // Системные предопределенные функции
+    const fixedIdx = this.fixedHash[name];
+    if (fixedIdx !== undefined) {
+      return fixedIdx; // Индекс в диапазоне [0 ... CD-1]
+    }
+
     const varIdx = this.varHash[name];
     if (varIdx !== undefined) {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
