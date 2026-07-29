@@ -1126,7 +1126,7 @@ export class MathParser {
         }
       }
 
-    } while (this.c_token === TokenType.COMMA && this.#consume()); // Переходим к следующему элементу, если есть запятая
+    } while (this.c_token === TokenType.COMMA && this.#consume() !== TokenType.EOF); // Переходим к следующему элементу, если есть запятая
 
     return null;    
     /*this.#consume();
