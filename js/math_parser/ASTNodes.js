@@ -209,6 +209,17 @@ export class VarableCode
   }
 }
 
+export class ErrorNode extends ASTNode {
+  constructor(msg, loc) {
+    super(loc);
+    this.msg = msg;
+  }
+  get type_unit() { return TYPE_UNIT.EMPTY; }
+
+  internal_evaluate(context) {
+    throw this.msg;
+  }
+}
 
 export class IF_Node extends ASTNode {
   constructor(if_expr, len_code_false, loc) {

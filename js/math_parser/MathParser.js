@@ -4,6 +4,7 @@ import ASTNode, {
   IF_Node,
   Goto_Node,
   IsOpNode,
+  ErrorNode,
   CastOpNode,
   NumberNode,
   UnaryOpNode, 
@@ -1129,96 +1130,22 @@ export class MathParser {
     } while (this.c_token === TokenType.COMMA && this.#consume() !== TokenType.EOF); // Переходим к следующему элементу, если есть запятая
 
     return null;    
-    /*this.#consume();
+  }
+
+  #parseError() {
     const token_loc = this.#location;
-    if (this.c_token !== TokenType.VARIABLE) {
-      this.#error("Ожидалось имя (идентификатор) после 'let'", token_loc);
-      return null;
-    }
-    const name = this.lexer.stringValue();
-    this.#consume();
-    if (this.c_token === TokenType.ASSIGN) {
-      this.#consume();
-      if (this.c_token === TokenType.LBRACE) {
-
-        const funcId = this.context.acquireId(name, true);
-        // Открываем создание переменных
-        this.context.enterScope();
-        const old_flag = this.flags;
-        this.setFlags(MathParser.ALLOW_RETURN);
-        const statements =this.#parseBlock();
-        const localCount = this.context.currentScope.symbols.length;
-        this.flags = old_flag;
-        this.context.exitScope();
-
-        const ret_loc = this.#location;
-        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
-        if (this.errors.length === 0)
-        {
-          if (this.context.localScope)
-            return new DefineVarableCodeNode(funcId, statements, 0, localCount, token_loc);
-          else {
-            const sym = this.context.getParseSymbolById(funcId);
-            sym.value = new VarableCode(statements, 0, localCount, null);
-          }
-        }
-        return null;
-      }
-      else if (this.c_token === TokenType.LPAREN) {
-        this.#consume();
-        const params = [];
-        if (this.c_token !== TokenType.RPAREN) {
-          while (true) {
-            if (this.c_token !== TokenType.VARIABLE) {
-              this.#error("Ожидалось имя параметра в круглых скобках", this.#location);
-            }
-            params.push(this.lexer.stringValue());
-            this.#consume();
-            
-            if (this.c_token === TokenType.COMMA) {
-              this.#consume();
-              continue;
-            }
-            break;
-          }
-        }
-        if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
-        if (this.c_token === TokenType.LBRACE) {
-
-          const funcId = this.context.acquireId(name, true);
-          this.context.enterScope();
-          for (let i = 0; i < params.length; i++) {
-            const pName = params[i];
-            this.context.acquireId(pName, true);
-          }
-          const old_flag = this.flags;
-          this.setFlags(MathParser.ALLOW_RETURN);
-          const statements =this.#parseBlock();
-          const localCount = this.context.currentScope.symbols.length;
-          this.flags = old_flag;
-          this.context.exitScope();
-
-          const ret_loc = this.#location;
-          if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
-          if (this.errors.length === 0)
-          {
-            if (this.context.localScope)              
-              return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
-            else {
-              const sym = this.context.getParseSymbolById(funcId);
-              sym.value = new VarableCode(statements, params.length, localCount, null);
-            }
-          }
-          return null;
-        }
-      }
-      this.#error("Ожидалась открывающиеся скобка '{' блока кода", this.#location);
-    }
-    else
+    this.#consume(); // Пропускаем токен 'error'
+    this.#match(TokenType.LPAREN, "Ожидалась '('");
+    let msg;
+    if (this.c_token === TokenType.TEXT_BLOCK)
     {
-      this.#error("Ожидалось '='", this.#location);
+      msg = this.lexer.stringValue();
+      this.#consume();
     }
-    return null;*/
+    else msg = "Пользовательская ошибка";
+    this.#match(TokenType.RPAREN, "Ожидалась ')'");
+
+    return new ErrorNode(msg, token_loc);    
   }
 
   // =======================================================
