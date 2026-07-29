@@ -1075,7 +1075,7 @@ export class MathParser {
 
       // 3. Развилка: Блок кода функции {...} или обычное выражение
       if (this.c_token === TokenType.LBRACE) {
-        this.#consume(); // Пропускаем '{'
+        //this.#consume(); // Пропускает this.#parseBlock(); '{'
 
         const funcId = this.context.acquireId(name, true);
         this.context.enterScope();
