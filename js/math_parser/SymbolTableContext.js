@@ -215,9 +215,12 @@ export class SymbolTableContext {
       const localIdx = payload & 0xFFFF;
 
       const currentScopeIdx = this.scopes.length - delta - 1;
-      if (currentScopeIdx < 0)
-        throw new Error(`Внутренняя ошибка: Область видимости потеряна при декодировании ID: ${id}`);
-      else return this.scopes[tcurrentScopeIdx].symbols[localIdx];
+      if (currentScopeIdx >= 0) {
+        const scope_sym = this.scopes[tcurrentScopeIdx].symbols;
+        if (localIdx < scope_sym.length)
+          return scope_sym[localIdx];
+      }
+      throw new Error(`Внутренняя ошибка: Область видимости потеряна при декодировании ID: ${id}`);
     }
 
     if (id >= this.CD) {
