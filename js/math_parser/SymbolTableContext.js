@@ -207,7 +207,6 @@ export class SymbolTableContext {
   }
 
   getParseSymbolById(id) {
-
     if (id >= this.LOCAL_MARKER) {
 
       const payload = id - this.LOCAL_MARKER;
@@ -233,6 +232,7 @@ export class SymbolTableContext {
       return this.fixedSymbols[id];
     }
 
+    return undefined;
   }
   // ФУНКЦИИ ВЫПОЛНЕНИЯ
 
