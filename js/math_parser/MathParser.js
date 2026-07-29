@@ -1101,7 +1101,7 @@ export class MathParser {
           this.context.enterScope();
           for (let i = 0; i < params.length; i++) {
             const pName = params[i];
-            this.context.acquireId(pName);
+            this.context.acquireId(pName, true);
           }
           const old_flag = this.flags;
           this.setFlags(MathParser.ALLOW_RETURN);
