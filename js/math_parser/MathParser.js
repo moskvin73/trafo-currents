@@ -1036,7 +1036,6 @@ export class MathParser {
   } 
 
   #parseBlock(f_out = true) {
-      
       this.#consume();
       const statements = [];
       while (this.c_token !== TokenType.EOF && this.c_token !== TokenType.RBRACE) {
@@ -1060,7 +1059,10 @@ export class MathParser {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
 
+        // Открываем создание переменных
         this.context.enterScope();
+        const old_flag = this.flags;
+        this.setFlags(MathParser.ALLOW_RETURN);
         const statements =this.#parseBlock();
 
         const ret_loc = this.#location;
@@ -1076,6 +1078,7 @@ export class MathParser {
           const funcSymbol = this.context.getSymbolById(funcId);
           funcSymbol.value = functionCompiledCode;
         } else this.context.exitScope();
+        this.flags = old_flag;
         return null;
       }
       else if (this.c_token === TokenType.LPAREN) {
