@@ -98,6 +98,16 @@ export class SymbolTableContext {
     return [...this.scopes];
   }
 
+  #initVarable() {
+      const state = { type: SYM_UNDEFINED, value: 0 };
+      return {
+        get type() { return state.type; },
+        set type(t) { state.type = t; },
+        get value() { return state.value; },
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
+      };   
+  }
+  
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
