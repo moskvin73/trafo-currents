@@ -75,8 +75,8 @@ export class SymbolTableContext {
     return {
       hash: Object.create(null), // имя -> локальный индекс внутри функции
       names: [],                 // массив имен
-      symbols: [],                // массив объектов-символов
-      outer: outerFrame // <--- Ссылка на живой кадр родителя в стеке!
+      symbols: [],               // массив объектов-символов
+      outer: outerFrame          // <--- Ссылка на живой кадр родителя в стеке!
     };
   }
 
