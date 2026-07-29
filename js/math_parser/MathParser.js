@@ -1115,7 +1115,7 @@ export class MathParser {
           if (this.errors.length === 0)
           {
             const funcId = this.context.acquireId(name);
-            return new DefineVarableCodeNode(funcId, statements, 0, localCount, token_loc);
+            return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
           }
           return null;
         }
