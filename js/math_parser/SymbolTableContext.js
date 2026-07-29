@@ -200,7 +200,6 @@ export class SymbolTableContext {
 
       const fixedIdx = this.fixedHash[name];
       if (fixedIdx !== undefined) return fixedIdx;
-
     }
     else
     {
