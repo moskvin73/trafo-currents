@@ -107,7 +107,8 @@ export class SymbolTableContext {
         set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };   
   }
-  
+
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
@@ -142,13 +143,14 @@ export class SymbolTableContext {
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
-      const state = { type: SYM_UNDEFINED, value: 0 };
+      /*const state = { type: SYM_UNDEFINED, value: 0 };
       const localSymbol = {
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
         set value(v) { state.value = v; state.type = SYM_VARIABLE; }
-      };
+      };*/
+      const localSymbol = this.#initVarable();
 
       const newLocalIdx = currentScope.symbols.length;
       currentScope.names.push(name);
@@ -168,14 +170,16 @@ export class SymbolTableContext {
     }
 
     // Создаем абсолютно новую глобальную переменную пользователя
-    const state = { type: SYM_UNDEFINED, value: 0 };
+    /*const state = { type: SYM_UNDEFINED, value: 0 };
     const userSymbol = {
       get type() { return state.type; },
       set type(t) { state.type = t; },
       get value() { return state.value; },
       set value(v) { state.value = v; state.type = SYM_VARIABLE; }
-    };
+    };*/
     
+    const userSymbol = this.#initVarable();
+
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
     this.varSymbols.push(userSymbol);
@@ -223,11 +227,14 @@ export class SymbolTableContext {
     return null; // Идентификатор вообще не зарегистрирован
   }
 
+  // ФУНКЦИИ ВЫПОЛНЕНИЯ
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ВЫПОЛНЕНИЯ (РАНТАЙМ) — Сложность O(1).
    * Достает ячейку памяти (объект-символ) по числовому ID.
    */
   getSymbolById(id) {
+
     // А) Локальный ID (содержит delta и localIdx)
     if (id >= this.LOCAL_MARKER) {
       const payload = id - this.LOCAL_MARKER;
