@@ -92,7 +92,11 @@ export class SymbolTableContext {
 
   /** Фаза парсинга: вход в новую функцию */
   enterScope() {
-    this.scopes.push(this.createFrame());
+    this.scopes.push({
+      hash: Object.create(null),
+      names: [],
+      symbols: []
+    });
   }
 
   /** Фаза парсинга: выход из функции */
@@ -226,7 +230,7 @@ export class SymbolTableContext {
     return null; // Идентификатор вообще не зарегистрирован
   }
 
-  
+
 
   // ФУНКЦИИ ВЫПОЛНЕНИЯ
 
