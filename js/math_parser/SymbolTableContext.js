@@ -113,7 +113,8 @@ export class SymbolTableContext {
   }*/
 
   get currentScope() {
-    return this.scopes[this.scopes.length - 1];
+    const len = this.scopes.length;
+    return len > 0 ? this.scopes[len - 1] : null;
   }
 
   /**
