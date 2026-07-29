@@ -150,8 +150,6 @@ export class SymbolTableContext {
       currentScope.hash[name] = newLocalIdx;
 
       const newLocalId = this.LOCAL_MARKER + (0 << 16) + newLocalIdx;
-      this.#idToNameMap.set(newLocalId, name); // Сохраняем имя для TeX
-
       return newLocalId;
     }    
 
@@ -169,8 +167,6 @@ export class SymbolTableContext {
     this.varHash[name] = newVarIdx;
 
     const newGlobalId = newVarIdx + this.CD;
-    this.#idToNameMap.set(newGlobalId, name); // Сохраняем имя для TeX
-
     return newGlobalId;
   }
 
@@ -257,13 +253,5 @@ export class SymbolTableContext {
     }
 
     return undefined;
-  }
-
-  /**
-   * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ГЕНЕРАЦИИ ОТЧЕТА LaTeX — Сложность O(1).
-   * Мгновенно возвращает оригинальное строковое имя переменной или функции.
-   */
-  getNameById(id) {
-    return this.#idToNameMap.get(id) ?? `?id_${id}?`;
   }
 }
