@@ -140,7 +140,6 @@ export class SymbolTableContext {
           return this.LOCAL_MARKER + (delta << 16) + localIdx;
         }
       }
-
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
