@@ -86,9 +86,7 @@ export class SymbolTableContext {
       symbols: [],               
       outer: outerFrame 
     };
-    while(count_vars-- > 0) {
-      frame.symbols.push(SymbolTableContext.#initVarable());
-    }
+    while(count_vars-- > 0)  frame.symbols.push(SymbolTableContext.#initVarable());
     return frame;
   }
 
