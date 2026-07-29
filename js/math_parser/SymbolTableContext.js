@@ -71,13 +71,15 @@ export class SymbolTableContext {
   }
 
   /** Создает новый локальный кадр (Scope) при вызове функции */
-  createFrame(outerFrame = null) {
-    return {
-      hash: Object.create(null), // имя -> локальный индекс внутри функции
-      names: [],                 // массив имен
-      symbols: [],               // массив объектов-символов
-      outer: outerFrame          // <--- Ссылка на живой кадр родителя в стеке!
+  createFrame(count_vars, outerFrame = null) {
+    const frame = {
+      symbols: [],               
+      outer: outerFrame 
     };
+    while(count_vars-- > 0) {
+      frame.symbols.push(this.#initVarable());
+    }
+    return frame;
   }
 
   /** Фаза парсинга: вход в новую функцию */
@@ -107,7 +109,6 @@ export class SymbolTableContext {
         set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };   
   }
-
 
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
