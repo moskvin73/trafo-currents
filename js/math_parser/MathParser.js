@@ -927,7 +927,7 @@ export class MathParser {
             for (let i = 0; i < jumps.length; i++) {
               const jump = jumps[i];
               if (jump.node.len_code.type === MathParser.ALLOW_BREAK) {
-                jump.node.len_code = switchEndIndex - jump.index - 3;
+                jump.node.len_code = switchEndIndex - jump.index - 2;
               }
               else if (jump.node.len_code.type === MathParser.ALLOW_CONTINUE) {
                 jump.node.len_code = -(jump.index + 1); // inc счётчика
