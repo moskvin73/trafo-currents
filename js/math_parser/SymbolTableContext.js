@@ -77,7 +77,7 @@ export class SymbolTableContext {
       outer: outerFrame 
     };
     while(count_vars-- > 0) {
-      frame.symbols.push(this.#initVarable());
+      frame.symbols.push(SymbolTableContext.#initVarable());
     }
     return frame;
   }
@@ -100,7 +100,7 @@ export class SymbolTableContext {
     return [...this.scopes];
   }
 
-  #initVarable() {
+  static #initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
@@ -151,7 +151,7 @@ export class SymbolTableContext {
         get value() { return state.value; },
         set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };*/
-      const localSymbol = this.#initVarable();
+      const localSymbol = SymbolTableContext.#initVarable();
 
       const newLocalIdx = currentScope.symbols.length;
       currentScope.names.push(name);
@@ -179,7 +179,7 @@ export class SymbolTableContext {
       set value(v) { state.value = v; state.type = SYM_VARIABLE; }
     };*/
     
-    const userSymbol = this.#initVarable();
+    const userSymbol = SymbolTableContext.#initVarable();
 
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
