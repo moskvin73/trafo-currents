@@ -206,8 +206,6 @@ export class SymbolTableContext {
     return null; // Идентификатор вообще не зарегистрирован
   }
 
-
-
   // ФУНКЦИИ ВЫПОЛНЕНИЯ
 
   /**
