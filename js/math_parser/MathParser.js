@@ -1089,7 +1089,7 @@ export class MathParser {
             this.#consume();
             
             if (this.c_token === TokenType.COMMA) {
-              this.#consume(); // Сожрали запятую ','
+              this.#consume();
               continue;
             }
             break;
@@ -1180,9 +1180,11 @@ export class MathParser {
           const name = this.#listUndefinedIdentifiers.getKeyByIndex(del_index);          
           const id = this.context.acquireId(name);
           foundAssignNode.id_name = id;
+          foundAssignNode.name = name;
           const list = this.#listUndefinedIdentifiers.getValueByIndex(del_index);
           for (let i = 0; i < list.length; i++) {
             list[i].id_name = id;
+            list[i].name = name;
           }
         }
       }
