@@ -137,8 +137,7 @@ export class SymbolTableContext {
         const scope = this.scopes[currentScopeIdx];
         const localIdx = scope.hash[name];
         if (localIdx !== undefined) {
-          const delta = currentScopeIdx - i;
-          return this.LOCAL_MARKER + (delta << 16) + localIdx;
+          return this.LOCAL_MARKER + (0 << 16) + localIdx;
         }
       }
       // Ищем вверх по цепочке функций (Паскаль-стиль для вложенных функций)
