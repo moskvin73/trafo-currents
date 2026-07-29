@@ -208,11 +208,9 @@ export class SymbolTableContext {
 
   getParseSymbolById(id) {
     if (id >= this.LOCAL_MARKER) {
-
       const payload = id - this.LOCAL_MARKER;
       const delta = payload >> 16;       
       const localIdx = payload & 0xFFFF;
-
       const currentScopeIdx = this.scopes.length - delta - 1;
       if (currentScopeIdx >= 0) {
         const scope_sym = this.scopes[tcurrentScopeIdx].symbols;
