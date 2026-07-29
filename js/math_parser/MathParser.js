@@ -555,15 +555,6 @@ export class MathParser {
     return varable;
   }
 
-  #possibleIdent() {
-    if (this.c_token !== TokenType.VARIABLE) {
-      return null;
-    }
-    const varable = this.lexer.stringValue();
-    this.#consume();
-    return varable;
-  }
-
   /**
    * plot_init(diagram_id, mode, [view_type])
    *  Инициализация диаграммы.
@@ -1066,7 +1057,12 @@ export class MathParser {
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
         if (this.errors.length === 0)
         {
-          return new DefineVarableCodeNode(funcId, statements, 0, localCount, token_loc);
+          if (this.context.localScope)
+            return new DefineVarableCodeNode(funcId, statements, 0, localCount, token_loc);
+          else {
+            const sym = this.context.getParseSymbolById(funcId);
+            sym.value = new new VarableCode(statements, 0, localsCount, null);
+          }
         }
         return null;
       }
@@ -1108,7 +1104,12 @@ export class MathParser {
           if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
           if (this.errors.length === 0)
           {
-            return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
+            if (this.context.localScope)              
+              return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
+            else {
+              const sym = this.context.getParseSymbolById(funcId);
+              sym.value = new new VarableCode(statements, 0, localsCount, null);
+            }
           }
           return null;
         }

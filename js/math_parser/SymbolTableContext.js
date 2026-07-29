@@ -100,6 +100,10 @@ export class SymbolTableContext {
     return len > 0 ? this.scopes[len - 1] : null;
   }
 
+  get localScope() {
+    return this.scopes.length > 0;
+  }
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
