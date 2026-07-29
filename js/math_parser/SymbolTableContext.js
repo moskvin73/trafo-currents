@@ -70,6 +70,16 @@ export class SymbolTableContext {
     }
   }
 
+  static #initVarable() {
+      const state = { type: SYM_UNDEFINED, value: 0 };
+      return {
+        get type() { return state.type; },
+        set type(t) { state.type = t; },
+        get value() { return state.value; },
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
+      };   
+  }
+
   /** Создает новый локальный кадр (Scope) при вызове функции */
   createFrame(count_vars, outerFrame = null) {
     const frame = {
@@ -98,16 +108,6 @@ export class SymbolTableContext {
   /** Возвращает снимок лексического окружения для Замыкания (Closure) */
   getLexicalEnvironment() {
     return [...this.scopes];
-  }
-
-  static #initVarable() {
-      const state = { type: SYM_UNDEFINED, value: 0 };
-      return {
-        get type() { return state.type; },
-        set type(t) { state.type = t; },
-        get value() { return state.value; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
-      };   
   }
 
   /**
