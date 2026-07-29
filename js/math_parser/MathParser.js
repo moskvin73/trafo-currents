@@ -898,6 +898,8 @@ export class MathParser {
     let loopBody = [];
     this.#consume();
 
+    const old_flag = this.flags;
+    this.setFlags(MathParser.ALLOW_BREAK | MathParser.ALLOW_CONTINUE);
     // Тело цикла
     if (this.c_token === TokenType.LBRACE)
     {
@@ -907,6 +909,7 @@ export class MathParser {
     else {
       this.#parseStatement(loopBody, f_out);
     }
+    this.flags = old_flag;
 
     if (this.#match(TokenType.RW_WHILE, "Ожидалась 'where' в конце блока кода")) {
       this.#match(TokenType.LPAREN, "Ожидалась '('");
