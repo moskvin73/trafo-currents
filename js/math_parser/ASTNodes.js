@@ -1241,13 +1241,14 @@ export class RefNode extends MathNode {
 }
 
 export class IdentifierNode extends RefNode {
-  constructor(id_name, loc) {
+  constructor(id_name, name, loc) {
     super(loc);
     this.id_name = id_name;
+    this.name = name;
   }
 
-  getTexName(context) {
-    return ASTNode.formatIdentifierToTeX(context.getNameById(this.id_name));
+  getTexName() {
+    return ASTNode.formatIdentifierToTeX(this.name);
   }
 }
 
@@ -1255,17 +1256,17 @@ export class IdentifierNode extends RefNode {
  * Узел чтения переменной (например, использование 'x' в выражении)
  */
 export class VariableNode extends IdentifierNode {
-  constructor(id_name, loc) {
-    super(id_name, loc);
+  constructor(id_name, name, loc) {
+    super(id_name, name, loc);
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(this.id_name, expression, loc);
+    return new AssignNode(this.id_name, this.name, expression, loc);
   }
 
   getPriority()  { return OpPriority.PRIMARY; }
 
-  toString(context) { return context.getNameById(this.id_name); }
+  toString(context) { return this.name; }
 
   internal_evaluate(context) {
     // Ищем переменную в локальном контексте вызова
@@ -1287,29 +1288,28 @@ export class VariableNode extends IdentifierNode {
     }
   }
 
-  toTeX(context) { return this.getTexName(context); }
+  toTeX(context) { return this.getTexName(); }
 }
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends IdentifierNode {
   constructor(id_name, expression, loc) {
-    super(id_name, loc);
+    super(id_name, name, loc);
     this.expression = expression;
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignNode(this.id_name, expression, loc);
+    return new AssignNode(this.id_name, this.name, expression, loc);
   }  
 
   get isAssigned() { return true; }
 
   getPriority() { return OpPriority.ASSIGN; }
 
-  toString(context) { return `${context.getNameById(this.id_name)} = ${this.expression.toString(context)}`; }
+  toString(context) { return `${this.name} = ${this.expression.toString(context)}`; }
 
   internal_evaluate(context) {
     try {
-      //const id = context.scope_context.acquireId(this.name);
       const sym = context.scope_context.getSymbolById(this.id_name);
       return sym.value = this.expression.internal_evaluate(context);
     }
@@ -1325,7 +1325,7 @@ export class AssignNode extends IdentifierNode {
   }
 
   toTeX(context) {
-    return `${this.getTexName(context)} = ${this.expression.toTeX(context)}`;
+    return `${this.getTexName()} = ${this.expression.toTeX(context)}`;
   }
 }
 
@@ -1765,17 +1765,18 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 ]);
 
 export class CallNode extends MathNode {
-  constructor(id_name, args, loc) {
+  constructor(id_name, name, args, loc) {
     super(loc); 
-    this.id_name = id_name; // Имя функции (строка)
-    this.args = args; // Массив дочерних узлов ASTNode
+    this.id_name = id_name;
+    this.name = name;
+    this.args = args;
   }
 
   getPriority() { return OpPriority.PRIMARY; }
 
   toString(context) {
     const argsCode = this.args.map(arg => arg.toString(context)).join(", ");
-    return `${context.getNameById(this.id_name)}(${argsCode})`;
+    return `${this.name}(${argsCode})`;
   }
 
   *getChildren() {
@@ -1786,12 +1787,8 @@ export class CallNode extends MathNode {
   internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
-      //const sym = context.scope_context.getSymbolByName(this.name);
       const sym = context.scope_context.getSymbolById(this.id_name);
-      if (sym === null) {
-        this.error(context, `Идентификатор "${this.name}" не опредилён.`);
-      }
-      else if (sym.type === SYM_UNDEFINED) {
+      if (sym.type === SYM_UNDEFINED) {
         this.error(context, `Переменная "${this.name}" не инициализирована.`);
         return this.errorValue();
       } else if (sym.value instanceof VarableCode) {        
@@ -1819,7 +1816,7 @@ export class CallNode extends MathNode {
 
   toTeX(context) {
     // Рендерим аргументы узла в LaTeX-строки
-    const name = context.getNameById(this.id_name);
+    const name = this.name;
     const argsTexArray = this.args.map(arg => arg.toTeX(context));
     const config = TEX_FUNCTIONS_REGISTRY.get(name);
 
