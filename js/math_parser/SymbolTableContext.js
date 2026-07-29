@@ -147,10 +147,7 @@ export class SymbolTableContext {
         
         if (localIdx !== undefined) {
           const delta = currentScopeIdx - i;
-          const newLocalId = this.LOCAL_MARKER + (delta << 16) + localIdx;
-          this.#idToNameMap.set(newLocalId, name); // Сохраняем имя для TeX
-          return newLocalId;
-          //return this.LOCAL_MARKER + (delta << 16) + localIdx;
+          return this.LOCAL_MARKER + (delta << 16) + localIdx;
         }
       }
 
@@ -211,10 +208,7 @@ export class SymbolTableContext {
         
         if (localIdx !== undefined) {
           const delta = currentScopeIdx - i;
-          const newLocalId = this.LOCAL_MARKER + (delta << 16) + localIdx;
-          this.#idToNameMap.set(newLocalId, name); // Сохраняем имя для TeX
-          return newLocalId;
-          //return this.LOCAL_MARKER + (delta << 16) + localIdx;
+          return this.LOCAL_MARKER + (delta << 16) + localIdx;
         }
       }
     }
