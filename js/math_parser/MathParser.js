@@ -1059,7 +1059,7 @@ export class MathParser {
       this.#consume();
       if (this.c_token === TokenType.LBRACE) {
 
-        const funcId = this.context.acquireId(name);
+        const funcId = this.context.acquireId(name, true);
         // Открываем создание переменных
         this.context.enterScope();
         const old_flag = this.flags;
@@ -1098,7 +1098,7 @@ export class MathParser {
         if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
         if (this.c_token === TokenType.LBRACE) {
 
-          const funcId = this.context.acquireId(name);
+          const funcId = this.context.acquireId(name, true);
           this.context.enterScope();
           for (let i = 0; i < params.length; i++) {
             const pName = params[i];
@@ -1115,7 +1115,6 @@ export class MathParser {
           if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
           if (this.errors.length === 0)
           {
-            const funcId = this.context.acquireId(name);
             return new DefineVarableCodeNode(funcId, statements, params.length, localCount, token_loc);
           }
           return null;
