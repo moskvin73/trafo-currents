@@ -104,9 +104,9 @@ export class SymbolTableContext {
   }
 
   /** Возвращает снимок лексического окружения для Замыкания (Closure) */
-  getLexicalEnvironment() {
+  /*getLexicalEnvironment() {
     return [...this.scopes];
-  }
+  }*/
 
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
