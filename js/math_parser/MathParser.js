@@ -276,7 +276,7 @@ export class MathParser {
   get #location() { return this.lexer.createLocation(); }
 
   // Сдвигает поток, считывая следующий токен из лексера
-  #consume() { this.c_token = this.lexer.next(); }
+  #consume() { return this.c_token = this.lexer.next(); }
 
   // Проверяет совпадение типа и сдвигает lookahead. Если тип не совпал — это синтаксический сбой.
   #match(token_id, errorMessage) {
