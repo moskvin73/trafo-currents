@@ -1030,8 +1030,106 @@ export class MathParser {
       return statements;
   }
 
-  #parseDeclarationStatement() {
-    this.#consume();
+  #parseDeclarationStatement(code, f_out) {
+
+    this.#consume(); // Пропускаем токен 'let'
+
+    do {
+      const token_loc = this.#location;
+      if (this.c_token !== TokenType.VARIABLE) {
+        this.#error("Ожидалось имя (идентификатор) после 'let' или ','", token_loc);
+        return null;
+      }
+
+      const name = this.lexer.stringValue();
+      this.#consume();
+
+      let params = null; // По умолчанию null — это обычная переменная
+
+      // 1. Парсим параметры, если есть круглые скобки: let name(p1, p2) = ...
+      if (this.c_token === TokenType.LPAREN) {
+        this.#consume();
+        params = [];
+        if (this.c_token !== TokenType.RPAREN) {
+          while (true) {
+            if (this.c_token !== TokenType.VARIABLE) {
+              this.#error("Ожидалось имя параметра в круглых скобках", this.#location);
+            }
+            params.push(this.lexer.stringValue());
+            this.#consume();
+
+            if (this.c_token === TokenType.COMMA) {
+              this.#consume();
+              continue;
+            }
+            break;
+          }
+        }
+        if (!this.#match(TokenType.RPAREN, "Ожидалась закрывающая скобка ')'"));
+      }
+
+      // 2. Ожидаем знак равенства '='
+      if (!this.#match(TokenType.ASSIGN, "Ожидалось '=' после идентификатора")) {
+        return null;
+      }
+
+      // 3. Развилка: Блок кода функции {...} или обычное выражение
+      if (this.c_token === TokenType.LBRACE) {
+        this.#consume(); // Пропускаем '{'
+
+        const funcId = this.context.acquireId(name, true);
+        this.context.enterScope();
+
+        // Если функция с параметрами, регистрируем их в локальном scope
+        if (params) {
+          for (let i = 0; i < params.length; i++) {
+            this.context.acquireId(params[i], true);
+          }
+        }
+
+        const old_flag = this.flags;
+        this.setFlags(MathParser.ALLOW_RETURN);
+        const statements = this.#parseBlock();
+        const localCount = this.context.currentScope.symbols.length;
+        this.flags = old_flag;
+        
+        this.context.exitScope();
+
+        if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода"));
+
+        if (this.errors.length === 0) {
+          const paramCount = params ? params.length : 0;
+          
+          if (this.context.localScope) {
+            // Локальная функция: пушим в исполняемый код
+            const node = new DefineVarableCodeNode(funcId, statements, paramCount, localCount, token_loc);
+            code.push(new StatementNode(node, f_out));
+          } else {
+            // Глобальная функция: только наполняем таблицу символов компилятора, в code ничего не пишем
+            const sym = this.context.getParseSymbolById(funcId);
+            sym.value = new VarableCode(statements, paramCount, localCount, null);
+          }
+        }
+      } 
+      else {
+        // Ветка: 'let' <id> '=' <expr> (обычная переменная)
+        if (params !== null) {
+          this.#error("Синтаксическая ошибка: параметры разрешены только для функций с блоком кода '{...}'", token_loc);
+          return null;
+        }
+
+        const exprNode = this.#parseExpression(); // Парсим математическое выражение
+        if (this.errors.length === 0) {
+          const varId = this.context.acquireId(name, true);
+          const node = new AssignNode(varId, name, exprNode, token_loc)
+          code.push(new StatementNode(node, f_out));
+        }
+      }
+
+    } while (this.c_token === TokenType.COMMA && this.#consume()); // Переходим к следующему элементу, если есть запятая
+
+    return null;    
+    /*this.#consume();
     const token_loc = this.#location;
     if (this.c_token !== TokenType.VARIABLE) {
       this.#error("Ожидалось имя (идентификатор) после 'let'", token_loc);
@@ -1120,7 +1218,7 @@ export class MathParser {
     {
       this.#error("Ожидалось '='", this.#location);
     }
-    return null;
+    return null;*/
   }
 
   // =======================================================
