@@ -173,15 +173,6 @@ export class SymbolTableContext {
     if (varIdx !== undefined) {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
-
-    // Создаем абсолютно новую глобальную переменную пользователя
-    /*const state = { type: SYM_UNDEFINED, value: 0 };
-    const userSymbol = {
-      get type() { return state.type; },
-      set type(t) { state.type = t; },
-      get value() { return state.value; },
-      set value(v) { state.value = v; state.type = SYM_VARIABLE; }
-    };*/
     
     const userSymbol = SymbolTableContext.#initVarable();
 
