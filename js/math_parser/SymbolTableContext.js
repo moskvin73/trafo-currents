@@ -7,9 +7,6 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolTableContext {
-  // Сквозная скрытая карта: ID -> Строковое Имя для пошаговых отчетов LaTeX
-  #idToNameMap = new Map(); 
-
   constructor() {
     this.settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
@@ -58,17 +55,8 @@ export class SymbolTableContext {
     // Смещение для локальных ID, чтобы они никогда не пересекались с глобальными.
     // Локальный ID = LOCAL_MARKER + (инндекс_слоя << 16) + индекс_переменной_в_слое
     this.LOCAL_MARKER = 1000000;     
-
-    // Автоматически наполняем карту имен системными функциями из коробки
-    this.#initIdToNameMap();
   }
 
-  /** Наполнение карты именами встроенных функций (вызывается в конструкторе) */
-  #initIdToNameMap() {
-    for (let i = 0; i < this.CD; i++) {
-      this.#idToNameMap.set(i, this.fixedNames[i]);
-    }
-  }
 
   static #initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
