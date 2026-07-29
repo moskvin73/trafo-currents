@@ -1064,6 +1064,9 @@ export class MathParser {
         const old_flag = this.flags;
         this.setFlags(MathParser.ALLOW_RETURN);
         const statements =this.#parseBlock();
+        const localCount = this.context.currentScope;
+        this.flags = old_flag;
+        this.context.exitScope();
 
         const ret_loc = this.#location;
         if (!this.#match(TokenType.RBRACE, "Ожидалась закрывающая скобка '}' в конце блока кода "));
@@ -1073,13 +1076,11 @@ export class MathParser {
           //return new DefineVarableCodeNode(name, statements, null, token_loc);
           const localCount = this.context.currentScope;
           const functionCompiledCode = new VarableCode(statements, 0, this.context);
-          this.context.exitScope();
 
           const funcId = this.context.acquireId(name);
           const funcSymbol = this.context.getSymbolById(funcId);
           funcSymbol.value = functionCompiledCode;
-        } else this.context.exitScope();
-        this.flags = old_flag;
+        }
         return null;
       }
       else if (this.c_token === TokenType.LPAREN) {
