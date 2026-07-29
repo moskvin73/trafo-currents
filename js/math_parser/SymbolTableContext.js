@@ -112,6 +112,10 @@ export class SymbolTableContext {
     return [...this.scopes];
   }*/
 
+  get currentScope() {
+    return this.scopes[this.scopes.length - 1];
+  }
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.

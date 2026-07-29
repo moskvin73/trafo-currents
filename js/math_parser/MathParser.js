@@ -1071,6 +1071,7 @@ export class MathParser {
         {
           //statements.push(new StatementNode(new ReturnCodeNode(ret_loc), true));
           //return new DefineVarableCodeNode(name, statements, null, token_loc);
+          const localCount = this.context.currentScope;
           const functionCompiledCode = new VarableCode(statements, 0, this.context);
           this.context.exitScope();
 
