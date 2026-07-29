@@ -202,11 +202,9 @@ export class VarableCode
     try {
         // 3. Выполняем тело функции
         ret = context.call_code(this.statements);
-    } catch(err) {
-      scopeCtrl.scopes.pop();
-      throw err; 
+    } finally {
+        scopeCtrl.scopes.pop();
     }
-    scopeCtrl.scopes.pop();
     return ret;
   }
 }
