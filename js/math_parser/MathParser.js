@@ -919,6 +919,22 @@ export class MathParser {
 
       if (this.errors.length === 0)
       {
+          const jumps = MathParser.#collectLoopJumps(loopBody);
+
+          if (jumps.length > 0)
+          {
+            const switchEndIndex = loopBody.length;
+            for (let i = 0; i < jumps.length; i++) {
+              const jump = jumps[i];
+              if (jump.node.len_code.type === MathParser.ALLOW_BREAK) {
+                jump.node.len_code = switchEndIndex - jump.index - 3;
+              }
+              else if (jump.node.len_code.type === MathParser.ALLOW_CONTINUE) {
+                jump.node.len_code = -(jump.index + 1); // inc счётчика
+              }
+            }
+          }
+          
           code.push(... loopBody);
           code.push(new StatementNode(new IF_Node(exp, 1, token_cond), f_out));
           code.push(new StatementNode(new Goto_Node(-(loopBody.length + 2), this.#location), f_out));
