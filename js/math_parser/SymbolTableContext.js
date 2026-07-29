@@ -185,10 +185,6 @@ export class SymbolTableContext {
    * @returns {number|null} ID символа или null, если не найден
    */
   getIdByName(name) {
-    // 1. Ищем в фиксированной части
-    const fixedIdx = this.fixedHash[name];
-    if (fixedIdx !== undefined) return fixedIdx;
-
     if (this.scopes.length > 0) {
       const currentScopeIdx = this.scopes.length - 1;
 
@@ -202,14 +198,20 @@ export class SymbolTableContext {
           return this.LOCAL_MARKER + (delta << 16) + localIdx;
         }
       }
+
+      const fixedIdx = this.fixedHash[name];
+      if (fixedIdx !== undefined) return fixedIdx;
+
     }
     else
     {
+      const fixedIdx = this.fixedHash[name];
+      if (fixedIdx !== undefined) return fixedIdx;
+
       // 2. Ищем в вариативной части
       const varIdx = this.varHash[name];
       if (varIdx !== undefined) return varIdx + this.CD;
-    }
-
+    }    
     return null; // Идентификатор вообще не зарегистрирован
   }
 
