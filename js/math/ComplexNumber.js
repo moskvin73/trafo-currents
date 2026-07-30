@@ -1,6 +1,7 @@
 import MathType from './MathType.js';
 import BoolValue from './BoolValue.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/ConstantsDef.js';
+import { registerDataType } from '../DataTypeRegistry.js';
 
 /**
  * Класс для работы с комплексными числами (a + bi).

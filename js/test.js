@@ -2,7 +2,7 @@ import BoolValue from './math/BoolValue.js';
 import RealNumber from './math/RealNumber.js';
 import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
-import { restoreDataType, debugRegistry } from './restoreDataType.js';
+import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
