@@ -20,14 +20,19 @@ export default class Matrix extends MathType {
 
   // --- ДЕСЕРИАЛИЗАЦИЯ ---
   static fromJSON(data) {
-    // data.rows — это сырой двумерный массив простых объектов из JSON.
-    // Нам нужно рекурсивно «оживить» каждый элемент.
-    const restoredRows = data.rows.map(row => 
-      row.map(element => restoreDataType(element))
-    );
+  const rowsToSource = data.rows.map(row => {
+    return row.map(element => {
+      // Если элемент УЖЕ является готовым объектом системы — возвращаем его без restoreDataType
+      if (element instanceof MathType || (element && typeof element.toTeX === 'function')) {
+        return element;
+      }
+      // Если это сырой JSON-объект, только тогда оживляем
+      return restoreDataType(element);
+    });
+  });
 
-    // Возвращаем новый полноценный экземпляр Матрицы
-    return new Matrix(restoredRows);
+  // Передаем очищенный двумерный массив в конструктор
+  return new Matrix(rowsToSource);
   }
 
   #rows; // Приватное хранилище: двумерный массив объектов MathType
