@@ -12,6 +12,22 @@ export class SourceLocation {
     this.endLineIdx = endLineIdx;
   }
 
+  // СЕРИАЛИЗАЦИЯ: Превращаем живую локацию в безопасный плоский JSON
+  // Мы принудительно вычисляем колонки прямо в этот момент!
+  toJSON() {
+    return {
+      locType: "IndependentLoc", // Метка для десериализации
+      start: this.start,
+      end: this.end,
+      line: this.line,
+      startLineIdx: this.startLineIdx,
+      endLine: this.endLine,
+      endLineIdx: this.endLineIdx,
+      column: this.column,       // Лексер один раз считает графемы прямо перед сохранением
+      endColumn: this.endColumn
+    };  
+  }
+
   isInLine() { return this._startLine === this._endLine; }
 
   // Строки отдаются мгновенно за O(1)
@@ -35,22 +51,60 @@ export class SourceLocation {
 
 export class IndependentSourceLocation {
   constructor(location) {
-    // Проверяем, что передан именно объект класса SourceLocation
-    if (!(location instanceof SourceLocation)) {
-      throw new TypeError("Ожидался объект класса SourceLocation");
-    }
+    // Если это создание в рантайме из живой локации
+    if (location instanceof SourceLocation) {
+      this.start = location.start;
+      this.end = location.end;
+      this.line = location.line;
+      this.startLineIdx = location.startLineIdx;
+      this.endLine = location.endLine;
+      this.endLineIdx = location.endLineIdx;
+      this.column = location.column;
+      this.endColumn = location.endColumn;
+    } 
+    // Если это восстановление из сырого JSON (конструктор для фабрики)
+    else {
+      this.start = location.start;
+      this.end = location.end;
+      this.line = location.line;
+      this.startLineIdx = location.startLineIdx;
+      this.endLine = location.endLine;
+      this.endLineIdx = location.endLineIdx;
+      this.column = location.column;
+      this.endColumn = location.endColumn;
+    }    
+  }
 
-    this.start = location.start;
-    this.end = location.end;
-    this.line = location.line;
-    this.startLineIdx = location.startLineIdx;
-    this.endLine = location.endLine;
-    this.endLineIdx = location.endLineIdx;
-    this.column = location.column;
-    this.endColumn = location.endColumn;
+  // Сериализация уже оторванной локации (если сохраняем повторно)
+  toJSON() {
+    return {
+      locType: "IndependentLoc",
+      start: this.start,
+      end: this.end,
+      line: this.line,
+      startLineIdx: this.startLineIdx,
+      endLine: this.endLine,
+      endLineIdx: this.endLineIdx,
+      column: this.column,
+      endColumn: this.endColumn
+    };
   }
 
   isInLine() { return this._startLine === this._endLine; }
+
+  toString() {
+    return `строка ${this.line}, позиция ${this.column}`;
+  }  
+}
+
+export function restoreLocation(locData) {
+  if (!locData) return null;
+  
+  if (locData.locType === "IndependentLoc") {
+    return new IndependentSourceLocation(locData); // Передаем сырой объект в конструктор
+  }
+  
+  return null;
 }
 
 /**

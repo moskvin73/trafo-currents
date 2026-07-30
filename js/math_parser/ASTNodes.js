@@ -9,6 +9,7 @@ import { dispatcher } from './SemanticDispatcher.js';
 import { TokenType } from './TokenTypes.js';
 import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
+import { restoreLocation } from './CompilerErrors.js';
 
 Matrix.registerRealNumberClass(RealNumber);
 

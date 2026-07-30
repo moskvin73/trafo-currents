@@ -1,5 +1,5 @@
 import { TokenType } from './TokenTypes.js';
-import { SourceLocation, CompilerError } from './CompilerErrors.js'; // перенесем типы ошибок в один служебный файл
+import { SourceLocation, CompilerError } from './CompilerErrors.js';
 
 
 // Карта быстрого сопоставления с типами токенов
