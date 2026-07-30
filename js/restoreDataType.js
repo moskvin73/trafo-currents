@@ -1,7 +1,7 @@
-import { BoolValue } from './math/BoolValue.js';
-import { RealNumber } from './math/RealNumber.js';
-import { ComplexNumber } from './math/ComplexNumber.js';
-import { Matrix } from './math/Matrix.js';
+import BoolValue from './math/BoolValue.js';
+import RealNumber from './math/RealNumber.js';
+import ComplexNumber from './math/ComplexNumber.js';
+import Matrix from './math/Matrix.js';
 import ASTNode, {
   IF_Node,
   Goto_Node,
