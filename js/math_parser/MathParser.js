@@ -597,7 +597,7 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    const Id = this.context.acquireId(diagram_id, true);
+    const id = this.context.acquireId(diagram_id, true);
     return new PlotInitNode(id, mode, view_type, token_loc);
   }
 
