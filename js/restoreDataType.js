@@ -41,20 +41,21 @@ import ASTNode, {
   DefineVarableCodeNode,
   ConstantNode } from './math_parser/ASTNodes.js';
 
-// Реестр типов данных
-const DATA_TYPE_REGISTRY = new Map([
-  [BoolValue,     (data) => BoolValue.fromJSON(data)],
-  [RealNumber,    (data) => RealNumber.fromJSON(data)],
-  [ComplexNumber, (data) => ComplexNumber.fromJSON(data)],
-  [Matrix,        (data) => Matrix.fromJSON(data)]
-]);
-
 const DATA_TYPE_STRING_LOOKUP = new Map();
-for (const [ClassRef, fromJsonFunc] of DATA_TYPE_REGISTRY) {
-  DATA_TYPE_STRING_LOOKUP.set(ClassRef.dataTypeName, fromJsonFunc);
+
+/**
+ * Метод для саморегистрации классов
+ * @param {string} dataTypeName - Строковое имя типа (например, "Matrix")
+ * @param {Function} fromJsonFunc - Функция восстановления
+ */
+export function registerDataType(dataTypeName, fromJsonFunc) {
+  DATA_TYPE_STRING_LOOKUP.set(dataTypeName, fromJsonFunc);
 }
 
-// Универсальный восстановитель значений математических типов
+
+/**
+ * Универсальный восстановитель
+*/
 export function restoreDataType(data) {
   if (!data || typeof data !== 'object') return data;
 
