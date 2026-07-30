@@ -12,7 +12,7 @@ export function test(data) {
   try {
     // 1. Создаем сложную вложенную матрицу
     const subMatrix = new Matrix([
-      [new BoolValue(true), new BoolValue(false), new ComplexNumber(1, 1), RealNumber(-10)]
+      [new BoolValue(true), new BoolValue(false), new ComplexNumber(1, 1), new RealNumber(-10)]
     ]);
     const rootMatrix = new Matrix([
       [new BoolValue(true), subMatrix]
