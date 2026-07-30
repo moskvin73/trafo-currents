@@ -259,6 +259,25 @@ export class IF_Node extends ASTNode {
     this.len_code_false = len_code_false;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      if_expr: this.if_expr,
+      len_code_false: this.len_code_false
+    };
+  }
+
+  static get dataTypeName() { return "IF_Node"; }
+
+  static fromJSON(data) {
+    return new IF_Node(
+      data.if_expr,
+      data.len_code_false,
+      restoreLocation(data.loc)
+    );
+  }
+
+
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
@@ -273,6 +292,7 @@ export class IF_Node extends ASTNode {
       yield this.if_expr;
   }
 }
+regAST(IF_Node);
 
 export class Goto_Node extends ASTNode {
   constructor(len_code, loc) {
