@@ -187,6 +187,10 @@ export default class ASTNode {
   }
 }
 
+export function regAST(ClassRef) {
+  registerDataType(ClassRef.nodeTypeName, ClassRef.fromJSON);
+}
+
 export class VarableCode
 {
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
@@ -245,7 +249,7 @@ export class ErrorNode extends ASTNode {
     throw this.msg;
   }
 }
-registerDataType(ErrorNode.dataTypeName, ErrorNode.fromJSON);
+regAST(ErrorNode);
 
 
 export class IF_Node extends ASTNode {
