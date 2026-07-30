@@ -696,7 +696,7 @@ export class MathParser {
     }
     const id = this.context.getIdByName(diagram_id);
     if (id)
-      return new PlotLayerNode(id, layer_id, color, stroke_width, token_loc);    
+      return new PlotLayerNode(id, diagram_id, layer_id, color, stroke_width, token_loc);    
     else  { 
       this.#error("Неопредилённый идентификатор", this.#location); 
     }
