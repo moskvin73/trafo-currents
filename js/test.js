@@ -35,7 +35,7 @@ export function test(data) {
       endColumn: 1
     };
     const loc = new IndependentSourceLocation(loc_data);
-    const e_n = new AST.ErrorNode("Error");
+    const e_n = new AST.ErrorNode("Error", loc);
 
     //const savedState = context.serializeGlobalContext();
     const jsonResult = JSON.stringify(matrixNode);
