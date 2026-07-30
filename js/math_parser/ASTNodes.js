@@ -48,7 +48,7 @@ export default class ASTNode {
       loc: this.loc // JS зайдет внутрь SourceLocation и вызовет его кастомный toJSON()!
     };
   }
-    
+
   get isLiteral() {
     return false; // По умолчанию большинство узлов динамические (переменные, функции и т.д.)
   }
@@ -222,12 +222,31 @@ export class ErrorNode extends ASTNode {
     super(loc);
     this.msg = msg;
   }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      msg: this.msg
+    };
+  }
+
+  static get dataTypeName() { return "ErrorNode"; }
+
+  static fromJSON(data) {
+    return new ErrorNode(
+      data.msg,
+      restoreLocation(data.loc)
+    );
+  }
+
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
     throw this.msg;
   }
 }
+registerDataType(ErrorNode.dataTypeName, ErrorNode.fromJSON);
+
 
 export class IF_Node extends ASTNode {
   constructor(if_expr, len_code_false, loc) {
