@@ -7,8 +7,23 @@ import MathType from './MathType.js';
  */
 export default class BoolValue extends MathType {
 
-  static typeId = Symbol.for('Math.BoolValue');  
+  static typeId = Symbol.for('Math.BoolValue');
 
+  static get nodeTypeName() { return "BoolValue"; }
+
+  // СЕРИАЛИЗАЦИЯ: Явно достаем приватное поле
+  toJSON() {
+  return {
+    // Безопасное обращение: берет статическую строку из текущего класса-наследника
+    ...super.toJSON(),
+    value: this.#value
+  };
+
+  // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
+  static fromJSON(data) {
+    return new BoolValue(data.value);
+  }
+  
   // Приватное поле для хранения вещественного значения
   #value;
 
