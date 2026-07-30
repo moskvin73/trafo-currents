@@ -272,7 +272,7 @@ export class IF_Node extends ASTNode {
 
   static fromJSON(data) {
     return new IF_Node(
-      data.if_expr,
+      restoreDataType(data.if_expr),
       data.len_code_false,
       restoreLocation(data.loc)
     );
@@ -348,7 +348,7 @@ export class DefineVarableCodeNode extends ASTNode {
   static fromJSON(data) {
     return new DefineVarableCodeNode(
       data.funcId,
-      data.statements,
+      restoreDataType(data.statements),
       data.paramsCount,
       data.localsCount,
       restoreLocation(data.loc)
@@ -413,7 +413,7 @@ export class NumberNode extends MathNode {
 
   static fromJSON(data) {
     return new NumberNode(
-      data.value,
+      restoreDataType(data.value),
       restoreLocation(data.loc)
     );
   }
