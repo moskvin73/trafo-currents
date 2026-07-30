@@ -1716,7 +1716,7 @@ export class MathParser {
 
         this.#match(TokenType.RPAREN, `Ожидалась закрывающая скобка ')' после аргументов функции "${name}"`);
         const id = this.context.getIdByName(name);
-        if (id) {
+        if (id != null) {
           // Возвращаем универсальный узел вызова
           return new CallNode(id, name, args, token_loc);
         }
@@ -1726,9 +1726,8 @@ export class MathParser {
         }
       }
 
-      //const ret = new VariableNode(name, token_loc);
       let id = this.context.getIdByName(name);
-      if (!id) {
+      if (id === null || id ==== undefined) {
           let list = this.#listUndefinedIdentifiers.get(name);
           if (list)
           {
