@@ -600,8 +600,26 @@ export class IsOpNode extends MathNode {
     this.argument = argument;
     this.targetType = TYPE_CLASSES[targetType];
     if (!this.targetType) {
-      throw new Error(`Runtime Error: Тип данных "${typeKey}" не зарегистрирован в ядре калькулятора.`);
+      throw new Error(`Runtime Error: Тип данных "${targetType}" не зарегистрирован в ядре калькулятора.`);
     }
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      argument: this.argument,
+      targetType: this.targetType,
+    };
+  }
+
+  static get dataTypeName() { return "IsOpNode"; }
+
+  static fromJSON(data) {
+    return new IsOpNode(
+      data.argument,
+      data.targetType,
+      restoreLocation(data.loc)
+    );
   }
 
   getPriority() { return OpPriority.IS; }
@@ -635,6 +653,7 @@ export class IsOpNode extends MathNode {
     return `${innerCode}\\text{ is ${name}}`;
   }
 }
+regAST(IsOpNode);
 
 // Реализация таблицы через объект объектов (или Map)
 const CAST_TABLE = new Map([
