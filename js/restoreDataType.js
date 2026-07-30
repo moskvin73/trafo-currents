@@ -1,7 +1,7 @@
-import { BoolValue } from './js/math/BoolValue.js';
-import { RealNumber } from './js/math/RealNumber.js';
-import { ComplexNumber } from './js/math/ComplexNumber.js';
-import { Matrix } from './js/math/Matrix.js';
+import { BoolValue } from './math/BoolValue.js';
+import { RealNumber } from './math/RealNumber.js';
+import { ComplexNumber } from './math/ComplexNumber.js';
+import { Matrix } from './math/Matrix.js';
 import ASTNode, {
   IF_Node,
   Goto_Node,
@@ -39,7 +39,7 @@ import ASTNode, {
   IndexNode,
   VarableCode,
   DefineVarableCodeNode,
-  ConstantNode } from './js/math_parser/ASTNodes.js';
+  ConstantNode } from './math_parser/ASTNodes.js';
 
 // Реестр типов данных
 const DATA_TYPE_REGISTRY = new Map([
