@@ -17,8 +17,8 @@ export class PlotInitNode extends ASTNode {
     try
     {
         // Регистрируем в SymbolTableContext
-        const id = context.scope_context.acquireId(this.diagramId);
-        const sym = context.scope_context.getSymbolById(id);
+        //const id = context.scope_context.acquireId(this.diagramId);
+        const sym = context.scope_context.getSymbolById(this.diagramId);
 
         // Создаем экземпляр нашего нового класса-описателя
         const descriptor = new DiagramDescriptor(this.diagramId, this.mode, this.viewType);

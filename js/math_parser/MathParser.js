@@ -597,7 +597,8 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new PlotInitNode(diagram_id, mode, view_type, token_loc);
+    const Id = this.context.acquireId(diagram_id, true);
+    return new PlotInitNode(id, mode, view_type, token_loc);
   }
 
   /**
@@ -636,7 +637,12 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new PlotConfigNode(diagram_id, key, valueNode, token_loc);    
+    const id = this.context.getIdByName(diagram_id);
+    if (id)
+      return new PlotConfigNode(id, key, valueNode, token_loc);
+    else  { 
+      this.#error("Неопредилённый идентификатор", this.#location); 
+    }
   }
 
   /**
