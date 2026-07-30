@@ -382,3 +382,23 @@ export default class DiagramDescriptor {
 
 // Регистрируем класс в вашей единой математической фабрике!
 registerDataType(DiagramDescriptor.dataTypeName, DiagramDescriptor.fromJSON);
+
+/*
+
+// В вашей точке входа (после загрузки контекста из LocalStorage)
+function postLoadHydration(context) {
+  for (const symbol of context.varSymbols) {
+    // Проверяем, лежит ли в переменной наш дескриптор диаграммы
+    if (symbol.value && symbol.value instanceof DiagramDescriptor) {
+      const descriptor = symbol.value;
+      
+      // Если это окно — заново инициализируем его физическое отображение в DOM!
+      if (descriptor.target === "window") {
+        console.log(`Восстановление окна для диаграммы: ${descriptor.id}`);
+        descriptor.createFloatingWindow(); 
+      }
+    }
+  }
+}
+
+*/
