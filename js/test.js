@@ -43,7 +43,7 @@ export function test(data) {
 
     const rawData = JSON.parse(jsonResult);
     const restoredTree = restoreDataType(rawData);
-    console.log(`${restoredTree}`);
+    console.log(restoredTree);
     //localStorage.setItem("global_symbol_table", savedState);
 
 
