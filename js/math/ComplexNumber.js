@@ -307,7 +307,7 @@ export default class ComplexNumber extends MathType {
     const r = this.#cleanRound(this.#real);
     const i = this.#cleanRound(this.#imaginary);
 
-    r_f = (val) => {
+    const r_f = (val) => {
       if (settings && typeof settings.precision === 'number') {
         // Ограничиваем диапазон от 0 до 100, так как toFixed() принимает строго этот интервал
         const precision = Math.max(0, Math.min(100, settings.precision));
