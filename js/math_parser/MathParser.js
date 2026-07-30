@@ -694,7 +694,12 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new PlotLayerNode(diagram_id, layer_id, color, stroke_width, token_loc);    
+    const id = this.context.getIdByName(diagram_id);
+    if (id)
+      return new PlotLayerNode(id, layer_id, color, stroke_width, token_loc);    
+    else  { 
+      this.#error("Неопредилённый идентификатор", this.#location); 
+    }
   }
 
   /** 
@@ -733,7 +738,12 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    return new PlotVectorNode(diagram_id, variable, layer_id, token_loc);       
+    const id = this.context.getIdByName(diagram_id);
+    if (id)
+      return new PlotVectorNode(id, variable, layer_id, token_loc);       
+    else  { 
+      this.#error("Неопредилённый идентификатор", this.#location); 
+    }
   }
 
   /**
@@ -775,8 +785,14 @@ export class MathParser {
       while (!MathParser.parsePrintStatement_FALLOW.has(this.c_token)) this.#consume();
       return error_value();
     }
-    if (e_c === this.errors.length)
-      return new PlotChordNode(diagram_id, exp, data, layer_id, token_loc);
+    if (e_c === this.errors.length) {
+          const id = this.context.getIdByName(diagram_id);
+          if (id)
+            return new PlotChordNode(diagram_id, exp, data, layer_id, token_loc);
+          else  { 
+            this.#error("Неопредилённый идентификатор", this.#location); 
+          }
+    }
     else
       return error_value();
   }
