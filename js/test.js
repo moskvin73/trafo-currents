@@ -27,7 +27,7 @@ export function test(data) {
     const restored = restoreDataType(rawData);
 
     console.log("2. Объект успешно восстановлен?", restored instanceof Matrix);
-    console.log("3. Проверка TeX вложенной матрицы:", restored.rows[1][1].toTeX());
+    console.log("3. Проверка TeX вложенной матрицы:", restored.toString());
 
   } catch (error) {
     console.error("Критическая ошибка в тесте:", error);
