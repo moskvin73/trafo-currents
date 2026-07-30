@@ -6,6 +6,10 @@ export default class MathType {
 
   // 1e-15 — это стандартный порог точности для double precision
   static get EPSILON() { return Number.EPSILON; }//1e-15; }
+
+  toJSON() {
+    dataType: this.constructor.dataTypeName
+  }
   
   constructor() {
     if (this.constructor === MathType) {
