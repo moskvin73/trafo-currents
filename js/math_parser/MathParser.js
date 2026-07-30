@@ -481,7 +481,7 @@ export class MathParser {
         return;
       default:
         this.#error(
-          `Ожидался разделитель ';' или '<span class="tex2jax_ignore">$</span>' инструкция "${this.lexer.stringValue()}"`,
+          `Ожидался разделитель ';' или $ инструкция "${this.lexer.stringValue()}"`,
            this.#location);
         while (true)
         {
