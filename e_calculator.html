@@ -1000,14 +1000,6 @@
 
                     // Проверяем наличие ошибок лексики или синтаксиса
                     if (parser.errors.length > 0) {
-                        /*card.classList.add("error-row"); // Подсвечиваем карточку красным цветом ваших стилей
-                        
-                        let errorHTML = "<strong>Ошибка разбора выражения:</strong><br>";
-                        parser.errors.forEach(err => {
-                            errorHTML += `${err.toString()}<br>`;
-                        });
-                        resultBlock.innerHTML = errorHTML;*/
-
                          if (floatPanel && floatList) {
                             floatPanel.classList.remove("hidden"); // Показываем панель поверх контента
                             
