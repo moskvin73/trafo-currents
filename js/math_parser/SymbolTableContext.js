@@ -1,5 +1,6 @@
 import { COMPILER_REGISTRY } from './MathRegistry.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from './ConstantsDef.js';
+import { restoreDataType } from '../DataTypeRegistry.js';
 
 
 export const SYM_UNDEFINED = 0; // Идентификатор объявлен, но значения еще нет
@@ -285,4 +286,53 @@ export class SymbolTableContext {
 
     return undefined;
   }
+
+  // МЕТОДЫ СЕРИАЛИЗАЦИИ и ДЕСЕРИАЛИЗАЦИИ
+
+  serializeGlobalContext() {
+    return JSON.stringify({
+      // Сохраняем имена переменных
+      varNames: this.varNames,
+      // Сохраняем их состояния. JS автоматически вызовет геттеры объектов символов!
+      varSymbols: this.varSymbols 
+    });
+  }
+
+  deserializeGlobalContext(jsonString) {
+    if (!jsonString) return;
+
+    const data = JSON.parse(jsonString);
+    
+    // 1. Сбрасываем текущее глобальное состояние
+    this.varNames = data.varNames;
+    this.varSymbols = [];
+    this.varHash = Object.create(null);
+
+    // 2. Восстанавливаем каждую переменную
+    for (let i = 0; i < data.varNames.length; i++) {
+      const name = data.varNames[i];
+      const savedSymbol = data.varSymbols[i];
+
+      // Восстанавливаем значение переменной (число 0 или сложный MathType)
+      const restoredValue = restoreDataType(savedSymbol.value);
+
+      // Воссоздаем реактивное замыкание (state) с геттерами и сеттерами
+      const state = { 
+        type: savedSymbol.type, 
+        value: restoredValue 
+      };
+
+      const reactiveSymbol = {
+        get type() { return state.type; },
+        set type(t) { state.type = t; },
+        get value() { return state.value; },
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; } // сохраняем вашу логику
+      };
+
+      // 3. Заполняем таблицы контекста
+      this.varSymbols.push(reactiveSymbol);
+      this.varHash[name] = i;
+    }
+  }
+
 }
