@@ -45,7 +45,7 @@ export default class ASTNode {
 
   toJSON() {
     return {
-      nodeType: this.constructor.nodeTypeName,
+      nodeType: this.constructor.dataTypeName,
       loc: this.loc // JS зайдет внутрь SourceLocation и вызовет его кастомный toJSON()!
     };
   }
