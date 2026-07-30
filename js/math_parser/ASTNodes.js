@@ -332,6 +332,28 @@ export class DefineVarableCodeNode extends ASTNode {
     this.localsCount = localsCount;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      funcId: this.funcId,
+      statements: this.statements,
+      paramsCount: this.paramsCount,
+      localsCount: this.localsCount,
+    };
+  }
+
+  static get dataTypeName() { return "DefineVarableCodeNode"; }
+
+  static fromJSON(data) {
+    return new DefineVarableCodeNode(
+      data.funcId,
+      data.statements,
+      data.paramsCount,
+      data.localsCount,
+      restoreLocation(data.loc)
+    );
+  }
+
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
@@ -352,6 +374,7 @@ export class DefineVarableCodeNode extends ASTNode {
     }
   }
 }
+regAST(DefineVarableCodeNode);
 
 export class MathNode extends ASTNode {
   constructor(loc) {
