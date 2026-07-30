@@ -7,6 +7,23 @@ import { COMPLEX_FORMAT, ANGLE_MODE } from '../math_parser/ConstantsDef.js';
  * Ориентирован на стандарты C++ и C#. Поддерживается всеми современными браузерами.
  */
 export default class ComplexNumber extends MathType {
+
+  // СЕРИАЛИЗАЦИЯ: Явно достаем приватное поле
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      real: this.#real,
+      imaginary: this.#imaginary
+    };
+  }
+
+  static get nodeTypeName() { return "ComplexNumber"; }
+
+  // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
+  static fromJSON(data) {
+    return new ComplexNumber(data.real, data.imaginary);
+  }
+
   // Приватные поля для инкапсуляции (защита от прямого изменения)
   #real;
   #imaginary;

@@ -7,6 +7,22 @@ import ComplexNumber from './ComplexNumber.js';
  * Защищает вычисления от комплексных ошибок округления.
  */
 export default class RealNumber extends MathType {
+
+  // СЕРИАЛИЗАЦИЯ: Явно достаем приватное поле
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      value: this.#value
+    };
+  }
+
+  static get nodeTypeName() { return "RealNumber"; }
+
+  // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
+  static fromJSON(data) {
+    return new RealNumber(data.value);
+  }
+
   // Приватное поле для хранения вещественного значения
   #value;
 
