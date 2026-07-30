@@ -189,7 +189,7 @@ export default class ASTNode {
 }
 
 export function regAST(ClassRef) {
-  registerDataType(ClassRef.nodeTypeName, ClassRef.fromJSON);
+  registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
 export class VarableCode
