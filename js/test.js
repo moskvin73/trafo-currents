@@ -35,10 +35,10 @@ export function test(data) {
       endColumn: 1
     };
     const loc = new IndependentSourceLocation(loc_data);
-    const e_n = new AST.ErrorNode("Error", loc);
+    const node = new AST.ErrorNode("Error", loc);
 
     //const savedState = context.serializeGlobalContext();
-    const jsonResult = JSON.stringify(matrixNode);
+    const jsonResult = JSON.stringify(node);
     console.log(jsonResult);
 
     const rawData = JSON.parse(jsonResult);
