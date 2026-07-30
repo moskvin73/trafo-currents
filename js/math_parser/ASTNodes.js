@@ -608,7 +608,7 @@ export class IsOpNode extends MathNode {
     return {
       ...super.toJSON(),
       argument: this.argument,
-      targetType: this.targetType,
+      targetType: getTypeNameString(this.targetType, , REVERSE_TYPE_CLASSES)
     };
   }
 
