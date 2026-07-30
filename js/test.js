@@ -3,7 +3,7 @@ import RealNumber from './math/RealNumber.js';
 import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
 import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
-import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
+import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
