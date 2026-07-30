@@ -707,7 +707,7 @@ export class CastOpNode extends MathNode {
     this.argument = argument;
     this.targetType = TYPE_CLASSES[targetType];
     if (!this.targetType) {
-      throw new Error(`Runtime Error: Тип данных "${typeKey}" не зарегистрирован в ядре калькулятора.`);
+      throw new Error(`Runtime Error: Тип данных "${targetType}" не зарегистрирован в ядре калькулятора.`);
     }
   }
   
