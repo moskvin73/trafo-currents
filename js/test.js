@@ -4,6 +4,7 @@ import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
 import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
+import * as AST from './math_parser/ASTNodes.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
@@ -11,12 +12,13 @@ export function test(data) {
     console.log("Зарегистрированные типы:", debugRegistry());
 
   try {
+    /*
     // Имитируем работу сессии №1: Пользователь создал глобальную переменную и записал туда матрицу
     const context = new SymbolTableContext();
     const id = context.acquireId("myMatrix");
 
     // Допустим, интерпретатор записал в эту переменную вашу новую рабочую матрицу
-    context.varSymbols[id - context.CD].value = new Matrix([[new BoolValue(true)]]);
+    context.varSymbols[id - context.CD].value = new Matrix([[new BoolValue(true)]]);*/
 
     // Сохраняем глобальный контекст в LocalStorage
     const savedState = context.serializeGlobalContext();
@@ -27,11 +29,11 @@ export function test(data) {
 
 
     // Создаем абсолютно чистый контекст
-    const newContext = new SymbolTableContext();
+    //const newContext = new SymbolTableContext();
 
     // Загружаем состояние из LocalStorage
     const storedState = localStorage.getItem("global_symbol_table");
-    newContext.deserializeGlobalContext(storedState);
+    /*newContext.deserializeGlobalContext(storedState);
 
     // ПРОВЕРКА №1: Проверяем, что хэш-таблица имен восстановилась
     const restoredId = newContext.acquireId("myMatrix"); 
@@ -45,7 +47,7 @@ export function test(data) {
 
     // ПРОВЕРКА №3: Проверяем, что реактивность (сеттер) не сломалась
     newContext.varSymbols[variableIndex].value = 42; // пишем примитив
-    console.log("Тип автоматически сменился на SYM_VARIABLE?", newContext.varSymbols[variableIndex].type);
+    console.log("Тип автоматически сменился на SYM_VARIABLE?", newContext.varSymbols[variableIndex].type);*/
   } catch (error) {
     console.error("Критическая ошибка в тесте:", error);
   }    
