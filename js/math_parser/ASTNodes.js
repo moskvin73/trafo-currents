@@ -401,6 +401,23 @@ export class NumberNode extends MathNode {
     this.value = mathTypeValue;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      value: this.value,
+    };
+  }
+
+  static get dataTypeName() { return "NumberNode"; }
+
+  static fromJSON(data) {
+    return new DefineVarableCodeNode(
+      data.value,
+      restoreLocation(data.loc)
+    );
+  }
+
+
   get isLiteral() { return true; }
 
   getPriority() { return OpPriority.PRIMARY; }
@@ -411,6 +428,7 @@ export class NumberNode extends MathNode {
 
   toTeX(context) { return this.value.toRawTeX(context); }
 }
+regAST(NumberNode);
 
 export class MatrixNode extends MathNode {
   #rows; // Двумерный массив узлов ASTNode/MathNode
