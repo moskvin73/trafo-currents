@@ -1,5 +1,7 @@
 import MathType from './MathType.js';
 import BoolValue from './BoolValue.js';
+import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
+
 
 export default class Matrix extends MathType {
   static typeId = Symbol.for('Math.Matrix');
@@ -15,7 +17,7 @@ export default class Matrix extends MathType {
   }
 
   static get dataTypeName() { return "Matrix"; }
-  
+
   // --- ДЕСЕРИАЛИЗАЦИЯ ---
   static fromJSON(data) {
     // data.rows — это сырой двумерный массив простых объектов из JSON.
@@ -735,3 +737,6 @@ export default class Matrix extends MathType {
     return `\\begin{${env}}\n${body}\n\\end{${env}}`;
   }
 }
+
+// САМОРЕГИСТРАЦИЯ: матрица сама добавляет себя в карту
+registerDataType(Matrix.dataTypeName, Matrix.fromJSON);

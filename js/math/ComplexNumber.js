@@ -17,7 +17,7 @@ export default class ComplexNumber extends MathType {
     };
   }
 
-  static get nodeTypeName() { return "ComplexNumber"; }
+  static get dataTypeName() { return "ComplexNumber"; }
 
   // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
   static fromJSON(data) {
@@ -1761,3 +1761,5 @@ export default class ComplexNumber extends MathType {
   static dot(left, right) { return ComplexNumber.from(left).dot(right); }
   static cross(left, right) { return ComplexNumber.from(left).cross(right); }  
 }
+
+registerDataType(ComplexNumber.dataTypeName, ComplexNumber.fromJSON);

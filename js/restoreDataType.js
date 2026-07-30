@@ -1,46 +1,3 @@
-import BoolValue from './math/BoolValue.js';
-import RealNumber from './math/RealNumber.js';
-import ComplexNumber from './math/ComplexNumber.js';
-import Matrix from './math/Matrix.js';
-import ASTNode, {
-  IF_Node,
-  Goto_Node,
-  IsOpNode,
-  ErrorNode,
-  CastOpNode,
-  NumberNode,
-  UnaryOpNode, 
-  UnaryOpNodePlus,
-  UnaryOpNodeMinus,
-  UnaryOpNodeNot,
-  BinaryOpNode,
-  OrNode,
-  XorNode,
-  AndNode,
-  EquNode,
-  NotEquNode,
-  LtNode,
-  GtNode,
-  LteNode,
-  GteNode,
-  AddNode,
-  SubNode,
-  MulNode,
-  DivNode,
-  ModNode,
-  PowNode,
-  CallNode,
-  RefNode, 
-  AssignNode, 
-  VariableNode, 
-  PrintNode, 
-  ProgramNode,
-  MatrixNode,
-  IndexNode,
-  VarableCode,
-  DefineVarableCodeNode,
-  ConstantNode } from './math_parser/ASTNodes.js';
-
 const DATA_TYPE_STRING_LOOKUP = new Map();
 
 /**
@@ -66,6 +23,11 @@ export function restoreDataType(data) {
   }
 
   return loader(data);
+}
+
+// Вспомогательный метод для отладки — покажет, кто зарегистрирован
+export function debugRegistry() {
+  return Array.from(DATA_TYPE_STRING_LOOKUP.keys());
 }
 
 export function test(data) {

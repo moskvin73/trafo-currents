@@ -1,6 +1,7 @@
 import MathType from './MathType.js';
 import BoolValue from './BoolValue.js';
 import ComplexNumber from './ComplexNumber.js';
+import { registerDataType } from '../DataTypeRegistry.js';
 
 /**
  * Класс для работы с чисто вещественными числами.
@@ -16,7 +17,7 @@ export default class RealNumber extends MathType {
     };
   }
 
-  static get nodeTypeName() { return "RealNumber"; }
+  static get dataTypeName() { return "RealNumber"; }
 
   // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
   static fromJSON(data) {
@@ -723,3 +724,6 @@ export default class RealNumber extends MathType {
     //return `${Math.abs(this.#value) < MathType.EPSILON ? 0 : this.#value}`;
   }
 }
+
+// САМОРЕГИСТРАЦИЯ: сама добавляет себя в карту
+registerDataType(RealNumber.dataTypeName, RealNumber.fromJSON);

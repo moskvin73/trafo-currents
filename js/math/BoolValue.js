@@ -1,4 +1,5 @@
 import MathType from './MathType.js';
+import { registerDataType } from '../DataTypeRegistry.js';
 
 /**
  * Класс-обертка для логического типа данных (Boolean) в математическом движке.
@@ -17,7 +18,7 @@ export default class BoolValue extends MathType {
     };
   }
 
-  static get nodeTypeName() { return "BoolValue"; }
+  static get dataTypeName() { return "BoolValue"; }
 
   // ДЕСЕРИАЛИЗАЦИЯ: Метод восстановления
   static fromJSON(data) {
@@ -190,3 +191,5 @@ export default class BoolValue extends MathType {
     return new BoolValue(this.#value >= right); 
   }  
 }
+
+registerDataType(BoolValue.dataTypeName, BoolValue.fromJSON);
