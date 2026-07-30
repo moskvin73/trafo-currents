@@ -417,7 +417,6 @@ export class NumberNode extends MathNode {
     );
   }
 
-
   get isLiteral() { return true; }
 
   getPriority() { return OpPriority.PRIMARY; }
