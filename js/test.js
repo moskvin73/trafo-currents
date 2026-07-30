@@ -4,6 +4,7 @@ import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
 import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
+import { IndependentSourceLocation } from './math_parser/CompilerErrors.js';
 import * as AST from './math_parser/ASTNodes.js';
 
 export function test(data) {
@@ -21,8 +22,28 @@ export function test(data) {
     context.varSymbols[id - context.CD].value = new Matrix([[new BoolValue(true)]]);*/
 
     // Сохраняем глобальный контекст в LocalStorage
-    const savedState = context.serializeGlobalContext();
-    localStorage.setItem("global_symbol_table", savedState);
+
+    const loc_data = {
+      locType: "IndependentLoc",
+      start: 0,
+      end: 0,
+      line: 1,
+      startLineIdx: 0,
+      endLine: 1,
+      endLineIdx: 0,
+      column: 1,
+      endColumn: 1
+    };
+    const loc = new IndependentSourceLocation(loc_data);
+    const e_n = new AST.ErrorNode("Error");
+
+    //const savedState = context.serializeGlobalContext();
+    const jsonResult = JSON.stringify(matrixNode);
+    console.log(jsonResult);
+
+    const rawData = JSON.parse(jsonResult);
+    const restoredTree = restoreDataType(rawData);
+    //localStorage.setItem("global_symbol_table", savedState);
 
 
     // --- ПЕРЕЗАГРУЗКА СТРАНИЦЫ (Сессия №2) ---
@@ -32,7 +53,7 @@ export function test(data) {
     //const newContext = new SymbolTableContext();
 
     // Загружаем состояние из LocalStorage
-    const storedState = localStorage.getItem("global_symbol_table");
+    //const storedState = localStorage.getItem("global_symbol_table");
     /*newContext.deserializeGlobalContext(storedState);
 
     // ПРОВЕРКА №1: Проверяем, что хэш-таблица имен восстановилась
