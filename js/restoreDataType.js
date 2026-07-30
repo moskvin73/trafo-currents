@@ -41,7 +41,7 @@ import ASTNode, {
   DefineVarableCodeNode,
   ConstantNode } from './js/math_parser/ASTNodes.js';
 
-// Реестр математических типов данных
+// Реестр типов данных
 const DATA_TYPE_REGISTRY = new Map([
   [BoolValue,     (data) => BoolValue.fromJSON(data)]
   [RealNumber,    (data) => RealNumber.fromJSON(data)],
