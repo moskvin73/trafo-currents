@@ -3,6 +3,31 @@ import BoolValue from './BoolValue.js';
 
 export default class Matrix extends MathType {
   static typeId = Symbol.for('Math.Matrix');
+
+  // --- СЕРИАЛИЗАЦИЯ ---
+  toJSON() {
+    return {
+      ...super.toJSON(), // Получаем { dataType: "Matrix" } из MathType
+      // Нам не нужно вручную вызывать .toJSON() для элементов. 
+      // JS автоматически вызовет его у каждого объекта внутри двумерного массива!
+      rows: this.#rows 
+    };
+  }
+
+  static get dataTypeName() { return "Matrix"; }
+  
+  // --- ДЕСЕРИАЛИЗАЦИЯ ---
+  static fromJSON(data) {
+    // data.rows — это сырой двумерный массив простых объектов из JSON.
+    // Нам нужно рекурсивно «оживить» каждый элемент.
+    const restoredRows = data.rows.map(row => 
+      row.map(element => restoreDataType(element))
+    );
+
+    // Возвращаем новый полноценный экземпляр Матрицы
+    return new Matrix(restoredRows);
+  }
+
   #rows; // Приватное хранилище: двумерный массив объектов MathType
 
   static #localConverters = new Map([
