@@ -10,6 +10,7 @@ import { TokenType } from './TokenTypes.js';
 import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
 import { restoreLocation } from './CompilerErrors.js';
+import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
 Matrix.registerRealNumberClass(RealNumber);
 
@@ -411,7 +412,7 @@ export class NumberNode extends MathNode {
   static get dataTypeName() { return "NumberNode"; }
 
   static fromJSON(data) {
-    return new DefineVarableCodeNode(
+    return new NumberNode(
       data.value,
       restoreLocation(data.loc)
     );
@@ -439,6 +440,26 @@ export class MatrixNode extends MathNode {
   constructor(rows, loc) {
     super(loc);
     this.#rows = rows;
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      rows: this.#rows,
+    };
+  }
+
+  static get dataTypeName() { return "MatrixNode"; }
+
+  static fromJSON(data) {
+    const restoredRows = data.rows.map(row => 
+      row.map(astNodeData => restoreDataType(astNodeData))
+    );
+
+    return new MatrixNode(
+      restoredRows,
+      restoreLocation(data.loc)
+    );
   }
 
   get isLiteral() { return true; }
@@ -530,6 +551,7 @@ export class MatrixNode extends MathNode {
     }
   }
 }
+regAST(MatrixNode);
 
 const TYPE_CLASSES = {
   'bool': BoolValue,
