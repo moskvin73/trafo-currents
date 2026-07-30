@@ -277,7 +277,6 @@ export class IF_Node extends ASTNode {
     );
   }
 
-
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
@@ -300,12 +299,29 @@ export class Goto_Node extends ASTNode {
     this.len_code = len_code;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      len_code: this.len_code,
+    };
+  }
+
+  static get dataTypeName() { return "IF_Node"; }
+
+  static fromJSON(data) {
+    return new Goto_Node(
+      data.len_code,
+      restoreLocation(data.loc)
+    );
+  }
+
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   internal_evaluate(context) {
       context.index_code += this.len_code;
   }
 }
+regAST(Goto_Node);
 
 export class DefineVarableCodeNode extends ASTNode {
     constructor(funcId, statements, paramsCount, localsCount, loc) {
