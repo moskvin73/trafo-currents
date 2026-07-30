@@ -1,9 +1,40 @@
 import VectorDiagram from '../VectorDiagram.js'
 import { createFloatingWindowDOM }  from '../util.js';
+import { registerDataType } from '../DataTypeRegistry.js';
  
 export default class DiagramDescriptor {
     #containerElement;
     #aliases; // Карта: имя_исходного_вектора -> массив_id_созданных_псевдонимов
+
+    // СЕРИАЛИЗАЦИЯ
+    toJSON() {
+        return {
+            dataType: this.constructor.dataTypeName, // Маркер для фабрики
+            id: this.id,
+            target: this.target,
+            data: this.data, // Копируем структуру векторов и конфигов
+            // Превращаем Map в сериализуемый массив: [['vec1', ['alias1', 'alias2']]]
+            aliases: Array.from(this.#aliases.entries()) 
+        };
+    }
+    
+    static get dataTypeName() { return "DiagramDescriptor"; }
+
+    // ДЕСЕРИАЛИЗАЦИЯ
+    static fromJSON(data) {
+        // 1. Создаем чистый объект через оригинальный конструктор
+        const descriptor = new DiagramDescriptor(data.id, data.data.config.mode, data.target);
+        
+        // 2. Восстанавливаем накопленные слои и векторы
+        descriptor.data = data.data;
+
+        // 3. Восстанавливаем карту алиасов
+        descriptor.#aliases = new Map(data.aliases);
+
+        // ВНИМАНИЕ: Мы восстановили только данные. 
+        // Логику перерисовки окна (createFloatingWindow) вызовет рантайм, когда это потребуется.
+        return descriptor;
+    }
 
     /**
      * @param {string} mode - "three_phase" или "math"
@@ -348,3 +379,6 @@ export default class DiagramDescriptor {
         return segmentId;
     }
 }
+
+// Регистрируем класс в вашей единой математической фабрике!
+registerDataType(DiagramDescriptor.dataTypeName, DiagramDescriptor.fromJSON);
