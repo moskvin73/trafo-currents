@@ -41,4 +41,28 @@ import ASTNode, {
   DefineVarableCodeNode,
   ConstantNode } from './js/math_parser/ASTNodes.js';
 
-  
+// Реестр математических типов данных
+const DATA_TYPE_REGISTRY = new Map([
+  [BoolValue,     (data) => BoolValue.fromJSON(data)]
+  [RealNumber,    (data) => RealNumber.fromJSON(data)],
+  [ComplexNumber, (data) => ComplexNumber.fromJSON(data)],
+  [Matrix,        (data) => ComplexNumber.fromJSON(data)]
+]);
+
+const DATA_TYPE_STRING_LOOKUP = new Map();
+for (const [ClassRef, fromJsonFunc] of DATA_TYPE_REGISTRY) {
+  DATA_TYPE_STRING_LOOKUP.set(ClassRef.dataTypeName, fromJsonFunc);
+}
+
+// Универсальный восстановитель значений математических типов
+export function restoreDataType(data) {
+  if (!data || typeof data !== 'object') return data;
+
+  // Ищем функцию восстановления по безопасной строке dataType
+  const loader = DATA_TYPE_STRING_LOOKUP.get(data.dataType);
+  if (!loader) {
+    throw new Error(`[Data] Неизвестный тип данных для восстановления: "${data.dataType}"`);
+  }
+
+  return loader(data);
+}
