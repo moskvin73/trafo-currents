@@ -1727,7 +1727,7 @@ export class MathParser {
       }
 
       let id = this.context.getIdByName(name);
-      if (id === null || id ==== undefined) {
+      if (id === null || id === undefined) {
           let list = this.#listUndefinedIdentifiers.get(name);
           if (list)
           {
