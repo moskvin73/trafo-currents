@@ -46,7 +46,7 @@ const DATA_TYPE_REGISTRY = new Map([
   [BoolValue,     (data) => BoolValue.fromJSON(data)]
   [RealNumber,    (data) => RealNumber.fromJSON(data)],
   [ComplexNumber, (data) => ComplexNumber.fromJSON(data)],
-  [Matrix,        (data) => ComplexNumber.fromJSON(data)]
+  [Matrix,        (data) => Matrix.fromJSON(data)]
 ]);
 
 const DATA_TYPE_STRING_LOOKUP = new Map();
