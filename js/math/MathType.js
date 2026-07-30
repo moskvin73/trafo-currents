@@ -8,7 +8,9 @@ export default class MathType {
   static get EPSILON() { return Number.EPSILON; }//1e-15; }
 
   toJSON() {
-    dataType: this.constructor.dataTypeName
+     return {
+      dataType: this.constructor.dataTypeName // Безопасное имя типа данных
+    };   
   }
   
   constructor() {
