@@ -614,9 +614,9 @@ export class IsOpNode extends MathNode {
 
   static get dataTypeName() { return "IsOpNode"; }
 
-  static fromJSON(data) {
+  static fromJSON(data) {    
     return new IsOpNode(
-      data.argument,
+      restoreDataType(data.argument),
       data.targetType,
       restoreLocation(data.loc)
     );
