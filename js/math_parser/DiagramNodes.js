@@ -4,9 +4,10 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
 
 export class PlotInitNode extends ASTNode {
-  constructor(diagramId, mode, viewType, loc) {
+  constructor(diagramId, name, mode, viewType, loc) {
     super(loc);
     this.diagramId = diagramId;
+    this.name = name;
     this.mode = mode;
     this.viewType = viewType;
   }
@@ -21,7 +22,7 @@ export class PlotInitNode extends ASTNode {
         const sym = context.scope_context.getSymbolById(this.diagramId);
 
         // Создаем экземпляр нашего нового класса-описателя
-        const descriptor = new DiagramDescriptor(this.diagramId, this.mode, this.viewType);
+        const descriptor = new DiagramDescriptor(this.name, this.mode, this.viewType);
         sym.value = descriptor;
 
         // Если режим window — сразу генерируем плавающее окно
@@ -49,7 +50,8 @@ export class PlotDataNode extends ASTNode {
   get type_unit() { return TYPE_UNIT.EMPTY; }
 
   getDiagram(context) {
-    const symbol = context.scope_context.getSymbolByName(this.diagramId);
+    //const symbol = context.scope_context.getSymbolByName(this.diagramId);
+    const symbol = context.scope_context.getSymbolById(this.diagramId)
     if (!symbol || symbol.value.type !== "DiagramState") {
         this.error(context, `Переменная '${this.diagramId}' не инициализирована как диаграмма.`);
         return null;
