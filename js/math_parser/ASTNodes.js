@@ -859,8 +859,13 @@ export class UnaryOpNodePlus extends UnaryOpNode {
     super('+', argument, loc);
   }
 
+  static get dataTypeName() { return "UnaryOpNodePlus"; }
+
+  static fromJSON(data) { UnaryOpNode.create(this, data); }
+
   internal_evaluate(context) { return this.argument.internal_evaluate(context); }
 }
+regAST(UnaryOpNodePlus);
 
 export class UnaryOpNodeMinus extends UnaryOpNode {
   /**
