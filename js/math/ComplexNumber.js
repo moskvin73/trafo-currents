@@ -313,7 +313,7 @@ export default class ComplexNumber extends MathType {
         const precision = Math.max(0, Math.min(100, settings.precision));
         return val.toFixed(precision);
       }
-      return `${val}i`;
+      return `${val}`;
     };
     
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
