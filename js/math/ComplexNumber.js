@@ -318,7 +318,7 @@ export default class ComplexNumber extends MathType {
     
     const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
 
-    if (i === 0 && !isNegativeZero(i)) return r_f(r);//`${r}`;
+    if (i === 0 && !isNegativeZero(i)) return r_f(r);
     
     const isNeg = i < 0 || isNegativeZero(i);
     if (r === 0 && !isNegativeZero(r)) {
