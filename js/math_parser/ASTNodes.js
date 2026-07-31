@@ -421,7 +421,7 @@ export class NumberNode extends MathNode {
   get isLiteral() { return true; }
 
   getPriority() {
-    if (this.value is instanceof ComplexNumber && !this.value.isComplexFormat())
+    if (this.value instanceof ComplexNumber && !this.value.isComplexFormat())
       return OpPriority.PRIMARY;
     else return OpPriority.ADD_SUB;
   }
