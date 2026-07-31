@@ -232,8 +232,7 @@ export class StatementNode {
 }
 regAST(StatementNode);
 
-export class VarableCode
-{
+export class VarableCode {
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
   constructor(statements, paramsCount, localsCount, lexicalParentFrame) {
     this.statements = statements;
