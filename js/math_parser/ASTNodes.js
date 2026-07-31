@@ -921,6 +921,15 @@ export class BinaryOpNode extends MathNode {
     this.right = right;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      left: this.left,
+      right: this.right,
+    };
+  }
+
+
   toString(context) {
     let leftCode = this.left.toString(context);
     let rightCode = this.right.toString(context);
