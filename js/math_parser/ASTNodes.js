@@ -876,11 +876,16 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
     super('-', argument, loc);
   }
 
+  static get dataTypeName() { return "UnaryOpNodeMinus"; }
+
+  static fromJSON(data) { UnaryOpNode.create(this, data); }
+
   internal_evaluate(context) { 
     const argVal = this.argument.internal_evaluate(context);
     return argVal.negate();
   }
 }
+regAST(UnaryOpNodeMinus);
 
 export class UnaryOpNodeNot extends UnaryOpNode {
   /**
@@ -890,6 +895,11 @@ export class UnaryOpNodeNot extends UnaryOpNode {
   constructor(argument, loc) {
     super('!', argument, loc);
   }
+
+  static get dataTypeName() { return "UnaryOpNodeNot"; }
+
+  static fromJSON(data) { UnaryOpNode.create(this, data); }
+
 
   internal_evaluate(context) { 
     const argVal = this.argument.internal_evaluate(context);
@@ -901,6 +911,7 @@ export class UnaryOpNodeNot extends UnaryOpNode {
     return `\\overline{${argTex}}`;
   }
 }
+regAST(UnaryOpNodeNot);
 
 /**
  * Узел бинарной операции (+, -, *, /, ^)
