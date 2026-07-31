@@ -2180,7 +2180,7 @@ export class CallNode extends MathNode {
 
   static fromJSON(data) {
     const args = this.args.map(arg => restoreDataType(arg));
-    return new ConstantNode(
+    return new CallNode(
       data.id_name,
       data.name,
       args,
@@ -2252,3 +2252,4 @@ export class CallNode extends MathNode {
     return `\\operatorname{${name}}\\left(${joinedArgs}\\right)`;
   }
 }
+regAST(CallNode);
