@@ -1558,6 +1558,23 @@ export class VariableNode extends IdentifierNode {
     super(id_name, name, loc);
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      id_name: this.id_name,
+      name: this.name
+    };
+  }
+
+  static get dataTypeName() { return "VariableNode"; }
+
+  static fromJSON(data) {
+    return new VariableNode(
+      data.id_name,
+      data.name,
+      restoreLocation(data.loc)
+    );
+  }  
   createAssign(expression, loc = this.loc) {
     return new AssignNode(this.id_name, this.name, expression, loc);
   }
@@ -1588,6 +1605,7 @@ export class VariableNode extends IdentifierNode {
 
   toTeX(context) { return this.getTexName(); }
 }
+regAST(VariableNode);
 
 // Дополнительные узлы для поддержки переменных, которые мы спроектировали
 export class AssignNode extends IdentifierNode {
