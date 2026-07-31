@@ -322,12 +322,10 @@ export default class ComplexNumber extends MathType {
     
     const isNeg = i < 0 || isNegativeZero(i);
     if (r === 0 && !isNegativeZero(r)) {
-      //return isNeg ? `-${Math.abs(i)}i` : `${i}i`;
       return isNeg ? `-${r_f(Math.abs(i))}i` : `${r_f(i)}i`;
     }
     
     const sign = isNeg ? '-' : '+';
-    //return `${r} ${sign} ${Math.abs(i)}i`;
     return `${r_f(r)} ${sign} ${r_f(Math.abs(i))}i`;
   }
 
