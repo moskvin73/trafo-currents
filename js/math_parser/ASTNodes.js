@@ -929,6 +929,13 @@ export class BinaryOpNode extends MathNode {
     };
   }
 
+  static create(ClassRef, data) {
+     return new ClassRef(
+      restoreDataType(data.left),
+      restoreDataType(data.right,
+      restoreLocation(data.loc)
+    );   
+  }
 
   toString(context) {
     let leftCode = this.left.toString(context);
@@ -1121,6 +1128,10 @@ export class AddNode extends BinaryOpNode {
     super(left, '+', right, loc);
   }
 
+  static get dataTypeName() { return "AddNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(AddNode, data); }
+
   getPriority() { return OpPriority.OR; }
 
   internal_evaluate(context) {
@@ -1132,11 +1143,16 @@ export class AddNode extends BinaryOpNode {
     return `${l} + ${r}`;
   }
 }
+regAST(AddNode);
 
 export class OrNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, 'or', right, loc);
   }
+
+  static get dataTypeName() { return "OrNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(OrNode, data); }
 
   getPriority() { return OpPriority.OR; }
 
@@ -1149,6 +1165,7 @@ export class OrNode extends BinaryOpNode {
     return `${l} \\vee ${r}`;
   }
 }
+regAST(OrNode);
 
 export class XorNode extends BinaryOpNode {
   constructor(left, right, loc) {
