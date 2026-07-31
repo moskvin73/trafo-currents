@@ -792,7 +792,6 @@ export class UnaryOpNode extends MathNode {
 
   static create(ClassRef, data) {
      return new ClassRef(
-      data.operator,
       restoreDataType(data.argument),
       restoreLocation(data.loc)
     );   
