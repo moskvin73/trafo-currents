@@ -329,6 +329,28 @@ export default class ComplexNumber extends MathType {
     return `${r_f(r)} ${sign} ${r_f(Math.abs(i))}i`;
   }
 
+  // Возвращает true, если формат вывода "a + bi" (два значения), 
+  // и false, если выводится только одно значение (или NaN)
+  isComplexFormat() {
+    if (Number.isNaN(this.#real) || Number.isNaN(this.#imaginary)) {
+      return false; // Выведется только 'NaN' (одно значение)
+    }
+
+    const r = this.#cleanRound(this.#real);
+    const i = this.#cleanRound(this.#imaginary);
+
+    const isNegativeZero = (num) => num === 0 && (1 / num === -Infinity);
+
+    // Условие для одного значения (чисто вещественное)
+    if (i === 0 && !isNegativeZero(i)) return false;
+
+    // Условие для одного значения (чисто мнимое)
+    if (r === 0 && !isNegativeZero(r)) return false;
+
+    // Во всех остальных случаях выводятся два значения
+    return true;
+  }
+
   // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================
