@@ -1866,6 +1866,30 @@ export class PrintNode extends ASTNode {
     this.elements = elements;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      elements: this.elements,
+    };
+  }
+
+  static get dataTypeName() { return "PrintNode"; }
+
+  static fromJSON(data) {
+    const restoredElements = data.elements.map(element => {
+      // Если это простой объект TEXT_BLOCK — оставляем как есть (или восстанавливаем его класс)
+      if (element.type === 'TEXT_BLOCK') {
+        return element; 
+      }
+      // Для всех остальных типов вызываем вашу функцию восстановления
+      return restoreDataType(element);
+    });
+    return new PrintNode(
+      restoredElements,
+      restoreLocation(data.loc)
+    );
+  }
+
   get type_unit() { return TYPE_UNIT.PRINT; }
 
   toString(context) {
