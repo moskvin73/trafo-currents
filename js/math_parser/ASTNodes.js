@@ -781,13 +781,21 @@ export class UnaryOpNode extends MathNode {
     this.argument = argument;
   }
 
-   toJSON() {
+  toJSON() {
     return {
       ...super.toJSON(),
-      operator, this.operator,
+      operator: this.operator,
       argument: this.argument,
       targetType: getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES)
     };
+  }
+
+  static create(ClassRef, data) {
+     return new ClassRef(
+      data.operator,
+      restoreDataType(data.argument),
+      restoreLocation(data.loc)
+    );   
   }
 
   getPriority() { return OpPriority.UNARY; }
