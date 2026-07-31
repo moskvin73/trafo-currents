@@ -1679,6 +1679,26 @@ export class IndexNode extends RefNode {
     this.#colExpr = colExpr; // Может быть null
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      target: this.#target,
+      rowExpr: this.#rowExpr,
+      colExpr: this.#colExpr
+    };
+  }
+
+  static get dataTypeName() { return "IndexNode"; }
+
+  static fromJSON(data) {
+    return new IndexNode(
+      restoreDataType(data.target),
+      restoreDataType(data.rowExpr),
+      restoreDataType(data.colExpr),
+      restoreLocation(data.loc)
+    );
+  }
+
   createAssign(expression, loc = this.loc) {
     return new AssignIndexNode(this.#target, this.#rowExpr, this.#colExpr, expression, loc);
   }    
@@ -1767,12 +1787,33 @@ export class IndexNode extends RefNode {
     if (this.#colExpr) this.#colExpr.collectMathExpressions(list);
   }
 }
+regAST(IndexNode);
 
 export class AssignIndexNode extends IndexNode {
   constructor(target, rowExpr, colExpr, expression, loc) {
     super(target, rowExpr, colExpr, loc);
     this.expression = expression;
   }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      expression: this.expression,
+    };
+  }
+
+  static get dataTypeName() { return "AssignIndexNode"; }
+
+  static fromJSON(data) {
+    return new AssignIndexNode(
+      restoreDataType(data.target),
+      restoreDataType(data.rowExpr),
+      restoreDataType(data.colExpr),
+      restoreDataType(data.expression),
+      restoreLocation(data.loc)
+    );
+  }
+
 
   get isAssigned() { return true; }
 
