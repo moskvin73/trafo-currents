@@ -729,8 +729,6 @@ export class CastOpNode extends MathNode {
     );
   }
   
-  static get dataTypeName() { return "IsOpNode"; } 
-  
   getPriority() {  return OpPriority.PRIMARY; }
 
   toString(context) {
