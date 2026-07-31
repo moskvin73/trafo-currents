@@ -2037,6 +2037,22 @@ export class ConstantNode extends MathNode {
     this.#tokenType = tokenType; 
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      tokenType: this.#tokenType,
+    };
+  }
+
+  static get dataTypeName() { return "ConstantNode"; }
+
+  static fromJSON(data) {
+    return new ConstantNode(
+      data.tokenType,
+      restoreLocation(data.loc)
+    );
+  }  
+
   get isLiteral() { return true; }
   
   getPriority() { return OpPriority.PRIMARY; }
@@ -2068,7 +2084,7 @@ export class ConstantNode extends MathNode {
     return config ? config.tex : `\\text{unknown}`;
   }
 }
-
+regAST(ConstantNode);
 
 const TEX_FUNCTIONS_REGISTRY = new Map([
   // === 1. ОСНОВНЫЕ АЛГЕБРАИЧЕСКИЕ И СТЕПЕННЫЕ ФУНКЦИИ ===
