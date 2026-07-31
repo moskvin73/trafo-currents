@@ -710,6 +710,26 @@ export class CastOpNode extends MathNode {
       throw new Error(`Runtime Error: Тип данных "${targetType}" не зарегистрирован в ядре калькулятора.`);
     }
   }
+
+   toJSON() {
+    return {
+      ...super.toJSON(),
+      argument: this.argument,
+      targetType: getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES)
+    };
+  }
+
+  static get dataTypeName() { return "CastOpNode"; }
+
+  static fromJSON(data) {    
+    return new CastOpNode(
+      restoreDataType(data.argument),
+      data.targetType,
+      restoreLocation(data.loc)
+    );
+  }
+  
+  static get dataTypeName() { return "IsOpNode"; } 
   
   getPriority() {  return OpPriority.PRIMARY; }
 
@@ -746,6 +766,7 @@ export class CastOpNode extends MathNode {
     this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
   }
 }
+regAST(CastOpNode);
 
 /**
  * Узел унарной операции (например: -x, +sin(i))
