@@ -2179,7 +2179,7 @@ export class CallNode extends MathNode {
   static get dataTypeName() { return "CallNode"; }
 
   static fromJSON(data) {
-    const args = this.args.map(arg => restoreDataType(arg));
+    const args = data.args.map(arg => restoreDataType(arg));
     return new CallNode(
       data.id_name,
       data.name,
