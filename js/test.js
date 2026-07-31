@@ -35,8 +35,8 @@ export function test(data) {
       endColumn: 1
     };
     const loc = new IndependentSourceLocation(loc_data);
-    const nn = new AST.NumberNode(new ComplexNumber(1, 1), 'Matrix', loc);
-    const node = new AST.CastOpNode(nn, loc);
+    const nn = new AST.NumberNode(new ComplexNumber(1, 1), loc);
+    const node = new AST.CastOpNode(nn, 'Matrix', loc);
 
     //const savedState = context.serializeGlobalContext();
     const jsonResult = JSON.stringify(node);
