@@ -1172,6 +1172,10 @@ export class XorNode extends BinaryOpNode {
     super(left, 'xor', right, loc);
   }
 
+  static get dataTypeName() { return "XorNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(XorNode, data); }
+
   getPriority() { return OpPriority.XOR; }
 
   internal_evaluate(context) {
@@ -1183,11 +1187,16 @@ export class XorNode extends BinaryOpNode {
     return `${l} \\oplus ${r}`;
   }
 }
+regAST(XorNode);
 
 export class AndNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, 'and', right, loc);
   }
+
+  static get dataTypeName() { return "AndNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(AndNode, data); }
 
   getPriority() { return OpPriority.AND; }
 
@@ -1200,11 +1209,16 @@ export class AndNode extends BinaryOpNode {
     return `${l} \\wedge ${r}`;
   }
 }
+regAST(AndNode);
 
 export class EquNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '==', right, loc);
   }
+
+  static get dataTypeName() { return "EquNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(EquNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1217,11 +1231,16 @@ export class EquNode extends BinaryOpNode {
     return `${l} = ${r}`;
   }
 }
+regAST(EquNode);
 
 export class NotEquNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '!=', right, loc);
   }
+
+  static get dataTypeName() { return "NotEquNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(NotEquNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1234,11 +1253,16 @@ export class NotEquNode extends BinaryOpNode {
     return `${l} \\neq ${r}`;
   }
 }
+regAST(NotEquNode);
 
 export class LtNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '<', right, loc);
   }
+
+  static get dataTypeName() { return "LtNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(LtNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1251,11 +1275,16 @@ export class LtNode extends BinaryOpNode {
     return `${l} < ${r}`;
   }
 }
+regAST(LtNode);
 
 export class GtNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '>', right, loc);
   }
+
+  static get dataTypeName() { return "GtNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(GtNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1268,11 +1297,16 @@ export class GtNode extends BinaryOpNode {
     return `${l} > ${r}`;
   }
 }
+regAST(GtNode);
 
 export class LteNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '<=', right, loc);
   }
+
+  static get dataTypeName() { return "LteNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(LteNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1285,11 +1319,16 @@ export class LteNode extends BinaryOpNode {
     return `${l} \\leqslant ${r}`;
   }
 }
+regAST(LteNode);
 
 export class GteNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '>=', right, loc);
   }
+
+  static get dataTypeName() { return "GteNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(GteNode, data); }
 
   getPriority() { return OpPriority.RELATIONAL; }
 
@@ -1302,11 +1341,16 @@ export class GteNode extends BinaryOpNode {
     return `${l} \\geqslant ${r}`;
   }
 }
+regAST(GteNode);
 
 export class SubNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '-', right, loc);
   }
+
+  static get dataTypeName() { return "SubNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(SubNode, data); }
 
   getPriority() { return OpPriority.ADD_SUB; }
 
@@ -1319,11 +1363,16 @@ export class SubNode extends StrictRightBinNode {
     return `${l} - ${r}`;
   }
 }
+regAST(SubNode);
 
 export class MulNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '*', right, loc);
   }
+
+  static get dataTypeName() { return "MulNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(MulNode, data); }
 
   getPriority() { return OpPriority.MUL_DIV; }
 
@@ -1358,11 +1407,16 @@ export class MulNode extends BinaryOpNode {
 
   toTeX(context) { return super._renderFractionChain(context); }
 }
+regAST(MulNode);
 
 export class DivNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, '/', right, loc);
   }
+
+  static get dataTypeName() { return "DivNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(DivNode, data); }
 
   getPriority() { return OpPriority.MUL_DIV; }
 
@@ -1398,11 +1452,16 @@ export class DivNode extends StrictRightBinNode {
 
   toTeX(context) { return super._renderFractionChain(context); }
 }
+regAST(DivNode);
 
 export class ModNode extends StrictRightBinNode {
   constructor(left, right, loc) {
     super(left, 'mod', right, loc);
   }
+
+  static get dataTypeName() { return "ModNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(ModNode, data); }
 
   getPriority() { return OpPriority.MUL_DIV; }
 
@@ -1414,13 +1473,17 @@ export class ModNode extends StrictRightBinNode {
   simpleTeX(l, r) {
     return `${l} \\bmod ${r}`;
   }
-
 }
+regAST(ModNode);
 
 export class PowNode extends BinaryOpNode {
   constructor(left, right, loc) {
     super(left, '^', right, loc);
   }
+
+  static get dataTypeName() { return "PowNode"; }
+
+  static fromJSON(data) { return BinaryOpNode.create(PowNode, data); }
 
   getPriority() { return OpPriority.POW; }
 
@@ -1465,6 +1528,7 @@ export class PowNode extends BinaryOpNode {
     return `{${l}}^{${r}}`;
   }
 }
+regAST(PowNode);
 
 export class RefNode extends MathNode {
   constructor(loc) {
