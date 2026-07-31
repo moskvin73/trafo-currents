@@ -2002,6 +2002,7 @@ export class PrintNode extends ASTNode {
     }).join('');
   }    
 }
+regAST(PrintNode);
 
 // 1. Инициализируем объекты в кэше один раз при старте
 const PRECOMPUTED_CONSTANTS = {
