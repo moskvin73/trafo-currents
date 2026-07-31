@@ -1,7 +1,8 @@
-import ASTNode, { VariableNode } from './ASTNodes.js';
+import ASTNode, { VariableNode, regAST } from './ASTNodes.js';
 import DiagramDescriptor from '../views/DiagramDescriptor.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import { TYPE_UNIT } from './ConstantsDef.js';
+import { restoreDataType } from '../DataTypeRegistry.js';
 
 export class PlotInitNode extends ASTNode {
   constructor(diagramId, name, mode, viewType, loc) {
