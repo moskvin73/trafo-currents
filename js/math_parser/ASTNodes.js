@@ -1814,7 +1814,6 @@ export class AssignIndexNode extends IndexNode {
     );
   }
 
-
   get isAssigned() { return true; }
 
   evaluate_command(context, matrixObj, rowIndex, colIndex) {
