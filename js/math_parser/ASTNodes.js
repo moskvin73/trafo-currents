@@ -1822,6 +1822,7 @@ export class AssignIndexNode extends IndexNode {
     return matrixObj.set(rowIndex, colIndex, l);
   }
 }
+regAST(AssignIndexNode);
 
 /**
  * Узел для всей программы (блокнота/интерфейса вычислений)
