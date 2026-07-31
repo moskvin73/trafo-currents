@@ -784,9 +784,7 @@ export class UnaryOpNode extends MathNode {
   toJSON() {
     return {
       ...super.toJSON(),
-      operator: this.operator,
       argument: this.argument,
-      targetType: getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES)
     };
   }
 
