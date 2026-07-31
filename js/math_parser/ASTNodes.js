@@ -1574,7 +1574,8 @@ export class VariableNode extends IdentifierNode {
       data.name,
       restoreLocation(data.loc)
     );
-  }  
+  }
+
   createAssign(expression, loc = this.loc) {
     return new AssignNode(this.id_name, this.name, expression, loc);
   }
@@ -1614,6 +1615,26 @@ export class AssignNode extends IdentifierNode {
     this.expression = expression;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      id_name: this.id_name,
+      name: this.name,
+      expression: this.expression
+    };
+  }
+
+  static get dataTypeName() { return "AssignNode"; }
+
+  static fromJSON(data) {
+    return new AssignNode(
+      data.id_name,
+      data.name,
+      restoreDataType(data.expression),
+      restoreLocation(data.loc)
+    );
+  }
+  
   createAssign(expression, loc = this.loc) {
     return new AssignNode(this.id_name, this.name, expression, loc);
   }  
@@ -1644,6 +1665,7 @@ export class AssignNode extends IdentifierNode {
     return `${this.getTexName()} = ${this.expression.toTeX(context)}`;
   }
 }
+regAST(AssignNode);
 
 export class IndexNode extends RefNode {
   #target;
