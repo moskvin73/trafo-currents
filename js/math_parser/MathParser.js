@@ -37,6 +37,7 @@ import ASTNode, {
   IndexNode,
   VarableCode,
   DefineVarableCodeNode,
+  StatementNode,
   ConstantNode } from './ASTNodes.js';
 import RealNumber from '../math/RealNumber.js';
 import ComplexNumber from '../math/ComplexNumber.js';
@@ -50,31 +51,6 @@ import { BuildVectorOperationDescription } from './VectorDeaign.js';
 import { foldASTToTable } from '../math/ASTToTableConverter.js'
 import { unfoldTableToAST } from '../math/unfoldTableToAST.js'
 import { IndexedMap } from '../math/util.js';
-
-/**
- * Единый узел для любой инструкции в коде
- */
-export class StatementNode {
-  constructor(node, isSilent) {
-    this.node = node;
-    this.isSilent = isSilent;
-  }
-
-  collectMathExpressions(list) {
-    // Обходим все аргументы функции, каждый из них может быть математикой
-      if (typeof node.collectMathExpressions === 'function') {
-      node.collectMathExpressions(list);
-    }
-  }
-
-  get type_unit() { return this.node.type_unit; }
-
-
-  toString() { return this.node.toString(); }
-
-  
-  toTeX() { return this.node.toTeX(); }
-}
 
 
 export class TeXOutputFormatter {

@@ -192,6 +192,47 @@ export function regAST(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
+/**
+ * Единый узел для любой инструкции в коде
+ */
+export class StatementNode {
+  constructor(node, isSilent) {
+    this.node = node;
+    this.isSilent = isSilent;
+  }
+
+  toJSON() {
+    return {
+      node: this.node,
+      isSilent: this.isSilent
+    };
+  }
+
+  static get dataTypeName() { return "StatementNode"; }
+
+  static fromJSON(data) {
+    return new EStatementNode(
+      restoreDataType(data.node),
+      data.isSilent
+    );
+  }
+
+  collectMathExpressions(list) {
+    // Обходим все аргументы функции, каждый из них может быть математикой
+      if (typeof node.collectMathExpressions === 'function') {
+      node.collectMathExpressions(list);
+    }
+  }
+
+  get type_unit() { return this.node.type_unit; }
+
+
+  toString() { return this.node.toString(); }
+
+  
+  toTeX() { return this.node.toTeX(); }
+}
+
 export class VarableCode
 {
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
