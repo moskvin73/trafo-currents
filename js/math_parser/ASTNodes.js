@@ -211,7 +211,7 @@ export class StatementNode {
   static get dataTypeName() { return "StatementNode"; }
 
   static fromJSON(data) {
-    return new EStatementNode(
+    return new StatementNode(
       restoreDataType(data.node),
       data.isSilent
     );
@@ -225,7 +225,6 @@ export class StatementNode {
   }
 
   get type_unit() { return this.node.type_unit; }
-
 
   toString() { return this.node.toString(); }
   
@@ -241,6 +240,28 @@ export class VarableCode
     this.paramsCount = paramsCount;
     this.localsCount = localsCount;
     this.lexicalParentFrame = lexicalParentFrame; 
+  }
+
+  toJSON() {
+    if (this.lexicalParentFrame != null)
+      throw new Error(`Попытка сохранить не корнивойю процедуру.`);
+    return {
+      statements: this.statements,
+      paramsCount: this.paramsCount,
+      localsCount: this.localsCount,
+    };
+  }
+
+  static get dataTypeName() { return "VarableCode"; }
+
+  static fromJSON(data) {
+    const restoredstatements = data.statements.map(stm => restoreDataType(stm));
+    return new VarableCode(
+      restoredstatements,
+      data.paramsCount,
+      data.localsCount,
+      null
+    );
   }
 
   toRawTeX(settings) { return "\\text{code}"; }
@@ -262,6 +283,7 @@ export class VarableCode
     return ret;
   }
 }
+regAST(VarableCode);
 
 export class ErrorNode extends ASTNode {
   constructor(msg, loc) {
