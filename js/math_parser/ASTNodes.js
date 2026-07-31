@@ -858,7 +858,7 @@ export class UnaryOpNodePlus extends UnaryOpNode {
 
   static get dataTypeName() { return "UnaryOpNodePlus"; }
 
-  static fromJSON(data) { UnaryOpNode.create(this, data); }
+  static fromJSON(data) { UnaryOpNode.create(UnaryOpNodePlus, data); }
 
   internal_evaluate(context) { return this.argument.internal_evaluate(context); }
 }
@@ -875,7 +875,7 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
 
   static get dataTypeName() { return "UnaryOpNodeMinus"; }
 
-  static fromJSON(data) { UnaryOpNode.create(this, data); }
+  static fromJSON(data) { UnaryOpNode.create(UnaryOpNodeMinus, data); }
 
   internal_evaluate(context) { 
     const argVal = this.argument.internal_evaluate(context);
@@ -895,7 +895,7 @@ export class UnaryOpNodeNot extends UnaryOpNode {
 
   static get dataTypeName() { return "UnaryOpNodeNot"; }
 
-  static fromJSON(data) { UnaryOpNode.create(this, data); }
+  static fromJSON(data) { UnaryOpNode.create(UnaryOpNodeNot, data); }
 
 
   internal_evaluate(context) { 
