@@ -36,7 +36,7 @@ export function test(data) {
     };
     const loc = new IndependentSourceLocation(loc_data);
     const nn = new AST.NumberNode(new ComplexNumber(1, 1), loc);
-    const node = new AST.UnaryOpNodeMinus(nn, loc);
+    const node = new AST.AddNode(new AST.UnaryOpNodeMinus(nn, loc), nn);
 
     //const savedState = context.serializeGlobalContext();
     const jsonResult = JSON.stringify(node);
