@@ -2167,6 +2167,27 @@ export class CallNode extends MathNode {
     this.args = args;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      id_name: this.id_name,
+      name: this.name,
+      args: this.args,
+    };
+  }
+
+  static get dataTypeName() { return "CallNode"; }
+
+  static fromJSON(data) {
+    const args = this.args.map(arg => restoreDataType(arg));
+    return new ConstantNode(
+      data.id_name,
+      data.name,
+      args,
+      restoreLocation(data.loc)
+    );
+  }  
+
   getPriority() { return OpPriority.PRIMARY; }
 
   toString(context) {
