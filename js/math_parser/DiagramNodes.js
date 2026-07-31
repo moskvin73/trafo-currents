@@ -13,6 +13,27 @@ export class PlotInitNode extends ASTNode {
     this.viewType = viewType;
   }
 
+  toJSON() {
+    return {
+      ...super.toJSON(),
+        diagramId: this.diagramId,
+        name: this.name,
+        mode: this.mode,
+        viewType: this.viewType
+    };
+  }
+
+  static get dataTypeName() { return "PlotInitNode"; }
+
+  static fromJSON(data) {
+    return new PlotInitNode(
+        data.diagramId,
+        data.name,
+        data.mode,
+        data.viewType
+    );
+  }
+
   get type_unit() { return TYPE_UNIT.PLOT; }
 
   internal_evaluate(context) { 
@@ -41,6 +62,7 @@ export class PlotInitNode extends ASTNode {
     }
   }
 }
+regAST(PlotInitNode);
 
 export class PlotDataNode extends ASTNode {
   constructor(diagramId, loc) {
