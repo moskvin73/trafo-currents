@@ -932,7 +932,7 @@ export class BinaryOpNode extends MathNode {
   static create(ClassRef, data) {
      return new ClassRef(
       restoreDataType(data.left),
-      restoreDataType(data.right,
+      restoreDataType(data.right),
       restoreLocation(data.loc)
     );   
   }
