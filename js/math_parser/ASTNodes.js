@@ -228,10 +228,10 @@ export class StatementNode {
 
 
   toString() { return this.node.toString(); }
-
   
   toTeX() { return this.node.toTeX(); }
 }
+regAST(StatementNode);
 
 export class VarableCode
 {
