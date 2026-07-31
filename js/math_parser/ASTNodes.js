@@ -420,7 +420,11 @@ export class NumberNode extends MathNode {
 
   get isLiteral() { return true; }
 
-  getPriority() { return OpPriority.PRIMARY; }
+  getPriority() {
+    if (this.value is instanceof ComplexNumber && !this.value.isComplexFormat())
+      return OpPriority.PRIMARY;
+    else return OpPriority.ADD_SUB;
+  }
 
   toString(context) { return this.value.toString(context); }
 
