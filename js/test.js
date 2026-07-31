@@ -37,9 +37,10 @@ export function test(data) {
     const loc = new IndependentSourceLocation(loc_data);
     const nn = new AST.NumberNode(new ComplexNumber(1, 1), loc);
     const node = new AST.AddNode(new AST.UnaryOpNodeMinus(nn, loc), nn, loc);
+    const p_node = new AST.PrintNode(["XXX", node]);
 
     //const savedState = context.serializeGlobalContext();
-    const jsonResult = JSON.stringify(node);
+    const jsonResult = JSON.stringify(p_node);
     console.log(jsonResult);
 
     const rawData = JSON.parse(jsonResult);
