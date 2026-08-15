@@ -55,7 +55,19 @@
             padding: 16px;
             box-sizing: border-box;
             transition: transform 0.3s ease; /* Плавное скрытие */
+
+            position: relative;
         }
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}        
 
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
@@ -94,6 +106,9 @@
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
+            <div>
+                Главные особенности Независимая прокрутка: У каждой панели задано overflow-y: auto, поэтому прокручивается только та область, где находится курсор или чей контент больше по высоте.Фиксированный низ: Задана точная высота строки в grid-template-rows (60px или любое ваше значение).Изменение ширины справа: Свойство resize: horizontal включает уголок изменения размера. Использование direction: rtl меняет сторону захвата на левую границу панели (чтобы было удобно тянуть изнутри экрана).
+            </div>
         </div>
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
     </div>
@@ -105,6 +120,16 @@
         const bottomPanel = document.getElementById('bottomPanel');
         let isResizing = false;
 
+window.addEventListener('keydown', function(event) {
+    // Проверяем комбинацию Ctrl+B или Alt+B
+    if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
+        event.preventDefault(); // Отменяем стандартное действие браузера
+        
+        // Переключаем видимость панели
+        const isHidden = container.classList.contains('hide-side');
+        toggleSidePanel(isHidden); 
+    }
+});      
         // Изменение ширины правой панели мышью
         resizer.addEventListener('mousedown', (e) => {
             isResizing = true;
