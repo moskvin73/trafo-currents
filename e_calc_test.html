@@ -72,10 +72,6 @@
             padding: 4px;
         }        
 
-        .close-btn:hover .icon-close {
-            color: red;
-        }
-
         /* Класс для иконки крестика */
         .icon-close {
             display: inline-block;
@@ -86,6 +82,10 @@
             mask: var(--close-icon) no-repeat center / contain;
         }
 
+         .close-btn:hover .icon-close {
+            color: red;
+        }
+       
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 2;
