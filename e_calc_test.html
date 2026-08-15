@@ -55,19 +55,32 @@
             padding: 16px;
             box-sizing: border-box;
             transition: transform 0.3s ease; /* Плавное скрытие */
-
             position: relative;
         }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-}        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }        
+
+        .close-btn:hover .icon-close {
+            color: red;
+        }
+
+        /* Класс для иконки крестика */
+        .icon-close {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: currentColor; /* Цвет наследуется от текста */
+            -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' xmlns='http://www.w3.org/2000/svg x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat center / contain;
+            mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' xmlns='http://www.w3.org/2000/svg x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat center / contain;
+        }      
 
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
@@ -120,16 +133,18 @@
         const bottomPanel = document.getElementById('bottomPanel');
         let isResizing = false;
 
-window.addEventListener('keydown', function(event) {
-    // Проверяем комбинацию Ctrl+B или Alt+B
-    if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
-        event.preventDefault(); // Отменяем стандартное действие браузера
-        
-        // Переключаем видимость панели
-        const isHidden = container.classList.contains('hide-side');
-        toggleSidePanel(isHidden); 
-    }
-});      
+        // Управление показа/скрытия боковой панелью
+        window.addEventListener('keydown', function(event) {
+            // Проверяем комбинацию Ctrl+B или Alt+B
+            if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
+                event.preventDefault(); // Отменяем стандартное действие браузера
+                
+                // Переключаем видимость панели
+                const isHidden = container.classList.contains('hide-side');
+                toggleSidePanel(isHidden); 
+            }
+        });
+
         // Изменение ширины правой панели мышью
         resizer.addEventListener('mousedown', (e) => {
             isResizing = true;
