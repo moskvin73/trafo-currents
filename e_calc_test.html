@@ -76,7 +76,9 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="main-center">Центральный контент (скролл)</div>
+        <div class="main-center">Центральный контент (скролл)
+            Нет результатов для function resizeMove(e) { if (!isResizing) return; // Считаем ширину в процентах от окна const newWidthPx = window.innerWidth - e.clientX; const newWidthPercent = (newWidthPx / window.innerWidth) * 100; // Ограничиваем от 15% до 70% if (newWidthPercent > 15 && newWidthPercent < 50) { container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`; } } А можо определить минмальный и максимальный проценты определить через переменные css.
+        </div>
         <div class="resizer" id="resizer"></div>
         <div class="side-panel" id="sidePanel">Правая панель (скролл / скрытие)</div>
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
