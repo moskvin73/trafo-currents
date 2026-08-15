@@ -33,43 +33,43 @@
         }
 
         .main-center {
-        grid-column: 1;
-        grid-row: 1;
-        overflow-y: auto; /* Независимый скролл */
-        padding: 16px;
+            grid-column: 1;
+            grid-row: 1;
+            overflow-y: auto; /* Независимый скролл */
+            padding: 16px;
         }
 
         .resizer {
-        grid-column: 2;
-        grid-row: 1;
-        background: #ccc;
-        cursor: col-resize;
-        user-select: none;
+            grid-column: 2;
+            grid-row: 1;
+            background: #ccc;
+            cursor: col-resize;
+            user-select: none;
         }
 
         .side-panel {
-        grid-column: 3;
-        grid-row: 1;
-        overflow-y: auto; /* Независимый скролл */
-        background: #f4f4f4;
-        padding: 16px;
-        box-sizing: border-box;
-        transition: transform 0.3s ease; /* Плавное скрытие */
+            grid-column: 3;
+            grid-row: 1;
+            overflow-y: auto; /* Независимый скролл */
+            background: #f4f4f4;
+            padding: 16px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease; /* Плавное скрытие */
         }
 
         .bottom-panel {
-        grid-column: 1 / 4; /* На всю ширину */
-        grid-row: 2;
-        height: 60px; /* Начальный размер, меняется из JS */
-        background: #e0e0e0;
-        overflow: auto;
-        box-sizing: border-box;
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 2;
+            height: 60px; /* Начальный размер, меняется из JS */
+            background: #e0e0e0;
+            overflow: auto;
+            box-sizing: border-box;
         }
 
         /* Класс для программного скрытия правой панели */
         .app-container.hide-side .resizer,
         .app-container.hide-side .side-panel {
-        display: none;
+            display: none;
         }
 
     </style>
@@ -108,9 +108,9 @@
             const newWidthPercent = (newWidthPx / window.innerWidth) * 100;
 
             // Ограничиваем значениями из переменных
-            if (newWidthPercent >= minVal && newWidthPercent <= maxVal) {
-                container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`;
-            }
+            if (newWidthPercent < minVal) newWidthPercent = minVal;
+            else if (newWidthPercent > maxVal) newWidthPercent = maxVal;
+            container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`;
         }
 
         function resizeUp() {
