@@ -10,33 +10,62 @@
 
     <style>
 
-        .container {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* делим экран на две равные колонки */
-        height: 100vh;                  /* ограничиваем высоту по размеру экрана */
-        overflow: hidden;               /* убираем общий скролл страницы */
-        }
+ .app-layout {
+  display: grid;
+  /* 3 колонки: середина, правая панель; 2 строки: контент и низ */
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: 1fr 60px; /* 60px — фиксированный размер низа */
+  grid-template-areas:
+    "main right"
+    "bottom bottom";
+  height: 100vh;
+  margin: 0;
+  overflow: hidden; /* Убираем общую прокрутку страницы */
+}
 
-        .panel {
-        overflow-y: auto;               /* включаем вертикальный скролл для каждой панели */
-        padding: 20px;
-        box-sizing: border-box;
-        }
+/* 1. Основная середина */
+.main-panel {
+  grid-area: main;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f9f9f9;
+}
 
-        .panel-1 {
-        background: #f0f0f0;
-        }
+/* 2. Нижняя панель (фиксированная) */
+.bottom-panel {
+  grid-area: bottom;
+  overflow-y: auto;
+  padding: 15px;
+  background: #333;
+  color: #fff;
+}
 
-        .panel-2 {
-        background: #e0e0e0;
-        }
+/* 3. Правая панель с изменением ширины */
+.right-panel {
+  grid-area: right;
+  overflow-y: auto;
+  padding: 20px;
+  background: #eee;
+  
+  /* Магия изменения размера */
+  resize: horizontal;
+  direction: rtl; /* Чтобы тянуть за левый край */
+  min-width: 150px;
+  max-width: 600px;
+}
+
+/* Возвращаем направление текста внутри правой панели */
+.right-panel > * {
+  direction: ltr; 
+}
 
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="panel panel-1">Первая панель с длинным текстом...</div>
-        <div class="panel panel-2">Вторая панель с другим содержимым...</div>
+    <div class="app-layout">
+        <main class="main-panel">Основная середина</main>
+        <aside class="right-panel">Правая панель (можно менять ширину)</aside>
+        <footer class="bottom-panel">Нижняя панель (фиксированный размер)</footer>
     </div>
 </body>
 </html>
