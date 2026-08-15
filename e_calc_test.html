@@ -88,23 +88,23 @@
 
         // Изменение ширины правой панели мышью
         resizer.addEventListener('mousedown', (e) => {
-        isResizing = true;
-        document.addEventListener('mousemove', resizeMove);
-        document.addEventListener('mouseup', resizeUp);
+            isResizing = true;
+            document.addEventListener('mousemove', resizeMove);
+            document.addEventListener('mouseup', resizeUp);
         });
 
         function resizeMove(e) {
-        if (!isResizing) return;
-        const newWidth = window.innerWidth - e.clientX;
-        if (newWidth > 100 && newWidth < window.innerWidth - 200) {
-            container.style.gridTemplateColumns = `1fr 4px ${newWidth}px`;
-        }
+            if (!isResizing) return;
+            const newWidth = window.innerWidth - e.clientX;
+            if (newWidth > 100 && newWidth < window.innerWidth - 200) {
+                container.style.gridTemplateColumns = `1fr 4px ${newWidth}px`;
+            }
         }
 
         function resizeUp() {
-        isResizing = false;
-        document.removeEventListener('mousemove', resizeMove);
-        document.removeEventListener('mouseup', resizeUp);
+            isResizing = false;
+            document.removeEventListener('mousemove', resizeMove);
+            document.removeEventListener('mouseup', resizeUp);
         }
 
         // Пример программного изменения высоты нижней панели
