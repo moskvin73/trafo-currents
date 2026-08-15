@@ -76,11 +76,25 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- Центральный контент -->
         <div class="main-center">Центральный контент (скролл)
-            Нет результатов для function resizeMove(e) { if (!isResizing) return; // Считаем ширину в процентах от окна const newWidthPx = window.innerWidth - e.clientX; const newWidthPercent = (newWidthPx / window.innerWidth) * 100; // Ограничиваем от 15% до 70% if (newWidthPercent > 15 && newWidthPercent < 50) { container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`; } } А можо определить минмальный и максимальный проценты определить через переменные css.
+            Нет результатов для function resizeMove(e) { if (!isResizing) return; // Считаем ширину в процентах от окна const 
+            newWidthPx = window.innerWidth - e.clientX; 
+            const newWidthPercent = (newWidthPx / window.innerWidth) * 100; // Ограничиваем от 15% до 70% 
+            if (newWidthPercent > 15 && newWidthPercent < 50) 
+            { container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`; } } 
+            А можо определить минмальный и максимальный проценты определить через переменные css.
         </div>
         <div class="resizer" id="resizer"></div>
-        <div class="side-panel" id="sidePanel">Правая панель (скролл / скрытие)</div>
+        <!-- Правая панель (скролл / скрытие) -->
+        <div class="side-panel" id="sidePanel">
+            <button class="close-btn" onclick="toggleSidePanel(false)" aria-label="Закрыть панель">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
     </div>
 
