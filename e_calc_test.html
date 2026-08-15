@@ -95,9 +95,14 @@
 
         function resizeMove(e) {
             if (!isResizing) return;
-            const newWidth = window.innerWidth - e.clientX;
-            if (newWidth > 100 && newWidth < window.innerWidth - 200) {
-                container.style.gridTemplateColumns = `1fr 4px ${newWidth}px`;
+
+            // Считаем ширину в процентах от окна
+            const newWidthPx = window.innerWidth - e.clientX;
+            const newWidthPercent = (newWidthPx / window.innerWidth) * 100;
+
+            // Ограничиваем от 15% до 70%
+            if (newWidthPercent > 15 && newWidthPercent < 50) {
+                container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`;
             }
         }
 
