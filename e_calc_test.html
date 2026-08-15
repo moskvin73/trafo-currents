@@ -12,7 +12,7 @@
 
         :root {
         --close-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
-        --close-size: 16px;
+        --close-icon-size: 16px;
         }
 
         html, body {
@@ -67,8 +67,8 @@
             position: absolute;
             top: 0px;
             right: 0px;
-            width: var(--close-size);
-            height: var(--close-size);
+            width: var(--close-icon-size);
+            height: var(--close-icon-size);
             padding: 0;
             line-height: 1;            
             background: transparent;
@@ -79,11 +79,11 @@
         /* Класс для иконки крестика */
         .icon-close {
             display: inline-block;
-            width: var(--close-size);
-            height: var(--close-size);
+            width: var(--close-icon-size);
+            height: var(--close-icon-size);
             background-color: currentColor; /* Цвет наследуется от текста */
-            -webkit-mask: var(--close-icon) no-repeat center / contain;
-            mask: var(--close-icon) no-repeat center / contain;
+            -webkit-mask: var(--close-icon-size) no-repeat center / contain;
+            mask: var(--close-icon-size) no-repeat center / contain;
         }
 
         .close-btn:hover .icon-close {
@@ -91,7 +91,7 @@
         }
 
         .info-panel {
-            padding: var(--close-size) 0px 0px 0px;
+            padding: var(--close-icon-size) 0px 0px 0px;
         }
        
         .bottom-panel {
