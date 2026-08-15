@@ -64,8 +64,8 @@
 
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 0px;
+            right: 0px;
             width: 16px;
             height: 16px;
             padding: 0;
@@ -87,6 +87,10 @@
 
         .close-btn:hover .icon-close {
             color: red;
+        }
+
+        .info-panel {
+            padding: 16px 16px 0px 0px;
         }
        
         .bottom-panel {
@@ -123,7 +127,7 @@
             <button class="close-btn" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                 <span class="icon-close"></span>
             </button>
-            <div>
+            <div contenteditable="info-panel">
                 Главные особенности Независимая прокрутка: У каждой панели задано overflow-y: auto, поэтому прокручивается только та область, где находится курсор или чей контент больше по высоте.Фиксированный низ: Задана точная высота строки в grid-template-rows (60px или любое ваше значение).Изменение ширины справа: Свойство resize: horizontal включает уголок изменения размера. Использование direction: rtl меняет сторону захвата на левую границу панели (чтобы было удобно тянуть изнутри экрана).
             </div>
         </div>
