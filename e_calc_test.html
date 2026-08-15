@@ -15,6 +15,33 @@
         --close-icon-size: 16px;
         }
 
+        .close-btn {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: var(--close-icon-size);
+            height: var(--close-icon-size);
+            padding: 0;
+            line-height: 1;            
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }        
+
+        /* Класс для иконки крестика */
+        .icon-close {
+            display: inline-block;
+            width: var(--close-icon-size);
+            height: var(--close-icon-size);
+            background-color: currentColor; /* Цвет наследуется от текста */
+            -webkit-mask: var(--close-icon) no-repeat center / contain;
+            mask: var(--close-icon) no-repeat center / contain;
+        }
+
+        .close-btn:hover .icon-close {
+            color: red;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
@@ -61,33 +88,6 @@
             box-sizing: border-box;
             transition: transform 0.3s ease; /* Плавное скрытие */
             position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            width: var(--close-icon-size);
-            height: var(--close-icon-size);
-            padding: 0;
-            line-height: 1;            
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }        
-
-        /* Класс для иконки крестика */
-        .icon-close {
-            display: inline-block;
-            width: var(--close-icon-size);
-            height: var(--close-icon-size);
-            background-color: currentColor; /* Цвет наследуется от текста */
-            -webkit-mask: var(--close-icon) no-repeat center / contain;
-            mask: var(--close-icon) no-repeat center / contain;
-        }
-
-        .close-btn:hover .icon-close {
-            color: red;
         }
 
         .info-panel {
