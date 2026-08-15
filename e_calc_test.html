@@ -7,8 +7,36 @@
 
     <!-- Подключение конфигурации и автозагрузки MathJax из репозитория -->
     <script src="./js/math-script.js"></script>
+
+    <style>
+
+        .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* делим экран на две равные колонки */
+        height: 100vh;                  /* ограничиваем высоту по размеру экрана */
+        overflow: hidden;               /* убираем общий скролл страницы */
+        }
+
+        .panel {
+        overflow-y: auto;               /* включаем вертикальный скролл для каждой панели */
+        padding: 20px;
+        box-sizing: border-box;
+        }
+
+        .panel-1 {
+        background: #f0f0f0;
+        }
+
+        .panel-2 {
+        background: #e0e0e0;
+        }
+
+    </style>
 </head>
 <body>
-    
+    <div class="container">
+        <div class="panel panel-1">Первая панель с длинным текстом...</div>
+        <div class="panel panel-2">Вторая панель с другим содержимым...</div>
+    </div>
 </body>
 </html>
