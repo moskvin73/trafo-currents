@@ -105,7 +105,7 @@
 
             // Считаем ширину в процентах от окна
             const newWidthPx = window.innerWidth - e.clientX;
-            const newWidthPercent = (newWidthPx / window.innerWidth) * 100;
+            let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
 
             // Ограничиваем значениями из переменных
             if (newWidthPercent < minVal) newWidthPercent = minVal;
