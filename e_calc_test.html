@@ -114,10 +114,7 @@
         <!-- Правая панель (скролл / скрытие) -->
         <div class="side-panel" id="sidePanel">
             <button class="close-btn" onclick="toggleSidePanel(false)" aria-label="Закрыть панель">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                <span class="icon-close"></span>
             </button>
             <div>
                 Главные особенности Независимая прокрутка: У каждой панели задано overflow-y: auto, поэтому прокручивается только та область, где находится курсор или чей контент больше по высоте.Фиксированный низ: Задана точная высота строки в grid-template-rows (60px или любое ваше значение).Изменение ширины справа: Свойство resize: horizontal включает уголок изменения размера. Использование direction: rtl меняет сторону захвата на левую границу панели (чтобы было удобно тянуть изнутри экрана).
