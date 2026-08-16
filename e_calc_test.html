@@ -96,6 +96,53 @@
             position: relative;
         }
 
+        /* Класс для программного скрытия правой панели */
+        .app-container.hide-side .resizer-x,
+        .app-container.hide-side .side-panel {
+            display: none;
+        }
+
+        /* #endregion Боковая панель */
+
+        /* #region Нижняя панель */
+
+        .resizer-y {
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 2;
+            background: #ccc;
+            cursor: row-resize;
+            user-select: none;
+            pointer-events: auto;
+        }
+
+        .resizer-bottom-panel {
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 3;
+            background: #f4f4f4;
+            overflow: auto;
+            box-sizing: border-box;
+            padding: 0;
+            transition: transform 0.3s ease; /* Плавное скрытие */
+            position: relative;
+        }
+
+        /* Класс для программного скрытия нижней панели */
+        .app-container.hide-bottom .resizer-y,
+        .app-container.hide-bottom .resizer-bottom-panel {
+            display: none;
+        }
+        /* #endregion Нижняя панель */
+
+        .bottom-panel {
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 4;
+            height: 30px; /* Начальный размер, меняется из JS */
+            background: #e0e0e0;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+
+        /* #region Tab контроллер */
         .tabs-container {
             display: flex; 
             flex-direction: column;
@@ -186,67 +233,17 @@
 
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }       
-
-        /* Класс для программного скрытия правой панели */
-        .app-container.hide-side .resizer-x,
-        .app-container.hide-side .side-panel {
-            display: none;
-        }
-
-        /* #endregion Боковая панель */
-
-        .resizer-y {
-            grid-column: 1 / 4; /* На всю ширину */
-            grid-row: 2;
-            background: #ccc;
-            cursor: row-resize;
-            user-select: none;
-            pointer-events: auto;
-        }
-
-        .resizer-bottom-panel {
-            grid-column: 1 / 4; /* На всю ширину */
-            grid-row: 3;
-            background: #f4f4f4;
-            overflow: auto;
-            box-sizing: border-box;
-            padding: 0;
-            transition: transform 0.3s ease; /* Плавное скрытие */
-            position: relative;
-        }
-
-        /* Класс для программного скрытия нижней панели */
-        .app-container.hide-bottom .resizer-y,
-        .app-container.hide-bottom .resizer-bottom-panel {
-            display: none;
-        }
-
-        .bottom-panel {
-            grid-column: 1 / 4; /* На всю ширину */
-            grid-row: 4;
-            height: 30px; /* Начальный размер, меняется из JS */
-            background: #e0e0e0;
-            overflow: auto;
-            box-sizing: border-box;
-        }
+        /* #endregion Tab контроллер */
 
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Центральный контент -->
-        <div class="main-center">Центральный контент (скролл)
-            Нет результатов для function resizeMoveX(e) { if (!isResizing) return; // Считаем ширину в процентах от окна const 
-            newWidthPx = window.innerWidth - e.clientX; 
-            const newWidthPercent = (newWidthPx / window.innerWidth) * 100; // Ограничиваем от 15% до 70% 
-            if (newWidthPercent > 15 && newWidthPercent  50) 
-            { container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`; } } 
-            А можо определить минмальный и максимальный проценты определить через переменные css.
-        </div>
+        <div class="main-center">Центральный контент (скролл)</div>
         <div class="resizer-x" id="resizer-x"></div>
         <!-- Правая панель (скролл / скрытие) -->
-        <div class="side-panel" id="sidePanel">
-          
+        <div class="side-panel" id="sidePanel">          
             <div class="tabs-container">
                 <div class="tablist-wrapper" role="region" aria-label="Вкладки">
                     <!-- Шапка с вкладками -->
@@ -341,9 +338,7 @@
     </div>
 
     <script>
-        const resizer_x = document.getElementById('resizer-x');
-        const container = document.querySelector('.app-container');
-        const bottomPanel = document.getElementById('bottomPanel');
+        
         const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
         const panels = document.querySelectorAll('.tab-panel');
@@ -408,6 +403,8 @@
             });
         });       
 
+        const container = document.querySelector('.app-container');
+        const bottomPanel = document.getElementById('bottomPanel');
 
         // Управление показа/скрытия боковой панелью
         const key_panels = {
@@ -426,6 +423,7 @@
         
 
         let isResizing = false;
+        const resizer_x = document.getElementById('resizer-x');
         // Изменение ширины правой панели мышью
         resizer_x.addEventListener('mousedown', (e) => {
             e.preventDefault(); 
