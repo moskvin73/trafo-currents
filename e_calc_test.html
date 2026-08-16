@@ -425,7 +425,7 @@
         let isResizing = false;
         // Изменение ширины правой панели мышью
         resizer_x.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // отключаем выделение текста
+            e.preventDefault(); 
             document.body.style.cursor = getComputedStyle(resizer_x).cursor;
             isResizing = true;
             document.addEventListener('mousemove', resizeMoveX);
@@ -458,7 +458,7 @@
 
         const resizer_y = document.getElementById('resizer-y');
         resizer_y.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // отключаем выделение текста
+            e.preventDefault();
             document.body.style.cursor = getComputedStyle(resizer_y).cursor;
             isResizing = true;
             document.addEventListener('mousemove', resizeMoveY);
