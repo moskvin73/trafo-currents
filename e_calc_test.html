@@ -81,6 +81,7 @@
             background: #ccc;
             cursor: col-resize;
             user-select: none;
+            pointer-events: auto;
         }
 
         .side-panel {
@@ -202,6 +203,7 @@
             background: #ccc;
             cursor: row-resize;
             user-select: none;
+            pointer-events: auto;
         }
 
         .resizer-bottom-panel {
@@ -424,7 +426,7 @@
         // Изменение ширины правой панели мышью
         resizer_x.addEventListener('mousedown', (e) => {
             e.preventDefault(); // отключаем выделение текста
-            document.body.style.cursor = resizer_x.style.cursor;
+            document.body.style.cursor = getComputedStyle(resizer_x).cursor;
             isResizing = true;
             document.addEventListener('mousemove', resizeMoveX);
             document.addEventListener('mouseup', resizeUpX);
@@ -457,7 +459,7 @@
         const resizer_y = document.getElementById('resizer-y');
         resizer_y.addEventListener('mousedown', (e) => {
             e.preventDefault(); // отключаем выделение текста
-            document.body.style.cursor = resizer_y.style.cursor;
+            document.body.style.cursor = getComputedStyle(resizer_y).cursor;
             isResizing = true;
             document.addEventListener('mousemove', resizeMoveY);
             document.addEventListener('mouseup', resizeUpY);
