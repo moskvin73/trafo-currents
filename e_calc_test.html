@@ -467,7 +467,7 @@
             const resizerHeight = 4;
 
             // Считаем ширину в процентах от окна
-            const newHeightPx = window.innerHeight - bottomPanel.height - e.clientY - (resizerHeight / 2);
+            const newHeightPx = window.innerHeight - /*bottomPanel.height -*/ e.clientY - (resizerHeight / 2);
             let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
 
             // Ограничиваем значениями из переменных
