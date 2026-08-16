@@ -408,8 +408,23 @@
             });
         });       
 
+
         // Управление показа/скрытия боковой панелью
+        const key_panels = {
+            KeyB: { toggle: toggleSidePanel, hideClass: 'hide-side' },
+            KeyA: { toggle: toggleBottomPanel, hideClass: 'hide-bottom' }
+        };
+       
         window.addEventListener('keydown', function(event) {
+            const panel = pkey_panels[event.code];
+            
+            if (panel && (event.ctrlKey || event.altKey)) {
+                event.preventDefault();
+                panel.toggle(container.classList.contains(panel.hideClass));
+            }
+        });
+        
+        /*window.addEventListener('keydown', function(event) {
             // Проверяем комбинацию Ctrl+B или Alt+B
             if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
                 event.preventDefault(); // Отменяем стандартное действие браузера
@@ -423,7 +438,7 @@
                 const isHidden = container.classList.contains('hide-bottom');
                 toggleBottomPanel(isHidden);
             }
-        });
+        });*/
 
         let isResizing = false;
         // Изменение ширины правой панели мышью
