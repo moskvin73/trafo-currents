@@ -82,7 +82,6 @@
         .side-panel {
             grid-column: 3;
             grid-row: 1;
-            overflow-y: auto; /* Независимый скролл */
             background: #f4f4f4;
             padding: 0;
             box-sizing: border-box;
@@ -129,6 +128,7 @@
         .tab-content {
             padding-left: 4px;
             padding-right: 4px;
+            overflow-y: auto; /* Независимый скролл */
         }
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }       
@@ -179,7 +179,6 @@
                 <!-- Блоки с содержимым -->
                 <div class="tab-content">
                     <div id="tab-1" class="tab-panel active" id="variables-tab" role="tabpanel">
-
                         <div class="tab-header">
                             <h3>Список переменных</h3>
                         </div>
