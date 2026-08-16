@@ -113,18 +113,14 @@
         }
 
         .tab-list {
-            /*flex-shrink: 0;*/
             flex-grow: 1;
             display: flex;
             overflow-x: auto;
             white-space: nowrap;
             box-sizing: border-box;
-            /*gap: 8px;*/
             scroll-behavior: smooth;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE/Edge */            
-            /*scrollbar-width: thin;
-            padding: 0px var(--close-icon-size) 0px 0px;*/
             border-bottom: 2px solid #ccc;
         }
 
@@ -138,7 +134,6 @@
             border: 1px solid #ccc;
             cursor: pointer;
             z-index: 2;
-            flex-shrink: 0;
         }
 
         .tab-btn {
@@ -208,15 +203,14 @@
             <div class="tabs-container">
 
                 <div class="tablist-wrapper" role="region" aria-label="Вкладки">
-                <button class="scroll-btn scroll-left" aria-label="Прокрутить влево">&lt;</button>
-
-                <!-- Шапка с вкладками -->
-                <div class="tab-list" role="tablist">
-                    <button class="tab-btn active" data-target="tab-1" role="tab">Переменные</button>
-                    <button class="tab-btn" data-target="tab-2" role="tab">Справка</button>
-                    <button class="tab-btn" data-target="tab-3" role="tab">Примеры</button>           
-                </div>
-                <button class="scroll-btn scroll-right" aria-label="Прокрутить вправо">&gt;</button>
+                    <button class="scroll-btn left" aria-label="Прокрутить влево">&lt;</button>
+                    <!-- Шапка с вкладками -->
+                    <div class="tab-list" role="tablist">
+                        <button class="tab-btn active" data-target="tab-1" role="tab">Переменные</button>
+                        <button class="tab-btn" data-target="tab-2" role="tab">Справка</button>
+                        <button class="tab-btn" data-target="tab-3" role="tab">Примеры</button>           
+                    </div>
+                    <button class="scroll-btn right" aria-label="Прокрутить вправо">&gt;</button>
                     <button class="scroll-btn" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                         <span class="icon-close"></span>
                     </button>
@@ -275,9 +269,22 @@
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
         const buttons = document.querySelectorAll('.tab-btn');
-        const panels = document.querySelectorAll('.tab-panel');        
+        const panels = document.querySelectorAll('.tab-panel');
+        const btnLeft = document.querySelector('.scroll-btn.left');
+        const btnRight = document.querySelector('.scroll-btn.right');        
         let isResizing = false;
 
+ // Шаг прокрутки за один клик
+const scrollAmount = 150;
+
+btnLeft.addEventListener('click', () => {
+  tablist.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+});
+
+btnRight.addEventListener('click', () => {
+  tablist.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+});
+       
         // Управление показа/скрытия боковой панелью
         window.addEventListener('keydown', function(event) {
             // Проверяем комбинацию Ctrl+B или Alt+B
