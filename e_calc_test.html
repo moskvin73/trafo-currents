@@ -151,7 +151,6 @@
                     <button class="tab-btn active" data-target="tab-1" role="tab">Вкладка 1</button>
                     <button class="tab-btn" data-target="tab-2" role="tab">Вкладка 2</button>
                     <button class="tab-btn" data-target="tab-3" role="tab">Вкладка 3</button>
-                    <!-- Новую вкладку можно добавить сюда, скопировав кнопку и изменив data-target -->
                 </div>
 
                 <!-- Блоки с содержимым -->
@@ -159,8 +158,8 @@
                     <div id="tab-1" class="tab-panel active" role="tabpanel">Контент первой вкладки</div>
                     <div id="tab-2" class="tab-panel" role="tabpanel">Контент второй вкладки</div>
                     <div id="tab-3" class="tab-panel" role="tabpanel">Контент третьей вкладки</div>
-                    <!-- Новый контент добавляется сюда с соответствующим id -->
                 </div>
+
             </div>
         </div>
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
@@ -171,6 +170,8 @@
         const resizer = document.getElementById('resizer');
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
+        const buttons = document.querySelectorAll('.tab-btn');
+        const panels = document.querySelectorAll('.tab-panel');        
         let isResizing = false;
 
         // Управление показа/скрытия боковой панелью
@@ -184,6 +185,21 @@
                 toggleSidePanel(isHidden); 
             }
         });
+
+        buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Убираем активный класс у всех кнопок и панелей
+            buttons.forEach(btn => btn.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            // Добавляем активный класс текущей кнопке
+            button.classList.add('active');
+
+            // Находим и показываем нужную панель
+            const targetId = button.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+            });
+        });       
 
         // Изменение ширины правой панели мышью
         resizer.addEventListener('mousedown', (e) => {
