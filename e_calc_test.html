@@ -75,7 +75,7 @@
 
         /* #region Боковая панель */
 
-        .resizer {
+        .resizer-x {
             grid-column: 2;
             grid-row: 1;
             background: #ccc;
@@ -189,7 +189,7 @@
         .tab-panel.active { display: block; }       
 
         /* Класс для программного скрытия правой панели */
-        .app-container.hide-side .resizer,
+        .app-container.hide-side .resizer-x,
         .app-container.hide-side .side-panel {
             display: none;
         }
@@ -218,7 +218,7 @@
             { container.style.gridTemplateColumns = `1fr 4px ${newWidthPercent}%`; } } 
             А можо определить минмальный и максимальный проценты определить через переменные css.
         </div>
-        <div class="resizer" id="resizer"></div>
+        <div class="resizer-x" id="resizer-x"></div>
         <!-- Правая панель (скролл / скрытие) -->
         <div class="side-panel" id="sidePanel">
           
@@ -314,7 +314,7 @@
     </div>
 
     <script>
-        const resizer = document.getElementById('resizer');
+        const resizer_x = document.getElementById('resizer-x');
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
         const list_wrapper = document.querySelector('.tablist-wrapper');
@@ -395,7 +395,7 @@
         });       
 
         // Изменение ширины правой панели мышью
-        resizer.addEventListener('mousedown', (e) => {
+        resizer_x.addEventListener('mousedown', (e) => {
             isResizing = true;
             document.addEventListener('mousemove', resizeMove);
             document.addEventListener('mouseup', resizeUp);
