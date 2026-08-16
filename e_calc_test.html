@@ -277,27 +277,27 @@
         let isResizing = false;
 
         function scrollByTab(direction) {
-  const tabs = buttons;//Array.from(tablist.querySelectorAll('.tab-item'));
-  const containerScrollLeft = tablist.scrollLeft;
-  
-  if (direction === 'right') {
-    // Ищем первую вкладку, которая находится правее текущего левого края скролла
-    const nextTab = tabs.find(tab => tab.offsetLeft > containerScrollLeft + 5);
-    if (nextTab) {
-      tablist.scrollTo({ left: nextTab.offsetLeft, behavior: 'smooth' });
-    }
-  } else {
-    // Ищем вкладку, которая находится левее текущего положения
-    const prevTabs = tabs.filter(tab => tab.offsetLeft < containerScrollLeft - 5);
-    if (prevTabs.length > 0) {
-      const prevTab = prevTabs[prevTabs.length - 1];
-      tablist.scrollTo({ left: prevTab.offsetLeft, behavior: 'smooth' });
-    }
-  }
-}
+            const tabs = Array.from(buttons);
+            const containerScrollLeft = tablist.scrollLeft;
+            
+            if (direction === 'right') {
+                // Ищем первую вкладку, которая находится правее текущего левого края скролла
+                const nextTab = tabs.find(tab => tab.offsetLeft > containerScrollLeft + 5);
+                if (nextTab) {
+                tablist.scrollTo({ left: nextTab.offsetLeft, behavior: 'smooth' });
+                }
+            } else {
+                // Ищем вкладку, которая находится левее текущего положения
+                const prevTabs = tabs.filter(tab => tab.offsetLeft < containerScrollLeft - 5);
+                if (prevTabs.length > 0) {
+                const prevTab = prevTabs[prevTabs.length - 1];
+                tablist.scrollTo({ left: prevTab.offsetLeft, behavior: 'smooth' });
+                }
+            }
+        }
 
-btnRight.addEventListener('click', () => scrollByTab('right'));
-btnLeft.addEventListener('click', () => scrollByTab('left'));
+        btnRight.addEventListener('click', () => scrollByTab('right'));
+        btnLeft.addEventListener('click', () => scrollByTab('left'));
 
         // Управление показа/скрытия боковой панелью
         window.addEventListener('keydown', function(event) {
