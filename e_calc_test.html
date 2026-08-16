@@ -187,17 +187,17 @@
         });
 
         buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Убираем активный класс у всех кнопок и панелей
-            buttons.forEach(btn => btn.classList.remove('active'));
-            panels.forEach(panel => panel.classList.remove('active'));
+            button.addEventListener('click', () => {
+                // Убираем активный класс у всех кнопок и панелей
+                buttons.forEach(btn => btn.classList.remove('active'));
+                panels.forEach(panel => panel.classList.remove('active'));
 
-            // Добавляем активный класс текущей кнопке
-            button.classList.add('active');
+                // Добавляем активный класс текущей кнопке
+                button.classList.add('active');
 
-            // Находим и показываем нужную панель
-            const targetId = button.getAttribute('data-target');
-            document.getElementById(targetId).classList.add('active');
+                // Находим и показываем нужную панель
+                const targetId = button.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
             });
         });       
 
