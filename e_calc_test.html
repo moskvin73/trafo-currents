@@ -119,6 +119,7 @@
             white-space: nowrap;
             box-sizing: border-box;
             scroll-behavior: smooth;
+            scroll-snap-type: x mandatory; /* точная прилипание к элементам */
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE/Edge */            
             border-bottom: 2px solid #ccc;
@@ -137,6 +138,7 @@
         }
 
         .tab-btn {
+            scroll-snap-align: start;
             flex-shrink: 0;         /* Кнопки не сжимаются принудительно */
             max-width: 100px;       /* Максимальная ширина кнопки */
             overflow: hidden;       /* Скрываем выходящий за рамки текст */
@@ -201,7 +203,6 @@
         <div class="side-panel" id="sidePanel">
           
             <div class="tabs-container">
-
                 <div class="tablist-wrapper" role="region" aria-label="Вкладки">
                     <button class="scroll-btn left" aria-label="Прокрутить влево">&lt;</button>
                     <!-- Шапка с вкладками -->
