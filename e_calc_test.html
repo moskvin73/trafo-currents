@@ -486,7 +486,7 @@
 
         function resizeMoveY(e) {
             if (!isResizing) return;
-
+ 
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-height'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
