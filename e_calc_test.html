@@ -148,6 +148,14 @@
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }       
 
+        /* Класс для программного скрытия правой панели */
+        .app-container.hide-side .resizer,
+        .app-container.hide-side .side-panel {
+            display: none;
+        }
+
+        /* #endregion Боковая панель */
+
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 2;
@@ -156,14 +164,6 @@
             overflow: auto;
             box-sizing: border-box;
         }
-
-        /* Класс для программного скрытия правой панели */
-        .app-container.hide-side .resizer,
-        .app-container.hide-side .side-panel {
-            display: none;
-        }
-
-        /* #endregion Боковая панель */
 
     </style>
 </head>
