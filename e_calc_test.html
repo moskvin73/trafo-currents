@@ -62,7 +62,7 @@
             /* 1 колонка: центр, 2: разделитель, 3: правая панель */
             /* 1 строка: контент, 2: низ */
             grid-template-columns: 1fr 4px 30%;
-            grid-template-rows: 1fr auto;
+            grid-template-rows: 1fr 4px 30% auto;
             box-sizing: border-box;
         }
 
@@ -196,9 +196,29 @@
 
         /* #endregion Боковая панель */
 
-        .bottom-panel {
+        .resizer-y {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 2;
+            background: #ccc;
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .resizer-bottom-panel {
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 3;
+            height: 60px; /* Начальный размер, меняется из JS */
+            background: #e0e0e0;
+            overflow: auto;
+            box-sizing: border-box;
+            padding: 0;
+            transition: transform 0.3s ease; /* Плавное скрытие */
+            position: relative;
+        }
+
+        .bottom-panel {
+            grid-column: 1 / 4; /* На всю ширину */
+            grid-row: 4;
             height: 60px; /* Начальный размер, меняется из JS */
             background: #e0e0e0;
             overflow: auto;
