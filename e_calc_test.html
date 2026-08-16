@@ -106,6 +106,12 @@
             overflow: hidden;
         }
 
+        .tablist-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
         .tab-list {
             flex-shrink: 0;
             display: flex;
@@ -191,13 +197,17 @@
         <div class="side-panel" id="sidePanel">
           
             <div class="tabs-container">
+
+                <div class="tablist-wrapper" role="region" aria-label="Вкладки">
                 <button class="scroll-btn scroll-left" aria-label="Прокрутить влево">&lt;</button>
-                
+
                 <!-- Шапка с вкладками -->
                 <div class="tab-list" role="tablist">
                     <button class="tab-btn active" data-target="tab-1" role="tab">Переменные</button>
                     <button class="tab-btn" data-target="tab-2" role="tab">Справка</button>
                     <button class="tab-btn" data-target="tab-3" role="tab">Примеры</button>           
+                </div>
+                <button class="scroll-btn scroll-right" aria-label="Прокрутить вправо">&gt;</button>
                     <button class="close-btn" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                         <span class="icon-close"></span>
                     </button>
