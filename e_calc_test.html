@@ -215,6 +215,12 @@
             position: relative;
         }
 
+        /* Класс для программного скрытия нижней панели */
+        .app-container.hide-bottom .resizer-y,
+        .app-container.hide-bottom .resizer-bottom-panel {
+            display: none;
+        }
+
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 4;
@@ -344,7 +350,6 @@
         const tablist = document.querySelector('.tab-list');
         const btnLeft = document.querySelector('.scroll-btn.left');
         const btnRight = document.querySelector('.scroll-btn.right');        
-        let isResizing = false;
 
         function updateButtonsVisibility() {
             const hasOverflow = tablist.scrollWidth > tablist.clientWidth;
@@ -415,6 +420,7 @@
             });
         });       
 
+        let isResizing = false;
         // Изменение ширины правой панели мышью
         resizer_x.addEventListener('mousedown', (e) => {
             isResizing = true;
