@@ -54,13 +54,31 @@
 
         /* Основной контейнер */
         .app-container {
+            /* Дефолтные значения переменных */
+            --col-track-1: 1fr;
+            --resizer-x: 4px;
+            --col-width: 30%;
+
+            --grid-columns: var(--col-track-1, 1fr) var(--resizer-x, 4px) var(--col-width, 30%);
+
+            --row-track-1: 1fr;
+            --resizer-y: 4px;
+            --row-height: 30%;
+            --row-track-4: auto;
+
+            --grid-rows: var(--row-track-1, 1fr) var(--resizer-y, 4px) var(--row-height, 30%) var(--row-track-4, auto);
+
             --min-width: 15;
             --max-width: 50;
+            
+            --min-height: 15;
+            --max-height: 50;
+
             display: grid;
             width: 100vw;
             height: 100vh;
-            grid-template-columns: 1fr 4px 30%;
-            grid-template-rows: 1fr 4px 30% auto;
+            grid-template-columns: var(--grid-columns);
+            grid-template-rows: var(--grid-rows);
             box-sizing: border-box;
         }
 
