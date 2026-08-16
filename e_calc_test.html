@@ -520,7 +520,20 @@
         }
 
         function toggleSidePanel(show) {
-            container.classList.toggle('hide-side', !show);
+            //container.classList.toggle('hide-side', !show);
+            if (show) {
+                // Восстанавливаем сохраненный размер или ставим дефолтный
+                const savedColumns = container.dataset.savedColumns || '1fr 4px 30%';
+                container.style.gridTemplateColumns = savedColumns;
+                container.classList.remove('hide-side');
+            } else {
+                // Сохраняем текущий актуальный размер перед скрытием
+                if (!container.classList.contains('hide-side')) {
+                    container.dataset.savedColumns = container.style.gridTemplateColumns || '1fr 4px 30%';
+                }
+                container.style.gridTemplateColumns = `1fr 0px 0%`;
+                container.classList.add('hide-side');
+            }
         }
     </script>
 </body>
