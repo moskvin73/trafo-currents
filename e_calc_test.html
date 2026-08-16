@@ -97,17 +97,27 @@
 
         .tab-list { 
             display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 8px;
+            scrollbar-width: thin; /* Тонкий скроллбар для Firefox */
             padding: 0px var(--close-icon-size) 0px 0px; 
-            border-bottom: 2px solid #ccc; 
+            border-bottom: 2px solid #ccc;
         }
 
-        .tab-btn { 
-            padding: 4px 10px; 
+        .tab-btn {
+            flex-shrink: 0;         /* Кнопки не сжимаются принудительно */
+            max-width: 150px;       /* Максимальная ширина кнопки */
+            overflow: hidden;       /* Скрываем выходящий за рамки текст */
+            text-overflow: ellipsis;/* Добавляем троеточие (...) */
+            white-space: nowrap;    /* Текст в одну строку */            
+            padding: 4px 10px;
             border: none; 
             background: none; 
             cursor: pointer; 
             font-size: 12px; 
         }
+
         .tab-btn.active { border-bottom: 2px solid #007bff; font-weight: bold; color: #007bff; }
 
         .tab-content {
