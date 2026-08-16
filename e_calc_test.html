@@ -435,9 +435,8 @@
             const minVal = parseFloat(styles.getPropertyValue('--min-width'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-width'));
             const resizerWidth = 4;
-
             // Считаем ширину в процентах от окна
-            const newWidthPx = window.innerWidth - e.clientX - (resizerWidth / 2);
+            const newWidthPx = window.innerWidth - bottomPanel.height - e.clientX - (resizerWidth / 2);
             let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
 
             // Ограничиваем значениями из переменных
