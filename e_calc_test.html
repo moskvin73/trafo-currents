@@ -130,17 +130,17 @@
         }
 
         .close-btn-side-panel {
+            display: grid;
             flex-shrink: 0;
             background: #fff;
             border: 1px solid #ccc;
             cursor: pointer;
             z-index: 2;
-            width: var(--close-icon-size);
-            height: var(--close-icon-size);
-            margin-top: auto;
-            margin-bottom: auto;
+            min-width: var(--close-icon-size);
+            min-height: var(--close-icon-size);
             padding: 0;
-            line-height: 1;            
+            line-height: 1;
+            place-items: center;           
         }
         .close-btn-side-panel:hover .icon-close {
             color: red;
