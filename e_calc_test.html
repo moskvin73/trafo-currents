@@ -285,11 +285,9 @@
     </div>
 
     <script>
-
         const resizer = document.getElementById('resizer');
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
-
         const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
         const panels = document.querySelectorAll('.tab-panel');
@@ -331,9 +329,9 @@
         btnLeft.addEventListener('click', () => scrollByTab('left'));
 
         const observer = new ResizeObserver(entries => {
-        for (let entry of entries) {
-            updateButtonsVisibility();
-        }
+            for (let entry of entries) {
+                updateButtonsVisibility();
+            }
         });
 
         observer.observe(tablist);        
