@@ -395,18 +395,6 @@
         window.addEventListener('resize', updateButtonsVisibility);
         updateButtonsVisibility();
 
-        // Управление показа/скрытия боковой панелью
-        window.addEventListener('keydown', function(event) {
-            // Проверяем комбинацию Ctrl+B или Alt+B
-            if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
-                event.preventDefault(); // Отменяем стандартное действие браузера
-                
-                // Переключаем видимость панели
-                const isHidden = container.classList.contains('hide-side');
-                toggleSidePanel(isHidden); 
-            }
-        });
-
         buttons.forEach(button => {
             button.addEventListener('click', () => {
                 // Убираем активный класс у всех кнопок и панелей
@@ -421,6 +409,23 @@
                 document.getElementById(targetId).classList.add('active');
             });
         });       
+
+        // Управление показа/скрытия боковой панелью
+        window.addEventListener('keydown', function(event) {
+            // Проверяем комбинацию Ctrl+B или Alt+B
+            if (event.code === 'KeyB' && (event.ctrlKey || event.altKey)) {
+                event.preventDefault(); // Отменяем стандартное действие браузера
+                
+                // Переключаем видимость панели
+                const isHidden = container.classList.contains('hide-side');
+                toggleSidePanel(isHidden); 
+            }
+            else if (event.code === 'KeyA' && (event.ctrlKey || event.altKey)) {
+                event.preventDefault();
+                const isHidden = container.classList.contains('hide-bottom');
+                toggleBottomPanel(isHidden);
+            }
+        });
 
         let isResizing = false;
         // Изменение ширины правой панели мышью
@@ -496,7 +501,10 @@
         bottomPanel.style.height = `${heightInPx}px`;
         }
 
-        // Пример программного скрытия/показа правой панели
+        function toggleBottomPanel(show) {
+            container.classList.toggle('hide-bottom', !show);
+        }
+
         function toggleSidePanel(show) {
             container.classList.toggle('hide-side', !show);
         }
