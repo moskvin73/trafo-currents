@@ -178,7 +178,43 @@
 
                 <!-- Блоки с содержимым -->
                 <div class="tab-content">
-                    <div id="tab-1" class="tab-panel active" role="tabpanel">Контент первой вкладки</div>
+                    <div id="tab-1" class="tab-panel active" id="variables-tab" role="tabpanel">
+
+                        <div class="tab-header">
+                            <h3>Список переменных</h3>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                            <tr>
+                                <th>Имя</th>
+                                <th>Тип</th>
+                                <th>Значение</th>
+                                <th>Действия</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><code>site_name</code></td>
+                                <td>Строка</td>
+                                <td>Мой Сайт</td>
+                                <td>
+                                <button class="btn-sm">Изменить</button>
+                                <button class="btn-sm btn-danger">Удалить</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>max_items</code></td>
+                                <td>Число</td>
+                                <td>100</td>
+                                <td>
+                                <button class="btn-sm">Изменить</button>
+                                <button class="btn-sm btn-danger">Удалить</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div id="tab-2" class="tab-panel" role="tabpanel">Контент второй вкладки</div>
                     <div id="tab-3" class="tab-panel" role="tabpanel">Контент третьей вкладки</div>
                 </div>
