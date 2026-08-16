@@ -460,21 +460,21 @@
         });
 
         function resizeMoveY(e) {
-            /*if (!isResizing) return;
+            if (!isResizing) return;
 
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-width'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-width'));
-            const resizerWidth = 4;
+            const resizerHeight = 4;
 
             // Считаем ширину в процентах от окна
-            const newWidthPx = window.innerWidth - e.clientX - (resizerWidth / 2);
-            let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
+            const newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
+            let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
 
             // Ограничиваем значениями из переменных
-            if (newWidthPercent < minVal) newWidthPercent = minVal;
-            else if (newWidthPercent > maxVal) newWidthPercent = maxVal;
-            container.style.gridTemplateColumns = `1fr ${resizerWidth}px ${newWidthPercent}%`;*/
+            if (newHeightPercent < minVal) newHeightPercent = minVal;
+            else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
+            container.style.gridTemplateRows = `1fr ${resizerHeight}px ${newHeightPercent}% auto`;
         }
 
         function resizeUpY() {
