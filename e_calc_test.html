@@ -90,9 +90,26 @@
             position: relative;
         }
 
-        .info-panel {
-            padding: var(--close-icon-size) 0px 0px 0px;
+        .tabs-container { 
+            font-family: sans-serif;
+            padding: var(--close-icon-size) 0px 0px 0px; 
         }
+
+        .tab-list { 
+            display: flex; 
+            border-bottom: 2px solid #ccc; 
+        }
+
+        .tab-btn { 
+            padding: 10px 20px; 
+            border: none; 
+            background: none; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
+        .tab-btn.active { border-bottom: 2px solid #007bff; font-weight: bold; color: #007bff; }
+        .tab-panel { display: none; padding: 20px 0; }
+        .tab-panel.active { display: block; }       
        
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
@@ -128,8 +145,22 @@
             <button class="close-btn" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                 <span class="icon-close"></span>
             </button>
-            <div class="info-panel">
-                Главные особенности Независимая прокрутка: У каждой панели задано overflow-y: auto, поэтому прокручивается только та область, где находится курсор или чей контент больше по высоте.Фиксированный низ: Задана точная высота строки в grid-template-rows (60px или любое ваше значение).Изменение ширины справа: Свойство resize: horizontal включает уголок изменения размера. Использование direction: rtl меняет сторону захвата на левую границу панели (чтобы было удобно тянуть изнутри экрана).
+            <div class="tabs-container">
+                <!-- Шапка с вкладками -->
+                <div class="tab-list" role="tablist">
+                    <button class="tab-btn active" data-target="tab-1" role="tab">Вкладка 1</button>
+                    <button class="tab-btn" data-target="tab-2" role="tab">Вкладка 2</button>
+                    <button class="tab-btn" data-target="tab-3" role="tab">Вкладка 3</button>
+                    <!-- Новую вкладку можно добавить сюда, скопировав кнопку и изменив data-target -->
+                </div>
+
+                <!-- Блоки с содержимым -->
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-panel active" role="tabpanel">Контент первой вкладки</div>
+                    <div id="tab-2" class="tab-panel" role="tabpanel">Контент второй вкладки</div>
+                    <div id="tab-3" class="tab-panel" role="tabpanel">Контент третьей вкладки</div>
+                    <!-- Новый контент добавляется сюда с соответствующим id -->
+                </div>
             </div>
         </div>
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
