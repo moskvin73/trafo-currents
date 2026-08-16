@@ -330,7 +330,7 @@
         btnRight.addEventListener('click', () => scrollByTab('right'));
         btnLeft.addEventListener('click', () => scrollByTab('left'));
 
-        tablist.addEventListener('resize', updateButtonsVisibility);
+        tablist.addEventListener('scroll', updateButtonsVisibility);
         window.addEventListener('resize', updateButtonsVisibility);
         updateButtonsVisibility();
 
