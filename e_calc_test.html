@@ -145,12 +145,17 @@
         }
 
         .scroll-btn {
+            display: none; /* скрыты по умолчанию */
             flex-shrink: 0;
             background: #fff;
             border: 1px solid #ccc;
             cursor: pointer;
             z-index: 2;
         }
+        /* Класс добавляется через JS, когда контент не помещается */
+        .tabs-container.show-scroll-buttons .scroll-btn {
+            display: flex;
+        }        
 
         .tab-btn {
             scroll-snap-align: start;
@@ -284,12 +289,23 @@
         const resizer = document.getElementById('resizer');
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
+
+        const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
         const panels = document.querySelectorAll('.tab-panel');
         const tablist = document.querySelector('.tab-list');
         const btnLeft = document.querySelector('.scroll-btn.left');
         const btnRight = document.querySelector('.scroll-btn.right');        
         let isResizing = false;
+
+        function updateButtonsVisibility() {
+            const hasOverflow = tablist.scrollWidth > tablist.clientWidth;
+            if (hasOverflow) {
+                list_wrapper.classList.add('show-scroll-buttons');
+            } else {
+                list_wrapper.classList.remove('show-scroll-buttons');
+            }
+        }
 
         function scrollByTab(direction) {
             const tabs = Array.from(buttons);
@@ -313,6 +329,10 @@
 
         btnRight.addEventListener('click', () => scrollByTab('right'));
         btnLeft.addEventListener('click', () => scrollByTab('left'));
+
+        tablist.addEventListener('scroll', updateButtonsVisibility);
+        window.addEventListener('resize', updateButtonsVisibility);
+        updateButtonsVisibility();
 
         // Управление показа/скрытия боковой панелью
         window.addEventListener('keydown', function(event) {
