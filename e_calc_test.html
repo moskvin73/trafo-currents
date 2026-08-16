@@ -118,6 +118,14 @@
             border-bottom: 2px solid #ccc;
         }
 
+        .scroll-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
         .tab-btn {
             flex-shrink: 0;         /* Кнопки не сжимаются принудительно */
             max-width: 100px;       /* Максимальная ширина кнопки */
@@ -183,6 +191,8 @@
         <div class="side-panel" id="sidePanel">
           
             <div class="tabs-container">
+                <button class="scroll-btn scroll-left" aria-label="Прокрутить влево">&lt;</button>
+                
                 <!-- Шапка с вкладками -->
                 <div class="tab-list" role="tablist">
                     <button class="tab-btn active" data-target="tab-1" role="tab">Переменные</button>
