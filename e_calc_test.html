@@ -129,6 +129,21 @@
             display: none; /* Chrome, Safari, Opera */
         }
 
+        .close-btn-side-panel {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            z-index: 2;
+            width: var(--close-icon-size);
+            height: var(--close-icon-size);
+            padding: 0;
+            line-height: 1;            
+        }
+        .close-btn-side-panel:hover .icon-close {
+            color: red;
+        }
+
         .scroll-btn {
             flex-shrink: 0;
             background: #fff;
@@ -212,7 +227,7 @@
                     </div>
                     <button class="scroll-btn left" aria-label="Прокрутить влево">&lt;</button>
                     <button class="scroll-btn right" aria-label="Прокрутить вправо">&gt;</button>
-                    <button class="scroll-btn" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
+                    <button class="close-btn-side-panel" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                         <span class="icon-close"></span>
                     </button>
                 </div>
