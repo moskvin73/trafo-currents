@@ -270,6 +270,7 @@
         const bottomPanel = document.getElementById('bottomPanel');
         const buttons = document.querySelectorAll('.tab-btn');
         const panels = document.querySelectorAll('.tab-panel');
+        const tablist = document.querySelector('.tab-list');
         const btnLeft = document.querySelector('.scroll-btn.left');
         const btnRight = document.querySelector('.scroll-btn.right');        
         let isResizing = false;
@@ -284,7 +285,7 @@ btnLeft.addEventListener('click', () => {
 btnRight.addEventListener('click', () => {
   tablist.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 });
-       
+
         // Управление показа/скрытия боковой панелью
         window.addEventListener('keydown', function(event) {
             // Проверяем комбинацию Ctrl+B или Alt+B
