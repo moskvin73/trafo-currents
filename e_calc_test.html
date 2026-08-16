@@ -81,6 +81,7 @@
 
         .side-panel {
             grid-column: 3;
+            height: 100%;
             overflow: hidden; 
             grid-row: 1;
             background: #f4f4f4;
@@ -94,7 +95,8 @@
             position: relative;
             font-family: sans-serif;
             padding: 0;
-            overflow: hidden; 
+            overflow: hidden;
+            height: 100%; 
         }
 
         .tab-list { 
@@ -130,8 +132,10 @@
         .tab-content {
             padding-left: 4px;
             padding-right: 4px;
+            height: 100%;
             overflow-y: auto; /* Независимый скролл */
         }
+
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }       
 
