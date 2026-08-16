@@ -64,6 +64,8 @@
             grid-template-columns: 1fr 4px 30%;
             grid-template-rows: 1fr 4px 30% auto;
             box-sizing: border-box;
+            transition: grid-template-columns 0.3s ease;
+            transition: grid-template-rows 0.3s ease;
         }
 
         .main-center {
@@ -502,11 +504,19 @@
         }
 
         function toggleBottomPanel(show) {
-            container.classList.toggle('hide-bottom', !show);
-            if (show)
-               container.style.gridTemplateRows = `1fr 4px 30% auto`;
-            else
-               container.style.gridTemplateRows = `1fr 0px 0% auto`;
+            if (show) {
+                // Восстанавливаем сохраненный размер или ставим дефолтный
+                const savedRows = container.dataset.savedRows || '1fr 4px 30% auto';
+                container.style.gridTemplateRows = savedRows;
+                container.classList.remove('hide-bottom');
+            } else {
+                // Сохраняем текущий актуальный размер перед скрытием
+                if (!container.classList.contains('hide-bottom')) {
+                    container.dataset.savedRows = container.style.gridTemplateRows || '1fr 4px 30% auto';
+                }
+                container.style.gridTemplateRows = `1fr 0px 0% auto`;
+                container.classList.add('hide-bottom');
+            }
         }
 
         function toggleSidePanel(show) {
