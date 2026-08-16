@@ -119,9 +119,9 @@
             white-space: nowrap;
             box-sizing: border-box;
             gap: 8px;
-  scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */            
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */            
             /*scrollbar-width: thin;
             padding: 0px var(--close-icon-size) 0px 0px;*/
             border-bottom: 2px solid #ccc;
@@ -132,6 +132,7 @@
         }
 
         .scroll-btn {
+            flex-shrink: 0;
             background: #fff;
             border: 1px solid #ccc;
             cursor: pointer;
