@@ -477,10 +477,6 @@
 
         function showError(errors) {
             floatList.innerHTML = '';
-            if (errors.length <= 0) {
-                toggleBottomPanel(false);
-                return; 
-            }
             errors.forEach(err => {
                 const item = document.createElement("div");
                 item.className = "floating-error-item";
