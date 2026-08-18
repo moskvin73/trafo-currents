@@ -476,6 +476,18 @@
                 this.initEvents();
             }
 
+            get hasContent {
+                return getItems() > 0;
+            }
+
+            clear() {
+                listElement.innerHTML = '';
+            }
+
+            append(item) {
+                listElement.appendChild(item);
+            }
+
             getItems() {
                 return this.listElement.querySelectorAll(this.itemSelector);
             }
@@ -559,7 +571,7 @@
             if (countSpan) {
                 countSpan.textContent = `(${errors.length})`;
             }
-            errorNav.listElement.innerHTML = '';
+            errorNav.clear();
             errors.forEach(err => {
                 const item = document.createElement("div");
                 item.className = "floating-error-item";
@@ -582,7 +594,7 @@
                 // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
                 //item.onclick = () => scrollToCodeLine(line, col);
                 
-                errorNav.listElement.appendChild(item);
+                errorNav.append(item);
             });
             errorNav.selectItem(0);
             toggleBottomPanel(true);
@@ -755,8 +767,7 @@
         });
 
         function toggleBottomPanel(show) {
-            const hasContent = errorNav.listElement.hasChildNodes() && errorNav.listElement.textContent.trim() !== '';
-            show = show && hasContent;
+            show = show && errorNav.hasContent;
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
