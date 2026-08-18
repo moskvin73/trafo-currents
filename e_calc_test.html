@@ -813,6 +813,7 @@
                 const savedRows = container.dataset.savedRows || defRows;
                 container.style.gridTemplateRows = savedRows;
                 container.classList.remove('hide-bottom');
+                errorNav.listElement.focus();
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
                 if (!container.classList.contains('hide-bottom')) {
