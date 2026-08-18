@@ -506,12 +506,17 @@
 
             const onMouseMove = (e) => {
                 // Считаем ширину в процентах от окна
-                const newHeightPx = window.innerHeight - bottomPanel.offsetHeight - e.clientY - (resizerHeight / 2);
+                //const newHeightPx = window.innerHeight - bottomPanel.offsetHeight - e.clientY - (resizerHeight / 2);
+                let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
 
                 // Ограничиваем значениями из переменных
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
+                
+                newHeightPx = newHeightPercent * window.innerHeight  / 100;
+                newHeightPercent = (newHeightPx - bottomPanel.offsetHeight) / window.innerHeight * 100;
+                if (newHeightPercent < 0) newHeightPercent = 0;
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
             }
 
