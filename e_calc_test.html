@@ -444,40 +444,54 @@
         });
         
 
-        let isResizing = false;
         const resizer_x = document.getElementById('resizer-x');
         // Изменение ширины правой панели мышью
         resizer_x.addEventListener('mousedown', (e) => {
             e.preventDefault(); 
             document.body.style.cursor = getComputedStyle(resizer_x).cursor;
-            isResizing = true;
-            document.addEventListener('mousemove', resizeMoveX);
-            document.addEventListener('mouseup', resizeUpX);
-        });
-
-        function resizeMoveX(e) {
-            if (!isResizing) return;
-
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-width'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-width'));
+            const track_1 = styles.getPropertyValue('--col-track-1');
             const resizerWidth = parseFloat(styles.getPropertyValue('--resizer-x'));
-            // Считаем ширину в процентах от окна
-            const newWidthPx = window.innerWidth - e.clientX - (resizerWidth / 2);
-            let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
 
-            // Ограничиваем значениями из переменных
-            if (newWidthPercent < minVal) newWidthPercent = minVal;
-            else if (newWidthPercent > maxVal) newWidthPercent = maxVal;
-            container.style.gridTemplateColumns = `1fr ${resizerWidth}px ${newWidthPercent}%`;
+            const onMouseMove = (e) => {
+                const newWidthPx = window.innerWidth - e.clientX - (resizerWidth / 2);
+                let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
+                if (newWidthPercent < minVal) newWidthPercent = minVal;
+                else if (newWidthPercent > maxVal) newWidthPercent = maxVal;
+                container.style.gridTemplateColumns = `${track_1} ${resizerWidth}px ${newWidthPercent}%`;
+            }
+
+            const onMouseUp = (e) => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                document.body.style.cursor = '';
+            }
+           
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        function toggleSidePanel(show) {
+            const styles = getComputedStyle(container);
+            const defColumns = styles.getPropertyValue('--grid-columns');
+            if (show) {
+                // Восстанавливаем сохраненный размер или ставим дефолтный
+                const savedColumns = container.dataset.savedColumns || defColumns;
+                container.style.gridTemplateColumns = savedColumns;
+                container.classList.remove('hide-side');
+            } else {
+                // Сохраняем текущий актуальный размер перед скрытием
+                if (!container.classList.contains('hide-side')) {
+                    container.dataset.savedColumns = container.style.gridTemplateColumns || defColumns;
+                }
+                const emptyColumns = styles.getPropertyValue('--empty-columns');
+                container.style.gridTemplateColumns = emptyColumns;
+                container.classList.add('hide-side');
+            }
         }
 
-        function resizeUpX() {
-            isResizing = false;
-            document.removeEventListener('mousemove', resizeMoveX);
-            document.removeEventListener('mouseup', resizeUpX);
-            document.body.style.cursor = '';
-        }
 
         const resizer_y = document.getElementById('resizer-y');
         resizer_y.addEventListener('mousedown', (e) => {
@@ -531,22 +545,6 @@
         }
 
         toggleBottomPanel(false);
-
-        function toggleSidePanel(show) {
-            if (show) {
-                // Восстанавливаем сохраненный размер или ставим дефолтный
-                const savedColumns = container.dataset.savedColumns || '1fr 4px 30%';
-                container.style.gridTemplateColumns = savedColumns;
-                container.classList.remove('hide-side');
-            } else {
-                // Сохраняем текущий актуальный размер перед скрытием
-                if (!container.classList.contains('hide-side')) {
-                    container.dataset.savedColumns = container.style.gridTemplateColumns || '1fr 4px 30%';
-                }
-                container.style.gridTemplateColumns = `1fr 0px 0%`;
-                container.classList.add('hide-side');
-            }
-        }
     </script>
 </body>
 </html>
