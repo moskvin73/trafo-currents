@@ -482,11 +482,36 @@
             e.preventDefault();
             document.body.style.cursor = getComputedStyle(resizer_y).cursor;
             isResizing = true;
-            document.addEventListener('mousemove', resizeMoveY);
-            document.addEventListener('mouseup', resizeUpY);
+
+            const onMouseMove = (e) => {
+                const styles = getComputedStyle(container);
+                const minVal = parseFloat(styles.getPropertyValue('--min-height'));
+                const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
+                const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-y'));
+
+                // Считаем ширину в процентах от окна
+                const newHeightPx = window.innerHeight - bottomPanel.offsetHeight - e.clientY - (resizerHeight / 2);
+                let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
+
+                // Ограничиваем значениями из переменных
+                if (newHeightPercent < minVal) newHeightPercent = minVal;
+                else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
+                container.style.gridTemplateRows = `1fr ${resizerHeight}px ${newHeightPercent}% auto`;
+            }
+
+            const onMouseUp = (e) => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                document.body.style.cursor = '';
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', ronMouseUp);
+            //document.addEventListener('mousemove', resizeMoveY);
+            //document.addEventListener('mouseup', resizeUpY);
         });
 
-        function resizeMoveY(e) {
+       /* function resizeMoveY(e) {
             if (!isResizing) return;
  
             const styles = getComputedStyle(container);
@@ -509,7 +534,7 @@
             document.removeEventListener('mousemove', resizeMoveY);
             document.removeEventListener('mouseup', resizeUpY);
             document.body.style.cursor = '';
-        }
+        }*/
 
         function toggleBottomPanel(show) {
             if (show) {
