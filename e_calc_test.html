@@ -502,7 +502,7 @@
                 if (!item) return;
                 const items = Array.from(this.getItems());
                 this.selectItem(items.indexOf(item));
-                });
+            });
 
                 // Управление с клавиатуры
                 this.listElement.addEventListener('keydown', (e) => {
@@ -535,8 +535,7 @@
                     this.selectItem(this.currentIndex + 5);
                     break;
                 }
-                });
-            }
+            });}
         }
 
         const errorNav = new ErrorNavigator('calc-floating-error-list');
