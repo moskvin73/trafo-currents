@@ -490,7 +490,7 @@
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-height'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
-            const resizerHeight = 4;//parseFloat(styles.getPropertyValue('--resizer-x'));
+            const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-x'));
 
             // Считаем ширину в процентах от окна
             const newHeightPx = window.innerHeight - bottomPanel.offsetHeight - e.clientY - (resizerHeight / 2);
