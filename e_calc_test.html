@@ -455,7 +455,7 @@
                 </button>
             </div>            
             <!-- Контейнер для списка ошибок -->
-            <div id="calc-floating-error-list" class="floating-error-list">
+            <div id="calc-floating-error-list" class="floating-error-list" tabindex="0">
                 <!-- Сюда JS будет динамически рендерить ошибки -->
             </div>
         </div>
@@ -465,6 +465,51 @@
     <script>
 
         const floatList = document.getElementById("calc-floating-error-list");
+        let currentIndex = -1;
+
+        // Получить все элементы ошибок
+        function getItems() {
+            return floatList.querySelectorAll('.floating-error-item');
+        }
+
+        // Выбрать элемент по индексу
+        function selectItem(index) {
+            const items = getItems();
+            if (items.length === 0) return;
+            
+            // Ограничиваем индекс в пределах списка
+            if (index < 0) index = 0;
+            if (index >= items.length) index = items.length - 1;
+            
+            items.forEach(el => el.classList.remove('selected'));
+            currentIndex = index;
+            
+            const target = items[currentIndex];
+            target.classList.add('selected');
+            target.scrollIntoView({ block: 'nearest' });
+        }
+
+        // Клик мыши
+        floatList.addEventListener('click', (e) => {
+            const item = e.target.closest('.floating-error-item');
+            if (!item) return;
+            const items = Array.from(getItems());
+            selectItem(items.indexOf(item));
+        });
+
+        // Управление с клавиатуры
+        floatList.addEventListener('keydown', (e) => {
+            const items = getItems();
+            if (!items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectItem(currentIndex + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectItem(currentIndex - 1);
+            }
+        });        
 
         function createErrors() {
             const count = Math.floor(Math.random() * 100) + 1;
@@ -512,6 +557,7 @@
             });
             toggleBottomPanel(true);           
         }
+
 
         //#region TabPages
         const list_wrapper = document.querySelector('.tablist-wrapper');
