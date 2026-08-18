@@ -464,12 +464,88 @@
 
     <script>
 
-        const floatList = document.getElementById("calc-floating-error-list");
-        let currentIndex = -1;
+        class ErrorNavigator {
+            constructor(listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
+                this.listElement = document.getElementById(listElementId);
+                if (!this.listElement) return;
+
+                this.itemSelector = itemSelector;
+                this.activeClass = activeClass;
+                this.currentIndex = -1;
+
+                this.initEvents();
+            }
+
+            getItems() {
+                return this.listElement.querySelectorAll(this.itemSelector);
+            }
+
+            selectItem(index) {
+                const items = this.getItems();
+                if (items.length === 0) return;
+
+                if (index < 0) index = 0;
+                if (index >= items.length) index = items.length - 1;
+
+                items.forEach(el => el.classList.remove(this.activeClass));
+                this.currentIndex = index;
+
+                const target = items[this.currentIndex];
+                target.classList.add(this.activeClass);
+                target.scrollIntoView({ block: 'nearest' });
+            }
+
+            initEvents() {
+                // Клик мыши
+                this.listElement.addEventListener('click', (e) => {
+                const item = e.target.closest(this.itemSelector);
+                if (!item) return;
+                const items = Array.from(this.getItems());
+                this.selectItem(items.indexOf(item));
+                });
+
+                // Управление с клавиатуры
+                this.listElement.addEventListener('keydown', (e) => {
+                const items = this.getItems();
+                if (!items.length) return;
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                    e.preventDefault();
+                    this.selectItem(this.currentIndex + 1);
+                    break;
+                    case 'ArrowUp':
+                    e.preventDefault();
+                    this.selectItem(this.currentIndex - 1);
+                    break;
+                    case 'Home':
+                    e.preventDefault();
+                    this.selectItem(0);
+                    break;
+                    case 'End':
+                    e.preventDefault();
+                    this.selectItem(items.length - 1);
+                    break;
+                    case 'PageUp':
+                    e.preventDefault();
+                    this.selectItem(this.currentIndex - 5);
+                    break;
+                    case 'PageDown':
+                    e.preventDefault();
+                    this.selectItem(this.currentIndex + 5);
+                    break;
+                }
+                });
+            }
+        }
+
+        const errorNav = new ErrorNavigator('calc-floating-error-list');
+        /*const ListErrors = document.getElementById("calc-floating-error-list");
+        let currentIndexError = -1;
 
         // Получить все элементы ошибок
         function getItems() {
-            return floatList.querySelectorAll('.floating-error-item');
+            return ListErrors.querySelectorAll('.floating-error-item');
         }
 
         // Выбрать элемент по индексу
@@ -482,15 +558,15 @@
             if (index >= items.length) index = items.length - 1;
             
             items.forEach(el => el.classList.remove('selected'));
-            currentIndex = index;
+            currentIndexError = index;
             
-            const target = items[currentIndex];
+            const target = items[currentIndexError];
             target.classList.add('selected');
             target.scrollIntoView({ block: 'nearest' });
         }
 
         // Клик мыши
-        floatList.addEventListener('click', (e) => {
+        ListErrors.addEventListener('click', (e) => {
             const item = e.target.closest('.floating-error-item');
             if (!item) return;
             const items = Array.from(getItems());
@@ -498,18 +574,18 @@
         });
 
         // Управление с клавиатуры
-        floatList.addEventListener('keydown', (e) => {
+        ListErrors.addEventListener('keydown', (e) => {
             const items = getItems();
             if (!items.length) return;
 
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                selectItem(currentIndex + 1);
+                selectItem(currentIndexError + 1);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                selectItem(currentIndex - 1);
+                selectItem(currentIndexError - 1);
             }
-        });        
+        });*/        
 
         function createErrors() {
             const count = Math.floor(Math.random() * 100) + 1;
@@ -530,7 +606,8 @@
             if (countSpan) {
                 countSpan.textContent = `(${errors.length})`;
             }
-            floatList.innerHTML = '';
+            errorNav.listElement.innerHTML = '';
+            //ListErrors.innerHTML = '';
             errors.forEach(err => {
                 const item = document.createElement("div");
                 item.className = "floating-error-item";
@@ -553,11 +630,11 @@
                 // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
                 //item.onclick = () => scrollToCodeLine(line, col);
                 
-                floatList.appendChild(item);
+                errorNav.listElement.appendChild(item);
             });
             toggleBottomPanel(true);
-            selectItem(0);
-            if (floatList.checkVisibility()) floatList.focus();   
+            errorNav.selectItem(0);
+            if (errorNav.listElement.checkVisibility()) errorNav.listElement.focus();   
         }
 
 
@@ -727,7 +804,7 @@
         });
 
         function toggleBottomPanel(show) {
-            const hasContent = floatList.hasChildNodes() && floatList.textContent.trim() !== '';
+            const hasContent = errorNav.listElement.hasChildNodes() && errorNav.listElement.textContent.trim() !== '';
             show = show && hasContent;
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
