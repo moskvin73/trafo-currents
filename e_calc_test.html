@@ -556,7 +556,8 @@
                 floatList.appendChild(item);
             });
             toggleBottomPanel(true);
-            selectItem(0);   
+            selectItem(0);
+            if (floatList.checkVisibility()) floatList.focus();   
         }
 
 
