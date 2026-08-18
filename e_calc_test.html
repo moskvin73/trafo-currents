@@ -435,12 +435,19 @@
         </div>
         <div class="resizer-y" id="resizer-y"></div>
         <div class="resizer-bottom-panel" id="resizerBottomPanel">
-            <button class="close-btn" onclick="toggleBottomPanel(false)" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
-                <span class="icon-close"></span>
-            </button>
-            Низ изменяемый размер
+            <!-- Шапка панели управления -->
+            <div class="error-panel-header">
+                <div class="panel-title">⚠️ Список обнаруженных ошибок</div>
+                <button class="close-btn" onclick="toggleBottomPanel(false)" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
+                    <span class="icon-close"></span>
+                </button>
+            </div>            
+            <!-- Контейнер для списка ошибок -->
+            <div id="calc-floating-error-list" class="floating-error-list">
+                <!-- Сюда JS будет динамически рендерить ошибки -->
+            </div>
         </div>
-        <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
+            <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
     </div>
 
     <script>
