@@ -60,6 +60,7 @@
             --col-width: 30%;
 
             --grid-columns: var(--col-track-1, 1fr) var(--resizer-x, 4px) var(--col-width, 30%);
+            --empty-columns: var(--col-track-1, 1fr) 0px 0%;
 
             --row-track-1: 1fr;
             --resizer-y: 4px;
@@ -67,6 +68,7 @@
             --row-track-4: auto;
 
             --grid-rows: var(--row-track-1, 1fr) var(--resizer-y, 4px) var(--row-height, 30%) var(--row-track-4, auto);
+            --empty-rows: var(--row-track-1, 1fr) 0px 0% var(--row-track-4, auto);
 
             --min-width: 15;
             --max-width: 50;
@@ -510,17 +512,20 @@
         });
 
         function toggleBottomPanel(show) {
+            const styles = getComputedStyle(container);
+            const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
                 // Восстанавливаем сохраненный размер или ставим дефолтный
-                const savedRows = container.dataset.savedRows || '1fr 4px 30% auto';
+                const savedRows = container.dataset.savedRows || defRows;
                 container.style.gridTemplateRows = savedRows;
                 container.classList.remove('hide-bottom');
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
                 if (!container.classList.contains('hide-bottom')) {
-                    container.dataset.savedRows = container.style.gridTemplateRows || '1fr 4px 30% auto';
+                    container.dataset.savedRows = container.style.gridTemplateRows || defRows;
                 }
-                container.style.gridTemplateRows = `1fr 0px 0% auto`;
+                const emptyRows = styles.getPropertyValue('--empty-rows');
+                container.style.gridTemplateRows = emptyRows;
                 container.classList.add('hide-bottom');
             }
         }
