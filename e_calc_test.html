@@ -11,8 +11,11 @@
     <style>
 
         :root {
-        --close-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
-        --close-icon-size: 16px;
+            --close-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
+            --close-icon-size: 16px;
+            --color-resizer: #ccc;
+            --color-panel: #f4f4f4;
+            --color-botttom-panel: #e0e0e0;
         }
 
         /* #region Кнопки */
@@ -100,7 +103,7 @@
         .resizer-x {
             grid-column: 2;
             grid-row: 1;
-            background: #ccc;
+            background: var(--color-resizer);
             cursor: col-resize;
             user-select: none;
             pointer-events: auto;
@@ -113,7 +116,7 @@
             display: flex;
             flex-direction: column;
             grid-row: 1;
-            background: #f4f4f4;
+            background: var(--color-panel);
             padding: 0;
             box-sizing: border-box;
             transition: transform 0.3s ease; /* Плавное скрытие */
@@ -133,7 +136,7 @@
         .resizer-y {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 2;
-            background: #ccc;
+            background: var(--color-resizer);
             cursor: row-resize;
             user-select: none;
             pointer-events: auto;
@@ -142,7 +145,7 @@
         .resizer-bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 3;
-            background: #f4f4f4;
+            background: var(--color-panel);
             overflow: auto;
             box-sizing: border-box;
             padding: 0;
@@ -161,7 +164,7 @@
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 4;
             height: 30px; /* Начальный размер, меняется из JS */
-            background: #e0e0e0;
+            background: var(--color-botttom-panel);
             overflow: auto;
             box-sizing: border-box;
         }
