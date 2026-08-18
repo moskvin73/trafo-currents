@@ -451,7 +451,41 @@
     </div>
 
     <script>
-        
+
+        const floatList = document.getElementById("calc-floating-error-list");
+
+        function showError(errors) {
+            if (errors.length <= 0) {
+                toggleBottomPanel(false);
+                return; 
+            }
+            errors.forEach(err => {
+                const item = document.createElement("div");
+                item.className = "floating-error-item";
+                
+                const loc = err.loc || err.location || err;
+                const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
+                const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;
+                
+                const locSpan = document.createElement("span");
+                locSpan.className = "err-loc";
+                locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
+                
+                const textSpan = document.createElement("span");
+                textSpan.className = "err-text";
+                textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");
+                
+                item.appendChild(locSpan);
+                item.appendChild(textSpan);
+                
+                // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
+                item.onclick = () => scrollToCodeLine(line, col);
+                
+                floatList.appendChild(item);
+            });
+            toggleBottomPanel(true);           
+        }
+
         //#region TabPages
         const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
