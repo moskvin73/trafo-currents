@@ -674,7 +674,7 @@
         });
 
         function toggleBottomPanel(show) {
-            const hasContent = floatList.hasChildNodes() && floatList.innerHTML.trim() !== '';
+            const hasContent = floatList.element.textContent.trim() !== '';
             show = show && hasContent;
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
