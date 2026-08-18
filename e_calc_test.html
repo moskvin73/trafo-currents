@@ -357,6 +357,7 @@
 
     <script>
         
+        //#region TabPages
         const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
         const panels = document.querySelectorAll('.tab-panel');
@@ -420,6 +421,7 @@
                 document.getElementById(targetId).classList.add('active');
             });
         });       
+        //#endregion TabPages
 
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
@@ -457,7 +459,7 @@
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-width'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-width'));
-            const resizerWidth = 4;
+            const resizerWidth = parseFloat(styles.getPropertyValue('--resizer-x'));
             // Считаем ширину в процентах от окна
             const newWidthPx = window.innerWidth - e.clientX - (resizerWidth / 2);
             let newWidthPercent = (newWidthPx / window.innerWidth) * 100;
@@ -490,7 +492,7 @@
             const styles = getComputedStyle(container);
             const minVal = parseFloat(styles.getPropertyValue('--min-height'));
             const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
-            const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-x'));
+            const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-y'));
 
             // Считаем ширину в процентах от окна
             const newHeightPx = window.innerHeight - bottomPanel.offsetHeight - e.clientY - (resizerHeight / 2);
