@@ -425,6 +425,7 @@
         });       
         //#endregion TabPages
 
+        //#region Size Paneles
         const container = document.querySelector('.app-container');
         const bottomPanel = document.getElementById('bottomPanel');
 
@@ -492,7 +493,6 @@
             }
         }
 
-
         const resizer_y = document.getElementById('resizer-y');
         resizer_y.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -545,6 +545,7 @@
         }
 
         toggleBottomPanel(false);
+        //#endregion Size Paneles
     </script>
 </body>
 </html>
