@@ -444,7 +444,7 @@
         <div class="resizer-bottom-panel" id="resizerBottomPanel">
             <!-- Шапка панели управления -->
             <div class="error-panel-header">
-                <div class="panel-title">⚠️ Список обнаруженных ошибок</div>
+                <div class="panel-title">⚠️ Список обнаруженных ошибок <span id="error-count">(0)</span></div>
                 <button class="close-btn" onclick="toggleBottomPanel(false)" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
                     <span class="icon-close"></span>
                 </button>
@@ -476,6 +476,10 @@
         }
 
         function showError(errors) {
+            const countSpan = document.getElementById('error-count');
+            if (countSpan) {
+                countSpan.textContent = `(${errors.length})`;
+            }
             floatList.innerHTML = '';
             errors.forEach(err => {
                 const item = document.createElement("div");
