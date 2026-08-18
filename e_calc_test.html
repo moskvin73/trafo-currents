@@ -37,6 +37,10 @@
             background-color: currentColor; /* Цвет наследуется от текста */
             -webkit-mask: var(--close-icon) no-repeat center / contain;
             mask: var(--close-icon) no-repeat center / contain;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer / Edge */
+            user-select: none;         /* Стандартное свойство */            
         }
 
         .close-btn:hover .icon-close {
@@ -205,6 +209,10 @@
             min-height: var(--close-icon-size);
             padding: 0;
             line-height: 1;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer / Edge */
+            user-select: none;         /* Стандартное свойство */            
         }
         .close-btn-side-panel:hover .icon-close {
             color: red;
@@ -235,6 +243,10 @@
             background: none; 
             cursor: pointer; 
             font-size: 12px; 
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer / Edge */
+            user-select: none;         /* Стандартное свойство */            
         }
 
         .tab-btn.active { 
