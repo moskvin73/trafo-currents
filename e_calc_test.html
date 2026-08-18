@@ -481,10 +481,12 @@
         resizer_y.addEventListener('mousedown', (e) => {
             e.preventDefault();
             document.body.style.cursor = getComputedStyle(resizer_y).cursor;
-                const styles = getComputedStyle(container);
-                const minVal = parseFloat(styles.getPropertyValue('--min-height'));
-                const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
-                const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-y'));
+            const styles = getComputedStyle(container);
+            const minVal = parseFloat(styles.getPropertyValue('--min-height'));
+            const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
+            const track_1 = styles.getPropertyValue('--row-track-1');
+            const resizerHeight = parseFloat(styles.getPropertyValue('--resizer-y'));
+            const track_4 = styles.getPropertyValue('--row-track-4');
 
             const onMouseMove = (e) => {
                 // Считаем ширину в процентах от окна
@@ -494,7 +496,7 @@
                 // Ограничиваем значениями из переменных
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
-                container.style.gridTemplateRows = `1fr ${resizerHeight}px ${newHeightPercent}% auto`;
+                container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
             }
 
             const onMouseUp = (e) => {
