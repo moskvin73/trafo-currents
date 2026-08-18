@@ -341,7 +341,10 @@
 <body>
     <div class="app-container">
         <!-- Центральный контент -->
-        <div class="main-center">Центральный контент (скролл)</div>
+        <div class="main-center">
+            <button onclick="createErrors()">Создать ошибки</button>
+            <button onclick="clearErrors()">Удалить ошибки</button>
+        </div>
         <div class="resizer-x" id="resizer-x"></div>
         <!-- Правая панель (скролл / скрытие) -->
         <div class="side-panel" id="sidePanel">          
@@ -453,6 +456,20 @@
     <script>
 
         const floatList = document.getElementById("calc-floating-error-list");
+
+        function createErrors() {
+            const count = Math.floor(Math.random() * 100) + 1;
+            // Создаем массив с помощью Array.from
+            const errors = Array.from(
+            { length: count }, 
+            (_, index) => `Ошибка №${index + 1}`
+            );
+            showError(errors);
+        }
+        
+        function clearErrors() {
+            showError([]);
+        }
 
         function showError(errors) {
             if (errors.length <= 0) {
