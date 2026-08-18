@@ -152,6 +152,10 @@
         }
 
         .resizer-bottom-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 3;
             background: var(--color-panel);
@@ -496,7 +500,7 @@
                 item.appendChild(textSpan);
                 
                 // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
-                item.onclick = () => scrollToCodeLine(line, col);
+                //item.onclick = () => scrollToCodeLine(line, col);
                 
                 floatList.appendChild(item);
             });
