@@ -768,7 +768,7 @@
                 const h_e = document.getElementById('error-header');
                 const calcListHeight = this.lineHeight - bottomPanel.offsetHeight - h_e.offsetHeight;
                 const newListHeight = Math.min(Math.max(calcListHeight, errorNav.minHeight), errorNav.maxHeight);
-                newHeightPx = newListHeight + bottomPanel.offsetHeight - h_e.offsetHeight;
+                newHeightPx = newListHeight + h_e.offsetHeight;
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
