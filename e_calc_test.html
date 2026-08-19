@@ -569,7 +569,7 @@
         const errorNav = new ErrorNavigator('calc-floating-error-list');
 
         function createErrors() {
-            const count = Math.floor(Math.random() * 10) + 1;
+            const count = /*Math.floor(Math.random() * 10)*/ + 1;
             // Создаем массив с помощью Array.from
             const errors = Array.from(
             { length: count }, 
@@ -766,6 +766,8 @@
                 let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
                 // Подсчитываем облость вывода списка
                 const h_e = document.getElementById('error-header');
+                const emax = errorNav.maxHeight;
+                const emin = errorNav.minHeight;
                 const maxListHeight = errorNav.maxHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
                 const minListHeight = errorNav.minHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
