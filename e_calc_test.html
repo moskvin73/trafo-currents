@@ -543,7 +543,7 @@
                 return this.minHeight + getTotalHeightWithMargins(this.header) + getVerticalSpacing(this.listElement);
             }
 
-            get pageHeight() {
+            get pageLength() {
                 return Math.ceil(this.listElement.clientHeight / this.lineHeight);
             }
 
@@ -603,11 +603,11 @@
                     break;
                     case 'PageUp':
                     e.preventDefault();
-                    this.selectItem(this.currentIndex - this.pageHeight);
+                    this.selectItem(this.currentIndex - this.pageLength);
                     break;
                     case 'PageDown':
                     e.preventDefault();
-                    this.selectItem(this.currentIndex + this.pageHeight);
+                    this.selectItem(this.currentIndex + this.pageLength);
                     break;
                 }
             });}
