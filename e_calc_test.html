@@ -503,15 +503,11 @@
             }
 
             get hasContent() {
-                return this.getItems().length > 0;
+                return this.length > 0;
             }
 
             clear() {
                 this.listElement.innerHTML = '';
-            }
-
-            append(item) {
-                this.listElement.appendChild(item);
             }
 
             get maxHeight() {
@@ -611,6 +607,32 @@
                     break;
                 }
             });}
+
+            setItems(errors) {
+                if (!errors) return;
+                this.clear();
+                errors.forEach(err => {
+                    const item = document.createElement("div");
+                    item.className = "floating-error-item";
+                    
+                    const loc = err.loc || err.location || err;
+                    const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
+                    const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;
+                    
+                    const locSpan = document.createElement("span");
+                    locSpan.className = "err-loc";
+                    locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
+                    
+                    const textSpan = document.createElement("span");
+                    textSpan.className = "err-text";
+                    textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");
+                    
+                    item.appendChild(locSpan);
+                    item.appendChild(textSpan);
+                    this.listElement.appendChild(item);
+                });
+                this.selectItem(0);
+            }
         }
 
         const errorNav = new ErrorNavigator('error-header', 'calc-floating-error-list');
