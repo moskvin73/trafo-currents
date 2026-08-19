@@ -837,7 +837,6 @@
                 const savedRows = container.dataset.savedRows || defRows;
 
                 const columns = savedRows.gridTemplateColumns.split(' ');
-                const styles = getComputedStyle(container);
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
                 const resizerHeight = parseFloat(columns[1]);
