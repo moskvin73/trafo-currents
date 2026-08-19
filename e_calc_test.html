@@ -785,8 +785,6 @@
                 let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
                 // Подсчитываем облость вывода списка
                 const h_e = document.getElementById('error-header');
-                const emax = errorNav.maxHeight;
-                const emin = errorNav.minHeight;
                 const bottomH = getTotalHeightWithMargins(bottomPanel);
                 const He = getTotalHeightWithMargins(h_e);
                 const maxListHeight = errorNav.maxHeight + bottomH + He;
