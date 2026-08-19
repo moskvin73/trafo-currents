@@ -610,6 +610,10 @@
 
             setItems(errors) {
                 if (!errors) return;
+                const errorInForm = this.header.querySelector('#error-count');
+                if (errorInForm) {
+                    errorInForm.textContent = `(${errors.length})`;
+                }
                 this.clear();
                 errors.forEach(err => {
                     const item = document.createElement("div");
