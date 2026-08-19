@@ -468,7 +468,7 @@
             if (!element) return 0;
         
             const rect = element.getBoundingClientRect();
-            const computed = element.getComputedStyle(element);
+            const computed = window.getComputedStyle(element);
             
             // Переводим отступы из строк/пикселей в числа
             const marginTop = parseFloat(computed.marginTop) || 0;
