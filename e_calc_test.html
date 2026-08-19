@@ -489,6 +489,9 @@
             }
 
             get maxHeight() {
+                if (this.getItems().length === 1)
+                    return this.getItems()[0].offsetHeight;
+                else
                 return this.listElement.scrollHeight;
             }
 
