@@ -803,17 +803,14 @@
 
             const onMouseMove = (e) => {
                 let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
+                if (newHeightPx < 0) return;
                 // Подсчитываем облость вывода списка
-                const h_e = document.getElementById('error-header');
                 const bottomH = getTotalHeightWithMargins(bottomPanel);
-                const He = getTotalHeightWithMargins(h_e);
-                const mp = getVerticalSpacing(errorNav.listElement);
-                const maxListHeight = Math.ceil(errorNav.maxHeight + bottomH + He + mp);
-                const minListHeight = Math.ceil(errorNav.minHeight + bottomH + He + mp);
+                const maxListHeight = Math.ceil(errorNav.maxTotalHeight + bottomH);
+                const minListHeight = Math.ceil(errorNav.minTotalHeight + bottomH);
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
-                let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
-                newHeightPercent = Math.min(newHeightPercent, maxVal);
-                newHeightPercent = newHeightPercent - bottomH / window.innerHeight  * 100;
+                const newHeightPercent = Math.min(newHeightPx / window.innerHeight * 100, maxVal) - bottomH / window.innerHeight  * 100;
+                if (newHeightPercent < 0) return;
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
             }
 
