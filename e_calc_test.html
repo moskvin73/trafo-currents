@@ -822,7 +822,7 @@
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
                 document.body.style.cursor = '';
-                container.dataset.savedRows = container.style.gridTemplateRows;
+                container.dataset.savedRows = container.style.gridTemplateRows || styles.getPropertyValue('--grid-rows');
             }
 
             document.addEventListener('mousemove', onMouseMove);
