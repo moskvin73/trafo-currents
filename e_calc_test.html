@@ -837,6 +837,7 @@
                 // Восстанавливаем сохраненный размер или ставим дефолтный
                 if (container.classList.contains('hide-bottom')) {
                     savedRows = container.dataset.savedRows || defRows;
+                    container.classList.remove('hide-bottom');
                 }
                 else savedRows = container.style.gridTemplateRows;
                 const columns = savedRows.trim().split(/\s+/);
@@ -852,7 +853,6 @@
                 const newHeightPercent = Math.min(newHeightPx / window.innerHeight * 100, maxVal) - bottomH / window.innerHeight  * 100;
                 if (newHeightPercent < 0) return;
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
-                container.classList.remove('hide-bottom');
                 errorNav.focus();
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
