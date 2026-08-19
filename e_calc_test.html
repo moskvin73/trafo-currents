@@ -839,7 +839,7 @@
                     container.classList.remove('hide-bottom');
                     savedRows = container.dataset.savedRows || defRows;
                 }
-                else savedRows = container.style.gridTemplateRows;
+                else savedRows = container.style.gridTemplateRows || defRows;
                 const columns = savedRows.trim().split(/\s+/);
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
