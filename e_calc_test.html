@@ -588,7 +588,7 @@
         const errorNav = new ErrorNavigator('calc-floating-error-list');
 
         function createErrors() {
-            const count = Math.floor(Math.random() * 100) + 1;
+            const count = Math.floor(Math.random() * 10) + 1;
             // Создаем массив с помощью Array.from
             const errors = Array.from(
             { length: count }, 
@@ -787,12 +787,14 @@
                 const h_e = document.getElementById('error-header');
                 const emax = errorNav.maxHeight;
                 const emin = errorNav.minHeight;
-                const maxListHeight = errorNav.maxHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
-                const minListHeight = errorNav.minHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
+                const bottomH = getTotalHeightWithMargins(bottomPanel);
+                const He = getTotalHeightWithMargins(h_e);
+                const maxListHeight = errorNav.maxHeight + bottomH + He;
+                const minListHeight = errorNav.minHeight + bottomH + He;
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 newHeightPercent = Math.min(newHeightPercent, maxVal);
-                newHeightPercent = newHeightPercent - bottomPanel.offsetHeight / window.innerHeight  * 100;
+                newHeightPercent = newHeightPercent - bottomH / window.innerHeight  * 100;
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
             }
 
