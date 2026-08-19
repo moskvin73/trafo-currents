@@ -519,7 +519,7 @@
                 items.forEach(item => {
                     totalHeight += getTotalHeightWithMargins(item);
                 });
-                return totalHeight;
+                return totalHeight + getVerticalSpacing(this.listElement);
             }
 
             get lineHeight() {
