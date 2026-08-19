@@ -840,9 +840,9 @@
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
                 const resizerHeight = parseFloat(columns[1]);
-                let newHeightPx = parseFloat(columns[2]) * window.innerHeight / 100;
-                const track_4 = columns[3];
                 const bottomH = getTotalHeightWithMargins(bottomPanel);
+                let newHeightPx = parseFloat(columns[2]) * window.innerHeight / 100 + bottomH;
+                const track_4 = columns[3];
                 const maxListHeight = Math.ceil(errorNav.maxTotalHeight + bottomH);
                 const minListHeight = Math.ceil(errorNav.minTotalHeight + bottomH);
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
