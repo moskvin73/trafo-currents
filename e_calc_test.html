@@ -833,9 +833,12 @@
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
+                let savedRows;
                 // Восстанавливаем сохраненный размер или ставим дефолтный
-                const savedRows = container.dataset.savedRows || defRows;
-
+                if (container.classList.contains('hide-bottom')) {
+                    savedRows = container.dataset.savedRows || defRows;
+                }
+                else savedRows = container.style.gridTemplateRows;
                 const columns = savedRows.trim().split(/\s+/);
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
@@ -851,7 +854,6 @@
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 container.classList.remove('hide-bottom');
                 errorNav.focus();
-                container.dataset.savedRows = container.style.gridTemplateRows || defRows;
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
                 if (!container.classList.contains('hide-bottom')) {
