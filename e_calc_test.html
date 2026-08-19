@@ -764,18 +764,24 @@
 
             const onMouseMove = (e) => {
                 let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
+                // Подсчитываем облость вывода списка
+                const h_e = document.getElementById('error-header');
+                const calcListHeight = this.lineHeight - bottomPanel.offsetHeight - h_e.offsetHeight;
+                const newListHeight = Math.min(Math.max(calcListHeight, errorNav.minHeight), errorNav.maxHeight);
+                newHeightPx = newListHeight + bottomPanel.offsetHeight - h_e.offsetHeight;
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
+                container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 // Вычисляем новый размер в px
-                const h_e = document.getElementById('error-header');
-                newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight - h_e.offsetHeight;
+                //const h_e = document.getElementById('error-header');
+                /*newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight - h_e.offsetHeight;
                 if (newHeightPx > 0)
                 {
                     newHeightPx = Math.min(errorNav.listElement.scrollHeight, newHeightPx) + h_e.offsetHeight;
                     newHeightPercent = newHeightPx * 100 / window.innerHeight;
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
-                }
+                }*/
             }
 
             const onMouseUp = (e) => {
