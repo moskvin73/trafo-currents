@@ -492,7 +492,12 @@
                 const items = this.getItems();
                 let totalHeight = 0;
                 items.forEach(item => {
-                    totalHeight += item.offsetHeight; 
+                    const style = window.getComputedStyle(item);
+                    const marginTop = parseFloat(style.marginTop) || 0;
+                    const marginBottom = parseFloat(style.marginBottom) || 0;
+                    
+                    // Высота элемента + его внешние отступы
+                    totalHeight += item.offsetHeight + marginTop + marginBottom;
                 });
                 return totalHeight;
             }
