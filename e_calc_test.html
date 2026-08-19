@@ -851,6 +851,7 @@
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 container.classList.remove('hide-bottom');
                 errorNav.focus();
+                container.dataset.savedRows = container.style.gridTemplateRows || defRows;
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
                 if (!container.classList.contains('hide-bottom')) {
