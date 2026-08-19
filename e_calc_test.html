@@ -488,6 +488,22 @@
                 this.listElement.appendChild(item);
             }
 
+            get maxHeight() {
+                return this.listElement.scrollHeight;
+            }
+
+            get lineHeight() {
+                return this.maxHeight / this.getItems().length;
+            }
+
+            get minHeight() {
+                return this.lineHeight;
+            }
+
+            get pageHeight() {
+                return this.listElement.clientHeight / this.lineHeight;
+            }
+
             getItems() {
                 return this.listElement.querySelectorAll(this.itemSelector);
             }
@@ -510,11 +526,11 @@
             initEvents() {
                 // Клик мыши
                 this.listElement.addEventListener('click', (e) => {
-                const item = e.target.closest(this.itemSelector);
-                if (!item) return;
-                const items = Array.from(this.getItems());
-                this.selectItem(items.indexOf(item));
-            });
+                    const item = e.target.closest(this.itemSelector);
+                    if (!item) return;
+                    const items = Array.from(this.getItems());
+                    this.selectItem(items.indexOf(item));
+                });
 
                 // Управление с клавиатуры
                 this.listElement.addEventListener('keydown', (e) => {
