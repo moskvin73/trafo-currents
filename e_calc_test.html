@@ -524,7 +524,10 @@
             }
 
             get maxTotalHeight() {
-                return this.maxHeight + getTotalHeightWithMargins(this.header) + getVerticalSpacing(this.listElement);
+                const h = getTotalHeightWithMargins(this.header);
+                const mp = getVerticalSpacing(this.listElement);
+                const mh = this.maxHeight;
+                return mh + h + mp;
             }
 
             get lineHeight() {
@@ -536,7 +539,10 @@
             }
 
             get minTotalHeight() {
-                return this.lineHeight + getTotalHeightWithMargins(this.header) + getVerticalSpacing(this.listElement);
+                const h = getTotalHeightWithMargins(this.header);
+                const mp = getVerticalSpacing(this.listElement);
+                const mh = this.minHeight;
+                return mh + h + mp;
             }
 
             get pageHeight() {
