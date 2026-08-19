@@ -492,7 +492,7 @@
         class ErrorNavigator {
             constructor(headerId, listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
                 this.listElement = document.getElementById(listElementId);
-                this.header = document.getElementById(listElementId);
+                this.header = document.getElementById(lheaderId);
                 if (!this.listElement || !this.header) return;
 
                 this.itemSelector = itemSelector;
