@@ -822,6 +822,7 @@
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
                 document.body.style.cursor = '';
+                container.dataset.savedRows = container.style.gridTemplateRows;
             }
 
             document.addEventListener('mousemove', onMouseMove);
@@ -833,13 +834,11 @@
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
-                let savedRows;
+                const savedRows = savedRows = container.dataset.savedRows || defRows;
                 // Восстанавливаем сохраненный размер или ставим дефолтный
                 if (container.classList.contains('hide-bottom')) {                    
                     container.classList.remove('hide-bottom');
-                    savedRows = container.dataset.savedRows || defRows;
                 }
-                else savedRows = container.style.gridTemplateRows || defRows;
                 const columns = savedRows.trim().split(/\s+/);
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
