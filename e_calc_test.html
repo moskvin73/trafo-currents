@@ -610,10 +610,6 @@
 
             setItems(errors) {
                 if (!errors) return;
-                const errorInForm = this.header.querySelector('#error-count');
-                if (errorInForm) {
-                    errorInForm.textContent = `(${errors.length})`;
-                }
                 this.clear();
                 errors.forEach(err => {
                     const item = document.createElement("div");
@@ -635,6 +631,10 @@
                     item.appendChild(textSpan);
                     this.listElement.appendChild(item);
                 });
+                const errorInForm = this.header.querySelector('#error-count');
+                if (errorInForm) {
+                    errorInForm.textContent = `(${this.length})`;
+                }
                 this.selectItem(0);
             }
         }
@@ -656,7 +656,7 @@
         }
 
         function showError(errors) {
-            const countSpan = document.getElementById('error-count');
+            /*const countSpan = document.getElementById('error-count');
             if (countSpan) {
                 countSpan.textContent = `(${errors.length})`;
             }
@@ -685,7 +685,8 @@
                 
                 errorNav.append(item);
             });
-            errorNav.selectItem(0);
+            errorNav.selectItem(0);*/
+            errorNav.setItems(errors);
             toggleBottomPanel(true);
         }
 
