@@ -835,7 +835,7 @@
             if (show) {
                 let savedRows;
                 // Восстанавливаем сохраненный размер или ставим дефолтный
-                if (container.classList.contains('hide-bottom')) {
+                if (container.classList.contains('hide-bottom')) {                    
                     savedRows = container.dataset.savedRows || defRows;
                     container.classList.remove('hide-bottom');
                 }
