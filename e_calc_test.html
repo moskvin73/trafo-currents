@@ -835,7 +835,24 @@
             if (show) {
                 // Восстанавливаем сохраненный размер или ставим дефолтный
                 const savedRows = container.dataset.savedRows || defRows;
-                container.style.gridTemplateRows = savedRows;
+
+                const columns = savedRows.gridTemplateColumns.split(' ');
+                const styles = getComputedStyle(container);
+                const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
+                const track_1 = columns[0];
+                const resizerHeight = parseFloat(columns[1]);
+                let newHeightPx = parseFloat(columns[2]);
+                const track_4 = columns[3];
+                const bottomH = getTotalHeightWithMargins(bottomPanel);
+                const maxListHeight = Math.ceil(errorNav.maxTotalHeight + bottomH);
+                const minListHeight = Math.ceil(errorNav.minTotalHeight + bottomH);
+                newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
+                const newHeightPercent = Math.min(newHeightPx / window.innerHeight * 100, maxVal) - bottomH / window.innerHeight  * 100;
+                if (newHeightPercent < 0) return;
+                container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
+
+
+                //container.style.gridTemplateRows = savedRows;
                 container.classList.remove('hide-bottom');
                 errorNav.focus();
             } else {
