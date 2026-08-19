@@ -755,7 +755,7 @@
                 newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
                 if (errorNav.listElement.scrollHeight >= newHeightPx)
                 {
-                    newHeightPercent = newHeightPercent * 100 / window.innerHeight;
+                    newHeightPercent = newHeightPx * 100 / window.innerHeight;
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 }
             }
