@@ -771,7 +771,6 @@
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
-                newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
                 newHeightPercent = newHeightPercent - bottomPanel.offsetHeight / window.innerHeight  * 100;
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
             }
