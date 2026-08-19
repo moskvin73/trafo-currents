@@ -656,36 +656,6 @@
         }
 
         function showError(errors) {
-            /*const countSpan = document.getElementById('error-count');
-            if (countSpan) {
-                countSpan.textContent = `(${errors.length})`;
-            }
-            errorNav.clear();
-            errors.forEach(err => {
-                const item = document.createElement("div");
-                item.className = "floating-error-item";
-                
-                const loc = err.loc || err.location || err;
-                const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
-                const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;
-                
-                const locSpan = document.createElement("span");
-                locSpan.className = "err-loc";
-                locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
-                
-                const textSpan = document.createElement("span");
-                textSpan.className = "err-text";
-                textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");
-                
-                item.appendChild(locSpan);
-                item.appendChild(textSpan);
-                
-                // Главная фишка: кликаем на ошибку в панели — страница сзади скроллится к строке кода
-                //item.onclick = () => scrollToCodeLine(line, col);
-                
-                errorNav.append(item);
-            });
-            errorNav.selectItem(0);*/
             errorNav.setItems(errors);
             toggleBottomPanel(true);
         }
