@@ -464,6 +464,30 @@
 
     <script>
 
+function getTotalHeightWithMargins(parentElement) {
+  if (!parentElement) return 0;
+  
+  let totalHeight = 0;
+  const children = parentElement.children;
+
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    
+    // Получаем реальные размеры элемента
+    const rect = child.getBoundingClientRect();
+    const computed = window.getComputedStyle(child);
+    
+    // Переводим отступы из строк/пикселей в числа
+    const marginTop = parseFloat(computed.marginTop) || 0;
+    const marginBottom = parseFloat(computed.marginBottom) || 0;
+    
+    // Добавляем высоту элемента и его отступы
+    totalHeight += rect.height + marginTop + marginBottom;
+  }
+
+  return totalHeight;
+}        
+
         class ErrorNavigator {
             constructor(listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
                 this.listElement = document.getElementById(listElementId);
@@ -492,12 +516,7 @@
                 const items = this.getItems();
                 let totalHeight = 0;
                 items.forEach(item => {
-                    const style = window.getComputedStyle(item);
-                    const marginTop = parseFloat(style.marginTop) || 0;
-                    const marginBottom = parseFloat(style.marginBottom) || 0;
-                    
-                    // Высота элемента + его внешние отступы
-                    totalHeight += item.offsetHeight + marginTop + marginBottom;
+                    totalHeight += getTotalHeightWithMargins(item);
                 });
                 return totalHeight;
             }
