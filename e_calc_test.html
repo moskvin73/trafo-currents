@@ -547,6 +547,10 @@
                 return this.listElement.querySelectorAll(this.itemSelector);
             }
 
+            focus() {
+                this.listElement.focus();
+            }
+
             selectItem(index) {
                 const items = this.getItems();
                 if (items.length === 0) return;
@@ -833,7 +837,7 @@
                 const savedRows = container.dataset.savedRows || defRows;
                 container.style.gridTemplateRows = savedRows;
                 container.classList.remove('hide-bottom');
-                errorNav.listElement.focus();
+                errorNav.focus();
             } else {
                 // Сохраняем текущий актуальный размер перед скрытием
                 if (!container.classList.contains('hide-bottom')) {
