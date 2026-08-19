@@ -833,13 +833,11 @@
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
-                let savedRows;
                 // Восстанавливаем сохраненный размер или ставим дефолтный
                 if (container.classList.contains('hide-bottom')) {                    
-                    savedRows = container.dataset.savedRows || defRows;
                     container.classList.remove('hide-bottom');
                 }
-                else savedRows = container.style.gridTemplateRows;
+                const savedRows = container.style.gridTemplateRows;
                 const columns = savedRows.trim().split(/\s+/);
                 const maxVal = parseFloat(styles.getPropertyValue('--max-height'));
                 const track_1 = columns[0];
