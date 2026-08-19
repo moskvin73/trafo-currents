@@ -834,7 +834,7 @@
             const styles = getComputedStyle(container);
             const defRows = styles.getPropertyValue('--grid-rows');
             if (show) {
-                const savedRows = savedRows = container.dataset.savedRows || defRows;
+                const savedRows = container.dataset.savedRows || defRows;
                 // Восстанавливаем сохраненный размер или ставим дефолтный
                 if (container.classList.contains('hide-bottom')) {                    
                     container.classList.remove('hide-bottom');
