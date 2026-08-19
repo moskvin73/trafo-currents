@@ -528,7 +528,11 @@
             }
 
             get lineHeight() {
-                return this.maxHeight / this.getItems().length;
+                return this.maxHeight / this.length;
+            }
+
+            get length() {
+                return this.getItems().length;
             }
 
             get minHeight() {
@@ -540,7 +544,7 @@
             }
 
             get pageHeight() {
-                return this.listElement.clientHeight / this.lineHeight;
+                return Math.ceil(this.listElement.clientHeight / this.lineHeight);
             }
 
             getItems() {
@@ -599,11 +603,11 @@
                     break;
                     case 'PageUp':
                     e.preventDefault();
-                    this.selectItem(this.currentIndex - 5);
+                    this.selectItem(this.currentIndex - this.pageHeight);
                     break;
                     case 'PageDown':
                     e.preventDefault();
-                    this.selectItem(this.currentIndex + 5);
+                    this.selectItem(this.currentIndex + this.pageHeight);
                     break;
                 }
             });}
