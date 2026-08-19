@@ -523,12 +523,20 @@
                 return totalHeight;
             }
 
+            get maxTotalHeight() {
+                return this.maxHeight + getTotalHeightWithMargins(this.header) + getVerticalSpacing(this.listElement);
+            }
+
             get lineHeight() {
                 return this.maxHeight / this.getItems().length;
             }
 
             get minHeight() {
                 return this.lineHeight;
+            }
+
+            get maxTotalHeight() {
+                return this.lineHeight + getTotalHeightWithMargins(this.header) + getVerticalSpacing(this.listElement);
             }
 
             get pageHeight() {
