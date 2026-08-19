@@ -754,7 +754,8 @@
                 // Вычисляем новый размер в px
                 const h_e = document.getElementById('error-header');
                 newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight - h_e.offsetHeight;
-                if (errorNav.listElement.scrollHeight >= newHeightPx)
+                const scroll = errorNav.listElement.scrollHeight;
+                if (scroll >= newHeightPx)
                 {
                     newHeightPercent = newHeightPx * 100 / window.innerHeight;
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
