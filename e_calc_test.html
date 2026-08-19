@@ -751,9 +751,14 @@
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
-                newHeightPercent = newHeightPercent - bottomPanel.offsetHeight * 100 / window.innerHeight;
-                if (newHeightPercent < 0) newHeightPercent = 0;
-                container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
+                // Вычисляем новый размер в px
+                const tt = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
+                if (errorNav.listElement.scrollHeight > tt)
+                {
+                    newHeightPercent = newHeightPercent - bottomPanel.offsetHeight * 100 / window.innerHeight;
+                    if (newHeightPercent < 0) newHeightPercent = 0;
+                    container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
+                }
             }
 
             const onMouseUp = (e) => {
