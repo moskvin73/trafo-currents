@@ -490,9 +490,10 @@
         }
 
         class ErrorNavigator {
-            constructor(listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
+            constructor(headerId, listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
                 this.listElement = document.getElementById(listElementId);
-                if (!this.listElement) return;
+                this.header = document.getElementById(listElementId);
+                if (!this.listElement || !this.header) return;
 
                 this.itemSelector = itemSelector;
                 this.activeClass = activeClass;
@@ -596,7 +597,7 @@
             });}
         }
 
-        const errorNav = new ErrorNavigator('calc-floating-error-list');
+        const errorNav = new ErrorNavigator('error-header', 'calc-floating-error-list');
 
         function createErrors() {
             const count = Math.floor(Math.random() * 10) + 1;
