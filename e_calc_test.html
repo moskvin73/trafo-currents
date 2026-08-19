@@ -756,8 +756,7 @@
                 newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight - h_e.offsetHeight;
                 if (newHeightPx > 0)
                 {
-                    const scroll = errorNav.listElement.scrollHeight;
-                    newHeightPx = Math.min(scroll, newHeightPx) + h_e.offsetHeight;
+                    newHeightPx = Math.min(errorNav.listElement.scrollHeight, newHeightPx) + h_e.offsetHeight;
                     newHeightPercent = newHeightPx * 100 / window.innerHeight;
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 }
