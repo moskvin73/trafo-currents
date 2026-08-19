@@ -766,9 +766,9 @@
                 let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
                 // Подсчитываем облость вывода списка
                 const h_e = document.getElementById('error-header');
-                const calcListHeight = this.lineHeight - bottomPanel.offsetHeight - h_e.offsetHeight;
-                const newListHeight = Math.min(Math.max(calcListHeight, errorNav.minHeight), errorNav.maxHeight);
-                newHeightPx = newListHeight + h_e.offsetHeight;
+                const maxListHeight = errorNav.maxHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
+                const minListHeight = errorNav.minHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
+                newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
