@@ -448,7 +448,7 @@
         <div class="resizer-y" id="resizer-y"></div>
         <div class="resizer-bottom-panel" id="resizerBottomPanel">
             <!-- Шапка панели управления -->
-            <div class="error-panel-header">
+            <div class="error-panel-header" id="error-header">
                 <div class="panel-title">⚠️ Список обнаруженных ошибок <span id="error-count">(0)</span></div>
                 <button class="close-btn" onclick="toggleBottomPanel(false)" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
                     <span class="icon-close"></span>
@@ -752,7 +752,8 @@
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
                 // Вычисляем новый размер в px
-                newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
+                const h_e = document.getElementById('error-header');
+                newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight - h_e.offsetHeight;
                 if (errorNav.listElement.scrollHeight >= newHeightPx)
                 {
                     newHeightPercent = newHeightPx * 100 / window.innerHeight;
