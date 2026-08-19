@@ -768,10 +768,10 @@
                 const h_e = document.getElementById('error-header');
                 const maxListHeight = errorNav.maxHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
                 const minListHeight = errorNav.minHeight + bottomPanel.offsetHeight + h_e.offsetHeight;
-                newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
+                newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight) - bottomPanel.offsetHeight;
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
-                if (newHeightPercent < minVal) newHeightPercent = minVal;
-                else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
+                /*if (newHeightPercent < minVal) newHeightPercent = minVal;
+                else if (newHeightPercent > maxVal) newHeightPercent = maxVal;*/
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 // Вычисляем новый размер в px
                 //const h_e = document.getElementById('error-header');
