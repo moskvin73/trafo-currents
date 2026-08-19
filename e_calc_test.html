@@ -477,15 +477,15 @@
             }
 
             get hasContent() {
-                return getItems().length > 0;
+                return this.getItems().length > 0;
             }
 
             clear() {
-                listElement.innerHTML = '';
+                this.listElement.innerHTML = '';
             }
 
             append(item) {
-                listElement.appendChild(item);
+                this.listElement.appendChild(item);
             }
 
             getItems() {
