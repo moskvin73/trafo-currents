@@ -747,16 +747,15 @@
             const track_4 = styles.getPropertyValue('--row-track-4');
 
             const onMouseMove = (e) => {
-                const newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
+                let newHeightPx = window.innerHeight - e.clientY - (resizerHeight / 2);
                 let newHeightPercent = (newHeightPx / window.innerHeight) * 100;
                 if (newHeightPercent < minVal) newHeightPercent = minVal;
                 else if (newHeightPercent > maxVal) newHeightPercent = maxVal;
                 // Вычисляем новый размер в px
-                const tt = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
-                if (errorNav.listElement.scrollHeight > tt)
+                newHeightPx = newHeightPercent * window.innerHeight / 100 - bottomPanel.offsetHeight;
+                if (errorNav.listElement.scrollHeight >= newHeightPx)
                 {
-                    newHeightPercent = newHeightPercent - bottomPanel.offsetHeight * 100 / window.innerHeight;
-                    if (newHeightPercent < 0) newHeightPercent = 0;
+                    newHeightPercent = newHeightPercent * 100 / window.innerHeight;
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 }
             }
