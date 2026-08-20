@@ -472,6 +472,160 @@
             }
         }
 
+        /* Каждая архивная карточка в ленте */
+        .calc-card {
+            position: relative;
+            background: var(--calc-bg-card);
+            border: 1px solid var(--calc-color-border);
+            border-radius: var(--calc-radius-card);
+            padding: var(--calc-card-padding);
+            margin-bottom: var(--calc-card-margin-bottom);
+            animation: fadeIn 0.3s ease;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .calc-card-echo {
+            /* Все ваши старые свойства без изменений */
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: var(--calc-font-size-echo);
+            color: var(--calc-color-echo);
+            background: var(--calc-bg-echo);
+            padding: var(--calc-echo-padding);
+            border-radius: var(--calc-radius-echo);
+            display: inline-block;      
+            white-space: pre-wrap;      
+            word-break: break-word;     
+            margin-bottom: var(--calc-echo-margin-bottom);
+            border-left: 2px solid var(--calc-color-brand);
+            
+            /* Добавляем поддержку плавного скрытия */
+            /*max-height: 500px;  Задаем заведомо большую высоту для анимации */
+            opacity: 1;
+            overflow: hidden;
+            /*transition: background 0.3s, color 0.3s, border-color 0.3s, 
+                        max-height 0.3s ease-in-out, opacity 0.2s ease, margin 0.3s ease;*/
+        }
+
+        /* КЛАСС СКРЫТИЯ ЭХО-БЛОКА (Плавное схлопывание) */
+        .calc-card-echo.hidden {
+            max-height: 0px;
+            opacity: 0;
+            margin-bottom: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            border-left-width: 0px;
+        }
+
+        /* ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КНОПОК УПРАВЛЕНИЯ В КАРТОЧКЕ */
+        .calc-card-actions {
+            position: absolute;
+            top: var(--calc-btn-delete-top);
+            right: var(--calc-btn-delete-right);
+            display: flex;
+            align-items: center; /* Идеальное выравнивание глаза и крестика по горизонтальной оси */
+            gap: 12px; /* Фиксированное расстояние между кнопками */
+        }
+
+        /* Базовый сброс для обеих кнопок в панели */
+        .calc-card-delete,
+        .calc-card-toggle-echo {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: var(--calc-btn-delete-padding);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1; /* Обнуляем высоту строки, чтобы шрифты не смещались вверх/вниз */
+        }
+
+        /* Специфичные стили крестика [×] */
+        .calc-card-delete {
+            color: var(--calc-color-muted);
+            font-size: var(--calc-font-size-delete);
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .calc-card-delete:hover {
+            color: var(--calc-color-danger);
+        }
+
+        /* Специфичные стили глаза [👁️] */
+        .calc-card-toggle-echo {
+            color: var(--calc-color-muted);
+            font-size: 16px; /* Размер иконки глаза */
+            transition: color 0.2s, transform 0.2s;
+        }
+        .calc-card-toggle-echo:hover {
+            color: var(--calc-color-brand);
+            transform: scale(1.1);
+        }
+
+        /* Контейнер активной строки ввода */
+        .input-row-container {
+            display: flex;
+            gap: var(--calc-row-gap);
+            align-items: stretch;
+            margin-top: var(--calc-row-margin-top);
+        }
+
+        /* ЕДИНЫЙ КОНТЕЙНЕР ТЕРМИНАЛА */
+        .terminal-editor-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--calc-color-border);
+            border-radius: var(--calc-radius-input);
+            background: var(--calc-bg-input);
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* Эффект фокуса на всем блоке, когда пользователь внутри textarea */
+        .terminal-editor-block:focus-within {
+            border-color: var(--calc-color-brand);
+            box-shadow: 0 0 0 3px var(--calc-brand-shadow);
+        }
+
+        /* РАБОЧАЯ ЗОНА ВВОДА */
+        .textarea-with-lines {
+            display: flex;
+            background: transparent;
+            border: none; /* Убираем старую рамку */
+        }
+
+        /* БЛОК НОМЕРОВ СТРОК */
+        .line-numbers {
+            background: var(--calc-bg-card);
+            color: var(--calc-color-muted);
+            padding: 12px 8px 12px 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: var(--calc-font-size-input);
+            line-height: 1.5;
+            text-align: right;
+            user-select: none;
+            border-right: 1px solid var(--calc-color-border);
+            min-width: 25px;
+        }
+
+        /* ПОЛЕ ВВОДА */
+        #calc-terminal-input {
+            flex: 1;
+            background: transparent !important;
+            color: var(--calc-color-text);
+            border: none !important;
+            box-shadow: none !important;
+            padding: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: var(--calc-font-size-input);
+            line-height: 1.5;
+            outline: none;
+            resize: none;             
+            overflow-y: hidden;       
+            box-sizing: border-box;   
+            field-sizing: content;     
+            caret-color: var(--calc-color-text);
+        }
 
         /* #endregion комндный контейнер */
 
