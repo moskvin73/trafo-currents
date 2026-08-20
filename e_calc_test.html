@@ -30,6 +30,62 @@
             --error-item-background-selected: rgba(255, 77, 79, 0.15);
             --error-loc-color: #cf1322;
             --error-loc-margin-right: 12px;
+
+            --calc-bg-main: #ffffff;           /* Фон самого калькулятора */
+            --calc-bg-card: #f8fafc;           /* Фон архивной карточки (светло-серый) */
+            --calc-bg-echo: #f1f5f9;           /* Фон блока эхо-кода */
+            --calc-bg-input: #ffffff;          /* Фон поля ввода */
+            
+            --calc-color-text: #0f172a;        /* Основной цвет текста (почти черный) */
+            --calc-color-echo: #475569;        /* Цвет текста внутри эхо-кода */
+            --calc-color-muted: #94a3b8;       /* Цвет крестика [×] и второстепенного текста */
+            --calc-color-border: #cbd5e1;      /* Цвет всех рамок и границ */
+
+            --calc-color-brand: #0f2d59;       /* Ваша фирменная синяя палитра (основной) */
+            --calc-color-brand-hover: #1e3a6d; /* Синий при наведении */
+            --calc-color-brand-shadow: rgba(15, 45, 89, 0.1); /* Тень вокруг поля при фокусе */
+            
+            --calc-color-danger: #dc3545;      /* Красный цвет для удаления/ошибок */
+
+            /* Переменная цвета для MathJax в светлой теме (совпадает с основным текстом) */
+            --calc-mathjax-color: #0f172a;
+
+           /* --- РАЗМЕРЫ И ОТСТУПЫ --- */
+
+            /* --- Внешние отступы (Margins) --- */
+            --calc-main-margin-top: 0px;       /* Отступ всего калькулятора от верхнего контента */
+            --calc-card-margin-bottom: 2px;    /* Расстояние между архивными карточками в ленте */
+            --calc-echo-margin-bottom: 2px;    /* Отступ снизу от эхо-кода до результата внутри карточки */
+            --calc-row-margin-top: 8px;        /* Отступ сверху для строки ввода (отделяет от ленты) */
+
+            /* --- Внутренние отступы (Paddings) --- */
+            --calc-card-padding: 6px;          /* Внутренний отступ архивной карточки */
+            --calc-echo-padding: 2px 4px;      /* Внутренний отступ для блока с эхо-кодом (верх/низ и право/лево) */
+            --calc-input-padding: 4px;         /* Внутренний отступ в поле ввода (высота и простор текста) */
+            --calc-result-padding: 2px;
+            --calc-btn-padding-desktop: 0 25px;/* Отступы кнопки Enter на ПК (0 сверху/снизу, 25px по бокам) */
+            --calc-btn-padding-mobile: 12px;   /* Внутренний отступ кнопки Enter на смартфонах */
+            --calc-btn-delete-padding: 2px 6px;/* Область клика вокруг крестика [×] удаления карточки */
+
+            /* --- Размеры шрифтов (Font Sizes) --- */
+            --calc-font-size-echo: 14px;       /* Размер шрифта эхо-кода */
+            --calc-font-size-input: 14px;      /* Размер шрифта в поле ввода */
+            --calc-font-size-result: 14px;     /* Размер шрифта в поле ввода */
+            --calc-font-size-btn: 14px;        /* Размер шрифта на кнопке Enter */
+            --calc-font-size-delete: 18px;     /* Размер крестика [×] удаления карточки */
+
+            /* --- Скругление углов (Border Radius) --- */
+            --calc-radius-card: 4px;           /* Скругление архивной карточки */
+            --calc-radius-echo: 6px;           /* Скругление блока эхо-кода */
+            --calc-radius-input: 4px;          /* Скругление поля ввода */
+            --calc-radius-result: 2px;
+            --calc-radius-btn: 4px;            /* Скругление кнопки Enter */
+
+            /* --- Сетки и Позиционирование --- */
+            --calc-row-gap: 12px;              /* Расстояние между полем ввода и кнопкой Enter на ПК */
+            --calc-btn-delete-top: 10px;       /* Смещение крестика [×] от верхнего края карточки */
+            --calc-btn-delete-right: 12px;     /* Смещение крестика [×] от правого края карточки */
+
         }
 
         /* #region Кнопки */
@@ -369,7 +425,57 @@
         }        
         /* #endregion панель ошиюок */    
 
-    </style>
+        /* #region комндный контейнер */
+
+        /* Контейнер калькулятора */
+        .command-line-calculator {
+            margin-top: var(--calc-main-margin-top);
+            background: var(--calc-bg-main);
+            color: var(--calc-color-text);
+            transition: background 0.3s, color 0.3s; /* Плавный переход при смене темы */
+        }
+
+        /* КЛЮЧЕВОЙ КЛЮЧ ДЛЯ MATHJAX: Управляем видимостью формул во всех режимах рендеринга */
+        .command-line-calculator mjx-container,
+        .command-line-calculator .MathJax,
+        .command-line-calculator .MathJax_Display,
+        .command-line-calculator mjx-math {
+            color: var(--calc-mathjax-color) !important;
+            fill: var(--calc-mathjax-color) !important; /* Для SVG-рендеринга MathJax */
+            transition: color 0.3s ease, fill 0.3s ease;
+        }
+
+        /* На всякий случай: если MathJax генерирует SVG-элементы напрямую */
+        .command-line-calculator svg path {
+            fill: currentColor; /* Заставляет SVG использовать текущий цвет текста (зелёный/чёрный) */
+        }
+
+        /* УВЕЛИЧИВАЕМ РАЗМЕР ВСЕХ ФОРМУЛ MATHJAX ВНУТРИ ЛЕНТЫ КАЛЬКУЛЯТОРА */
+        .command-line-calculator mjx-container {
+            font-size: 100% !important; 
+            
+            margin: 4px 0 !important; 
+            
+            vertical-align: middle;
+        }
+        
+        /* Заставляем все inline-формулы MathJax внутри калькулятора рендериться в крупном масштабе */
+        .command-line-calculator mjx-container[inline] {
+            font-size: 150% !important;
+            margin: 4px 0 !important; 
+        }
+
+        /* Защита для мобильных телефонов: чтобы огромная дробь не вылезала за края карточки */
+        @media (max-width: 768px) {
+            .command-line-calculator mjx-container[inline] {
+                font-size: 120% !important;
+            }
+        }
+
+
+        /* #endregion комндный контейнер */
+
+   </style>
 </head>
 <body>
     <div class="app-container">
