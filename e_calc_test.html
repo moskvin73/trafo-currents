@@ -816,7 +816,7 @@
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
                 const newHeightPercent = Math.min(newHeightPx / window.innerHeight * 100, maxVal) - bottomH / window.innerHeight  * 100;
                 if (newHeightPercent < 0) return;
-                const oldHeightPercent = parseFloat(container.style.gridTemplateRows.trim().split(/\s+/).columns[2]);
+                const oldHeightPercent = parseFloat(container.style.gridTemplateRows.trim().split(/\s+/)[2]);
                 if (oldHeightPercent !== newHeightPercent) {
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                     container.dataset.savedRows = container.style.gridTemplateRows;
