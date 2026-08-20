@@ -859,7 +859,10 @@
                 const minListHeight = Math.ceil(errorNav.minTotalHeight + bottomH);
                 newHeightPx = Math.max(Math.min(newHeightPx, maxListHeight), minListHeight);
                 const newHeightPercent = Math.min(newHeightPx / window.innerHeight * 100, maxVal) - bottomH / window.innerHeight  * 100;
-                if (newHeightPercent < 0) return;
+                if (newHeightPercent < 0) {
+                    toggleBottomPanel(false);
+                    return;
+                }
                 container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                 errorNav.focus();
             } else {
