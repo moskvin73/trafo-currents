@@ -818,7 +818,7 @@
                 if (newHeightPercent < 0) return;
                 const str = container.style.gridTemplateRows;
                 const oldHeightPercent = parseFloat(container.style.gridTemplateRows.trim().split(/\s+/)[2]);
-                if (oldHeightPercent !== newHeightPercent) {
+                if (Math.abs(oldHeightPercent - newHeightPercent) > 0.0001) {
                     container.style.gridTemplateRows = `${track_1} ${resizerHeight}px ${newHeightPercent}% ${track_4}`;
                     container.dataset.savedRows = container.style.gridTemplateRows;
                 }
