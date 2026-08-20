@@ -482,7 +482,10 @@
         <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
     </div>
 
-    <script>
+    <script type="module">
+        import { MathParser } from './js/math_parser/MathParser.js';
+        import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
+        import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
