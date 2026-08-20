@@ -971,9 +971,12 @@
             showError(errors);
         }
         
+        window.createErrors = createErrors;
         function clearErrors() {
             showError([]);
         }
+
+        window.clearErrors = clearErrors;
 
         function showError(errors) {
             errorNav.setItems(errors);
