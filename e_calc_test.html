@@ -498,6 +498,7 @@
                 this.itemSelector = itemSelector;
                 this.activeClass = activeClass;
                 this.currentIndex = -1;
+                this._cachedItems = null; // Поле для хранения кэша
 
                 this.initEvents();
             }
@@ -508,6 +509,7 @@
 
             clear() {
                 this.listElement.innerHTML = '';
+                this._cachedItems = null;
             }
 
             get maxHeight() {
@@ -544,7 +546,9 @@
             }
 
             getItems() {
-                return this.listElement.querySelectorAll(this.itemSelector);
+                if (!this._cachedItems)
+                    this._cachedItems = this.listElement.querySelectorAll(this.itemSelector);
+                return this._cachedItems;
             }
 
             focus() {
