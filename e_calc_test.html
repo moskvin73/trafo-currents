@@ -246,11 +246,41 @@
         .bottom-panel {
             grid-column: 1 / 4; /* На всю ширину */
             grid-row: 4;
+            display: flex;
             height: 30px; /* Начальный размер, меняется из JS */
             background: var(--color-botttom-panel);
-            overflow: auto;
+            overflow: hidden;
             box-sizing: border-box;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
         }
+
+        /* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
+        #calc-submit-btn {
+            background: var(--calc-color-brand);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #calc-submit-btn:hover { background: var(--calc-color-brand-hover); }
+        #calc-submit-btn:active { transform: scale(0.97); }
+
+        /* ИНДИКАТОР КУРСОРA */
+        .cursor-position {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--calc-color-echo);
+        }
+
 
         /* #region Tab контроллер */
         .tabs-container {
@@ -739,7 +769,10 @@
             </div>            
             <div id="calc-floating-error-list" class="floating-error-list" tabindex="0"></div>
         </div>
-        <div class="bottom-panel" id="bottomPanel">Низ (программируемый размер)</div>
+        <div class="bottom-panel" id="bottomPanel">
+            <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
+            <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
+        </div>
     </div>
 
     <script type="module">
