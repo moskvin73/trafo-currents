@@ -765,7 +765,7 @@
         <div class="resizer-bottom-panel" id="resizerBottomPanel">
             <div class="error-panel-header" id="error-header">
                 <div class="panel-title">⚠️ Список обнаруженных ошибок <span id="error-count">(0)</span></div>
-                <button class="close_btn_error" onclick="toggleBottomPanel(false)" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
+                <button class="close_btn_error" id="close_btn_error" title="Закрыть панель Ctrl+A или Alt+A" aria-label="Закрыть панель Ctrl+A или Alt+A">
                     <span class="icon-close"></span>
                 </button>
             </div>            
@@ -1198,6 +1198,7 @@
             }
         }
 
+        document.getElementById('close_btn_error').addEventListener('click', function() { toggleBottomPanel(false) });
         //#endregion Size Paneles
     </script>
 </body>
