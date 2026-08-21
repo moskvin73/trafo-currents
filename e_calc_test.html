@@ -683,7 +683,7 @@
                     </div>
                     <button class="scroll-btn left" aria-label="Прокрутить влево">&lt;</button>
                     <button class="scroll-btn right" aria-label="Прокрутить вправо">&gt;</button>
-                    <button class="close-btn-side-panel" onclick="toggleSidePanel(false)" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
+                    <button class="close-btn-side-panel" id="close-btn-side-panel" title="Закрыть панель Ctrl+B или Alt+B" aria-label="Закрыть панель Ctrl+B или Alt+B">
                         <span class="icon-close"></span>
                     </button>
                 </div>
@@ -1118,6 +1118,8 @@
                 container.classList.add('hide-side');
             }
         }
+
+        document.getElementById('close-btn-side-panel').addEventListener('click', function() { toggleSidePanel(false) });
 
         const resizer_y = document.getElementById('resizer-y');
         resizer_y.addEventListener('mousedown', (e) => {
