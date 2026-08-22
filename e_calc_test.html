@@ -1201,7 +1201,7 @@
         //#endregion Size Paneles
 
         //#region Line editor
-
+        function initLineNumbers() {
            const textarea = document.getElementById('calc-terminal-input');
             const lineNumbersEle = document.getElementById('calc-line-numbers');
             const cursorIndicator = document.getElementById('calc-cursor-position');
@@ -1295,7 +1295,9 @@
             }
 
             updateLineNumbers();
-            updateCursorPosition();        
+            updateCursorPosition();
+        }
+        initLineNumbers();
         //#endregion Line editor
 
 </script>
