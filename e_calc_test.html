@@ -984,28 +984,6 @@
 
         const errorNav = new ErrorNavigator('error-header', 'calc-floating-error-list');
 
-        function createErrors() {
-            const count = Math.floor(Math.random() * 100) + 1;
-            // Создаем массив с помощью Array.from
-            const errors = Array.from(
-            { length: count }, 
-            (_, index) => `Ошибка №${index + 1}`
-            );
-            showError(errors);
-        }
-        
-        window.createErrors = createErrors;
-        function clearErrors() {
-            showError([]);
-        }
-
-        window.clearErrors = clearErrors;
-
-        function showError(errors) {
-            errorNav.setItems(errors);
-            toggleBottomPanel(true);
-        }
-
         //#region TabPages
         const list_wrapper = document.querySelector('.tablist-wrapper');
         const buttons = document.querySelectorAll('.tab-btn');
