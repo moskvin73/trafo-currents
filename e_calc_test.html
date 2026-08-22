@@ -667,8 +667,29 @@
     <div class="app-container hide-bottom">
         <!-- Центральный контент -->
         <div class="main-center">
-            <button onclick="createErrors()">Создать ошибки</button>
-            <button onclick="clearErrors()">Удалить ошибки</button>
+            <div class="command-line-calculator">
+                
+                <!-- Зона истории: сюда JS будет динамически добавлять выполненные карточки -->
+                <div id="calc-history-stream"></div>
+
+                <!-- Активный блок ввода (всегда зафиксирован в самом внизу ленты) -->
+                <div class="active-input-block">
+                    <div class="step-heading">Новый скрипт:</div>
+
+                    <div class="input-row-container">
+                        <!-- Единый монолитный блок терминала -->
+                        <div class="terminal-editor-block">
+                            
+                            <!-- Рабочая зона: Номера строк + Ввод -->
+                            <div class="textarea-with-lines">
+                                <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
+                                <textarea id="calc-terminal-input" rows="2" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>	
         </div>
         <div class="resizer-x" id="resizer-x"></div>
         <!-- Правая панель (скролл / скрытие) -->
