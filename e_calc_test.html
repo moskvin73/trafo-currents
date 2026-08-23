@@ -1281,8 +1281,8 @@
 
             // Стандартные слушатели для действий пользователя
             textarea.addEventListener('input', () => {
-                this.style.height = 'auto'; // сбрасываем высоту, чтобы уменьшаться при удалении текста
-                this.style.height = this.scrollHeight + 'px'; // устанавливаем высоту по содержимому
+                //this.style.height = 'auto'; // сбрасываем высоту, чтобы уменьшаться при удалении текста
+                //this.style.height = this.scrollHeight + 'px'; // устанавливаем высоту по содержимому
                 updateLineNumbers();
                 updateCursorPosition();
             });
