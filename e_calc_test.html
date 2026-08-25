@@ -1221,42 +1221,7 @@
             document.body.appendChild(mirrorEle);
 
             const updateLineNumbers = () => {
-                // Ждем, пока браузер пересчитает ширину и переносы строк
-                requestAnimationFrame(() => {
-                    textarea.style.height = 'auto'; 
-                    textarea.style.height = textarea.scrollHeight + 'px'; 
-                    
-                    mirrorEle.style.width = `${textarea.clientWidth}px`;
-                    const text = textarea.value;
-                    const lines = text.split('\n');
-                    mirrorEle.innerHTML = '';
-                    
-                    lines.forEach((line) => {
-                        const span = document.createElement('span');
-                        span.style.display = 'block';
-                        span.style.wordBreak = 'break-all';
-                        span.style.whiteSpace = 'pre-wrap';
-                        span.textContent = line === '' ? ' ' : line;
-                        mirrorEle.appendChild(span);
-                    });
-
-                    const spans = mirrorEle.querySelectorAll('span');
-                    let lineNumbersHtml = '';
-                    const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
-
-                    spans.forEach((span, index) => {
-                        const spanHeight = span.getBoundingClientRect().height;
-                        const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-                        lineNumbersHtml += `<div>${index + 1}</div>`;
-                        for (let i = 1; i < subLinesCount; i++) {
-                            lineNumbersHtml += `<div>&nbsp;</div>`;
-                        }
-                    });
-                    
-                    lineNumbersEle.innerHTML = lineNumbersHtml;
-                });
-
-                /*textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
+                textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
                 textarea.style.height = textarea.scrollHeight + 'px'; // Устанавливаем новую высоту по содержимом
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
@@ -1286,7 +1251,7 @@
                         lineNumbersHtml += `<div>&nbsp;</div>`;
                     }
                 });
-                lineNumbersEle.innerHTML = lineNumbersHtml;*/
+                lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
             const updateCursorPosition = () => {
@@ -1328,6 +1293,7 @@
             textarea.addEventListener('keyup', updateCursorPosition);
             textarea.addEventListener('click', updateCursorPosition);
             textarea.addEventListener('focus', updateCursorPosition);
+            window.addEventListener('resize', updateLineNumbers);
 
             if (window.ResizeObserver) {
                 new ResizeObserver(updateLineNumbers).observe(textarea);
