@@ -1255,7 +1255,7 @@
             };
 
             const updateCursorPosition = () => {
-                const selectionStart = textarea.selectionStart;
+                const selectionStart = textarea.selectionEnd;
                 const text = textarea.value;
                 const textBeforeCursor = text.substring(0, selectionStart);
                 const lines = textBeforeCursor.split('\n');
