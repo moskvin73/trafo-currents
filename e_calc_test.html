@@ -1294,6 +1294,11 @@
             textarea.addEventListener('click', updateCursorPosition);
             textarea.addEventListener('focus', updateCursorPosition);
             window.addEventListener('resize', updateLineNumbers);
+            extarea.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' || event.key === 'Delete') {
+                // Используем setTimeout, чтобы значение успело обновиться в DOM
+                setTimeout(updateLineNumbers, 0);
+            }});
 
             if (window.ResizeObserver) {
                 new ResizeObserver(updateLineNumbers).observe(textarea);
