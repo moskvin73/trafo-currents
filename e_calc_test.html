@@ -1229,6 +1229,9 @@
                 lines.forEach((line) => {
                     const span = document.createElement('span');
                     span.style.display = 'block';
+                    // Добавляем перенос длинных слов без пробелов
+                    span.style.wordBreak = 'break-all'; 
+                    span.style.whiteSpace = 'pre-wrap';
                     span.textContent = line === '' ? ' ' : line;
                     mirrorEle.appendChild(span);
                 });
