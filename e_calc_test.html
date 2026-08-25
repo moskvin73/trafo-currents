@@ -1255,7 +1255,23 @@
             };
 
             const updateCursorPosition = () => {
-                const selectionStart = textarea.selectionEnd;
+                const direction = textarea.selectionDirection;
+                // Если выделение назад (в противоположную сторону), то активный край в selectionStart
+                const activePosition = (direction === 'backward') 
+                    ? textarea.selectionStart 
+                    : textarea.selectionEnd;
+
+                const text = textarea.value;
+                const textBeforeCursor = text.substring(0, activePosition);
+                const lines = textBeforeCursor.split('\n');
+                const currentLine = lines.length;
+                const currentColumn = lines[lines.length - 1].length + 1;
+
+                if (cursorIndicator) {
+                    cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
+                }
+
+               /*const selectionStart = textarea.selectionEnd;
                 const text = textarea.value;
                 const textBeforeCursor = text.substring(0, selectionStart);
                 const lines = textBeforeCursor.split('\n');
@@ -1264,7 +1280,7 @@
 
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
-                }
+                }*/
             };
 
             // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
