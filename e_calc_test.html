@@ -1373,7 +1373,6 @@
             toggleBottomPanel(false);
             const rawCode = textarea.value.trim();
             if (!rawCode) return; // Игнорируем пустой ввод
-            toggleBottomPanel(false);
             let resultBlock; let card;
             try {
                 // Запускаем наш потоковый LL(1) компилятор
