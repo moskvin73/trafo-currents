@@ -832,7 +832,16 @@
         function scrollToCodeLine(line, column) {
             if (!line) return;
 
-            // 1. Сначала плавно доскроллим ВСЮ страницу до самого блока ввода
+            setTimeout(() => {
+                const activeBlock = document.querySelector(".active-input-block") || textarea;
+                if (activeBlock) {
+                    activeBlock.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'end' 
+                });
+            }}, 80); 
+
+            /*// 1. Сначала плавно доскроллим ВСЮ страницу до самого блока ввода
             // Точно так же, как это делал ваш работающий код в карточках!
             const activeBlock = document.querySelector(".active-input-block") || textarea;
             if (activeBlock) {
@@ -840,7 +849,7 @@
                     behavior: 'smooth', 
                     block: 'end' 
                 });
-            }
+            }*/
 
             // Даем фокус и ставим курсор сразу, отключая автоскролл браузера
             /*textarea.focus({ preventScroll: true });
