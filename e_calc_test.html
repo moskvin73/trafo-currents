@@ -858,7 +858,7 @@
                 charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
                 
                 // Устанавливаем курсор на ошибочное место
-                inputArea.setSelectionRange(charIndex, charIndex);
+                textarea.setSelectionRange(charIndex, charIndex);
 
                 // 3. Если внутри самого textarea есть внутреннее смещение, докрутим его
                 const computedStyle = window.getComputedStyle(textarea);
