@@ -1482,11 +1482,9 @@
             }
             // 5. Вставляем готовую карточку в ленту истории
             historyStream.appendChild(card);
-
             // 6. Очищаем поле ввода и возвращаем на него фокус для следующей команды
             textarea.value = "";
             textarea.focus();
-
             // Внутренняя функция для идеального скролла
             const performSmartScroll = () => {
                 const activeBlock = document.querySelector(".active-input-block") || textarea;
