@@ -802,6 +802,7 @@
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
+        const textarea = document.getElementById('calc-terminal-input');
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
@@ -828,6 +829,46 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
+        function scrollToCodeLine(line, column) {
+            if (!line) return;
+
+            // 1. Сначала плавно доскроллим ВСЮ страницу до самого блока ввода
+            // Точно так же, как это делал ваш работающий код в карточках!
+            const activeBlock = document.querySelector(".active-input-block") || textarea;
+            if (activeBlock) {
+                activeBlock.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'end' 
+                });
+            }
+
+            // 2. Делаем микропаузу (80мс), чтобы страница успела завершить скролл,
+            // и только потом ставим курсор и фокус, чтобы браузер не сбил наше положение
+            setTimeout(() => {
+                textarea.focus({ preventScroll: true });
+
+                const text = textarea.value;
+                const lines = text.split('\n');
+                
+                // Высчитываем индекс символа
+                let charIndex = 0;
+                for (let i = 0; i < Math.min(line - 1, lines.length); i++) {
+                    charIndex += lines[i].length + 1;
+                }
+                charIndex += Math.min((column || 1) - 1, lines[line - 1]?.length || 0);
+                
+                // Устанавливаем курсор на ошибочное место
+                inputArea.setSelectionRange(charIndex, charIndex);
+
+                // 3. Если внутри самого textarea есть внутреннее смещение, докрутим его
+                const computedStyle = window.getComputedStyle(textarea);
+                const fontSize = parseFloat(computedStyle.fontSize) || 14;
+                const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);
+                
+                inputArea.scrollTop = (line - 1) * lineHeight;
+            }, 80);
+        }
+
         class ErrorNavigator {
             constructor(headerId, listElementId, itemSelector = '.floating-error-item', activeClass = 'selected') {
                 this.listElement = document.getElementById(listElementId);
@@ -838,7 +879,6 @@
                 this.activeClass = activeClass;
                 this.currentIndex = -1;
                 this._cachedItems = null; // Поле для хранения кэша
-
                 this.initEvents();
             }
 
@@ -972,6 +1012,7 @@
                     
                     item.appendChild(locSpan);
                     item.appendChild(textSpan);
+                    item.onclick = () => scrollToCodeLine(line, col);
                     this.listElement.appendChild(item);
                 });
                 const errorInForm = this.header.querySelector('#error-count');
@@ -1202,7 +1243,6 @@
         document.getElementById('close_btn_error').addEventListener('click', function() { toggleBottomPanel(false) });
         //#endregion Size Paneles
 
-        const textarea = document.getElementById('calc-terminal-input');
         //#region Line editor
         function initLineNumbers() {
             const lineNumbersEle = document.getElementById('calc-line-numbers');
