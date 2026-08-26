@@ -1370,6 +1370,7 @@
         }
 
         function executeCurrentCommand() {
+            toggleBottomPanel(false);
             const rawCode = textarea.value.trim();
             if (!rawCode) return; // Игнорируем пустой ввод
             toggleBottomPanel(false);
