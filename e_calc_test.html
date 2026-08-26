@@ -799,6 +799,10 @@
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
 
+        // Единая изолированная область памяти (контекст сессии калькулятора)
+        // Переменные живут здесь, пока пользователь не обновит страницу
+        const globalScope = new SymbolTableContext();
+
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
         
@@ -1198,9 +1202,9 @@
         document.getElementById('close_btn_error').addEventListener('click', function() { toggleBottomPanel(false) });
         //#endregion Size Paneles
 
+        const textarea = document.getElementById('calc-terminal-input');
         //#region Line editor
         function initLineNumbers() {
-            const textarea = document.getElementById('calc-terminal-input');
             const lineNumbersEle = document.getElementById('calc-line-numbers');
             const cursorIndicator = document.getElementById('calc-cursor-position');
 
@@ -1315,6 +1319,208 @@
         initLineNumbers();
         //#endregion Line editor
 
+        const submitBtn = document.getElementById("calc-submit-btn");
+        const historyStream = document.getElementById("calc-history-stream");
+
+        function createCard(rawCode) {
+            // 1. Создаем контейнер для новой карточки в ленте истории
+            const card = document.createElement("div");
+            card.className = "calc-card";
+
+            // НОВОЕ: Создаем единый контейнер для кнопок управления в углу
+            const actionsContainer = document.createElement("div");
+            actionsContainer.className = "calc-card-actions";
+
+            // 2. Добавляем кнопку удаления этой карточки [×]
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "calc-card-delete";
+            deleteBtn.innerHTML = "&times;";
+            deleteBtn.title = "Удалить этот расчет";
+            deleteBtn.onclick = () => card.remove();
+
+            // 3. Добавляем кнопку сворачивания эхо-кода [👁️]
+            const toggleEchoBtn = document.createElement("button");
+            toggleEchoBtn.className = "calc-card-toggle-echo";
+            toggleEchoBtn.innerHTML = "👁️";
+            toggleEchoBtn.title = "Скрыть/Показать исходный код";
+
+            const echoBlock = document.createElement("div");
+            echoBlock.className = "calc-card-echo";
+            echoBlock.textContent = rawCode;
+
+            toggleEchoBtn.onclick = () => {
+                const isHidden = echoBlock.classList.toggle("hidden");
+                toggleEchoBtn.innerHTML = isHidden ? "🙈" : "👁️";
+                toggleEchoBtn.title = isHidden ? "Показать исходный код" : "Скрыть исходный код";
+            };
+
+            // Сначала складываем кнопки в контейнер действий
+            actionsContainer.appendChild(toggleEchoBtn);
+            actionsContainer.appendChild(deleteBtn);
+
+            // Затем сам контейнер действий добавляем в карточку
+            card.appendChild(actionsContainer);
+
+            // 4. Выводим «эхо» и результат
+            card.appendChild(echoBlock);
+            const resultBlock = document.createElement("div");
+            resultBlock.className = "result-side";
+            card.appendChild(resultBlock);
+            return { card: card, resultBlock: resultBlock  };
+        }
+
+        function executeCurrentCommand() {
+            const rawCode = textarea.value.trim();
+            if (!rawCode) return; // Игнорируем пустой ввод
+            toggleBottomPanel(false);
+            let resultBlock; let card;
+            try {
+                // Запускаем наш потоковый LL(1) компилятор
+                const parser = new MathParser(rawCode, globalScope);
+                parser.parse();
+                if (parser.errors.length > 0) {
+                    errorNav.setItems(parser.errors);
+                    return;
+                }
+                else {
+                    const cc = createCard(rawCode);
+                    card = cc.card;
+                    resultBlock = cc.resultBlock;
+                    // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
+                    resultBlock.innerHTML = "";
+                    const parseResult = parser.toTex();
+                    parseResult.forEach((res) => {
+                    switch (res.type)
+                    {
+                        case 'mixed': {
+                            const printRow = document.createElement("div");
+                            printRow.className = "print-row"; 
+                            printRow.innerHTML = res.value; 
+                            resultBlock.appendChild(printRow);
+                            }
+                            break;
+                        case 'expr': {
+                            const mathRow = document.createElement("div");
+                            mathRow.className = "output-row";
+                            mathRow.innerHTML = res.value;
+                            resultBlock.appendChild(mathRow);
+                            }
+                            break;
+                        case 'plot':
+                            if (res.value.target === "window") {
+                                res.value.createFloatingWindow();
+                            } else if (res.value.target === "inline") {
+                                // 1. Создаем промежуточный DIV-обёртку (ограничитель размеров)
+                                const diagramWrapper = document.createElement("div");
+                                diagramWrapper.className = "inline-diagram-wrapper";
+                                
+                                Object.assign(diagramWrapper.style, {
+                                    width: '100%',
+                                    maxWidth: '400px',       // Максимальный комфортный размер на десктопе
+                                    aspectRatio: '1 / 1',    // Идеальный квадрат (браузер сам рассчитает высоту от ширины!)
+                                    margin: '10px auto',     // Центрируем диаграмму внутри карточки
+                                    boxSizing: 'border-box'
+                                });
+
+                                // 2. Создаем финальный контейнер, куда запишется сама SVG-диаграмма
+                                const mathRow = document.createElement("div");
+                                mathRow.className = "output-row";
+                                
+                                Object.assign(mathRow.style, {
+                                    width: '100%',
+                                    height: '100%',          // Занимает ровно 100% от нашего wrapper-ограничителя
+                                    position: 'relative'
+                                });
+
+                                // Собираем матрешку: пихаем mathRow во wrapper, а wrapper — в карточку
+                                diagramWrapper.appendChild(mathRow);
+                                resultBlock.appendChild(diagramWrapper);
+                                
+                                // 3. Вызываем сеттер (внутри создается VectorDiagram)
+                                res.value.containerElement = mathRow;
+
+                                // 4. Включаем слежку за размерами обёртки
+                                const inlineObserver = new ResizeObserver((entries) => {
+                                    for (let entry of entries) {
+                                        if (entry.contentRect.width > 0) {
+                                            if (res.value.instance && typeof res.value.syncContainerSizes === 'function') {
+                                                res.value.syncContainerSizes();
+                                            }
+                                            // В отличие от окон, для inline-карточек слежку НЕ выключаем (.disconnect() убираем),
+                                            // чтобы при изменении размеров всего окна браузера диаграмма в карточке тоже адаптивно сжималась!
+                                        }
+                                    }
+                                });                                
+                                inlineObserver.observe(diagramWrapper);                                   
+                            }
+                            break;
+                        }
+                    });
+                    // Если цикл прошёл, но в resultBlock ничего не добавилось (все строки были скрыты через $)
+                    if (resultBlock.children.length === 0) {
+                        const silentRow = document.createElement("div");
+                        silentRow.style.color = "#6c757d";
+                        silentRow.style.fontStyle = "italic";
+                        silentRow.textContent = "Вычислено (сохранено в памяти $)";
+                        resultBlock.appendChild(silentRow);
+                    }                    
+                }
+
+            }
+            catch (runtimeError) {
+                card.classList.add("error-row");
+                resultBlock.innerHTML = `<strong>Критическая ошибка вычисления:</strong><br>${runtimeError.message}`;
+                console.error(runtimeError);
+            }
+            // 5. Вставляем готовую карточку в ленту истории
+            historyStream.appendChild(card);
+
+            // 6. Очищаем поле ввода и возвращаем на него фокус для следующей команды
+            textarea.value = "";
+            // СБРОС ВЫСОТЫ: возвращаем textarea к начальному размеру в одну строку
+            textarea.style.height = 'auto'; 
+            textarea.focus();
+
+            // Внутренняя функция для идеального скролла
+            const performSmartScroll = () => {
+                const activeBlock = document.querySelector(".active-input-block") || textarea;
+                if (activeBlock) {
+                    activeBlock.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'end' 
+                    });
+                }
+            };
+
+            // 8. Запускаем рендеринг MathJax и строго ПОСЛЕ его завершения крутим экран
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                window.MathJax.typesetPromise([resultBlock])
+                    .then(() => {
+                        // Формулы отрисованы, высота карточки финальная. 
+                        // Делаем микро-задержку, чтобы мобильная клавиатура успела занять свое место
+                        setTimeout(performSmartScroll, 80);
+                    })
+                    .catch((mjErr) => {
+                        console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
+                        // Даже если MathJax упал, все равно скроллим
+                        setTimeout(performSmartScroll, 30);
+                    });
+            } else {
+                // Если MathJax не загружен, скроллим с минимальной задержкой
+                setTimeout(performSmartScroll, 50);
+            }                           
+        }
+
+        // Слушатель клика по кнопке Enter
+        submitBtn.addEventListener("click", executeCurrentCommand);
+
+        // Слушатель горячих клавиш: Ctrl+Enter или Cmd+Enter для удобства работы на компьютерах
+        textarea.addEventListener("keydown", (event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                event.preventDefault(); // Предотвращаем стандартный перенос строки в textarea
+                executeCurrentCommand();
+            }
+        });        
 </script>
 </body>
 </html>
