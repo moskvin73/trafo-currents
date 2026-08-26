@@ -865,7 +865,7 @@
                 const fontSize = parseFloat(computedStyle.fontSize) || 14;
                 const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);
                 
-                inputArea.scrollTop = (line - 1) * lineHeight;
+                textarea.scrollTop = (line - 1) * lineHeight;
             }, 80);
         }
 
