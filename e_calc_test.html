@@ -1380,6 +1380,7 @@
                 parser.parse();
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
+                    toggleBottomPanel(true);
                     return;
                 }
                 else {
