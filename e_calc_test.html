@@ -942,6 +942,10 @@
                 const target = items[this.currentIndex];
                 target.classList.add(this.activeClass);
                 target.scrollIntoView({ block: 'nearest' });
+
+                const line = target.dataset.line;
+                const col = target.dataset.col;
+                scrollToCodeLine(line, col);
             }
 
             initEvents() {
@@ -989,7 +993,7 @@
             setItems(errors) {
                 if (!errors) return;
                 this.clear();
-                errors.forEach(err => {
+                errors.forEach((err, index) => {
                     const item = document.createElement("div");
                     item.className = "floating-error-item";
                     
@@ -997,6 +1001,10 @@
                     const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
                     const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;
                     
+                    // Сохраняем line и col в дата-атрибуты элемента
+                    item.dataset.line = line;
+                    item.dataset.col = col;
+
                     const locSpan = document.createElement("span");
                     locSpan.className = "err-loc";
                     locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
@@ -1007,7 +1015,7 @@
                     
                     item.appendChild(locSpan);
                     item.appendChild(textSpan);
-                    item.onclick = () => scrollToCodeLine(line, col);
+                    item.onclick = () => this.selectItem(index);
                     this.listElement.appendChild(item);
                 });
                 const errorInForm = this.header.querySelector('#error-count');
