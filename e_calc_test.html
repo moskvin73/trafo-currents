@@ -857,9 +857,8 @@
                 setTimeout(() => {
                     const computedStyle = window.getComputedStyle(textarea);
                     const fontSize = parseFloat(computedStyle.fontSize) || 14;
-                    const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);
-                    
-                    //textarea.scrollTop = (line - 1) * lineHeight;
+                    const lineHeight = fontSize * (parseFloat(computedStyle.lineHeight) || 1.5);                    
+                    textarea.scrollTop = (line - 1) * lineHeight;
                 }, 250); // Увеличьте таймаут до 250-300мс, чтобы он гарантированно срабатывал после плавного скролла страницы
             }}, 50); 
         }
