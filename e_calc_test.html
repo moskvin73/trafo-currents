@@ -801,7 +801,6 @@
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
         const textarea = document.getElementById('calc-terminal-input');
-        //const backdrop = document.getElementById('calc-backdrop');
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
@@ -1278,11 +1277,6 @@
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
-                /*backdrop.style.height = textarea.style.height;
-                backdrop.style.width = `${textarea.clientWidth}px`;
-                const highlightedHTML = text.replace(/(print)/g, '<span class="highlight">$1</span>');
-                backdrop.innerHTML = highlightedHTML + (text.endsWith('\n') ? ' ' : '');*/
-
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
                 
