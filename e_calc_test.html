@@ -662,7 +662,6 @@
 
         /* ПОЛЕ ВВОДА */
         #calc-terminal-input {            
-            z-index: 1;
             flex: 1;
             background: transparent !important;
             color: var(--calc-color-text);
@@ -698,7 +697,7 @@
                             <!-- Рабочая зона: Номера строк + Ввод -->
                             <div class="textarea-with-lines">
                                 <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-                                <div id="calc-backdrop" class="textarea-backdrop"></div>
+                             <!--   <div id="calc-backdrop" class="textarea-backdrop"></div> -->
                                 <textarea id="calc-terminal-input" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                             </div>
                         </div>
@@ -822,7 +821,7 @@
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
         const textarea = document.getElementById('calc-terminal-input');
-        const backdrop = document.getElementById('calc-backdrop');
+        //const backdrop = document.getElementById('calc-backdrop');
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
@@ -1300,10 +1299,10 @@
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
-                backdrop.style.height = textarea.style.height;
+                /*backdrop.style.height = textarea.style.height;
                 backdrop.style.width = `${textarea.clientWidth}px`;
                 const highlightedHTML = text.replace(/(print)/g, '<span class="highlight">$1</span>');
-                backdrop.innerHTML = highlightedHTML + (text.endsWith('\n') ? ' ' : '');
+                backdrop.innerHTML = highlightedHTML + (text.endsWith('\n') ? ' ' : '');*/
 
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
