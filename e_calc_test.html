@@ -683,7 +683,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>	
         </div>
@@ -831,22 +830,26 @@
 
         function scrollToCodeLine(line, column) {
             if (!line) return;
+            const scrollContainer = document.querySelector('.main-center');
+            if (!textarea || !scrollContainer) return;
+
+            // Получаем реальную высоту одной строки из стилей textarea
             const computedStyle = window.getComputedStyle(textarea);
-            // Учитываем верхний паддинг (padding-top) textarea
+            const lineHeight = parseFloat(computedStyle.lineHeight) || 20; // замените 20 на дефолтное значение, если line-height не задан
             const paddingTop = parseFloat(computedStyle.paddingTop) || 0; 
-            // Сдвиг от верха textarea до нужной строки
+
+            // Сдвиг нужной строки относительно верха textarea
             const lineOffset = paddingTop + (line - 1) * lineHeight;
 
-            // Абсолютная позиция строки на странице
-            const absoluteTop = textarea.getBoundingClientRect().top + window.pageYOffset + lineOffset;
-            const activeBlock = document.querySelector(".active-input-block") || textarea;
-            if (activeBlock) {
-            // Плавная прокрутка окна так, чтобы строка оказалась на комфортной высоте (например, с отступом в 100px сверху)
-            activeBlock.scrollTo({
-                top: absoluteTop - 100,
+            // Вычисляем положение строки относительно прокручиваемого контейнера (.main-center)
+            const textareaTopRelativeToContainer = textarea.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top;
+            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset;
+
+            // Плавная прокрутка контейнера
+            scrollContainer.scrollTo({
+                top: targetScrollTop,
                 behavior: 'smooth'
             });
-            }            
             /*setTimeout(() => {
                 const activeBlock = document.querySelector(".active-input-block") || textarea;
                 if (activeBlock) {
