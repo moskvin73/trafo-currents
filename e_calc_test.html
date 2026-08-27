@@ -859,7 +859,7 @@
                     // Получаем реальный lineHeight из стилей (если он в px) или вычисляем безопасный
                     let lineHeight = parseFloat(computedStyle.lineHeight);
                     if (isNaN(lineHeight)) {
-                    lineHeight = parseFloat(computedStyle.fontSize) * 1.2; // fallback
+                        lineHeight = parseFloat(computedStyle.fontSize) * 1.2; // fallback
                     }
                     
                     // Учитываем верхний паддинг (padding-top) textarea
