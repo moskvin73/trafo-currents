@@ -640,8 +640,35 @@
             min-width: 25px;
         }
 
+/* Слой-двойник */
+.textarea-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 12px; /* Должен точно совпадать с padding textarea */
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: var(--calc-font-size-input);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  pointer-events: none; /* Главное свойство: клики проходят сквозь слой */
+  color: transparent; /* Сам текст прозрачный, видны только теги выделения внутри */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Стили для самого выделения внутри слоя-двойника */
+.textarea-backdrop .highlight {
+  background-color: rgba(255, 235, 59, 0.3); /* Цвет подсветки */
+  border-radius: 2px;
+}
+
         /* ПОЛЕ ВВОДА */
         #calc-terminal-input {
+            position: relative;
+            z-index: 1;
             flex: 1;
             background: transparent !important;
             color: var(--calc-color-text);
@@ -677,6 +704,7 @@
                             <!-- Рабочая зона: Номера строк + Ввод -->
                             <div class="textarea-with-lines">
                                 <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
+                                <div id="calc-backdrop" class="textarea-backdrop"></div>
                                 <textarea id="calc-terminal-input" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                             </div>
                         </div>
@@ -800,6 +828,7 @@
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
         const textarea = document.getElementById('calc-terminal-input');
+        const backdrop = document.getElementById('calc-backdrop');
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
@@ -1273,9 +1302,15 @@
             const updateLineNumbers = () => {
                 textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
                 textarea.style.height = `${textarea.scrollHeight}px`; // Устанавливаем новую высоту по содержимом
+                
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
+
                 const text = textarea.value;
+
+                const highlightedHTML = text.replace(/(print)/g, '<span class="highlight">$1</span>');
+                backdrop.innerHTML = highlightedHTML + (text.endsWith('\n') ? ' ' : '');
+
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
                 
