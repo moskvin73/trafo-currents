@@ -640,32 +640,6 @@
             min-width: 25px;
         }
 
-/* Слой-двойник */
-.textarea-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: relative;
-
-  padding: 12px; /* Должен точно совпадать с padding textarea */
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: var(--calc-font-size-input);
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  pointer-events: none; /* Главное свойство: клики проходят сквозь слой */
-  color: transparent; /* Сам текст прозрачный, видны только теги выделения внутри */
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-/* Стили для самого выделения внутри слоя-двойника */
-.textarea-backdrop .highlight {
-  background-color: rgba(255, 235, 59, 0.3); /* Цвет подсветки */
-  border-radius: 2px;
-}
 
         /* ПОЛЕ ВВОДА */
         #calc-terminal-input { 
