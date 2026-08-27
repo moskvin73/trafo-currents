@@ -828,19 +828,53 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
-        function scrollToCodeLine(line, column) {
-            if (!line) return;
+        function scrollToCodeLine(targetLine, column) {
             const scrollContainer = document.querySelector('.main-center');
-            if (!textarea || !scrollContainer) return;
+            if (!textarea || !scrollContainer || !targetLine) return;
+   // Получаем текст до нужной строки (строки считаются с 1, поэтому targetLine - 1)
+    const lines = textarea.value.split('\n');
+    const textBeforeTarget = lines.slice(0, targetLine - 1).join('\n');
+
+    // Создаем временный элемент-двойник для точного измерения высоты текста
+    const mirror = document.createElement('div');
+    const computed = window.getComputedStyle(textarea);
+
+    // Копируем стили, влияющие на перенос строк и высоту
+    const properties = [
+        'font-family', 'font-size', 'font-weight', 'font-style',
+        'letter-spacing', 'line-height', 'text-transform',
+        'word-spacing', 'text-indent', 'white-space', 'word-break',
+        'padding-left', 'padding-right', 'padding-top', 'width', 'box-sizing'
+    ];
+    
+    properties.forEach(prop => {
+        mirror.style[prop] = computed.getPropertyValue(prop);
+    });
+
+    mirror.style.position = 'absolute';
+    mirror.style.visibility = 'hidden';
+    mirror.style.height = 'auto';
+    mirror.style.whiteSpace = 'pre-wrap'; // дублируем поведение переноса строк
+    mirror.textContent = textBeforeTarget;
+
+    document.body.appendChild(mirror);
+    const textHeight = mirror.offsetHeight; // реальная высота текста до нужной строки с учетом переносов
+    document.body.removeChild(mirror);
+
+    // С учетом отступа сверху у самого textarea
+    const paddingTop = parseFloat(computed.paddingTop) || 0;
+    const targetScrollTop = textHeight + paddingTop;
+
+
             // Получаем реальную высоту одной строки из стилей textarea
-            const computedStyle = window.getComputedStyle(textarea);
-            const lineHeight = parseFloat(computedStyle.lineHeight) || 20; // замените 20 на дефолтное значение, если line-height не задан
+            /*const computedStyle = window.getComputedStyle(textarea);
+            const lineHeight = parseFloat(computedStyle.lineHeight) || 20;
             const paddingTop = parseFloat(computedStyle.paddingTop) || 0; 
             // Сдвиг нужной строки относительно верха textarea
             const lineOffset = paddingTop + (line - 1) * lineHeight;
             // Вычисляем положение строки относительно прокручиваемого контейнера (.main-center)
             const textareaTopRelativeToContainer = textarea.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top;
-            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset;
+            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset;*/
             // Плавная прокрутка контейнера
             scrollContainer.scrollTo({
                 top: targetScrollTop,
