@@ -1432,7 +1432,7 @@
         function executeCurrentCommand() {
             toggleBottomPanel(false);
             errorNav.clear();
-            const rawCode = textarea.value.trim();
+            const rawCode = textarea.value;
             if (!rawCode) return; // Игнорируем пустой ввод
             let resultBlock; let card;
             try {
