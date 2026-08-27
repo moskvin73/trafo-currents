@@ -621,6 +621,9 @@
 
         /* РАБОЧАЯ ЗОНА ВВОДА */
         .textarea-with-lines {
+            position: relative;
+            flex: 1;
+
             display: flex;
             background: transparent;
             border: none; /* Убираем старую рамку */
@@ -642,6 +645,13 @@
 
 /* Слой-двойник */
 .textarea-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: relative;
+
   padding: 12px; /* Должен точно совпадать с padding textarea */
   font-family: 'Fira Code', 'Courier New', monospace;
   font-size: var(--calc-font-size-input);
@@ -661,7 +671,9 @@
 }
 
         /* ПОЛЕ ВВОДА */
-        #calc-terminal-input {            
+        #calc-terminal-input { 
+            z-index: 2;
+            
             flex: 1;
             background: transparent !important;
             color: var(--calc-color-text);
