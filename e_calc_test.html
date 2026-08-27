@@ -1341,6 +1341,19 @@
                 configurable: true
             });
 
+            let isDragging = false;
+            textarea.addEventListener('mousedown', () => {
+                isDragging = true;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            textarea.addEventListener('mousemove', () => {
+            if (isDragging) updateCursorPosition();
+            });
+
             // Стандартные слушатели для действий пользователя
             textarea.addEventListener('input', (event) => {
                 updateLineNumbers();
