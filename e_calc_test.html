@@ -860,10 +860,11 @@
             const lineOffset = paddingTop + textHeight;
             // Вычисляем положение строки относительно прокручиваемого контейнера (.main-center)
             const textareaTopRelativeToContainer = textarea.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top;
-            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset;
+            const containerHeight = scrollContainer.clientHeight;
+            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset - containerHeight /3;
             // Плавная прокрутка контейнера
             scrollContainer.scrollTo({
-                top: targetScrollTop,
+                top: Math.max(0, targetScrollTop),
                 behavior: 'smooth'
             });
         }
