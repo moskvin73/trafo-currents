@@ -954,8 +954,8 @@
                 target.classList.add(this.activeClass);
                 target.scrollIntoView({ block: 'nearest' });
 
-                const line = target.dataset.line;
-                const col = target.dataset.col;
+                const line = parseInt(target.dataset.line);
+                const col = parseInt(target.dataset.col);
                 scrollToCodeLine(line, col);
             }
 
