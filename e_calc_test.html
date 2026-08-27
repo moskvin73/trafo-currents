@@ -1294,8 +1294,7 @@
 
             const updateLineNumbers = () => {
                 textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
-                textarea.style.height = `${textarea.scrollHeight}px`; // Устанавливаем новую высоту по содержимом
-                
+                textarea.style.height = `${textarea.scrollHeight}px`; // Устанавливаем новую высоту по содержимом                
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
