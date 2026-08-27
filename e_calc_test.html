@@ -1305,9 +1305,9 @@
                 
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
-
                 const text = textarea.value;
-
+                backdrop.style.height = textarea.style.height;
+                backdrop.style.width = textarea.style.width;
                 const highlightedHTML = text.replace(/(print)/g, '<span class="highlight">$1</span>');
                 backdrop.innerHTML = highlightedHTML + (text.endsWith('\n') ? ' ' : '');
 
