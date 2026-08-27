@@ -1543,19 +1543,11 @@
 
             }
             catch (runtimeError) {
-                    const errors = [`Критическая ошибка вычисления:${runtimeError.message}`];
-                    errorNav.setItems(errors);
-                    toggleBottomPanel(true);
-                    return;
-                /*if (!card) {
-                    const cc = createCard(rawCode);
-                    card = cc.card;
-                    resultBlock = cc.resultBlock;
-                    resultBlock.innerHTML = "";
-                }
-                card.classList.add("error-row");
-                resultBlock.innerHTML = `<strong>Критическая ошибка вычисления:</strong><br>${runtimeError.message}`;*/
+                const errors = [`Критическая ошибка вычисления:${runtimeError.message}`];
+                errorNav.setItems(errors);
+                toggleBottomPanel(true);
                 console.error(runtimeError);
+                return;
             }
             // 5. Вставляем готовую карточку в ленту истории
             historyStream.appendChild(card);
