@@ -1347,6 +1347,8 @@
                 updateCursorPosition();
             });
             textarea.addEventListener('keyup', updateCursorPosition);
+            textarea.addEventListener('select', updateCursorPosition);
+            textarea.addEventListener('mouseup', updateSelection);
             textarea.addEventListener('click', updateCursorPosition);
             textarea.addEventListener('focus', updateCursorPosition);
             window.addEventListener('resize', updateLineNumbers);
