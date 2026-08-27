@@ -832,19 +832,15 @@
             if (!line) return;
             const scrollContainer = document.querySelector('.main-center');
             if (!textarea || !scrollContainer) return;
-
             // Получаем реальную высоту одной строки из стилей textarea
             const computedStyle = window.getComputedStyle(textarea);
             const lineHeight = parseFloat(computedStyle.lineHeight) || 20; // замените 20 на дефолтное значение, если line-height не задан
             const paddingTop = parseFloat(computedStyle.paddingTop) || 0; 
-
             // Сдвиг нужной строки относительно верха textarea
             const lineOffset = paddingTop + (line - 1) * lineHeight;
-
             // Вычисляем положение строки относительно прокручиваемого контейнера (.main-center)
             const textareaTopRelativeToContainer = textarea.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top;
             const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset;
-
             // Плавная прокрутка контейнера
             scrollContainer.scrollTo({
                 top: targetScrollTop,
