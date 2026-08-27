@@ -621,9 +621,6 @@
 
         /* РАБОЧАЯ ЗОНА ВВОДА */
         .textarea-with-lines {
-            position: relative;
-            flex: 1;
-
             display: flex;
             background: transparent;
             border: none; /* Убираем старую рамку */
@@ -672,8 +669,6 @@
 
         /* ПОЛЕ ВВОДА */
         #calc-terminal-input { 
-            z-index: 2;
-            
             flex: 1;
             background: transparent !important;
             color: var(--calc-color-text);
@@ -709,7 +704,6 @@
                             <!-- Рабочая зона: Номера строк + Ввод -->
                             <div class="textarea-with-lines">
                                 <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-                                <div id="calc-backdrop" class="textarea-backdrop"></div>
                                 <textarea id="calc-terminal-input" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                             </div>
                         </div>
