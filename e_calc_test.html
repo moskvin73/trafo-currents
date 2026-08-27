@@ -1543,14 +1543,18 @@
 
             }
             catch (runtimeError) {
-                if (!card) {
+                    const errors = [`Критическая ошибка вычисления:${runtimeError.message}`];
+                    errorNav.setItems(errors);
+                    toggleBottomPanel(true);
+                    return;
+                /*if (!card) {
                     const cc = createCard(rawCode);
                     card = cc.card;
                     resultBlock = cc.resultBlock;
                     resultBlock.innerHTML = "";
                 }
                 card.classList.add("error-row");
-                resultBlock.innerHTML = `<strong>Критическая ошибка вычисления:</strong><br>${runtimeError.message}`;
+                resultBlock.innerHTML = `<strong>Критическая ошибка вычисления:</strong><br>${runtimeError.message}`;*/
                 console.error(runtimeError);
             }
             // 5. Вставляем готовую карточку в ленту истории
