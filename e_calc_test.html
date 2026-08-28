@@ -831,6 +831,16 @@
         function scrollToCodeLine(loc) {
             const scrollContainer = document.querySelector('.main-center');
             if (!textarea || !scrollContainer || !loc) return;
+            const hasValidLoc = 
+                'start' in loc && 
+                'end' in loc && 
+                Number.isInteger(loc.start) && 
+                loc.start >= 0 && 
+                Number.isInteger(loc.end) && 
+                loc.end >= 0;
+
+            if (!hasValidLoc) return;
+            
             const text = textarea.value;
             // Ограничиваем индекс длиной текста
             const index = Math.min(loc.start, text.length); 
