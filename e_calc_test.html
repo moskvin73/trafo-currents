@@ -890,7 +890,7 @@
             clear() {
                 this.listElement.innerHTML = '';
                 this._cachedItems = null;
-                linked = [];
+                this.linked = [];
             }
 
             get maxHeight() {
@@ -952,7 +952,7 @@
 
                 //const line = parseInt(target.dataset.line);
                 //const col = parseInt(target.dataset.col);
-                const loc = linked[this.currentIndex];
+                const loc = this.linked[this.currentIndex];
                     const line = loc.line;
                     const col = loc.column;
                 scrollToCodeLine(line, col);
@@ -1010,7 +1010,7 @@
                     item.className = "floating-error-item";
                     
                     const loc = err.location;
-                    linked.push(loc);
+                    this.linked.push(loc);
                     const line = loc.line;
                     const col = loc.column;
                     /*const loc = err.loc || err.location || err;
