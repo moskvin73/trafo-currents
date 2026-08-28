@@ -698,6 +698,13 @@
 }
 
 .highlight-layer .token-error { background-color: rgba(255, 0, 0, 0.2); }
+/* Если start === end (ошибка-точка) */
+.highlight-layer .error-empty {
+  display: inline-block;
+  width: 2px;
+  background-color: red;
+  margin-left: -1px; /* Центрирование курсора */
+}
 .highlight-layer .token-bracket { color: #005cc5; font-weight: bold; }
 .highlight-layer .token-keyword { color: #d73a49; font-weight: bold; font-style: italic; }
         /* #endregion комндный контейнер */
@@ -894,6 +901,15 @@
                 return;
             }
 
+            // 1. Проверка на равенство (начало === конец)
+            if (start === end) {
+                const before = escapeHtml(text.substring(0, start));
+                const after = escapeHtml(text.substring(start));
+                // Ставим пустой span с маркером ошибки
+                highlights.innerHTML = `${before}<span class="error-empty"></span>${after}`;
+                return;
+            }
+            
             const before = text.substring(0, start);
             const errorText = text.substring(start, end);
             const after = text.substring(end);
