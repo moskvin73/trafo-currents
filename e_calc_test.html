@@ -927,11 +927,12 @@
             function traverse(node) {
                 if (node.nodeType === Node.TEXT_NODE) {
                     const len = node.length;
-                    if (!startNode && currentPos + len > start) {
+                    const nextPos = currentPos + len;
+                    if (!startNode && start >= currentPos && start < nextPos) {
                         startNode = node;
                         startOffset = start - currentPos;
                     }
-                    if (!endNode && currentPos + len >= end) {
+                    if (!endNode && end >= currentPos && end <= nextPos) {
                         endNode = node;
                         endOffset = end - currentPos;
                     }
