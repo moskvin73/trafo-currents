@@ -873,6 +873,25 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
+        function runLexerAndHighlight(text, start, end) {
+        // В реальном коде вы прогоняете текст через ваш лексический анализатор
+        // и оборачиваете токены в теги <span> с нужными классами.
+        // ВАЖНО: Конец строки \n должен сохраняться!
+        
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;")
+            // Пример: подсветим ключевые слова (sin, cos) жирным и курсивом
+            .replace(/(sin|cos)/g, '<span class="token-keyword">$1</span>')
+            // Пример: подсветим скобки
+            .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>')
+            // Пример: подсветим ошибку (если нашли спец-символ вроде текстуальной метки ошибки)
+            .replace(/(\[ERROR\])/g, '<span class="token-error">!</span>');
+        }       
+
         function scrollToCodeLine(loc) {
             const scrollContainer = document.querySelector('.main-center');
             if (!textarea || !scrollContainer || !loc) return;
@@ -1334,25 +1353,6 @@
         //#endregion Size Paneles
 
         //#region Line editor
-        function runLexerAndHighlight(text) {
-        // В реальном коде вы прогоняете текст через ваш лексический анализатор
-        // и оборачиваете токены в теги <span> с нужными классами.
-        // ВАЖНО: Конец строки \n должен сохраняться!
-        
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            // Пример: подсветим ключевые слова (sin, cos) жирным и курсивом
-            .replace(/(sin|cos)/g, '<span class="token-keyword">$1</span>')
-            // Пример: подсветим скобки
-            .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>')
-            // Пример: подсветим ошибку (если нашли спец-символ вроде текстуальной метки ошибки)
-            .replace(/(\[ERROR\])/g, '<span class="token-error">!</span>');
-        }
-
         function initLineNumbers() {
             const lineNumbersEle = document.getElementById('calc-line-numbers');
             const cursorIndicator = document.getElementById('calc-cursor-position');
