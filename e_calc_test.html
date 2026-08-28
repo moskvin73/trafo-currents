@@ -847,6 +847,7 @@
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
         const textarea = document.getElementById('calc-terminal-input');
+        const highlightLayer = document.getElementById('calc-highlight');
 
         function getTotalHeightWithMargins(element) {
             if (!element) return 0;
@@ -873,24 +874,37 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
+
         function runLexerAndHighlight(text, start, end) {
-        // В реальном коде вы прогоняете текст через ваш лексический анализатор
-        // и оборачиваете токены в теги <span> с нужными классами.
-        // ВАЖНО: Конец строки \n должен сохраняться!
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                // Пример: подсветим ключевые слова (sin, cos) жирным и курсивом
+                .replace(/(sin|cos)/g, '<span class="token-keyword">$1</span>')
+                // Пример: подсветим скобки
+                .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>');
+        }
         
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            // Пример: подсветим ключевые слова (sin, cos) жирным и курсивом
-            .replace(/(sin|cos)/g, '<span class="token-keyword">$1</span>')
-            // Пример: подсветим скобки
-            .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>')
-            // Пример: подсветим ошибку (если нашли спец-символ вроде текстуальной метки ошибки)
-            .replace(/(\[ERROR\])/g, '<span class="token-error">!</span>');
-        }       
+        function setErrorHighlight(text, start, end) {
+            // Проверка корректности индексов
+            if (start < 0 || end > text.length || start >= end) {
+                highlightLayer.innerHTML = runLexerAndHighlight(text);
+                return;
+            }
+
+            const before = text.substring(0, start);
+            const errorText = text.substring(start, end);
+            const after = text.substring(end);
+
+            // Формируем HTML с одним единственным span для ошибки
+            highlightLayer.innerHTML = 
+                runLexerAndHighlight(before) + 
+                `<span class="error-token">${runLexerAndHighlight(errorText)}</span>` + 
+                runLexerAndHighlight(after);           
+        }
 
         function scrollToCodeLine(loc) {
             const scrollContainer = document.querySelector('.main-center');
