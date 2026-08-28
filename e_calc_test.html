@@ -642,7 +642,7 @@
 
 
         /* ПОЛЕ ВВОДА */
-        #calc-terminal-input { 
+        /*#calc-terminal-input { 
             flex: 1;
             background: transparent !important;
             color: var(--calc-color-text);
@@ -657,7 +657,41 @@
             overflow-y: hidden;       
             box-sizing: border-box;     
             caret-color: var(--calc-color-text);
-        }
+        }*/
+
+.input-wrapper {
+  position: relative;
+  flex-grow: 1;
+}        
+
+.textInput, .highlight-layer {
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: var(--calc-font-size-input);
+  line-height: 1.5;
+  outline: none;
+  overflow-y: hidden;
+  overflow-x: hidden;       
+  box-sizing: border-box;     
+}
+
+textInput {
+  position: relative;
+  background: transparent !important;
+  color: transparent !important; /* Скрываем текст, оставляя каретку */
+  caret-color: var(--calc-color-text);  /* Цвет курсора */
+  resize: none;
+  overflow: hidden;
+}
+.highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* Пропускаем клики в textarea */
+  color: var(--calc-color-text);;
+}
         /* #endregion комндный контейнер */
 
    </style>
@@ -678,7 +712,10 @@
                             <!-- Рабочая зона: Номера строк + Ввод -->
                             <div class="textarea-with-lines">
                                 <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-                                <textarea id="calc-terminal-input" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
+                                <div>
+                                    <div id="calc-highlight" class="highlight-layer"></div>
+                                    <textarea id="calc-terminal-input" class="textInput" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1311,7 +1348,10 @@
 
             const updateLineNumbers = () => {
                 textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
-                textarea.style.height = `${textarea.scrollHeight}px`; // Устанавливаем новую высоту по содержимом                
+                const currentScrollHeight = textarea.scrollHeight;
+                textarea.style.height = `${currentScrollHeight}px`; // Устанавливаем новую высоту по содержимом     
+                const highlightEle = document.getElementById('calc-highlight');
+                if (highlightEle) highlightEle.style.height = `${currentScrollHeight}px`;
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
