@@ -8,7 +8,7 @@ const tokenNames = [
   'MUL',
   'DIV',
   'POW',
-  'ASSIGN',
+  'ASSIGN', // ==
   'LPAREN', // (
   'LSQUARE', // [
   'RSQUARE', // ]
@@ -19,6 +19,7 @@ const tokenNames = [
   'TEXT_BLOCK',
   'COMMENT',
   'SPACES',
+  'ERROR',
   'SEMICOLON',
   'SILENT',
   'COMMA',
