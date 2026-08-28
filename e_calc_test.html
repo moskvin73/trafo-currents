@@ -906,7 +906,7 @@
                 const before = runLexerAndHighlight(text.substring(0, start));
                 const after = runLexerAndHighlight(text.substring(start));
                 // Ставим пустой span с маркером ошибки
-                highlights.innerHTML = `${before}<span class="error-empty"></span>${after}`;
+                highlightLayer.innerHTML = `${before}<span class="error-empty"></span>${after}`;
                 return;
             }
 
@@ -1404,12 +1404,11 @@
                 textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
                 const currentScrollHeight = textarea.scrollHeight;
                 textarea.style.height = `${currentScrollHeight}px`; // Устанавливаем новую высоту по содержимом     
-                const highlightEle = document.getElementById('calc-highlight');
-                if (highlightEle) highlightEle.style.height = `${currentScrollHeight}px`;
+                highlightLayer.style.height = `${currentScrollHeight}px`;
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
-                highlightEle.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
+                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
 
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
