@@ -936,7 +936,7 @@
                         endNode = node;
                         endOffset = end - currentPos;
                     }
-                    currentPos += len;
+                    currentPos = nextPos;
                 } else {
                     for (let child of node.childNodes) {
                         traverse(child);
