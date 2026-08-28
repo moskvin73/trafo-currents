@@ -966,31 +966,6 @@
                 range.setEnd(endNode, endOffset);
                 range.surroundContents(span);
             }
-
-           /* // Проверка корректности индексов
-            if (start < 0 || end > text.length || start > end) {
-                highlightLayer.innerHTML = runLexerAndHighlight(text);
-                return;
-            }
-
-            // 1. Проверка на равенство (начало === конец)
-            if (start === end) {
-                const before = runLexerAndHighlight(text.substring(0, start));
-                const after = runLexerAndHighlight(text.substring(start));
-                // Ставим пустой span с маркером ошибки
-                highlightLayer.innerHTML = `${before}<span id="error-anchor" class="error-empty"></span>${after}`;
-                return;
-            }
-
-            const before = text.substring(0, start);
-            const errorText = text.substring(start, end);
-            const after = text.substring(end);
-
-            // Формируем HTML с одним единственным span для ошибки
-            highlightLayer.innerHTML = 
-                runLexerAndHighlight(before) + 
-                `<span id="error-anchor" class="token-error">${runLexerAndHighlight(errorText)}</span>` + 
-                runLexerAndHighlight(after); */          
         }
 
         function scrollToCodeLine(loc) {
