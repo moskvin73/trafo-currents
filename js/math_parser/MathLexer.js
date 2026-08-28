@@ -178,12 +178,13 @@ function isUnicodeNumber(code) {
 }
 
 export class MathLexer {
-  constructor(input, errors, baseLine = 1) {
+  constructor(input, errors, baseLine = 1, include_trivia = false) {
     this.source = input;
     this.errors = errors;
     this.i = 0;
     this.currentLine = baseLine;
     this.lineStartIdx = 0;
+    this.include_trivia = typeof include_trivia === 'boolean' ? include_trivia : false;
 
     // Внутреннее состояние ПОСЛЕДНЕГО успешно прочитанного тонена
     this.tokenStart = 0;

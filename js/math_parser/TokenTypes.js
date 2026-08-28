@@ -18,6 +18,7 @@ const tokenNames = [
   'VARIABLE',
   'TEXT_BLOCK',
   'COMMENT',
+  'SPACES',
   'SEMICOLON',
   'SILENT',
   'COMMA',
