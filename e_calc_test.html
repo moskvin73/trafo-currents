@@ -965,7 +965,10 @@
                 // Случай выделения текста
                 range.setStart(startNode, startOffset);
                 range.setEnd(endNode, endOffset);
-                range.surroundContents(span);
+                //range.surroundContents(span);
+                let contents = range.extractContents(); // Извлекаем выбранный фрагмент
+                span.appendChild(contents);             // Помещаем его внутрь вашего span
+                range.insertNode(span);                 // Вставляем span на место выделения                
             }
         }
 
