@@ -916,60 +916,7 @@
 
         // Функция установки ошибки
         function setErrorHighlight(start, end) {
-
-    removeErrorHighlightDOM(); 
-
-    let currentPos = 0;
-    let startNode = null, startOffset = 0;
-    let endNode = null, endOffset = 0;
-
-    function traverse(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            const len = node.length;
-            if (!startNode && currentPos + len >= start) {
-                startNode = node;
-                startOffset = start - currentPos;
-            }
-            if (!endNode && currentPos + len >= end) {
-                endNode = node;
-                endOffset = end - currentPos;
-            }
-            currentPos += len;
-        } else {
-            // Проходим по дочерним узлам
-            for (let child of Array.from(node.childNodes)) {
-                traverse(child);
-                if (startNode && endNode) break;
-            }
-        }
-    }
-
-    traverse(highlightLayer);
-
-    if (!startNode || !endNode) return;
-
-    // Создание Range и оборачивание в span
-    // Создание Range
-    const range = document.createRange();
-    range.setStart(startNode, startOffset);
-    range.setEnd(endNode, endOffset);
-
-    const span = document.createElement('span');
-    span.id = 'error-anchor';
-    span.className = (start === end) ? 'error-empty' : 'token-error';
-    
-    // БЕЗОПАСНАЯ АЛЬТЕРНАТИВА surroundContents:
-    try {
-        // Извлекаем содержимое диапазона (DOM сам корректно разделит не-текстовые узлы)
-        const fragment = range.extractContents();
-        // Вставляем извлеченный контент внутрь нашего span
-        span.appendChild(fragment);
-        // Вставляем span обратно в документ на место разреза
-        range.insertNode(span);
-    } catch (e) {
-        console.error("Ошибка при подсветке синтаксиса:", e);
-    }    
-            /*// 1. Сначала удаляем старый маркер, если он есть
+            // 1. Сначала удаляем старый маркер, если он есть
             removeErrorHighlightDOM();
 
             let currentPos = 0;
@@ -1018,11 +965,10 @@
                 // Случай выделения текста
                 range.setStart(startNode, startOffset);
                 range.setEnd(endNode, endOffset);
-                //range.surroundContents(span);
                 let contents = range.extractContents(); // Извлекаем выбранный фрагмент
                 span.appendChild(contents);             // Помещаем его внутрь вашего span
                 range.insertNode(span);                 // Вставляем span на место выделения                
-            }*/
+            }
         }
 
         function scrollToCodeLine(loc) {
