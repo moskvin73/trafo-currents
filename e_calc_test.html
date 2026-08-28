@@ -903,13 +903,13 @@
 
             // 1. Проверка на равенство (начало === конец)
             if (start === end) {
-                const before = escapeHtml(text.substring(0, start));
-                const after = escapeHtml(text.substring(start));
+                const before = runLexerAndHighlight(text.substring(0, start));
+                const after = runLexerAndHighlight(text.substring(start));
                 // Ставим пустой span с маркером ошибки
                 highlights.innerHTML = `${before}<span class="error-empty"></span>${after}`;
                 return;
             }
-            
+
             const before = text.substring(0, start);
             const errorText = text.substring(start, end);
             const after = text.substring(end);
