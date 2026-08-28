@@ -1020,11 +1020,14 @@
                     item.appendChild(textSpan);
                     this.listElement.appendChild(item);
                 });
-                const errorInForm = this.header.querySelector('#error-count');
-                if (errorInForm) {
-                    errorInForm.textContent = `(${this.length})`;
+                if (this.length > 0)
+                {
+                    const errorInForm = this.header.querySelector('#error-count');
+                    if (errorInForm) {
+                        errorInForm.textContent = `(${this.length})`;
+                    }
+                    this.selectItem(0);
                 }
-                this.selectItem(0);
             }
         }
 
