@@ -915,7 +915,59 @@
         }
 
         function setErrorHighlight(text, start, end) {
-            // Проверка корректности индексов
+            // 1. Сначала удаляем старый маркер, если он есть
+            removeErrorHighlightDOM();
+
+            let currentPos = 0;
+            let startNode = null, startOffset = 0;
+            let endNode = null, endOffset = 0;
+
+            // Рекурсивный обход текстовых узлов
+            function traverse(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const len = node.length;
+                    if (!startNode && currentPos + len >= start) {
+                        startNode = node;
+                        startOffset = start - currentPos;
+                    }
+                    if (!endNode && currentPos + len >= end) {
+                        endNode = node;
+                        endOffset = end - currentPos;
+                    }
+                    currentPos += len;
+                } else {
+                    for (let child of node.childNodes) {
+                        traverse(child);
+                        if (startNode && endNode) break;
+                    }
+                }
+            }
+
+            traverse(highlightLayer);
+
+            // Если узлы не найдены (индексы вне диапазона)
+            if (!startNode || !endNode) return;
+
+            // Создаем элемент ошибки
+            const span = document.createElement('span');
+            span.id = 'error-anchor';
+            span.className = (start === end) ? 'error-empty' : 'token-error';
+
+            const range = document.createRange();
+
+            if (start === end) {
+                // Случай пустого диапазона
+                range.setStart(startNode, startOffset);
+                range.collapse(true);
+                range.insertNode(span);
+            } else {
+                // Случай выделения текста
+                range.setStart(startNode, startOffset);
+                range.setEnd(endNode, endOffset);
+                range.surroundContents(span);
+            }
+
+           /* // Проверка корректности индексов
             if (start < 0 || end > text.length || start > end) {
                 highlightLayer.innerHTML = runLexerAndHighlight(text);
                 return;
@@ -938,7 +990,7 @@
             highlightLayer.innerHTML = 
                 runLexerAndHighlight(before) + 
                 `<span id="error-anchor" class="token-error">${runLexerAndHighlight(errorText)}</span>` + 
-                runLexerAndHighlight(after);           
+                runLexerAndHighlight(after); */          
         }
 
         function scrollToCodeLine(loc) {
