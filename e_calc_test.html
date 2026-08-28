@@ -910,7 +910,7 @@
                 const before = runLexerAndHighlight(text.substring(0, start));
                 const after = runLexerAndHighlight(text.substring(start));
                 // Ставим пустой span с маркером ошибки
-                highlightLayer.innerHTML = `${before}<span class="error-empty"></span>${after}`;
+                highlightLayer.innerHTML = `${before}<span id="error-anchor" class="error-empty"></span>${after}`;
                 return;
             }
 
@@ -921,7 +921,7 @@
             // Формируем HTML с одним единственным span для ошибки
             highlightLayer.innerHTML = 
                 runLexerAndHighlight(before) + 
-                `<span class="token-error">${runLexerAndHighlight(errorText)}</span>` + 
+                `<span id="error-anchor" class="token-error">${runLexerAndHighlight(errorText)}</span>` + 
                 runLexerAndHighlight(after);           
         }
 
@@ -935,13 +935,33 @@
                 loc.start >= 0 && 
                 Number.isInteger(loc.end) && 
                 loc.end >= 0;
+            if (!hasValidLoc) return;            
 
-            if (!hasValidLoc) return;
-            
             const text = textarea.value;
             // Ограничиваем индекс длиной текста
             const index = Math.min(loc.start, text.length); 
+            setErrorHighlight(text, index, Math.min(loc.end, text.length)); 
+            
+            // Ждем, пока браузер обновит DOM (микротаска)
+            setTimeout(() => {
+                const errorElement = document.getElementById('error-anchor');
+                if (!errorElement) return;
 
+                // Находим позицию ошибки относительно контейнера main-center
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const errorRect = errorElement.getBoundingClientRect();
+
+                // Вычисляем нужный scrollTop
+                const targetScrollTop = scrollContainer.scrollTop + (errorRect.top - containerRect.top) - (containerRect.height / 2);
+
+                // Плавно скроллим контейнер
+                scrollContainer.scrollTo({
+                    top: Math.max(0, targetScrollTop),
+                    behavior: 'smooth'
+                });
+            }, 0);            
+
+            /*
             // 1. Создаем зеркальный элемент для расчета координат
             const mirror = document.createElement('div');
             const computedStyle = window.getComputedStyle(textarea);
@@ -1004,7 +1024,7 @@
                 behavior: 'smooth'
             });
 
-            setErrorHighlight(text, index, Math.min(loc.end, text.length));
+            setErrorHighlight(text, index, Math.min(loc.end, text.length));*/
         }
 
         class ErrorNavigator {
