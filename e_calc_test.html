@@ -672,19 +672,18 @@
   font-size: var(--calc-font-size-input);
   line-height: 1.5;
   outline: none;
-  overflow-y: hidden;
-  overflow-x: hidden;       
+  overflow: hidden;
   box-sizing: border-box;     
 }
 
-textInput {
+.textInput {
   position: relative;
   background: transparent !important;
   color: transparent !important; /* Скрываем текст, оставляя каретку */
   caret-color: var(--calc-color-text);  /* Цвет курсора */
   resize: none;
-  overflow: hidden;
 }
+
 .highlight-layer {
   position: absolute;
   top: 0;
