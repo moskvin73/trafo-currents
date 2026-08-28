@@ -1007,31 +1007,17 @@
                 .filter(err => err instanceof CompilerError)
                 .forEach((err, index) => {
                     const item = document.createElement("div");
-                    item.className = "floating-error-item";
-                    
+                    item.className = "floating-error-item";                    
                     const loc = err.location;
                     this.linked.push(loc);
-                    const line = loc.line;
-                    const col = loc.column;
-                    /*const loc = err.loc || err.location || err;
-                    const line = (loc && typeof loc.line !== 'undefined') ? loc.line : 1;
-                    const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;*/
-                    
-                    // Сохраняем line и col в дата-атрибуты элемента
-                    //item.dataset.line = line;
-                    //item.dataset.col = col;
-
                     const locSpan = document.createElement("span");
                     locSpan.className = "err-loc";
-                    locSpan.textContent = `[Стр ${line}, Кол ${col}]`;
-                    
+                    locSpan.textContent = `[Стр ${loc.line}, Кол ${loc.column}]`;                    
                     const textSpan = document.createElement("span");
                     textSpan.className = "err-text";
-                    textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");
-                    
+                    textSpan.textContent = err.toString ? err.toString() : (err.message || "Ошибка");                    
                     item.appendChild(locSpan);
                     item.appendChild(textSpan);
-                    //item.onclick = () => this.selectItem(index);
                     this.listElement.appendChild(item);
                 });
                 const errorInForm = this.header.querySelector('#error-count');
