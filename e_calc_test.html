@@ -922,12 +922,14 @@
             let currentPos = 0;
             let startNode = null, startOffset = 0;
             let endNode = null, endOffset = 0;
+            let lastTextNode = null; // Хранит последний текстовый узел на случай выхода за границы
 
             // Рекурсивный обход текстовых узлов
             function traverse(node) {
                 if (node.nodeType === Node.TEXT_NODE) {
                     const len = node.length;
                     const nextPos = currentPos + len;
+                    lastTextNode = node; // Запоминаем текущий узел
                     if (!startNode && start >= currentPos && start < nextPos) {
                         startNode = node;
                         startOffset = start - currentPos;
@@ -946,6 +948,16 @@
             }
 
             traverse(highlightLayer);
+
+            // Фолбэк: если позиции вышли за пределы текста, привязываем их к концу последнего узла
+            if (!startNode && lastTextNode) {
+                startNode = lastTextNode;
+                startOffset = lastTextNode.length;
+            }
+            if (!endNode && lastTextNode) {
+                endNode = lastTextNode;
+                endOffset = lastTextNode.length;
+            }            
 
             // Если узлы не найдены (индексы вне диапазона)
             if (!startNode || !endNode) return;
