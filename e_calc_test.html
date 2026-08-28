@@ -1000,8 +1000,9 @@
             setItems(errors) {
                 if (!errors) return;
                 this.clear();
-                errors.forEach((err, index) => {
-                    if (err instanceof CompilerError) {
+                errors
+                .filter(err => err instanceof CompilerError)
+                .forEach((err, index) => {
                     const item = document.createElement("div");
                     item.className = "floating-error-item";
                     
@@ -1029,7 +1030,7 @@
                     item.appendChild(textSpan);
                     item.onclick = () => this.selectItem(index);
                     this.listElement.appendChild(item);
-                }});
+                });
                 const errorInForm = this.header.querySelector('#error-count');
                 if (errorInForm) {
                     errorInForm.textContent = `(${this.length})`;
