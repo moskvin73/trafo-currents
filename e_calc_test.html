@@ -898,6 +898,22 @@
                 .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>');
         }
         
+        // Функция быстрого удаления ошибки
+        function removeErrorHighlightDOM() {
+            const errorSpan = document.getElementById('error-anchor');
+            if (!errorSpan) return;
+
+            // Возвращаем текстовое содержимое на место span
+            const parent = errorSpan.parentNode;
+            while (errorSpan.firstChild) {
+                parent.insertBefore(errorSpan.firstChild, errorSpan);
+            }
+            errorSpan.remove();
+            
+            // Склеиваем соседние текстовые узлы, чтобы DOM оставался чистым
+            parent.normalize(); 
+        }
+
         function setErrorHighlight(text, start, end) {
             // Проверка корректности индексов
             if (start < 0 || end > text.length || start > end) {
