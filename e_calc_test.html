@@ -901,7 +901,7 @@
             // Формируем HTML с одним единственным span для ошибки
             highlightLayer.innerHTML = 
                 runLexerAndHighlight(before) + 
-                `<span class="error-token">${runLexerAndHighlight(errorText)}</span>` + 
+                `<span class="token-error">${runLexerAndHighlight(errorText)}</span>` + 
                 runLexerAndHighlight(after);           
         }
 
