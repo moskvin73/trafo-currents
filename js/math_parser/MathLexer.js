@@ -286,6 +286,15 @@ export class MathLexer {
         switch (charClass) {
           case C_SPACE: {
             this.#readCodePointAndAdvance();
+            if (this.include_trivia) {
+              this.tokenStart = startIdx;
+              this.tokenEnd = this.i;
+              this.tokenStartLine = startLine;
+              this.tokenStartLineIdx = startLineIdx;
+              this.tokenEndLine = this.currentLine;
+              this.tokenEndLineIdx = this.lineStartIdx;
+              return TokenType.SPACES;
+            }                         
             continue;
           }
 
