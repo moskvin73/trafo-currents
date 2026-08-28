@@ -950,8 +950,11 @@
                 target.classList.add(this.activeClass);
                 target.scrollIntoView({ block: 'nearest' });
 
-                const line = parseInt(target.dataset.line);
-                const col = parseInt(target.dataset.col);
+                //const line = parseInt(target.dataset.line);
+                //const col = parseInt(target.dataset.col);
+                const loc = linked[index];
+                    const line = loc.line;
+                    const col = loc.column;
                 scrollToCodeLine(line, col);
             }
 
@@ -1015,8 +1018,8 @@
                     const col = (loc && typeof loc.column !== 'undefined') ? loc.column : 1;*/
                     
                     // Сохраняем line и col в дата-атрибуты элемента
-                    item.dataset.line = line;
-                    item.dataset.col = col;
+                    //item.dataset.line = line;
+                    //item.dataset.col = col;
 
                     const locSpan = document.createElement("span");
                     locSpan.className = "err-loc";
