@@ -914,7 +914,7 @@
             parent.normalize(); 
         }
 
-        function setErrorHighlight(text, start, end) {
+        function setErrorHighlight(start, end) {
             // 1. Сначала удаляем старый маркер, если он есть
             removeErrorHighlightDOM();
 
@@ -1006,9 +1006,7 @@
             if (!hasValidLoc) return;            
 
             const text = textarea.value;
-            // Ограничиваем индекс длиной текста
-            const index = Math.min(loc.start, text.length); 
-            setErrorHighlight(text, index, Math.min(loc.end, text.length)); 
+            setErrorHighlight(Math.min(loc.start, text.length), Math.min(loc.end, text.length)); 
             
             // Ждем, пока браузер обновит DOM (микротаска)
             setTimeout(() => {
