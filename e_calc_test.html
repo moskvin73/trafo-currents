@@ -949,6 +949,7 @@
     if (!startNode || !endNode) return;
 
     // Создание Range и оборачивание в span
+    // Создание Range
     const range = document.createRange();
     range.setStart(startNode, startOffset);
     range.setEnd(endNode, endOffset);
@@ -957,7 +958,17 @@
     span.id = 'error-anchor';
     span.className = (start === end) ? 'error-empty' : 'token-error';
     
-    range.surroundContents(span);            
+    // БЕЗОПАСНАЯ АЛЬТЕРНАТИВА surroundContents:
+    try {
+        // Извлекаем содержимое диапазона (DOM сам корректно разделит не-текстовые узлы)
+        const fragment = range.extractContents();
+        // Вставляем извлеченный контент внутрь нашего span
+        span.appendChild(fragment);
+        // Вставляем span обратно в документ на место разреза
+        range.insertNode(span);
+    } catch (e) {
+        console.error("Ошибка при подсветке синтаксиса:", e);
+    }    
             /*// 1. Сначала удаляем старый маркер, если он есть
             removeErrorHighlightDOM();
 
