@@ -677,6 +677,8 @@
   border: none !important;
   box-shadow: none !important;
   box-sizing: border-box;     
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .textInput {
@@ -1357,6 +1359,8 @@
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
+                highlightEle.innerHTML = textж
+
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
                 
@@ -1383,6 +1387,7 @@
                     }
                 });
                 lineNumbersEle.innerHTML = lineNumbersHtml;
+                highlightEle.innerHTML = spans;
             };
 
             const updateCursorPosition = () => {
