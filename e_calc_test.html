@@ -1330,6 +1330,22 @@
         //#endregion Size Paneles
 
         //#region Line editor
+function runLexerAndHighlight(text) {
+  // В реальном коде вы прогоняете текст через ваш лексический анализатор
+  // и оборачиваете токены в теги <span> с нужными классами.
+  // ВАЖНО: Конец строки \n должен сохраняться!
+  
+  return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Пример: подсветим ключевые слова (sin, cos) жирным и курсивом
+    .replace(/(sin|cos)/g, '<span class="token-keyword">$1</span>')
+    // Пример: подсветим скобки
+    .replace(/([\(\)])/g, '<span class="token-bracket">$1</span>')
+    // Пример: подсветим ошибку (если нашли спец-символ вроде текстуальной метки ошибки)
+    .replace(/(\[ERROR\])/g, '<span class="token-error">!</span>');
+}
+
         function initLineNumbers() {
             const lineNumbersEle = document.getElementById('calc-line-numbers');
             const cursorIndicator = document.getElementById('calc-cursor-position');
@@ -1359,7 +1375,7 @@
 
                 mirrorEle.style.width = `${textarea.clientWidth}px`;
                 const text = textarea.value;
-                highlightEle.innerHTML = textж
+                highlightEle.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
 
                 const lines = text.split('\n');
                 mirrorEle.innerHTML = '';
@@ -1387,7 +1403,6 @@
                     }
                 });
                 lineNumbersEle.innerHTML = lineNumbersHtml;
-                highlightEle.innerHTML = spans;
             };
 
             const updateCursorPosition = () => {
