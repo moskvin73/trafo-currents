@@ -896,7 +896,7 @@
         
         function setErrorHighlight(text, start, end) {
             // Проверка корректности индексов
-            if (start < 0 || end > text.length || start >= end) {
+            if (start < 0 || end > text.length || start > end) {
                 highlightLayer.innerHTML = runLexerAndHighlight(text);
                 return;
             }
