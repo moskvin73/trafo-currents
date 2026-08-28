@@ -828,45 +828,78 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
-        function scrollToCodeLine(targetLine, column) {
+        function scrollToCodeLine(loc) {
             const scrollContainer = document.querySelector('.main-center');
-            if (!textarea || !scrollContainer || !targetLine) return;
-            // Получаем текст до нужной строки (строки считаются с 1, поэтому targetLine - 1)
-            const lines = textarea.value.split('\n');
-            const textBeforeTarget = lines.slice(0, targetLine - 1).join('\n');
-            // Создаем временный элемент-двойник для точного измерения высоты текста
+            if (!textarea || !scrollContainer || !loc) return;
+            const text = textarea.value;
+            // Ограничиваем индекс длиной текста
+            const index = Math.min(loc.start, text.length); 
+
+            // 1. Создаем зеркальный элемент для расчета координат
             const mirror = document.createElement('div');
-            const computed = window.getComputedStyle(textarea);
-            // Копируем стили, влияющие на перенос строк и высоту
-            const properties = [
-                'font-family', 'font-size', 'font-weight', 'font-style',
-                'letter-spacing', 'line-height', 'text-transform',
-                'word-spacing', 'text-indent', 'white-space', 'word-break',
-                'padding-left', 'padding-right', 'padding-top', 'width', 'box-sizing'
-            ];          
-            properties.forEach(prop => {
-                mirror.style[prop] = computed.getPropertyValue(prop);
+            const computedStyle = window.getComputedStyle(textarea);
+            
+            // Копируем все важные стили оформления и шрифта
+            const stylesToCopy = [
+                'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing',
+                'lineHeight', 'textTransform', 'wordSpacing', 'textIndent',
+                'whiteSpace', 'wordBreak', 'paddingLeft', 'paddingRight',
+                'paddingTop', 'paddingBottom', 'borderLeftWidth', 'borderRightWidth',
+                'boxSizing', 'width'
+            ];
+            
+            stylesToCopy.forEach(prop => {
+                mirror.style[prop] = computedStyle[prop];
             });
+
+            // Делаем зеркало невидимым и позиционируем абсолютно
             mirror.style.position = 'absolute';
             mirror.style.visibility = 'hidden';
-            mirror.style.height = 'auto';
-            mirror.style.whiteSpace = 'pre-wrap'; // дублируем поведение переноса строк
-            mirror.textContent = textBeforeTarget;
+            mirror.style.top = '0';
+            mirror.style.left = '0';
+
+            // 2. Разрезаем текст и вставляем маркер (span) в позицию ошибки
+            const textBefore = text.substring(0, index);
+            const textAfter = text.substring(index);
+            
+            mirror.textContent = textBefore;
+            
+            const marker = document.createElement('span');
+            marker.textContent = text[index] || ' '; // защищаем от пустой строки
+            mirror.appendChild(marker);
+            
+            const restText = document.createTextNode(textAfter);
+            mirror.appendChild(restText);
+
+            // Добавляем в body для расчета геометрии
             document.body.appendChild(mirror);
-            const textHeight = mirror.offsetHeight; // реальная высота текста до нужной строки с учетом переносов
+
+            // 3. Считаем абсолютные координаты маркера относительно textarea
+            const textareaRect = textarea.getBoundingClientRect();
+            const markerRect = marker.getBoundingClientRect();
+            
+            // На сколько пикселей символ удален от верхнего края textarea
+            const relativeMarkerTop = markerRect.top - mirror.getBoundingClientRect().top;
+
+            // Удаляем зеркало из DOM
             document.body.removeChild(mirror);
-            // С учетом отступа сверху у самого textarea
-            const paddingTop = parseFloat(computed.paddingTop) || 0;
-            const lineOffset = paddingTop + textHeight;
-            // Вычисляем положение строки относительно прокручиваемого контейнера (.main-center)
-            const textareaTopRelativeToContainer = textarea.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top;
-            const containerHeight = scrollContainer.clientHeight;
-            const targetScrollTop = scrollContainer.scrollTop + textareaTopRelativeToContainer + lineOffset - containerHeight /3;
-            // Плавная прокрутка контейнера
+
+            // 4. Расчет прокрутки для scrollContainer
+            // Позиция textarea внутри скролл-контейнера + смещение символа
+            const absoluteCharacterTop = textarea.offsetTop + relativeMarkerTop;
+
+            // Целевая позиция: центрируем строку с ошибкой в контейнере для лучшей видимости
+            const targetScrollTop = absoluteCharacterTop - (scrollContainer.clientHeight / 2);
+
+            // Выполняем плавную прокрутку
             scrollContainer.scrollTo({
                 top: Math.max(0, targetScrollTop),
                 behavior: 'smooth'
             });
+
+            textarea.selectionStart = index;
+            textarea.selectionEnd = Math.min(loc.end, text.length);
+            textarea.focus({ preventScroll: true });
         }
 
         class ErrorNavigator {
@@ -949,13 +982,7 @@
                 const target = items[this.currentIndex];
                 target.classList.add(this.activeClass);
                 target.scrollIntoView({ block: 'nearest' });
-
-                //const line = parseInt(target.dataset.line);
-                //const col = parseInt(target.dataset.col);
-                const loc = this.linked[this.currentIndex];
-                    const line = loc.line;
-                    const col = loc.column;
-                scrollToCodeLine(line, col);
+                scrollToCodeLine(this.linked[this.currentIndex]);
             }
 
             initEvents() {
