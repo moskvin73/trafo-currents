@@ -18,21 +18,25 @@ const tokenNames = [
   'DIV',      // /
   'POW',      // ** или ^
   'ASSIGN',   // ==
+  'SEMICOLON',// ;
+  'SILENT',   // $
+  'COMMA',    // ,
+  'EQU',      // ==
+  'NOT_EQU',  // !=
+
+  // Экронируемые символы
+  'LT',       // <
+  'GT',       // >
+  'LTE',      // <=
+  'GTE',      // >=
+
+  // Cкобки
   'LPAREN',   // (
   'LSQUARE',  // [
   'RSQUARE',  // ]
   'RPAREN',   // )
   'LBRACE',   // {
   'RBRACE',   // }
-  'SEMICOLON',// ;
-  'SILENT',   // $
-  'COMMA',    // ,
-  'EQU',      // ==
-  'NOT_EQU',  // !=
-  'LT',       // <
-  'GT',       // >
-  'LTE',      // <=
-  'GTE',      // >=
 
   // Зарезервированные констаны начинающиеся на %
   'MATH_PI',

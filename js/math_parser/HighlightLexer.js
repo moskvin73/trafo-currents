@@ -12,7 +12,9 @@ export function htmlEscape(text) {
 
 export function HighlightLerxer(text) {
     const lexer = new MathLexer(text, [], 1, true);
-    const chunks = []; 
+    const chunks = [];
+    const bracketStack = [];
+    let bracketIdCounter = 0; 
     let token = lexer.next();
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
@@ -22,6 +24,39 @@ export function HighlightLerxer(text) {
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
             chunks.push(`<span class="token-rw-words">${lexer.stringValue()}</span>`);
         else switch (token) {
+                // --- Обработка скобок ---
+                case TokenType.LPAREN:
+                case TokenType.LSQUARE:
+                case TokenType.LBRACE: {
+                    const id = bracketIdCounter++;
+                    // Запоминаем тип скобки и её ID в стеке
+                    bracketStack.push({ type: token, id: id }); 
+                    chunks.push(`<span class="token-bracket" data-bracket-id="${id}">${lexer.stringValue()}</span>`);
+                    break;
+                }
+                case TokenType.RPAREN:
+                case TokenType.RSQUARE:
+                case TokenType.RBRACE: {
+                    // Ищем соответствующую открывающую скобку в стеке
+                    const expectedOpen = token === TokenType.RPAREN ? TokenType.LPAREN :
+                                         token === TokenType.RSQUARE ? TokenType.LSQUARE : TokenType.LBRACE;
+                    
+                    let pairId = null;
+                    // Проверяем стек на корректность вложенности
+                    if (bracketStack.length > 0 && bracketStack[bracketStack.length - 1].type === expectedOpen) {
+                        pairId = bracketStack.pop().id;
+                    }
+
+                    if (pairId !== null) {
+                        chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}">${lexer.stringValue()}</span>`);
+                    } else {
+                        // Если парная скобка не найдена (ошибка синтаксиса)
+                        chunks.push(`<span class="token-bracket token-bracket-error">${lexer.stringValue()}</span>`);
+                    }
+                    break;
+                }
+                // --- Конец обработки скобок ---
+
             case TokenType.COMMENT:
                 chunks.push(`<span class="token-comment">${htmlEscape(lexer.stringValue())}</span>`);
                 break;
