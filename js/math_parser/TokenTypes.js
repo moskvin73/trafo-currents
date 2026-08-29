@@ -1,34 +1,47 @@
 // Просто пишем список названий по порядку
 const tokenNames = [
   'EOF',
-  'NUMBER',
-  'COMPLEX_NUMBER',
-  'PLUS',
-  'MINUS',
-  'MUL',
-  'DIV',
-  'POW',
-  'ASSIGN', // ==
-  'LPAREN', // (
-  'LSQUARE', // [
-  'RSQUARE', // ]
-  'RPAREN', // )
-  'LBRACE', // {
-  'RBRACE', // }
-  'VARIABLE',
-  'TEXT_BLOCK',
+
   'COMMENT',
   'SPACES',
   'ERROR',
   'ERROR_STR',
-  'SEMICOLON',
-  'SILENT',
-  'COMMA',
+  'NUMBER',
+  'COMPLEX_NUMBER',
+  'VARIABLE',
+  'TEXT_BLOCK',
+
+  // Зарезервированные символы
+  'PLUS',     // +
+  'MINUS',    // -
+  'MUL',      // *
+  'DIV',      // /
+  'POW',      // ** или ^
+  'ASSIGN',   // ==
+  'LPAREN',   // (
+  'LSQUARE',  // [
+  'RSQUARE',  // ]
+  'RPAREN',   // )
+  'LBRACE',   // {
+  'RBRACE',   // }
+  'SEMICOLON',// ;
+  'SILENT',   // $
+  'COMMA',    // ,
+  'EQU',      // ==
+  'NOT_EQU',  // !=
+  'LT',       // <
+  'GT',       // >
+  'LTE',      // <=
+  'GTE',      // >=
+
+  // Зарезервированные констаны начинающиеся на %
   'MATH_PI',
   'MATH_E',
   'MATH_PHI',
   'MATH_INF',
   'MATH_NAN',
+
+  // Зарезервированные слова
   'RW_PRINT',
   'RW_TRUE',
   'RW_FALSE',
@@ -56,12 +69,6 @@ const tokenNames = [
   'RW_RETUTN',
   'RW_BREAK',
   'RW_CONTINUE',
-  'EQU', // ==
-  'NOT_EQU', // !=
-  'LT', // <
-  'GT',  // >
-  'LTE', // <=
-  'GTE', // >=
   'RW_ERROR',
 ];
 
@@ -73,5 +80,13 @@ for (let i = 0; i < tokenNames.length; i++) {
   TokenType[tokenNames[i]] = i;
 }
 
+TokenType.FIRST_RESERVED_CHARACTERS = TokenType.PLUS;
+TokenType.LAST_RESERVED_CHARACTERS = TokenType.GTE;
+
+TokenType.FIRST_RESERVED_CONSTANTS = TokenType.MATH_PI;
+TokenType.LAST_RESERVED_CONSTANTS = TokenType.MATH_NAN;
+
+TokenType.FIRST_RESERVED_WORDS = TokenType.RW_PRINT;
+TokenType.LAST_RESERVED_WORDS = TokenType.RW_ERROR;
 // Замораживаем для оптимизации V8
 Object.freeze(TokenType);
