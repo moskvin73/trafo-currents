@@ -1566,7 +1566,7 @@
             window.addEventListener('resize', updateLineNumbers);
             textarea.addEventListener('keydown', (event) => {
                 if (event.key === 'Tab') {
-                    e.preventDefault();
+                    event.preventDefault();
                     const start = this.selectionStart;
                     const end = this.selectionEnd;
 
