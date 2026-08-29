@@ -20,7 +20,7 @@ export function HighlightLerxer(text) {
         else if (token >= TokenType.FIRST_RESERVED_CONSTANTS && token <= TokenType.LAST_RESERVED_CONSTANTS)
             htmltext += `<span class="token-rw-constants">&amp;${lexer.source.slice(lexer.tokenStart + 1, lexer.tokenEnd)}</span>`;
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
-            htmltext += `<span class="token-rw-words">&amp;${lexer.stringValue()}</span>`;
+            htmltext += `<span class="token-rw-words">${lexer.stringValue()}</span>`;
         else switch (token) {
             case TokenType.COMMENT:
                 htmltext += `<span class="token-comment">${htmlEscape(lexer.stringValue())}</span>`;
