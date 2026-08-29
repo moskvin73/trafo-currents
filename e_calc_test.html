@@ -709,31 +709,31 @@
         .error-empty::before {
         content: "\200B"; /* Пробел нулевой ширины */
         }
-        .highlight-layer .token-rw-words { color: #005cc5; font-weight: bold; }
-        .highlight-layer .token-comment { color: #d73a49; font-weight: bold;  }
+        :is(.calc-card-echo, .highlight-layer) .token-rw-words { color: #005cc5; font-weight: bold; }
+        :is(.calc-card-echo, .highlight-layer) .token-comment { color: #d73a49; font-weight: bold;  }
         /* Ключевые слова-константы (например: true, false, null) */
-        .highlight-layer .token-rw-constants { color: #005cc5; font-weight: bold; }
+        :is(.calc-card-echo, .highlight-layer) .token-rw-constants { color: #005cc5; font-weight: bold; }
 
         /* Код ошибки в тексте (например: E001, 404) */
-        .highlight-layer .token-error-code { color: #d73a49; font-weight: bold; }
+        :is(.calc-card-echo, .highlight-layer) .token-error-code { color: #d73a49; font-weight: bold; }
 
         /* Строка с ошибкой (выделение текста ошибки фоном) */
-        .highlight-layer .token-error-string { background-color: rgba(215, 58, 73, 0.15); color: #d73a49; }
+        :is(.calc-card-echo, .highlight-layer) .token-error-string { background-color: rgba(215, 58, 73, 0.15); color: #d73a49; }
 
         /* Обычные строки (текстовые литералы) */
-        .highlight-layer .token-string { color: #032f62; }
+        :is(.calc-card-echo, .highlight-layer) .token-string { color: #032f62; }
 
         /* Обычные числа (целые и вещественные) */
-        .highlight-layer.token-number { color: #e36209; }
+        :is(.calc-card-echo, .highlight-layer) .token-number { color: #e36209; }
 
         /* Комплексные числа (например: 5+3i) */
-        .highlight-layer .token-complex-number { color: #6f42c1; font-weight: 500; }
+        :is(.calc-card-echo, .highlight-layer) .token-complex-number { color: #6f42c1; font-weight: 500; }
 
         /* Переменные и идентификаторы */
-        .highlight-layer .token-varable { color: #24292e; }        
+        :is(.calc-card-echo, .highlight-layer) .token-varable { color: #24292e; }        
 
         /* Базовый стиль для всех скобок */
-        .highlight-layer .token-bracket {
+        :is(.calc-card-echo, .highlight-layer) .token-bracket {
             font-weight: bold;
             color: #24292e;
         }
@@ -746,7 +746,7 @@
         }
 
         /* Если закрывающая скобка лишняя и пара не нашлась */
-        .token-bracket-error {
+        .highlight-layer .token-bracket-error {
             color: #ff0000 !important;
             text-decoration: underline wavy red;
         }       
