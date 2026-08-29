@@ -543,7 +543,16 @@ export class MathLexer {
         if (isUnicodeSpace(code)) { 
           this.#readCodePointAndAdvance();
           if (this.include_trivia) {
-               this.tokenStart = startIdx;
+               while (true)
+               {
+                  const code = src.codePointAt(this.i);
+                  const isSpace = code < 128 
+                      ? asciiMap[code] === C_SPACE 
+                      : isUnicodeSpace(code);
+                  if (!isSpace) break;
+                  this.#readCodePointAndAdvance();
+              }
+              this.tokenStart = startIdx;
               this.tokenEnd = this.i;
               this.tokenStartLine = startLine;
               this.tokenStartLineIdx = startLineIdx;
