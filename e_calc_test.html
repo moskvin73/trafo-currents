@@ -1575,16 +1575,22 @@
             const code= document.getElementById('calc-input-wrapper');
 
             const find_token_bracket = (e) =>  {
+                const x = e.clientX;
+                const y = e.clientY;
                 const code_pointerEvents = code.style.pointerEvents;
                 code.style.pointerEvents = 'none';
                 const textarea_pointerEvents = textarea.pointerEvents;
                 textarea.pointerEvents = 'none';
                 highlightLayer.pointerEvents = 'auto';
-                const element = e.target.closest('.token-bracket'); 
+                const element = document.elementFromPoint(x, y);
                 code.style.pointerEvents = code_pointerEvents;
                 textarea.pointerEvents = textarea_pointerEvents;
                 highlightLayer.pointerEvents = 'none';
-                return element;
+                if (topElement) {
+                    const bracketElement = element.closest('.token-bracket');
+                    if (bracketElement) return bracketElement;
+                }
+                return null;
             };
             
             code.addEventListener('mouseover', (e) => {
