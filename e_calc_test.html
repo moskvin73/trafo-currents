@@ -1635,10 +1635,10 @@
             errorNav.clear();
             const rawCode = textarea.value;
             if (!rawCode.trim()) return; // Игнорируем пустой ввод
-            let resultBlock; let card;
+            let resultBlock; let card; let parser;
             try {
                 // Запускаем наш потоковый LL(1) компилятор
-                const parser = new MathParser(rawCode, globalScope);
+                parser = new MathParser(rawCode, globalScope);
                 parser.parse();
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
@@ -1731,7 +1731,7 @@
 
             }
             catch (runtimeError) {
-                const errors = [`Критическая ошибка вычисления:${runtimeError.message}`];
+                const errors = [new CompilerError(`Критическая ошибка вычисления:${runtimeError.message}`, parser.lexer.createLocation())];
                 errorNav.setItems(errors);
                 toggleBottomPanel(true);
                 return;
