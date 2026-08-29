@@ -1586,7 +1586,7 @@
 
             code.addEventListener('mouseout', (e) => {
                 const element = document.elementFromPoint(e.clientX, e.clientY);
-                if (element && highlightLayer.contains(element) && element.classList.contains('token-bracket') {
+                if (element && highlightLayer.contains(element) && element.classList.contains('token-bracket')) {
                     const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
                     highlighted.forEach(el => el.classList.remove('bracket-highlight'));
                 }
