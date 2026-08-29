@@ -1582,7 +1582,7 @@
         const historyStream = document.getElementById("calc-history-stream");
 
         function createCard(rawCode) {
-            rawCode = HighlightLerxer(rawCode.replace(replace(/^[\s\u2028\u2029\u0085\u000C]*\n/gm, '')));
+            rawCode = HighlightLerxer(rawCode.replace(/^[\s\u2028\u2029\u0085\u000C]*\n/gm, ''));
             // 1. Создаем контейнер для новой карточки в ленте истории
             const card = document.createElement("div");
             card.className = "calc-card";
