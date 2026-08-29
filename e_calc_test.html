@@ -1649,7 +1649,6 @@
                     const cc = createCard(rawCode);
                     card = cc.card;
                     resultBlock = cc.resultBlock;
-                    // Очищаем блок перед выводом (чтобы не дублировать результаты при повторных кликах)
                     resultBlock.innerHTML = "";
                     const parseResult = parser.toTex();
                     parseResult.forEach((res) => {
