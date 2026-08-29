@@ -31,7 +31,7 @@ export function HighlightLerxer(text) {
                     const id = bracketIdCounter++;
                     // Запоминаем тип скобки, её ID и индекс в массиве chunks, чтобы потом можно было пометить ошибку
                     bracketStack.push({ type: token, id: id, chunkIndex: chunks.length }); 
-                    chunks.push(`<span class="token-bracket" data-bracket-id="${id}">${lexer.stringValue()}</span>`);
+                    chunks.push(`<span class="token-bracket" data-bracket-id="${id}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
                     break;
                 }
                 case TokenType.RPAREN:
@@ -54,10 +54,10 @@ export function HighlightLerxer(text) {
                     }
 
                     if (pairId !== null) {
-                        chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}">${lexer.stringValue()}</span>`);
+                        chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
                     } else {
                         // Ошибка: закрывающая скобка не имеет пары
-                        chunks.push(`<span class="token-bracket token-bracket-error">${lexer.stringValue()}</span>`);
+                        chunks.push(`<span class="token-bracket token-bracket-error" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
                     }                    
                     break;
                 }
