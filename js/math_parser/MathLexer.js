@@ -414,9 +414,14 @@ export class MathLexer {
             const matchedType = reservedWordsMap[constName];
             if (matchedType) return matchedType; // Возвращает числовой ID из карты констант
 
-            const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-            this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, errLoc));
-            continue;
+            if (this.include_trivia) {
+              return TokenType.ERROR;
+            }
+            else {
+              const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+              this.errors.push(new CompilerError(`Неизвестная математическая константа "${constName}"`, errLoc));
+              continue;
+            }
           }
           case C_DIGIT: {
             while (this.i < len) {
