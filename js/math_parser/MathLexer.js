@@ -511,9 +511,20 @@ export class MathLexer {
 
           default: { // Неизвестный или запрещённый ASCII-символ (например, '\', '#', '`')
             this.#readCodePointAndAdvance();
-            const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-            this.errors.push(new CompilerError(`Неизвестный ASCII символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
-            continue; // Идем искать следующий полезный токен
+            if (this.include_trivia) {
+                this.tokenStart = startIdx;
+                this.tokenEnd = this.i;
+                this.tokenStartLine = startLine;
+                this.tokenStartLineIdx = startLineIdx;
+                this.tokenEndLine = this.currentLine;
+                this.tokenEndLineIdx = this.lineStartIdx;
+                return TokenType.ERROR;
+            }
+            else {
+              const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+              this.errors.push(new CompilerError(`Неизвестный ASCII символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
+              continue; // Идем искать следующий полезный токен
+            }
           }
         }
       } else {
