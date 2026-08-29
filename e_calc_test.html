@@ -1576,7 +1576,8 @@
 
             code.addEventListener('mouseover', (e) => {
                 const element = document.elementFromPoint(e.clientX, e.clientY);
-                if (element && highlightLayer.contains(element) && element.classList.contains('token-bracket') && element.hasAttribute('data-bracket-id')) { 
+                if (element && highlightLayer.contains(element) && 
+                        element.classList.contains('token-bracket') && element.hasAttribute('data-bracket-id')) { 
                     const bracketId = activeSpan.getAttribute('data-bracket-id');                   
                     // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
                     const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
