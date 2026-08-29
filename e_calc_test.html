@@ -731,6 +731,24 @@
 
         /* Переменные и идентификаторы */
         .highlight-layer .token-varable { color: #24292e; }        
+
+        /* Базовый стиль для всех скобок */
+        .token-bracket {
+            font-weight: bold;
+            color: #ffd700; /* Желтый цвет по умолчанию */
+        }
+
+        /* Стиль для подсвеченной пары */
+        .token-bracket.bracket-highlight {
+            background-color: rgba(255, 215, 0, 0.3); /* Мягкий задний фон */
+            border-bottom: 2px solid #ffd700;          /* Подчеркивание */
+        }
+
+        /* Если закрывающая скобка лишняя и пара не нашлась */
+        .token-bracket-error {
+            color: #ff0000 !important;
+            text-decoration: underline wavy red;
+        }       
         /* #endregion комндный контейнер */
 
    </style>
