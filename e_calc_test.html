@@ -1731,9 +1731,12 @@
 
             }
             catch (runtimeError) {
-                const errors = [new CompilerError(`Критическая ошибка вычисления:${runtimeError.message}`, parser.lexer.createLocation())];
-                errorNav.setItems(errors);
-                toggleBottomPanel(true);
+                if (parser)
+                {
+                    const errors = [new CompilerError(`Критическая ошибка вычисления:${runtimeError.message}`, parser.lexer.createLocation())];
+                    errorNav.setItems(errors);
+                    toggleBottomPanel(true);
+                }
                 return;
             }
             // 5. Вставляем готовую карточку в ленту истории
