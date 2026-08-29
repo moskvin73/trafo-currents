@@ -679,6 +679,8 @@
         box-sizing: border-box;     
         white-space: pre-wrap;
         word-break: break-word;
+        tab-size: 4; 
+        -moz-tab-size: 4; /* Для старых версий Firefox */        
         }
 
         .textInput {
@@ -1563,7 +1565,7 @@
             textarea.addEventListener('focus', updateCursorPosition);
             window.addEventListener('resize', updateLineNumbers);
             textarea.addEventListener('keydown', (event) => {
-                if (event.key === 'Backspace') {
+                if (event.key === 'Tab') {
                     e.preventDefault();
                     const start = this.selectionStart;
                     const end = this.selectionEnd;
