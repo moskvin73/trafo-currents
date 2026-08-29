@@ -20,6 +20,7 @@ const tokenNames = [
   'COMMENT',
   'SPACES',
   'ERROR',
+  'ERROR_STR',
   'SEMICOLON',
   'SILENT',
   'COMMA',

@@ -307,7 +307,16 @@ export class MathLexer {
                 if (next === 10 || next === 13 || next === 8232 || next === 8233 || next === 133 || next === 12) break;
                 this.#readCodePointAndAdvance();
               }
-              continue;
+              if (this.include_trivia) {
+                this.tokenStart = startIdx;
+                this.tokenEnd = this.i;
+                this.tokenStartLine = startLine;
+                this.tokenStartLineIdx = startLineIdx;
+                this.tokenEndLine = this.currentLine;
+                this.tokenEndLineIdx = this.lineStartIdx;
+                return TokenType.COMMENT;
+              }
+              else continue;
             }
 
             // Вспомогательная функция для записи состояния оператора
@@ -367,11 +376,19 @@ export class MathLexer {
             this.tokenStartLineIdx = startLineIdx;
 
             if (this.i >= len) {
-              const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-              this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));
-              this.tokenEndLine = this.currentLine;
-              this.tokenEndLineIdx = this.lineStartIdx;
-              return TokenType.TEXT_BLOCK;
+              if (this.include_trivia) {
+                this.tokenEndLine = this.currentLine;
+                this.tokenEndLineIdx = this.lineStartIdx;
+                return TokenType.ERROR_STR;
+              }
+              else
+              {
+                const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+                this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));              
+                this.tokenEndLine = this.currentLine;
+                this.tokenEndLineIdx = this.lineStartIdx;
+                return TokenType.TEXT_BLOCK;
+              }
             }
             this.#readCodePointAndAdvance(); // закрывающая кавычка
             this.tokenEndLine = this.currentLine;
