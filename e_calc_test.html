@@ -1567,14 +1567,14 @@
             textarea.addEventListener('keydown', (event) => {
                 if (event.key === 'Tab') {
                     event.preventDefault();
-                    const start = this.selectionStart;
-                    const end = this.selectionEnd;
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
 
                     // Вставляем символ табуляции прямо в место курсора
-                    this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
+                    textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
 
                     // Возвращаем курсор на место после вставленного символа
-                    this.selectionStart = this.selectionEnd = start + 1;                    
+                    textarea.selectionStart = textarea.selectionEnd = start + 1;                    
                 }
                 else if (event.key === 'Backspace' || event.key === 'Delete') {
                 // Используем setTimeout, чтобы значение успело обновиться в DOM
