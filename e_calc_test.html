@@ -693,13 +693,9 @@
         position: absolute;
         top: 0;
         left: 0;
-        /*pointer-events: none; /* Пропускаем клики в textarea */
-        pointer-events: auto;
+        pointer-events: none; /* Пропускаем клики в textarea */
         color: var(--calc-color-text);
         }
-        .highlight-layer * {
-        pointer-events: none; /* Чтобы внутренние спаны сами по себе не мешали, если нужно */
-        }        
 
         .highlight-layer .token-error { background-color: rgba(255, 0, 0, 0.2); }
         /* Если start === end (ошибка-точка) */
@@ -1576,23 +1572,22 @@
                 new ResizeObserver(updateLineNumbers).observe(textarea);
             }
 
-            highlightLayer.addEventListener('mouseover', (e) => {
-                const target = e.target;
-                // Проверяем, что навели на скобку и у неё есть ID пары
-                if (target.classList.contains('token-bracket') && target.hasAttribute('data-bracket-id')) {
-                    const bracketId = target.getAttribute('data-bracket-id');
-                    
+            const code= document.getElementById('calc-input-wrapper');
+
+            code.addEventListener('mouseover', (e) => {
+                const element = document.elementFromPoint(e.clientX, e.clientY);
+                if (element && highlightLayer.contains(element) && element.classList.contains('token-bracket') && element.hasAttribute('data-bracket-id')) { 
+                    const bracketId = activeSpan.getAttribute('data-bracket-id');                   
                     // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
                     const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
                     pairs.forEach(el => el.classList.add('bracket-highlight'));
                 }
             });
 
-            highlightLayer.addEventListener('mouseout', (e) => {
-                const target = e.target;
-                if (target.classList.contains('token-bracket')) {
-                    // Убираем подсветку со всех скобок при уходе курсора
-                    const highlighted = codeContainer.querySelectorAll('.bracket-highlight');
+            code.addEventListener('mouseout', (e) => {
+                const element = document.elementFromPoint(e.clientX, e.clientY);
+                if (element && highlightLayer.contains(element) && target.classList.contains('token-bracket') {
+                    const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
                     highlighted.forEach(el => el.classList.remove('bracket-highlight'));
                 }
             }); 
