@@ -1571,46 +1571,7 @@
             if (window.ResizeObserver) {
                 new ResizeObserver(updateLineNumbers).observe(textarea);
             }
-
-            const code= document.getElementById('calc-input-wrapper');
-
-            const find_token_bracket = (e) =>  {
-                const x = e.clientX;
-                const y = e.clientY;
-                const code_pointerEvents = code.style.pointerEvents;
-                code.style.pointerEvents = 'none';
-                const textarea_pointerEvents = textarea.style.pointerEvents;
-                textarea.pointerEvents = 'none';
-                highlightLayer.pointerEvents = 'auto';
-                const element = document.elementFromPoint(x, y);
-                code.style.pointerEvents = code_pointerEvents;
-                textarea.style.pointerEvents = textarea_pointerEvents;
-                highlightLayer.pointerEvents = 'none';
-                if (element) {
-                    const bracketElement = element.closest('.token-bracket');
-                    if (bracketElement) return bracketElement;
-                }
-                return null;
-            };
             
-            code.addEventListener('mouseover', (e) => {
-                const element = find_token_bracket(e); 
-                if (element && element.hasAttribute('data-bracket-id')) { 
-                    const bracketId = activeSpan.getAttribute('data-bracket-id');                   
-                    // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
-                    const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
-                    pairs.forEach(el => el.classList.add('bracket-highlight'));
-                }
-            });
-
-            code.addEventListener('mouseout', (e) => {
-                const element = find_token_bracket(e); 
-                if (element) {
-                    const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
-                    highlighted.forEach(el => el.classList.remove('bracket-highlight'));
-                }
-            }); 
-
             updateLineNumbers();
             updateCursorPosition();
         }
