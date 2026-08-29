@@ -1552,26 +1552,27 @@
                 new ResizeObserver(updateLineNumbers).observe(textarea);
             }
 
-highlightLayer.addEventListener('mouseover', (e) => {
-    const target = e.target;
-    // Проверяем, что навели на скобку и у неё есть ID пары
-    if (target.classList.contains('token-bracket') && target.hasAttribute('data-bracket-id')) {
-        const bracketId = target.getAttribute('data-bracket-id');
-        
-        // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
-        const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
-        pairs.forEach(el => el.classList.add('bracket-highlight'));
-    }
-});
+            highlightLayer.addEventListener('mouseover', (e) => {
+                const target = e.target;
+                // Проверяем, что навели на скобку и у неё есть ID пары
+                if (target.classList.contains('token-bracket') && target.hasAttribute('data-bracket-id')) {
+                    const bracketId = target.getAttribute('data-bracket-id');
+                    
+                    // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
+                    const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
+                    pairs.forEach(el => el.classList.add('bracket-highlight'));
+                }
+            });
 
-highlightLayer.addEventListener('mouseout', (e) => {
-    const target = e.target;
-    if (target.classList.contains('token-bracket')) {
-        // Убираем подсветку со всех скобок при уходе курсора
-        const highlighted = codeContainer.querySelectorAll('.bracket-highlight');
-        highlighted.forEach(el => el.classList.remove('bracket-highlight'));
-    }
-}); 
+            highlightLayer.addEventListener('mouseout', (e) => {
+                const target = e.target;
+                if (target.classList.contains('token-bracket')) {
+                    // Убираем подсветку со всех скобок при уходе курсора
+                    const highlighted = codeContainer.querySelectorAll('.bracket-highlight');
+                    highlighted.forEach(el => el.classList.remove('bracket-highlight'));
+                }
+            }); 
+            
             updateLineNumbers();
             updateCursorPosition();
         }
