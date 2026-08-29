@@ -18,7 +18,7 @@ export function HighlightLerxer(text) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
             htmltext += lexer.stringValue();
         else if (token >= TokenType.FIRST_RESERVED_CONSTANTS && token <= TokenType.LAST_RESERVED_CONSTANTS)
-            htmltext += `<span class="token-rw-constants">&amp;${lexer.source.slice(lexer.tokenStart + 1, lexer.tokenEnd)}</span>`;
+            htmltext += `<span class="token-rw-constants">${lexer.source.slice(lexer.tokenStart, lexer.tokenEnd)}</span>`;
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
             htmltext += `<span class="token-rw-words">${lexer.stringValue()}</span>`;
         else switch (token) {
