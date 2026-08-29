@@ -1579,12 +1579,12 @@
                 const y = e.clientY;
                 const code_pointerEvents = code.style.pointerEvents;
                 code.style.pointerEvents = 'none';
-                const textarea_pointerEvents = textarea.pointerEvents;
+                const textarea_pointerEvents = textarea.style.pointerEvents;
                 textarea.pointerEvents = 'none';
                 highlightLayer.pointerEvents = 'auto';
                 const element = document.elementFromPoint(x, y);
                 code.style.pointerEvents = code_pointerEvents;
-                textarea.pointerEvents = textarea_pointerEvents;
+                textarea.style.pointerEvents = textarea_pointerEvents;
                 highlightLayer.pointerEvents = 'none';
                 if (element) {
                     const bracketElement = element.closest('.token-bracket');
