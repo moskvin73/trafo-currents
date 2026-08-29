@@ -532,8 +532,16 @@ export class MathLexer {
         
         // Проверяем полнокровные пробельные символы Юникода (\p{Zs} и др.)
         if (isUnicodeSpace(code)) { 
-          this.#readCodePointAndAdvance(); 
-          continue; 
+          this.#readCodePointAndAdvance();
+          if (this.include_trivia) {
+               this.tokenStart = startIdx;
+              this.tokenEnd = this.i;
+              this.tokenStartLine = startLine;
+              this.tokenStartLineIdx = startLineIdx;
+              this.tokenEndLine = this.currentLine;
+              this.tokenEndLineIdx = this.lineStartIdx;
+              return TokenType.SPACES;           
+          } else continue; 
         }
 
         // Переменные, начавшиеся сразу с Юникод-букв (кириллица, корейский и т.д.)
@@ -579,10 +587,19 @@ export class MathLexer {
         for (let step = 0; step < graphemeLength; step++) {
           this.#readCodePointAndAdvance();
         }
-
-        const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-        this.errors.push(new CompilerError(`Неизвестный символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
-        continue;
+        if (this.include_trivia) {
+            this.tokenStart = startIdx;
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+            return TokenType.ERROR;
+        } else {
+          const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+          this.errors.push(new CompilerError(`Неизвестный символ "${formatBadChar(src.slice(startIdx, this.i))}"`, errLoc));
+          continue;
+        }
       }
     }
 
