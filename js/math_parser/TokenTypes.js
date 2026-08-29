@@ -81,7 +81,7 @@ for (let i = 0; i < tokenNames.length; i++) {
 }
 
 TokenType.FIRST_RESERVED_CHARACTERS = TokenType.PLUS;
-TokenType.LAST_RESERVED_CHARACTERS = TokenType.GTE;
+TokenType.LAST_RESERVED_CHARACTERS = TokenType.NOT_EQU;
 
 TokenType.FIRST_RESERVED_CONSTANTS = TokenType.MATH_PI;
 TokenType.LAST_RESERVED_CONSTANTS = TokenType.MATH_NAN;

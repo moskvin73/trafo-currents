@@ -850,6 +850,7 @@
 
     <script type="module">
         import { MathParser } from './js/math_parser/MathParser.js';
+        import { HighlightLerxer } from './js/math_parser/HighlightLexer.js';
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
@@ -886,6 +887,7 @@
         }
 
         function runLexerAndHighlight(text) {
+            const test = HighlightLerxer(text);
             return text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, '&lt;')
