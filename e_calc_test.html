@@ -1504,6 +1504,41 @@
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
                 }
+
+            // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
+
+                // 1. Очищаем старую подсветку перед поиском новой
+                const highlighted = codeContainer.querySelectorAll('.bracket-highlight');
+                highlighted.forEach(el => el.classList.remove('bracket-highlight'));
+
+                // 2. Ищем элемент скобки, который находится сразу перед курсором или под ним.
+                // Для этого у ваших элементов в highlightLayer должны быть data-атрибуты с индексами символов (например, data-index).
+                // Если их нет, можно найти скобку по текстовому индексу в DOM слое подсветки:
+                
+                // ПРИМЕР А (Если у токенов-скобок есть атрибут data-start-index равен индексу в textarea):
+                // const activeBracket = highlightLayer.querySelector(`.token-bracket[data-start-index="${activePosition - 1}"]`);
+
+                // ПРИМЕР Б (Универсальный поиск через перебор, если индексов в HTML нет):
+                let currentIdx = 0;
+                let activeBracket = null;
+                const allTokens = highlightLayer.querySelectorAll('.token-bracket');
+
+                // Нам нужна скобка, на которой сейчас стоит курсор (activePosition - 1)
+                const targetCharIndex = activePosition - 1; 
+
+                // ВАЖНО: Этот способ сработает, если структура highlightLayer позволяет 
+                // сопоставить физический символ из textarea с DOM-узлом. 
+                // Если у вас токенизирован весь текст, проще всего при рендере разметки 
+                // добавлять каждому элементу атрибут data-index.
+
+                // 3. Если скобка найдена и у неё есть ID пары — подсвечиваем обе
+                if (activeBracket && activeBracket.hasAttribute('data-bracket-id')) {
+                    const bracketId = activeBracket.getAttribute('data-bracket-id');
+                    const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
+                    pairs.forEach(el => el.classList.add('bracket-highlight'));
+                }
+
+                // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
             };
 
             // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
