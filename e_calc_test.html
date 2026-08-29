@@ -1515,41 +1515,13 @@
 
                 const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
                 if (activeSpan) {
-
-                }                
-
-                /*// 2. Получаем текущее выделение/каретку
-                const selection = window.getSelection();
-                if (!selection.rangeCount) return;
-
-                const range = selection.getRangeAt(0);
-                let targetNode = range.startContainer;
-
-                // Если каретка стоит внутри текстового узла, берем его родительский элемент
-                if (targetNode.nodeType === Node.TEXT_NODE) {
-                    targetNode = targetNode.parentElement;
-                }
-
-                // 3. Проверяем, стоим ли мы на скобке (или рядом с ней)
-                // Примечание: в зависимости от логики ввода, может потребоваться проверить targetNode.nextSibling
-                let bracketEl = targetNode.closest('.token-bracket');
-
-                if (bracketEl) {
-                    const bracketId = bracketEl.getAttribute('data-bracket-id');
-
-                    if (bracketId) {
-                        // 4. Находим обе скобки с этим ID в контейнере редактора
-                        // Замените '#editor', на ID или переменную вашего контейнера
-                        const editorContainer = document.getElementById('editor'); 
-                        const pairs = editorContainer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
-
-                        // 5. Подсвечиваем обе скобки
-                        pairs.forEach(el => {
+                    const bracketId = activeSpan.getAttribute('data-bracket-id');
+                    const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
+                    pairs.forEach(el => {
                             el.classList.add('bracket-highlight');
                             currentlyHighlightedBrackets.push(el);
-                        });
-                    }
-                }*/
+                            });
+                }                
                 // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
             };
 
