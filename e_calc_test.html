@@ -1488,6 +1488,9 @@
                 lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
+            // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
+            let currentlyHighlightedBrackets = [];
+
             const updateCursorPosition = () => {
                 const direction = textarea.selectionDirection;
                 // Если выделение назад (в противоположную сторону), то активный край в selectionStart
@@ -1505,39 +1508,44 @@
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
                 }
 
-            // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
+                // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
 
-                // 1. Очищаем старую подсветку перед поиском новой
-                const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
-                highlighted.forEach(el => el.classList.remove('bracket-highlight'));
+                // 1. Очищаем предыдущую подсветку
+                currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
+                currentlyHighlightedBrackets = [];
 
-                // 2. Ищем элемент скобки, который находится сразу перед курсором или под ним.
-                // Для этого у ваших элементов в highlightLayer должны быть data-атрибуты с индексами символов (например, data-index).
-                // Если их нет, можно найти скобку по текстовому индексу в DOM слое подсветки:
-                
-                // ПРИМЕР А (Если у токенов-скобок есть атрибут data-start-index равен индексу в textarea):
-                // const activeBracket = highlightLayer.querySelector(`.token-bracket[data-start-index="${activePosition - 1}"]`);
+                // 2. Получаем текущее выделение/каретку
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
 
-                // ПРИМЕР Б (Универсальный поиск через перебор, если индексов в HTML нет):
-                let currentIdx = 0;
-                let activeBracket = null;
-                const allTokens = highlightLayer.querySelectorAll('.token-bracket');
+                const range = selection.getRangeAt(0);
+                let targetNode = range.startContainer;
 
-                // Нам нужна скобка, на которой сейчас стоит курсор (activePosition - 1)
-                const targetCharIndex = activePosition - 1; 
-
-                // ВАЖНО: Этот способ сработает, если структура highlightLayer позволяет 
-                // сопоставить физический символ из textarea с DOM-узлом. 
-                // Если у вас токенизирован весь текст, проще всего при рендере разметки 
-                // добавлять каждому элементу атрибут data-index.
-
-                // 3. Если скобка найдена и у неё есть ID пары — подсвечиваем обе
-                if (activeBracket && activeBracket.hasAttribute('data-bracket-id')) {
-                    const bracketId = activeBracket.getAttribute('data-bracket-id');
-                    const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
-                    pairs.forEach(el => el.classList.add('bracket-highlight'));
+                // Если каретка стоит внутри текстового узла, берем его родительский элемент
+                if (targetNode.nodeType === Node.TEXT_NODE) {
+                    targetNode = targetNode.parentElement;
                 }
 
+                // 3. Проверяем, стоим ли мы на скобке (или рядом с ней)
+                // Примечание: в зависимости от логики ввода, может потребоваться проверить targetNode.nextSibling
+                let bracketEl = targetNode.closest('.token-bracket');
+
+                if (bracketEl) {
+                    const bracketId = bracketEl.getAttribute('data-bracket-id');
+
+                    if (bracketId) {
+                        // 4. Находим обе скобки с этим ID в контейнере редактора
+                        // Замените '#editor', на ID или переменную вашего контейнера
+                        const editorContainer = document.getElementById('editor'); 
+                        const pairs = editorContainer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
+
+                        // 5. Подсвечиваем обе скобки
+                        pairs.forEach(el => {
+                            el.classList.add('bracket-highlight');
+                            currentlyHighlightedBrackets.push(el);
+                        });
+                    }
+                }
                 // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
             };
 
