@@ -1431,169 +1431,6 @@
         document.getElementById('close_btn_error').addEventListener('click', function() { toggleBottomPanel(false) });
         //#endregion Size Paneles
 
-        //#region Line editor        
-        function initLineNumbers() {
-            const lineNumbersEle = document.getElementById('calc-line-numbers');
-            const cursorIndicator = document.getElementById('calc-cursor-position');
-
-            if (!textarea || !lineNumbersEle) return;
-
-            // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
-            const mirrorEle = document.createElement('div');
-            const textareaStyle = window.getComputedStyle(textarea);
-            mirrorEle.style.position = 'absolute';
-            mirrorEle.style.visibility = 'hidden';
-            mirrorEle.style.whiteSpace = textareaStyle.whiteSpace;
-            mirrorEle.style.wordBreak = textareaStyle.wordBreak;
-            mirrorEle.style.fontFamily = textareaStyle.fontFamily;
-            mirrorEle.style.fontSize = textareaStyle.fontSize;
-            mirrorEle.style.lineHeight = textareaStyle.lineHeight;
-            mirrorEle.style.padding = textareaStyle.padding;
-            mirrorEle.style.boxSizing = textareaStyle.boxSizing;
-            document.body.appendChild(mirrorEle);
-
-            const updateLineNumbers = () => {
-                textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
-                const currentScrollHeight = textarea.scrollHeight;
-                textarea.style.height = `${currentScrollHeight}px`; // Устанавливаем новую высоту по содержимом     
-                highlightLayer.style.height = `${currentScrollHeight}px`;
-
-                mirrorEle.style.width = `${textarea.clientWidth}px`;
-                const text = textarea.value;
-                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
-
-                const lines = text.split('\n');
-                mirrorEle.innerHTML = '';
-                
-                lines.forEach((line) => {
-                    const span = document.createElement('span');
-                    span.style.display = 'block';
-                    // Добавляем перенос длинных слов без пробелов
-                    span.style.wordBreak = 'break-all'; 
-                    span.style.whiteSpace = 'pre-wrap';
-                    span.textContent = line === '' ? ' ' : line;
-                    mirrorEle.appendChild(span);
-                });
-
-                const spans = mirrorEle.querySelectorAll('span');
-                let lineNumbersHtml = '';
-                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
-
-                spans.forEach((span, index) => {
-                    const spanHeight = span.getBoundingClientRect().height;
-                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-                    lineNumbersHtml += `<div>${index + 1}</div>`;
-                    for (let i = 1; i < subLinesCount; i++) {
-                        lineNumbersHtml += `<div>&nbsp;</div>`;
-                    }
-                });
-                lineNumbersEle.innerHTML = lineNumbersHtml;
-            };
-
-            // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
-            let currentlyHighlightedBrackets = [];
-
-            const updateCursorPosition = () => {
-                const direction = textarea.selectionDirection;
-                // Если выделение назад (в противоположную сторону), то активный край в selectionStart
-                const activePosition = (direction === 'backward') 
-                    ? textarea.selectionStart 
-                    : textarea.selectionEnd;
-
-                const text = textarea.value;
-                const textBeforeCursor = text.substring(0, activePosition);
-                const lines = textBeforeCursor.split('\n');
-                const currentLine = lines.length;
-                const currentColumn = lines[lines.length - 1].length + 1;
-
-                if (cursorIndicator) {
-                    cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
-                }
-
-                // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
-                // 1. Очищаем предыдущую подсветку
-                currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
-                currentlyHighlightedBrackets = [];
-
-                const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
-                if (activeSpan) {
-                    const bracketId = activeSpan.getAttribute('data-bracket-id');
-                    const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
-                    pairs.forEach(el => {
-                            el.classList.add('bracket-highlight');
-                            currentlyHighlightedBrackets.push(el);
-                            });
-                }                
-                // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
-            };
-
-            // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
-            // Переопределяем стандартный дескриптор свойства value для этого конкретного textarea
-            const rawPrototype = Object.getPrototypeOf(textarea);
-            const valueDescriptor = Object.getOwnPropertyDescriptor(rawPrototype, 'value');
-
-            Object.defineProperty(textarea, 'value', {
-                get() {
-                    return valueDescriptor.get.call(this);
-                },
-                set(newValue) {
-                    valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
-                    // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
-                    updateLineNumbers();
-                    updateCursorPosition();
-                },
-                configurable: true
-            });
-
-            let isDragging = false;
-            textarea.addEventListener('mousedown', () => {
-                isDragging = true;
-            });
-
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-
-            textarea.addEventListener('mousemove', () => {
-            if (isDragging) updateCursorPosition();
-            });
-
-            // Стандартные слушатели для действий пользователя
-            textarea.addEventListener('input', (event) => {
-                updateLineNumbers();
-                updateCursorPosition();
-            });
-            textarea.addEventListener('keyup', updateCursorPosition);
-            textarea.addEventListener('click', updateCursorPosition);
-            textarea.addEventListener('focus', updateCursorPosition);
-            window.addEventListener('resize', updateLineNumbers);
-            textarea.addEventListener('keydown', (event) => {
-                if (event.key === 'Tab') {
-                    event.preventDefault();
-                    const start = textarea.selectionStart;
-                    const end = textarea.selectionEnd;
-
-                    // Вставляем символ табуляции прямо в место курсора
-                    textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
-
-                    // Возвращаем курсор на место после вставленного символа
-                    textarea.selectionStart = textarea.selectionEnd = start + 1;                    
-                }
-                else if (event.key === 'Backspace' || event.key === 'Delete') {
-                // Используем setTimeout, чтобы значение успело обновиться в DOM
-                setTimeout(updateLineNumbers, 0);
-            }});
-
-            if (window.ResizeObserver) {
-                new ResizeObserver(updateLineNumbers).observe(textarea);
-            }
-
-            updateLineNumbers();
-            updateCursorPosition();
-        }
-        initLineNumbers();
-        //#endregion Line editor
-
         const submitBtn = document.getElementById("calc-submit-btn");
         const historyStream = document.getElementById("calc-history-stream");
 
@@ -1794,13 +1631,173 @@
         // Слушатель клика по кнопке Enter
         submitBtn.addEventListener("click", executeCurrentCommand);
 
-        // Слушатель горячих клавиш: Ctrl+Enter или Cmd+Enter для удобства работы на компьютерах
-        textarea.addEventListener("keydown", (event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-                event.preventDefault(); // Предотвращаем стандартный перенос строки в textarea
-                executeCurrentCommand();
+         //#region Line editor        
+        function initLineNumbers() {
+            const lineNumbersEle = document.getElementById('calc-line-numbers');
+            const cursorIndicator = document.getElementById('calc-cursor-position');
+
+            if (!textarea || !lineNumbersEle) return;
+
+            // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
+            const mirrorEle = document.createElement('div');
+            const textareaStyle = window.getComputedStyle(textarea);
+            mirrorEle.style.position = 'absolute';
+            mirrorEle.style.visibility = 'hidden';
+            mirrorEle.style.whiteSpace = textareaStyle.whiteSpace;
+            mirrorEle.style.wordBreak = textareaStyle.wordBreak;
+            mirrorEle.style.fontFamily = textareaStyle.fontFamily;
+            mirrorEle.style.fontSize = textareaStyle.fontSize;
+            mirrorEle.style.lineHeight = textareaStyle.lineHeight;
+            mirrorEle.style.padding = textareaStyle.padding;
+            mirrorEle.style.boxSizing = textareaStyle.boxSizing;
+            document.body.appendChild(mirrorEle);
+
+            const updateLineNumbers = () => {
+                textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
+                const currentScrollHeight = textarea.scrollHeight;
+                textarea.style.height = `${currentScrollHeight}px`; // Устанавливаем новую высоту по содержимом     
+                highlightLayer.style.height = `${currentScrollHeight}px`;
+
+                mirrorEle.style.width = `${textarea.clientWidth}px`;
+                const text = textarea.value;
+                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
+
+                const lines = text.split('\n');
+                mirrorEle.innerHTML = '';
+                
+                lines.forEach((line) => {
+                    const span = document.createElement('span');
+                    span.style.display = 'block';
+                    // Добавляем перенос длинных слов без пробелов
+                    span.style.wordBreak = 'break-all'; 
+                    span.style.whiteSpace = 'pre-wrap';
+                    span.textContent = line === '' ? ' ' : line;
+                    mirrorEle.appendChild(span);
+                });
+
+                const spans = mirrorEle.querySelectorAll('span');
+                let lineNumbersHtml = '';
+                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
+
+                spans.forEach((span, index) => {
+                    const spanHeight = span.getBoundingClientRect().height;
+                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
+                    lineNumbersHtml += `<div>${index + 1}</div>`;
+                    for (let i = 1; i < subLinesCount; i++) {
+                        lineNumbersHtml += `<div>&nbsp;</div>`;
+                    }
+                });
+                lineNumbersEle.innerHTML = lineNumbersHtml;
+            };
+
+            // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
+            let currentlyHighlightedBrackets = [];
+
+            const updateCursorPosition = () => {
+                const direction = textarea.selectionDirection;
+                // Если выделение назад (в противоположную сторону), то активный край в selectionStart
+                const activePosition = (direction === 'backward') 
+                    ? textarea.selectionStart 
+                    : textarea.selectionEnd;
+
+                const text = textarea.value;
+                const textBeforeCursor = text.substring(0, activePosition);
+                const lines = textBeforeCursor.split('\n');
+                const currentLine = lines.length;
+                const currentColumn = lines[lines.length - 1].length + 1;
+
+                if (cursorIndicator) {
+                    cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
+                }
+
+                // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
+                // 1. Очищаем предыдущую подсветку
+                currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
+                currentlyHighlightedBrackets = [];
+
+                const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
+                if (activeSpan) {
+                    const bracketId = activeSpan.getAttribute('data-bracket-id');
+                    const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
+                    pairs.forEach(el => {
+                            el.classList.add('bracket-highlight');
+                            currentlyHighlightedBrackets.push(el);
+                            });
+                }                
+                // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
+            };
+
+            // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
+            // Переопределяем стандартный дескриптор свойства value для этого конкретного textarea
+            const rawPrototype = Object.getPrototypeOf(textarea);
+            const valueDescriptor = Object.getOwnPropertyDescriptor(rawPrototype, 'value');
+
+            Object.defineProperty(textarea, 'value', {
+                get() {
+                    return valueDescriptor.get.call(this);
+                },
+                set(newValue) {
+                    valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
+                    // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
+                    updateLineNumbers();
+                    updateCursorPosition();
+                },
+                configurable: true
+            });
+
+            let isDragging = false;
+            textarea.addEventListener('mousedown', () => {
+                isDragging = true;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            textarea.addEventListener('mousemove', () => {
+            if (isDragging) updateCursorPosition();
+            });
+
+            // Стандартные слушатели для действий пользователя
+            textarea.addEventListener('input', (event) => {
+                updateLineNumbers();
+                updateCursorPosition();
+            });
+            textarea.addEventListener('keyup', updateCursorPosition);
+            textarea.addEventListener('click', updateCursorPosition);
+            textarea.addEventListener('focus', updateCursorPosition);
+            window.addEventListener('resize', updateLineNumbers);
+            textarea.addEventListener('keydown', (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                    event.preventDefault(); // Предотвращаем стандартный перенос строки в textarea
+                    executeCurrentCommand();
+                }                
+                else if (event.key === 'Tab') {
+                    event.preventDefault();
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+
+                    // Вставляем символ табуляции прямо в место курсора
+                    textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
+
+                    // Возвращаем курсор на место после вставленного символа
+                    textarea.selectionStart = textarea.selectionEnd = start + 1;                    
+                }
+                else if (event.key === 'Backspace' || event.key === 'Delete') {
+                // Используем setTimeout, чтобы значение успело обновиться в DOM
+                setTimeout(updateLineNumbers, 0);
+            }});
+
+            if (window.ResizeObserver) {
+                new ResizeObserver(updateLineNumbers).observe(textarea);
             }
-        });        
+
+            updateLineNumbers();
+            updateCursorPosition();
+        }
+        initLineNumbers();
+        //#endregion Line editor
+       
 </script>
 </body>
 </html>
