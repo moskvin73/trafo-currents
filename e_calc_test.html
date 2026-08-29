@@ -1509,12 +1509,14 @@
                 }
 
                 // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
-
-                const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
-                
                 // 1. Очищаем предыдущую подсветку
                 currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
                 currentlyHighlightedBrackets = [];
+
+                const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
+                if (activeSpan) {
+
+                }                
 
                 /*// 2. Получаем текущее выделение/каретку
                 const selection = window.getSelection();
