@@ -29,7 +29,7 @@ export function HighlightLerxer(text) {
                 chunks.push(lexer.stringValue());
                 break;
             case TokenType.ERROR:
-                chunks.push(htmltext += `<span class="token-error-code">${htmlEscape(lexer.stringValue())}</span>`);
+                chunks.push(`<span class="token-error-code">${htmlEscape(lexer.stringValue())}</span>`);
                 break;
             case TokenType.ERROR_STR:
                 chunks.push(`<span class="token-error-string">${htmlEscape(lexer.source.slice(lexer.tokenStart - 1, lexer.tokenEnd))}</span>`);
