@@ -743,7 +743,7 @@
         }
 
         /* Стиль для подсвеченной пары */
-        .token-bracket.bracket-highlight {
+        .token-bracket .bracket-highlight {
             background-color: rgba(255, 215, 0, 0.3); /* Мягкий задний фон */
             border-bottom: 2px solid #ffd700;          /* Подчеркивание */
         }
@@ -1508,7 +1508,7 @@
             // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
 
                 // 1. Очищаем старую подсветку перед поиском новой
-                const highlighted = codeContainer.querySelectorAll('.bracket-highlight');
+                const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
                 highlighted.forEach(el => el.classList.remove('bracket-highlight'));
 
                 // 2. Ищем элемент скобки, который находится сразу перед курсором или под ним.
