@@ -769,7 +769,7 @@
                             <!-- Рабочая зона: Номера строк + Ввод -->
                             <div class="textarea-with-lines">
                                 <div id="calc-line-numbers" class="line-numbers"><div>1</div></div>
-                                <div class="input-wrapper">
+                                <div class="input-wrapper" id="calc-input-wrapper">
                                     <div id="calc-highlight" class="highlight-layer"></div>
                                     <textarea id="calc-terminal-input" class="textInput" rows="1" spellcheck="false" placeholder="Например: z = 3 + 4i; или print(&quot;Ответ:&quot;, z^2)"></textarea>
                                 </div>
@@ -1552,7 +1552,9 @@
                 new ResizeObserver(updateLineNumbers).observe(textarea);
             }
 
-            highlightLayer.addEventListener('mouseover', (e) => {
+            const codeContainer = document.getElementById('calc-input-wrapper');
+
+            codeContainer.addEventListener('mouseover', (e) => {
                 const target = e.target;
                 // Проверяем, что навели на скобку и у неё есть ID пары
                 if (target.classList.contains('token-bracket') && target.hasAttribute('data-bracket-id')) {
@@ -1564,7 +1566,7 @@
                 }
             });
 
-            highlightLayer.addEventListener('mouseout', (e) => {
+            codeContainer.addEventListener('mouseout', (e) => {
                 const target = e.target;
                 if (target.classList.contains('token-bracket')) {
                     // Убираем подсветку со всех скобок при уходе курсора
@@ -1572,7 +1574,7 @@
                     highlighted.forEach(el => el.classList.remove('bracket-highlight'));
                 }
             }); 
-            
+
             updateLineNumbers();
             updateCursorPosition();
         }
