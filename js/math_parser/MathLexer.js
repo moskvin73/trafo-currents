@@ -289,12 +289,12 @@ export class MathLexer {
             if (this.include_trivia) {
                while (true)
                {
-                const code = src.codePointAt(this.i);
-                const isSpace = code < 128 
-                    ? asciiMap[code] === C_SPACE 
-                    : isUnicodeSpace(code);
-                if (!isSpace) break;
-                this.#readCodePointAndAdvance();
+                  const code = src.codePointAt(this.i);
+                  const isSpace = code < 128 
+                      ? asciiMap[code] === C_SPACE 
+                      : isUnicodeSpace(code);
+                  if (!isSpace) break;
+                  this.#readCodePointAndAdvance();
               }
               this.tokenStart = startIdx;
               this.tokenEnd = this.i;
