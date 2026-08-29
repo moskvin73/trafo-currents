@@ -693,9 +693,13 @@
         position: absolute;
         top: 0;
         left: 0;
-        pointer-events: none; /* Пропускаем клики в textarea */
-        color: var(--calc-color-text);;
+        /*pointer-events: none; /* Пропускаем клики в textarea */
+        pointer-events: auto;
+        color: var(--calc-color-text);
         }
+        .highlight-layer * {
+        pointer-events: none; /* Чтобы внутренние спаны сами по себе не мешали, если нужно */
+        }        
 
         .highlight-layer .token-error { background-color: rgba(255, 0, 0, 0.2); }
         /* Если start === end (ошибка-точка) */
@@ -1552,9 +1556,7 @@
                 new ResizeObserver(updateLineNumbers).observe(textarea);
             }
 
-            const codeContainer = document.getElementById('calc-input-wrapper');
-
-            codeContainer.addEventListener('mouseover', (e) => {
+            highlightLayer.addEventListener('mouseover', (e) => {
                 const target = e.target;
                 // Проверяем, что навели на скобку и у неё есть ID пары
                 if (target.classList.contains('token-bracket') && target.hasAttribute('data-bracket-id')) {
@@ -1566,7 +1568,7 @@
                 }
             });
 
-            codeContainer.addEventListener('mouseout', (e) => {
+            highlightLayer.addEventListener('mouseout', (e) => {
                 const target = e.target;
                 if (target.classList.contains('token-bracket')) {
                     // Убираем подсветку со всех скобок при уходе курсора
