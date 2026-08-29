@@ -62,4 +62,5 @@ export function HighlightLerxer(text) {
         }
         token = lexer.next();
     }
+    return htmltext;
 }
