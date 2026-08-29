@@ -1578,7 +1578,8 @@
                 code.style.pointerEvents = 'none';
                 textarea.pointerEvents = 'none';
                 highlightLayer.pointerEvents = 'auto';
-                const element = document.elementFromPoint(e.clientX, e.clientY);
+                const element = e.target.closest('.token-bracket'); 
+                //const element = document.elementFromPoint(e.clientX, e.clientY);
                 code.style.pointerEvents = 'auto';
                 textarea.pointerEvents = 'auto';
                 highlightLayer.pointerEvents = 'none';
