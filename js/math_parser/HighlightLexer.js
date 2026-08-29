@@ -29,30 +29,36 @@ export function HighlightLerxer(text) {
                 case TokenType.LSQUARE:
                 case TokenType.LBRACE: {
                     const id = bracketIdCounter++;
-                    // Запоминаем тип скобки и её ID в стеке
-                    bracketStack.push({ type: token, id: id }); 
+                    // Запоминаем тип скобки, её ID и индекс в массиве chunks, чтобы потом можно было пометить ошибку
+                    bracketStack.push({ type: token, id: id, chunkIndex: chunks.length }); 
                     chunks.push(`<span class="token-bracket" data-bracket-id="${id}">${lexer.stringValue()}</span>`);
                     break;
                 }
                 case TokenType.RPAREN:
                 case TokenType.RSQUARE:
                 case TokenType.RBRACE: {
-                    // Ищем соответствующую открывающую скобку в стеке
                     const expectedOpen = token === TokenType.RPAREN ? TokenType.LPAREN :
-                                         token === TokenType.RSQUARE ? TokenType.LSQUARE : TokenType.LBRACE;
+                                        token === TokenType.RSQUARE ? TokenType.LSQUARE : TokenType.LBRACE;
                     
                     let pairId = null;
-                    // Проверяем стек на корректность вложенности
-                    if (bracketStack.length > 0 && bracketStack[bracketStack.length - 1].type === expectedOpen) {
-                        pairId = bracketStack.pop().id;
+                    
+                    // Ищем подходящую открывающую скобку с конца стека
+                    for (let i = bracketStack.length - 1; i >= 0; i--) {
+                        if (bracketStack[i].type === expectedOpen) {
+                            pairId = bracketStack[i].id;
+                            // Удаляем найденную скобку и все ошибочные скобки после неё
+                            // (Те, что были после неё, автоматически становятся непарными)
+                            bracketStack.splice(i); 
+                            break;
+                        }
                     }
 
                     if (pairId !== null) {
                         chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}">${lexer.stringValue()}</span>`);
                     } else {
-                        // Если парная скобка не найдена (ошибка синтаксиса)
+                        // Ошибка: закрывающая скобка не имеет пары
                         chunks.push(`<span class="token-bracket token-bracket-error">${lexer.stringValue()}</span>`);
-                    }
+                    }                    
                     break;
                 }
                 // --- Конец обработки скобок ---
@@ -97,5 +103,13 @@ export function HighlightLerxer(text) {
         }
         token = lexer.next();
     }
+    // ПОСТ-ОБРАБОТКА:
+    // Если в стеке остались открывающие скобки, у которых нет закрывающих,
+    // мы ретроспективно меняем их класс на ошибочный.
+    while (bracketStack.length > 0) {
+        const unmatched = bracketStack.pop();
+        // Заменяем класс в сохраненном чанке на ошибку
+        chunks[unmatched.chunkIndex] = chunks[unmatched.chunkIndex].replace('token-bracket', 'token-bracket token-bracket-error');
+    }    
     return chunks.join(''); 
 }
