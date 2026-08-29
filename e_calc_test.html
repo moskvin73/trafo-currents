@@ -1574,18 +1574,22 @@
 
             const code= document.getElementById('calc-input-wrapper');
 
-            code.addEventListener('mouseover', (e) => {
+            const find_token_bracket = (e) =>  {
+                const code_pointerEvents = code.style.pointerEvents;
                 code.style.pointerEvents = 'none';
+                const textarea_pointerEvents = textarea.pointerEvents;
                 textarea.pointerEvents = 'none';
                 highlightLayer.pointerEvents = 'auto';
                 const element = e.target.closest('.token-bracket'); 
-                //const element = document.elementFromPoint(e.clientX, e.clientY);
-                code.style.pointerEvents = 'auto';
-                textarea.pointerEvents = 'auto';
+                code.style.pointerEvents = code_pointerEvents;
+                textarea.pointerEvents = textarea_pointerEvents;
                 highlightLayer.pointerEvents = 'none';
-
-                if (element && highlightLayer.contains(element) && 
-                        element.classList.contains('token-bracket') && element.hasAttribute('data-bracket-id')) { 
+                return element;
+            };
+            
+            code.addEventListener('mouseover', (e) => {
+                const element = find_token_bracket(e); 
+                if (element && element.hasAttribute('data-bracket-id')) { 
                     const bracketId = activeSpan.getAttribute('data-bracket-id');                   
                     // Находим ОВЕ скобки с таким ID и добавляем им класс подсветки
                     const pairs = codeContainer.querySelectorAll(`[data-bracket-id="${bracketId}"]`);
@@ -1594,15 +1598,8 @@
             });
 
             code.addEventListener('mouseout', (e) => {
-                code.style.pointerEvents = 'none';
-                textarea.pointerEvents = 'none';
-                highlightLayer.pointerEvents = 'auto';
-                const element = document.elementFromPoint(e.clientX, e.clientY);
-                code.style.pointerEvents = 'auto';
-                textarea.pointerEvents = 'auto';
-                highlightLayer.pointerEvents = 'none';
-
-                if (element && highlightLayer.contains(element) && element.classList.contains('token-bracket')) {
+                const element = find_token_bracket(e); 
+                if (element) {
                     const highlighted = highlightLayer.querySelectorAll('.bracket-highlight');
                     highlighted.forEach(el => el.classList.remove('bracket-highlight'));
                 }
