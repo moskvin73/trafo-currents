@@ -697,6 +697,14 @@
         color: var(--calc-color-text);
         }
 
+.highlight-layer .code-line {
+    width: 100%;
+    line-height: 1.5; /* Должно строго совпадать с родителем */
+    white-space: pre-wrap; /* Наследуем правильный перенос */
+    word-break: break-word; /* Наследуем разрыв слов */
+    min-height: 1.5em; /* Гарантирует высоту строки, если она пустая */
+}        
+
         .highlight-layer .token-error { background-color: red; }
 
         /* Если start === end (ошибка-точка) */
@@ -976,7 +984,15 @@
         }
 
         function runLexerAndHighlight(text) {
-           return HighlightLerxer(text);
+            let highlightedHtml = HighlightLerxer(text);
+            const lines = highlightedHtml.split('\n');
+            const wrappedLines = lines.map(line => {
+                    // Если строка пустая, добавляем <br>, иначе div сожмется до 0px по высоте
+                    const content = line === '' ? '<br>' : line;
+                    return `<div class="code-line">${content}</div>`;
+                });
+            return wrappedLines.join('');            
+            //return HighlightLerxer(text);
         }
         
         // Функция быстрого удаления ошибки
