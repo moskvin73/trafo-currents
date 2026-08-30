@@ -1350,17 +1350,21 @@
 
         // Управление показа/скрытия боковой панелью
         const key_panels = {
-            KeyB: { toggle: toggleSidePanel, hideClass: 'hide-side' },
-            KeyA: { toggle: toggleBottomPanel, hideClass: 'hide-bottom' }
+        KeyB: { toggle: toggleSidePanel, hideClass: 'hide-side' },
+        KeyA: { toggle: toggleBottomPanel, hideClass: 'hide-bottom' }
         };
-       
+
         window.addEventListener('keydown', function(event) {
-            const panel = key_panels[event.code];
+        const panel = key_panels[event.code];
+        
+        // Проверяем, что нажаты именно Alt и Shift одновременно
+        if (panel && event.altKey && event.shiftKey) {
+            // Отменяем стандартное поведение браузера (если оно есть для Alt+Shift+Key)
+            event.preventDefault(); 
             
-            if (panel && (event.ctrlKey || event.altKey)) {
-                event.preventDefault();
-                panel.toggle(container.classList.contains(panel.hideClass));
-            }
+            // Переключаем панель
+            panel.toggle(container.classList.contains(panel.hideClass));
+        }
         });
         
 
