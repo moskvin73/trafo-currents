@@ -1204,6 +1204,13 @@
                     const items = Array.from(this.getItems());
                     this.selectItem(items.indexOf(item));
                 });
+                // Двойной клик мыши
+                this.listElement.addEventListener('dblclick', (e) => {
+                    const item = e.target.closest(this.itemSelector);
+                    if (!item) return;
+                    const items = Array.from(this.getItems());
+                    this.selectItem(items.indexOf(item), true); 
+                });                
 
                 // Управление с клавиатуры
                 this.listElement.addEventListener('keydown', (e) => {
