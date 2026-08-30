@@ -1787,11 +1787,12 @@
                 }
 
                 // 2. Выделяем подстроку текущей строки только для расчета графем/табуляций
-                const currentLineStart = lastNewLineIndex + 1;
-                const currentLineText = text.substring(currentLineStart, activePosition);
+                //const currentLineStart = lastNewLineIndex + 1;
+                const currentColumn = calcSubstrGraphemes(text, lastNewLineIndex + 1, activePosition, var_css.chars_tab);
+                //const currentLineText = text.substring(currentLineStart, activePosition);
                 
                 // 3. Считаем колонки
-                const currentColumn = calcLineGraphemes(currentLineText, var_css.chars_tab);
+                //const currentColumn = calcLineGraphemes(currentLineText, var_css.chars_tab);
 
 
                 /*const textBeforeCursor = text.substring(0, activePosition);
