@@ -1828,12 +1828,13 @@
                 isDragging = false;
             });
 
+            const inputWrapper = document.getElementById('calc-input-wrapper');
             textarea.addEventListener('mousemove', (e) => {
                 if (isDragging) updateCursorPosition();
                 else {
-                    textarea.style.pointerEvents = 'none';
+                    inputWrapper.style.pointerEvents = 'none';
                     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
-                    textarea.style.pointerEvents = 'auto';
+                    inputWrapper.style.pointerEvents = 'auto';
                     console.log('Элемент под мышыю:', elementUnderMouse); 
                     if (elementUnderMouse && elementUnderMouse.classList.contains('token-varable')) {
                         const varName = elementUnderMouse.textContent;
