@@ -177,14 +177,14 @@ function isUnicodeNumber(code) {
   return false;
 }
 
-export function calcLineGraphemes(subStr,  chars_tab = 4, segmenter = null) {
-  if (!subStr || subStr.length == 0) return 1;
+export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
+  if (!line || line.length == 0) return 1;
     let visualLength = 0;
     if (!segmenter)
-    segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+      segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 
     if (segmenter) {
-        for (const segmentInfo of segmenter.segment(subStr)) {
+        for (const segmentInfo of segmenter.segment(line)) {
             const char = segmentInfo.segment;
             
             if (char === '\t') {
@@ -196,12 +196,12 @@ export function calcLineGraphemes(subStr,  chars_tab = 4, segmenter = null) {
         }
     } else {
         let curr = 0;
-        while (curr < subStr.length) {
-            const code = subStr.charCodeAt(curr);
+        while (curr < line.length) {
+            const code = line.charCodeAt(curr);
             
             // Проверка на суррогатную пару
-            if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < subStr.length && 
-                subStr.charCodeAt(curr + 1) >= 0xDC00 && subStr.charCodeAt(curr + 1) <= 0xDFFF) {
+            if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < line.length && 
+                line.charCodeAt(curr + 1) >= 0xDC00 && line.charCodeAt(curr + 1) <= 0xDFFF) {
                 
                 visualLength++;
                 curr += 2;
@@ -209,7 +209,7 @@ export function calcLineGraphemes(subStr,  chars_tab = 4, segmenter = null) {
             }
 
             // Проверка на обычный символ или табуляцию
-            if (subStr[curr] === '\t') {
+            if (line[curr] === '\t') {
                 visualLength += chars_tab - (visualLength % chars_tab);
             } else {
                 visualLength++;
