@@ -98,13 +98,19 @@ const C_DIGIT    = 2;
 const C_ALPHA    = 3; 
 const C_OPERATOR = 4; 
 const C_QUOTE    = 5; 
-const C_PERCENT  = 6; 
+const C_PERCENT  = 6;
+const C_NEWLINE  = 7; 
 
 const asciiMap = new Uint8Array(128);
 
 // Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
 for (let c of ['\t', '\n', '\v', '\f', '\r', ' ']) {
   asciiMap[c.charCodeAt(0)] = C_SPACE;
+}
+
+// Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
+for (let c of ['\n', '\r']) {
+  asciiMap[c.charCodeAt(0)] = C_NEWLINE;
 }
 
 // Заполняем цифры (0-9)
@@ -261,7 +267,6 @@ export function calcSubstrGraphemes(text, start, end, chars_tab = 4, segmenter =
       curr += isSurrogate ? 2 : 1;
     }
   }
-
   return visualLength || 1;
 }
 
@@ -406,7 +411,10 @@ export class MathLexer {
       if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
       this.lineStartIdx = this.i; return code;
     }
-    if (code >= 0xD800 && code <= 0xDBFF && this.i + 1 < this.source.length && this.source.charCodeAt(this.i + 1) >= 0xDC00 && this.source.charCodeAt(this.i + 1) <= 0xDFFF) {
+    if (code >= 0xD800 && code <= 0xDBFF && 
+        this.i + 1 < this.source.length && 
+        this.source.charCodeAt(this.i + 1) >= 0xDC00 && 
+        this.source.charCodeAt(this.i + 1) <= 0xDFFF) {
       this.i += 2; return cp;
     }
     this.i++; return code;
