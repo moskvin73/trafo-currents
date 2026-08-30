@@ -177,6 +177,11 @@ function isUnicodeNumber(code) {
   return false;
 }
 
+// \p{Mn} или \p{Mc}
+function isMnOrMc(char) {
+  return /[\p{Mn}\p{Mc}]/u.test(char);
+}
+
 /** Метод подсчета визуальных графем Юникода */
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
   if (!line || line.length == 0) return 1;
