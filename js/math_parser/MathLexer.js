@@ -179,14 +179,18 @@ function isUnicodeNumber(code) {
 
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
   if (!line || line.length == 0) return 1;
+
     let visualLength = 0;
-    if (!segmenter)
-      segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+    // Используем современный Intl.Segmenter для точного подсчета графем (эмодзи, сложные знаки)
+    if (!segmenter) {
+      segmenter = typeof Intl.Segmenter !== 'undefined' 
+        ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) 
+        : null;
+    }
 
     if (segmenter) {
         for (const segmentInfo of segmenter.segment(line)) {
-            const char = segmentInfo.segment;
-            
+            const char = segmentInfo.segment;            
             if (char === '\t') {
                 // Вычисляем, сколько позиций осталось до следующей таб-стопы
                 visualLength += chars_tab - (visualLength % chars_tab);
@@ -195,29 +199,28 @@ export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
             }
         }
     } else {
-        let curr = 0;
-        while (curr < line.length) {
-            const code = line.charCodeAt(curr);
-            
-            // Проверка на суррогатную пару
-            if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < line.length && 
-                line.charCodeAt(curr + 1) >= 0xDC00 && line.charCodeAt(curr + 1) <= 0xDFFF) {
-                
-                visualLength++;
-                curr += 2;
-                continue;
-            }
+      // Фолбек для старых сред (учитывает суррогатные пары)
+      let curr = 0;
+      while (curr < line.length) {
+        const char = line[curr];
 
-            // Проверка на обычный символ или табуляцию
-            if (line[curr] === '\t') {
-                visualLength += chars_tab - (visualLength % chars_tab);
-            } else {
-                visualLength++;
+        if (char === '\t') {
+          visualLength += chars_tab - (visualLength % chars_tab);
+          curr++;
+        } else {
+          const code = line.charCodeAt(curr);
+          // Если это верхний суррогат и за ним идет нижний — это один символ (4 байта)
+          if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < line.length) {
+            const nextCode = line.charCodeAt(curr + 1);
+            if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+              curr++; // Пропускаем второй хвост суррогатной пары
             }
-            curr++;
-        }
+          }
+          visualLength++;
+          curr++;
+        }      
+      }
     }
-
     return visualLength + 1;  
 }
 
