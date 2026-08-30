@@ -93,13 +93,13 @@ function formatBadChar(str) {
 // 1. КОНСТАНТЫ И КЛАССЫ СИМВОЛОВ (Инициализируются 1 раз при старте приложения)
 // ============================================================================
 const C_UNKNOWN  = 0;
-const C_SPACE    = 1; 
-const C_DIGIT    = 2; 
-const C_ALPHA    = 3; 
-const C_OPERATOR = 4; 
-const C_QUOTE    = 5; 
-const C_PERCENT  = 6;
-const C_NEWLINE  = 7; 
+const C_SPACE    = 1;
+const C_NEWLINE  = 2; 
+const C_DIGIT    = 3; 
+const C_ALPHA    = 4; 
+const C_OPERATOR = 5; 
+const C_QUOTE    = 6; 
+const C_PERCENT  = 7;
 
 const asciiMap = new Uint8Array(128);
 
@@ -461,6 +461,15 @@ export class MathLexer {
               this.tokenEndLineIdx = this.lineStartIdx;
               return TokenType.SPACES;
             }                         
+            continue;
+          }
+
+          case C_NEWLINE: {
+            this.currentLine++; this.i++;
+            if (code === 13) {
+              if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
+            }
+            this.lineStartIdx = this.i;
             continue;
           }
 
