@@ -31,7 +31,7 @@ export function HighlightLerxer(text) {
                     const id = bracketIdCounter++;
                     // Запоминаем тип скобки, её ID и индекс в массиве chunks, чтобы потом можно было пометить ошибку
                     bracketStack.push({ type: token, id: id, chunkIndex: chunks.length }); 
-                    chunks.push(`<span class="token-bracket" data-bracket-id="${id}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
+                    chunks.push({ type: 'TEXT', html: `<span class="token-bracket" data-bracket-id="${id}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`});
                     break;
                 }
                 case TokenType.RPAREN:
@@ -53,51 +53,53 @@ export function HighlightLerxer(text) {
                         }
                     }
                     if (pairId !== null) {
-                        chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
+                        chunks.push({ type: 'TEXT', html: `<span class="token-bracket" data-bracket-id="${pairId}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`});
                     } else {
                         // Ошибка: закрывающая скобка не имеет пары
-                        chunks.push(`<span class="token-bracket token-bracket-error" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
+                        chunks.push({ type: 'TEXT', html: `<span class="token-bracket token-bracket-error" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`});
                     }                    
                     break;
                 }
                 // --- Конец обработки скобок ---
 
             case TokenType.COMMENT:
-                chunks.push(`<span class="token-comment">${htmlEscape(lexer.stringValue())}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-comment">${htmlEscape(lexer.stringValue())}</span>`});
                 break;
             case TokenType.SPACES:
-            case TokenType.NL:
-                chunks.push(lexer.stringValue());
+                chunks.push({ type: 'TEXT', html: lexer.stringValue()});
+                break;
+            case TokenType.NL:    
+                chunks.push({ type: 'NL', html: '<br>' });
                 break;
             case TokenType.ERROR:
-                chunks.push(`<span class="token-error-code">${htmlEscape(lexer.stringValue())}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-error-code">${htmlEscape(lexer.stringValue())}</span>`});
                 break;
             case TokenType.ERROR_STR:
-                chunks.push(`<span class="token-error-string">${htmlEscape(lexer.source.slice(lexer.tokenStart - 1, lexer.tokenEnd))}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-error-string">${htmlEscape(lexer.source.slice(lexer.tokenStart - 1, lexer.tokenEnd))}</span>`});
                 break;
             case TokenType.TEXT_BLOCK:
-                chunks.push(`<span class="token-string">${htmlEscape(lexer.source.slice(lexer.tokenStart - 1, lexer.tokenEnd + 1))}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-string">${htmlEscape(lexer.source.slice(lexer.tokenStart - 1, lexer.tokenEnd + 1))}</span>`});
                 break;
             case TokenType.NUMBER:
-                chunks.push(`<span class="token-number">${lexer.stringValue()}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-number">${lexer.stringValue()}</span>`});
                 break;
             case TokenType.COMPLEX_NUMBER:
-                chunks.push(`<span class="token-complex-number">${lexer.stringValue()}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-complex-number">${lexer.stringValue()}</span>`});
                 break;
             case TokenType.VARIABLE:
-                chunks.push(`<span class="token-varable">${lexer.stringValue()}</span>`);
+                chunks.push({ type: 'TEXT', html: `<span class="token-varable">${lexer.stringValue()}</span>`});
                 break;
             case TokenType.LT:       // <
-                chunks.push('<span class="token-rw-characters">&lt;</span>');
+                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters">&lt;</span>'});
                 break;
             case TokenType.GT:       // >
-                chunks.push('<span class="token-rw-characters">&gt;</span>');
+                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters">&gt;</span>'});
                 break;
             case TokenType.LTE:      // <=
-                chunks.push('<span class="token-rw-characters">&lt;=</span>');
+                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters">&lt;=</span>'});
                 break;
             case TokenType.GTE:      // >=
-                chunks.push('<span class="token-rw-characters">&gt;=</span>');
+                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters">&gt;=</span>'});
                 break;
             default: throw new Error(`[HighlightLerxer]: неизвестный токен ${token}`);
         }
@@ -109,7 +111,27 @@ export function HighlightLerxer(text) {
     while (bracketStack.length > 0) {
         const unmatched = bracketStack.pop();
         // Заменяем класс в сохраненном чанке на ошибку
-        chunks[unmatched.chunkIndex] = chunks[unmatched.chunkIndex].replace('token-bracket', 'token-bracket token-bracket-error');
-    }    
-    return chunks.join(''); 
+        chunks[unmatched.chunkIndex].html  = chunks[unmatched.chunkIndex].html.replace('token-bracket', 'token-bracket token-bracket-error');
+    }
+    
+    const lines = [];
+    let currentLine = [];
+
+    for (const chunk of chunks) {
+        if (chunk.type === 'NL') {
+            // Если строка пустая, вставляем <br>, иначе соединяем накопленные токены
+            const lineContent = currentLine.length === 0 ? '<br>' : currentLine.join('');
+            lines.push(`<div class="code-line">${lineContent}</div>`);
+            currentLine = []; // Очищаем для следующей строки
+        } else {
+            currentLine.push(chunk.html);
+        }
+    }
+
+    // Не забываем добавить последнюю строку, если текст не заканчивался на TokenType.NL
+    if (currentLine.length > 0) {
+        lines.push(`<div class="code-line">${currentLine.join('')}</div>`);
+    }
+
+    return lines.join(''); 
 }
