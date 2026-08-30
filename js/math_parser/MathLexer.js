@@ -403,7 +403,7 @@ export class MathLexer {
 
   #readCodePointAndAdvance() {
     if (this.i >= this.source.length) return null;
-    //const cp = this.source.codePointAt(this.i);
+    const cp = this.source.codePointAt(this.i);
     const code = this.source.charCodeAt(this.i);
 
     /*if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) {
