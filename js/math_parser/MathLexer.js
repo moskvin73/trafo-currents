@@ -177,6 +177,7 @@ function isUnicodeNumber(code) {
   return false;
 }
 
+/** Метод подсчета визуальных графем Юникода */
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
   if (!line || line.length == 0) return 1;
 
