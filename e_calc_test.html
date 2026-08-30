@@ -703,6 +703,8 @@
         color: var(--calc-color-text);
         }
 
+        .highlight-layer .token-error { background-color: red; }
+
         /* Если start === end (ошибка-точка) */
         .highlight-layer .error-empty { 
         display: inline-block; 
@@ -717,7 +719,7 @@
         content: "\200B"; /* Пробел нулевой ширины */
         }
         /* Зарезервированные символы >, * <=  и т.д. */
-        :is(.calc-card-echo, .highlight-layer) .token-rw-characters { color: #cb0c6b; }
+        :is(.calc-card-echo, .highlight-layer) .token-rw-characters { color: #000204; }
         /* Зарезервированные слова */
         :is(.calc-card-echo, .highlight-layer) .token-rw-words { color: #005cc5; font-weight: bold; }
          /* Коментарий */
