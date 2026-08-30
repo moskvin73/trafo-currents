@@ -245,6 +245,7 @@ export class MathLexer {
     this.tokenNumberValue = 0; 
 
     this._segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+    this.chars_tab = 4;
   }
 
   // ============================================================================
