@@ -3,6 +3,7 @@ const tokenNames = [
   'EOF',
 
   'COMMENT',
+  'NL',
   'SPACES',
   'ERROR',
   'ERROR_STR',

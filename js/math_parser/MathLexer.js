@@ -470,8 +470,15 @@ export class MathLexer {
               if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
             }
             this.lineStartIdx = this.i;
-
-            continue;
+            if (this.include_trivia) {
+              this.tokenStart = startIdx;
+              this.tokenEnd = this.i;
+              this.tokenStartLine = startLine;
+              this.tokenStartLineIdx = startLineIdx;
+              this.tokenEndLine = this.currentLine;
+              this.tokenEndLineIdx = this.lineStartIdx;
+              return TokenType.NL;
+            } else continue;
           }
 
           case C_OPERATOR: {
@@ -707,7 +714,15 @@ export class MathLexer {
         // --- 2. ТОЧНАЯ ЮНИКОД-ДОРОЖКА (Кодовые точки >= 128) ---
         if (isUnicodeNewLine(code)) {
           this.currentLine++; this.i++; this.lineStartIdx = this.i;
-          continue; 
+          if (this.include_trivia) {
+            this.tokenStart = startIdx;
+            this.tokenEnd = this.i;
+            this.tokenStartLine = startLine;
+            this.tokenStartLineIdx = startLineIdx;
+            this.tokenEndLine = this.currentLine;
+            this.tokenEndLineIdx = this.lineStartIdx;
+            return TokenType.NL;
+          } else continue;
         }
 
         // Проверяем полнокровные пробельные символы Юникода (\p{Zs} и др.)
