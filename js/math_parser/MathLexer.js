@@ -470,6 +470,7 @@ export class MathLexer {
               if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
             }
             this.lineStartIdx = this.i;
+
             continue;
           }
 
@@ -704,7 +705,11 @@ export class MathLexer {
         }
       } else {
         // --- 2. ТОЧНАЯ ЮНИКОД-ДОРОЖКА (Кодовые точки >= 128) ---
-        
+        if (isUnicodeNewLine(code)) {
+          this.currentLine++; this.i++; this.lineStartIdx = this.i;
+          continue; 
+        }
+
         // Проверяем полнокровные пробельные символы Юникода (\p{Zs} и др.)
         if (isUnicodeSpace(code)) { 
           this.#readCodePointAndAdvance();
