@@ -906,6 +906,10 @@
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
 
+         // Единая изолированная область памяти (контекст сессии калькулятора)
+        // Переменные живут здесь, пока пользователь не обновит страницу
+        const globalScope = new SymbolTableContext();
+       
         class CssVariables {
             constructor(element = document.documentElement) {
                 this.element = element;
@@ -943,9 +947,6 @@
         // Создаем экземпляр
         const var_css = new CssVariables();
 
-        // Единая изолированная область памяти (контекст сессии калькулятора)
-        // Переменные живут здесь, пока пользователь не обновит страницу
-        const globalScope = new SymbolTableContext();
         const textarea = document.getElementById('calc-terminal-input');
         const highlightLayer = document.getElementById('calc-highlight');
 
