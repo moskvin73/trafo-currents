@@ -938,17 +938,6 @@
         // Создаем экземпляр
         const var_css = new CssVariables();
 
-        // Доступ к изменяемым переменным
-        /*function get_chars_tab() {
-            const currentTabSize = getComputedStyle(document.documentElement).getPropertyValue('--chars_tab').trim();
-            return currentTabSize;
-        }
-
-        function set_chars_tab(count) { 
-            const parsed = parseInt(count, 10);
-            document.documentElement.style.setProperty('--chars_tab', isNaN(parsed) ? 4 : Math.max(0, Math.min(parsed, 16)););
-        }*/
-
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
         const globalScope = new SymbolTableContext();
