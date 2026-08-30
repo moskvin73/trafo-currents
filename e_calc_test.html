@@ -907,8 +907,9 @@
             return currentTabSize;
         }
 
-        function set_chars_tab(count) {  
-            document.documentElement.style.setProperty('--chars_tab', count);
+        function set_chars_tab(count) { 
+            const parsed = parseInt(count, 10);
+            document.documentElement.style.setProperty('--chars_tab', isNaN(parsed) ? 4 : Math.max(0, Math.min(parsed, 16)););
         }
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
