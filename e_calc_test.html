@@ -1180,7 +1180,7 @@
                 this.listElement.focus();
             }
 
-            selectItem(index) {
+            selectItem(index, set_focus = false) {
                 const items = this.getItems();
                 if (items.length === 0) return;
 
@@ -1193,7 +1193,7 @@
                 const target = items[this.currentIndex];
                 target.classList.add(this.activeClass);
                 target.scrollIntoView({ block: 'nearest' });
-                scrollToCodeLine(this.linked[this.currentIndex]);
+                scrollToCodeLine(this.linked[this.currentIndex], set_focus);
             }
 
             initEvents() {
