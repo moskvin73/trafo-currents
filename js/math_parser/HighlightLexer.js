@@ -18,7 +18,7 @@ export function HighlightLerxer(text) {
     let token = lexer.next();
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
-            chunks.push(<span class="token-rw-characters">${lexer.stringValue()}</span>`);
+            chunks.push(`<span class="token-rw-characters">${lexer.stringValue()}</span>`);
         else if (token >= TokenType.FIRST_RESERVED_CONSTANTS && token <= TokenType.LAST_RESERVED_CONSTANTS)
             chunks.push(`<span class="token-rw-constants">${lexer.source.slice(lexer.tokenStart, lexer.tokenEnd)}</span>`);
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
@@ -88,16 +88,16 @@ export function HighlightLerxer(text) {
                 chunks.push(`<span class="token-varable">${lexer.stringValue()}</span>`);
                 break;
             case TokenType.LT:       // <
-                chunks.push('&lt;');
+                chunks.push('<span class="token-rw-characters">&lt;</span>');
                 break;
             case TokenType.GT:       // >
-                chunks.push('&gt;');
+                chunks.push('<span class="token-rw-characters">&gt;</span>');
                 break;
             case TokenType.LTE:      // <=
-                chunks.push('&lt;=');
+                chunks.push('<span class="token-rw-characters">&lt;=</span>');
                 break;
             case TokenType.GTE:      // >=
-                chunks.push('&gt;=');
+                chunks.push('<span class="token-rw-characters">&gt;=</span>');
                 break;
             default: throw new Error(`[HighlightLerxer]: неизвестный токен ${token}`);
         }
