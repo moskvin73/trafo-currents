@@ -1725,9 +1725,8 @@
             document.body.appendChild(mirrorEle);*/
 
             const updateLineNumbers = () => {
-
                 // 1. Синхронизируем высоту textarea по ее содержимому
-                /*textarea.style.height = 'auto';
+                textarea.style.height = 'auto';
                 const currentScrollHeight = textarea.scrollHeight;
                 textarea.style.height = `${currentScrollHeight}px`;
                 highlightLayer.style.height = `${currentScrollHeight}px`;
@@ -1769,7 +1768,7 @@
                     
                     // (Опционально) Если вам нужно было заполнять пустые блоки для перенесенных строк, 
                     // вы можете использовать subLinesCount прямо здесь, как в вашем старом коде:
-                    // for (let i = 1; i < subLinesCount; i++) { lineNumbersHtml += '<div>&nbsp;</div>'; }
+                    for (let i = 1; i < subLinesCount; i++) { lineNumbersHtml += '<div>&nbsp;</div>'; }
 
                     // Переходим к следующей строке
                     start = end + 1;
@@ -1780,8 +1779,8 @@
                 }
 
                 // Удаляем хелпер и вставляем номера (не забудьте добавить этот шаг в конец вашей функции)
-                highlightLayer.removeChild(helperSpan);*/                
-                // 1. Синхронизируем высоту textarea по ее содержимому
+                highlightLayer.removeChild(helperSpan);                
+                /*// 1. Синхронизируем высоту textarea по ее содержимому
                 textarea.style.height = 'auto';
                 const currentScrollHeight = textarea.scrollHeight;
                 textarea.style.height = `${currentScrollHeight}px`;
@@ -1817,7 +1816,7 @@
                 });
 
                 // Удаляем временный элемент и обновляем DOM один раз
-                helperSpan.remove();
+                helperSpan.remove();*/
                 lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
