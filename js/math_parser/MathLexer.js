@@ -87,31 +87,6 @@ function formatBadChar(str) {
 
   // Возвращаем символ как есть (целиком, включая ZWJ последовательности)
   return str;  
-  /*if (!str) return 'EOF';
-
-  // Если это одиночный разорванный суррогат, JS не сможет взять codePointAt корректно.
-  // Поэтому сначала проверяем через обычный charCodeAt.
-  const firstCode = str.charCodeAt(0);
-  
-  // Проверяем: разорванный верхний или нижний суррогат, 
-  // либо управляющие символы ASCII (<= 32), включая таб, переводы строк, NEL (133), BOM (0xFEFF)
-  // или официальный символ замены Unicode REPLACEMENT CHARACTER (0xFFFD)
-  const isInvisibleOrBroken = 
-    (firstCode <= 32) || 
-    (firstCode >= 0xD800 && firstCode <= 0xDFFF) || 
-    (firstCode === 133 || firstCode === 12 || firstCode === 0xFEFF || firstCode === 0xFFFD) ||
-    (firstCode >= 0x200B && firstCode <= 0x200D) || // Невидимые разделители ZWSP, ZWNJ, ZWJ
-    (firstCode >= 0x2028 && firstCode <= 0x2029);   // Разделители строк Юникода
-
-  if (isInvisibleOrBroken) {
-    // Форматируем код в красивый hex: U+XXXX
-    const hex = firstCode.toString(16).toUpperCase().padStart(4, '0');
-    return `U+${hex}`;
-  }
-
-  // Для сложных составных графем (например, эмодзи, у которых внутри есть ZWJ)
-  // если они попали в ошибку, мы можем вывести их как есть, чтобы пользователь их узнал.
-  return str;*/
 }
 
 // ============================================================================
