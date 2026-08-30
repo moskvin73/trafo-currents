@@ -551,55 +551,36 @@ export class MathLexer {
           case C_QUOTE: {
             const quote = code;
             this.#readCodePointAndAdvance();
+            let isUnterminated = false;
             while (this.i < len) {
               const next = src.charCodeAt(this.i);
               if (next === quote) break;
               if (next === 10 || next === 13 || next === 8232 || next === 8233 || next === 133 || next === 12)
               {
-                this.tokenStart = startIdx + 1; // Пропускаем открывающую кавычку
-                this.tokenEnd = this.i;
-                this.tokenStartLine = startLine;
-                this.tokenStartLineIdx = startLineIdx;
-                if (this.include_trivia) {
-                  this.tokenEndLine = this.currentLine;
-                  this.tokenEndLineIdx = this.lineStartIdx;
-                  return TokenType.ERROR_STR;
-                }
-                else
-                {
-                  const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-                  this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));              
-                  this.tokenEndLine = this.currentLine;
-                  this.tokenEndLineIdx = this.lineStartIdx;
-                  return TokenType.TEXT_BLOCK;
-                }
+                isUnterminated = true;
+                break;
               }
               this.#readCodePointAndAdvance();
             }
 
-            this.tokenStart = startIdx + 1; // Пропускаем открывающую кавычку
+            // Заполняем координаты токена (общие для всех исходов)
+            this.tokenStart = startIdx + 1; 
             this.tokenEnd = this.i;
             this.tokenStartLine = startLine;
             this.tokenStartLineIdx = startLineIdx;
-
-            if (this.i >= len) {
-              if (this.include_trivia) {
-                this.tokenEndLine = this.currentLine;
-                this.tokenEndLineIdx = this.lineStartIdx;
-                return TokenType.ERROR_STR;
-              }
-              else
-              {
-                const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
-                this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));              
-                this.tokenEndLine = this.currentLine;
-                this.tokenEndLineIdx = this.lineStartIdx;
-                return TokenType.TEXT_BLOCK;
-              }
-            }
-            this.#readCodePointAndAdvance(); // закрывающая кавычка
             this.tokenEndLine = this.currentLine;
             this.tokenEndLineIdx = this.lineStartIdx;
+
+            // Если строка не закрыта (из-за EOL или конца файла)
+            if (isUnterminated || this.i >= len) {
+                if (!this.include_trivia) {
+                    const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+                    this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));
+                    return TokenType.TEXT_BLOCK;
+                }
+                return TokenType.ERROR_STR;
+            }            
+            this.#readCodePointAndAdvance(); // закрывающая кавычка
             return TokenType.TEXT_BLOCK;
           }
 
