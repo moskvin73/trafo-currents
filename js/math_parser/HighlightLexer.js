@@ -52,7 +52,6 @@ export function HighlightLerxer(text) {
                             break;
                         }
                     }
-
                     if (pairId !== null) {
                         chunks.push(`<span class="token-bracket" data-bracket-id="${pairId}" data-index="${lexer.tokenStart}">${lexer.stringValue()}</span>`);
                     } else {
@@ -67,6 +66,7 @@ export function HighlightLerxer(text) {
                 chunks.push(`<span class="token-comment">${htmlEscape(lexer.stringValue())}</span>`);
                 break;
             case TokenType.SPACES:
+            case TokenType.NL:
                 chunks.push(lexer.stringValue());
                 break;
             case TokenType.ERROR:
