@@ -939,7 +939,7 @@
         const var_css = new CssVariables();
 
         // Доступ к изменяемым переменным
-        function get_chars_tab() {
+        /*function get_chars_tab() {
             const currentTabSize = getComputedStyle(document.documentElement).getPropertyValue('--chars_tab').trim();
             return currentTabSize;
         }
@@ -947,7 +947,7 @@
         function set_chars_tab(count) { 
             const parsed = parseInt(count, 10);
             document.documentElement.style.setProperty('--chars_tab', isNaN(parsed) ? 4 : Math.max(0, Math.min(parsed, 16)););
-        }
+        }*/
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
@@ -1542,7 +1542,7 @@
             try {
                 // Запускаем наш потоковый LL(1) компилятор
                 parser = new MathParser(rawCode, globalScope);
-                parser.chars_tab = get_chars_tab();
+                parser.chars_tab = var_css.chars_tab;
                 parser.parse();
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
@@ -1755,7 +1755,7 @@
                 const textBeforeCursor = text.substring(0, activePosition);
                 const lines = textBeforeCursor.split('\n');
                 const currentLine = lines.length;
-                const currentColumn = calcLineGraphemes(lines[lines.length - 1], get_chars_tab());
+                const currentColumn = calcLineGraphemes(lines[lines.length - 1], var_css.chars_tab);
 
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
