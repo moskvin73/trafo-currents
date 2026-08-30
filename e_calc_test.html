@@ -1044,7 +1044,7 @@
                     else if (node.nodeType === Node.ELEMENT_NODE) {
                         // Учитываем переносы строк между div, если они не содержат \n в тексте
                         for (let i = 0; i < node.childNodes.length; i++) {
-                            getTextNodes(node.childNodes[i]);
+                            traverse(node.childNodes[i]);
                         }
                         // Если это блочный элемент (строка кода) и он не последний, добавляем 1 символ переноса строки
                         if (node.classList.contains('code-line') && node.nextSibling) {
