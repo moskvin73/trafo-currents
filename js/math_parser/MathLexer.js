@@ -184,7 +184,74 @@ function isUnicodeMnOrMc(code) {
 
 /** Метод подсчета визуальных графем Юникода */
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
-  if (!line || line.length == 0) return 1;
+  if (!line || line.length === 0) return 0; // Для пустой строки позиций 0
+
+  let visualLength = 0;
+
+  if (!segmenter) {
+    segmenter = typeof Intl.Segmenter !== 'undefined' 
+      ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) 
+      : null;
+  }
+
+  // Регулярное выражение для поиска комбинируемых символов (диакритики)
+  const combiningMarksRegex = /\p{Mn}|\p{Mc}/gu;
+
+  if (segmenter) {
+    for (const segmentInfo of segmenter.segment(line)) {
+      const char = segmentInfo.segment;
+
+      if (char === '\t') {
+        visualLength += chars_tab - (visualLength % chars_tab);
+        continue;
+      }
+
+      // 1. Разбиваем графему на массив Code Points (учитывает суррогатные пары)
+      const codePoints = [...char]; 
+      
+      // 2. Фильтруем (удаляем) из неё все комбинируемые символы (диакритику)
+      const cleanCodePoints = codePoints.filter(cp => !combiningMarksRegex.test(cp));
+
+      // 3. Если после очистки что-то осталось, прибавляем количество кодовых точек
+      // Если осталась пустышка (например, строка состояла только из диакритики), берем минимум 1
+      visualLength += cleanCodePoints.length || 1;
+    }
+  } else {
+    // Фолбек для старых сред
+    let curr = 0;
+    while (curr < line.length) {
+      const char = line[curr];
+      if (char === '\t') {
+        visualLength += chars_tab - (visualLength % chars_tab);
+        curr++;
+        continue;
+      }
+
+      const code = line.charCodeAt(curr);
+      let isSurrogate = false;
+
+      if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < line.length) {
+        const nextCode = line.charCodeAt(curr + 1);
+        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+          isSurrogate = true;
+        }
+      }
+
+      // Извлекаем текущий полный Code Point (2 или 4 байта)
+      const fullChar = isSurrogate ? line.substr(curr, 2) : line[curr];
+      
+      // Проверяем, не является ли он комбинируемым символом
+      if (!combiningMarksRegex.test(fullChar)) {
+        visualLength++;
+      }
+
+      curr += isSurrogate ? 2 : 1;
+    }
+  }
+
+  return visualLength;
+
+  /*if (!line || line.length == 0) return 1;
 
     let visualLength = 0;
     // Используем современный Intl.Segmenter для точного подсчета графем (эмодзи, сложные знаки)
@@ -227,7 +294,7 @@ export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
         }      
       }
     }
-    return visualLength + 1;  
+    return visualLength + 1;*/  
 }
 
 export class MathLexer {
