@@ -715,9 +715,11 @@
         .error-empty::before {
         content: "\200B"; /* Пробел нулевой ширины */
         }
-        /* Зарезервированные символы */
+        /* Зарезервированные символы >, * <=  и т.д. */
         :is(.calc-card-echo, .highlight-layer) .token-rw-characters { color: #000204; }
+        /* Зарезервированные слова */
         :is(.calc-card-echo, .highlight-layer) .token-rw-words { color: #005cc5; font-weight: bold; }
+         /* Коментарий */
         :is(.calc-card-echo, .highlight-layer) .token-comment { color: #d73a49; font-weight: bold;  }
         /* Ключевые слова-константы (например: %pi, %inf и т.д.) */
         :is(.calc-card-echo, .highlight-layer) .token-rw-constants { color: #005cc5; font-weight: bold; }
