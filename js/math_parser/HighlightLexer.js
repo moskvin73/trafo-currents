@@ -18,11 +18,11 @@ export function HighlightLerxer(text) {
     let token = lexer.next();
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
-            chunks.push(`<span class="token-rw-characters">${lexer.stringValue()}</span>`);
+            chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters">${lexer.stringValue()}</span>`});
         else if (token >= TokenType.FIRST_RESERVED_CONSTANTS && token <= TokenType.LAST_RESERVED_CONSTANTS)
-            chunks.push(`<span class="token-rw-constants">${lexer.source.slice(lexer.tokenStart, lexer.tokenEnd)}</span>`);
+            chunks.push({ type: 'TEXT', html: `<span class="token-rw-constants">${lexer.source.slice(lexer.tokenStart, lexer.tokenEnd)}</span>`});
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
-            chunks.push(`<span class="token-rw-words">${lexer.stringValue()}</span>`);
+            chunks.push({ type: 'TEXT', html: `<span class="token-rw-words">${lexer.stringValue()}</span>`});
         else switch (token) {
                 // --- Обработка скобок ---
                 case TokenType.LPAREN:
