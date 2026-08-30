@@ -1780,43 +1780,6 @@
 
                 // Удаляем хелпер и вставляем номера (не забудьте добавить этот шаг в конец вашей функции)
                 highlightLayer.removeChild(helperSpan);                
-                /*// 1. Синхронизируем высоту textarea по ее содержимому
-                textarea.style.height = 'auto';
-                const currentScrollHeight = textarea.scrollHeight;
-                textarea.style.height = `${currentScrollHeight}px`;
-                highlightLayer.style.height = `${currentScrollHeight}px`;
-
-                // 2. Подсвечиваем синтаксис (добавляем пробел в конце для корректного переноса новой строки)
-                const text = textarea.value;
-                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
-
-                // 3. Генерируем номера строк, опираясь на физическое разбиение текста в textarea
-                const lines = text.split('\n');
-                let lineNumbersHtml = '';
-                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
-
-                // Временный фрагмент для точного замера высоты виртуальной строки
-                const helperSpan = document.createElement('span');
-                helperSpan.style.display = 'block';
-                helperSpan.style.wordBreak = 'break-all';
-                helperSpan.style.whiteSpace = 'pre-wrap';
-                highlightLayer.appendChild(helperSpan);
-
-                lines.forEach((line, index) => {
-                    // Заполняем временный span текущей строкой для замера ее высоты с учетом переносов
-                    helperSpan.textContent = line === '' ? ' ' : line;
-                    const spanHeight = helperSpan.getBoundingClientRect().height;
-                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-
-                    // Добавляем номер строки и пустые блоки для перенесенных строк
-                    lineNumbersHtml += `<div>${index + 1}</div>`;
-                    for (let i = 1; i < subLinesCount; i++) {
-                        lineNumbersHtml += `<div>&nbsp;</div>`;
-                    }
-                });
-
-                // Удаляем временный элемент и обновляем DOM один раз
-                helperSpan.remove();*/
                 lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
