@@ -47,6 +47,48 @@ const reservedWordsMap = {
 function formatBadChar(str) {
   if (!str) return 'EOF';
 
+  // Получаем полный Unicode код (учитывает суррогатные пары)
+  const codePoint = str.codePointAt(0);
+  const firstCode = str.charCodeAt(0);
+
+  // 1. Проверяем на РЕАЛЬНО СЛОМАННЫЕ суррогаты.
+  // Если первый юнит в диапазоне суррогатов, но codePoint вернул то же самое значение,
+  // значит, у этого суррогата нет пары (строка оборвана).
+  const isBrokenSurrogate = 
+    (firstCode >= 0xD800 && firstCode <= 0xDFFF) && (codePoint === firstCode);
+
+  // 2. Проверяем управляющие символы ASCII (<= 32), исключая пробел (32), 
+  // если пробел вам нужно оставить печатным.
+  const isControlAscii = (codePoint < 32); 
+
+  // 3. Другие спецсимволы (NEL, BOM, REPLACEMENT)
+  const isSpecialInvisible = 
+    codePoint === 133 || 
+    codePoint === 12 || 
+    codePoint === 0xFEFF || 
+    codePoint === 0xFFFD;
+
+  // 4. Одиночные невидимые разделители. 
+  // ВАЖНО: проверяем длину строки. Если ZWJ идет внутри длинного эмодзи (строка > 2-3 юнитов), 
+  // мы его не считаем плохим, чтобы не ломать составные эмодзи.
+  const isIsolatedSeparator = 
+    str.length <= 2 && (
+      (codePoint >= 0x200B && codePoint <= 0x200D) || 
+      (codePoint >= 0x2028 && codePoint <= 0x2029)
+    );
+
+  const isInvisibleOrBroken = isBrokenSurrogate || isControlAscii || isSpecialInvisible || isIsolatedSeparator;
+
+  if (isInvisibleOrBroken) {
+    // Форматируем в U+XXXX (или U+XXXXX для больших кодов)
+    const hex = codePoint.toString(16).toUpperCase().padStart(4, '0');
+    return `U+${hex}`;
+  }
+
+  // Возвращаем символ как есть (целиком, включая ZWJ последовательности)
+  return str;  
+  /*if (!str) return 'EOF';
+
   // Если это одиночный разорванный суррогат, JS не сможет взять codePointAt корректно.
   // Поэтому сначала проверяем через обычный charCodeAt.
   const firstCode = str.charCodeAt(0);
@@ -69,7 +111,7 @@ function formatBadChar(str) {
 
   // Для сложных составных графем (например, эмодзи, у которых внутри есть ZWJ)
   // если они попали в ошибку, мы можем вывести их как есть, чтобы пользователь их узнал.
-  return str;
+  return str;*/
 }
 
 // ============================================================================
