@@ -1828,8 +1828,19 @@
                 isDragging = false;
             });
 
-            textarea.addEventListener('mousemove', () => {
-            if (isDragging) updateCursorPosition();
+            textarea.addEventListener('mousemove', (e) => {
+                if (isDragging) updateCursorPosition();
+                else {
+                    textarea.style.pointerEvents = 'none';
+                    const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
+                    textarea.style.pointerEvents = 'auto';
+                    if (elementUnderMouse && elementUnderMouse.classList.contains('token-varable')) {
+                        const varName = elementUnderMouse.textContent;
+                        //showTooltip(varName, e.clientX, e.clientY);
+                    } else {
+                        //hideTooltip();
+                    }                 
+                }
             });
 
             // Стандартные слушатели для действий пользователя
