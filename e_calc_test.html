@@ -703,14 +703,22 @@
         color: var(--calc-color-text);
         }
 
-        .highlight-layer .token-error { background-color: rgba(255, 0, 0, 0.2); }
-        /* Если start === end (ошибка-точка) */
+        /*.highlight-layer .token-error { background-color: rgba(255, 0, 0, 0.2); }
         .highlight-layer .error-empty {
         display: inline-block;
         width: 2px;
         background-color: red;
-        margin-left: -1px; /* Центрирование курсора */
-        }
+        margin-left: -1px;
+        }*/
+/* Если start === end (ошибка-точка) */
+ .highlight-layer .error-empty { 
+  display: inline-block; 
+  width: 2px; 
+  background-color: red; 
+  margin-left: -1px; 
+  overflow: hidden; /* Скрывает любой вылезающий текст */
+  vertical-align: bottom;
+}        
         /* Добавьте этот блок */
         .error-empty::before {
         content: "\200B"; /* Пробел нулевой ширины */
