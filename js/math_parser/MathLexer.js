@@ -286,21 +286,6 @@ export class MathLexer {
     if (fromIndex >= toIndex) return 1;
     const subStr = this.source.slice(fromIndex, toIndex);
     return calcLineGraphemes(subStr, this.chars_tab, this._segmenter);
-    /*const subStr = this.source.slice(fromIndex, toIndex);
-    let count = 1;
-    if (this._segmenter) {
-      for (const _ of this._segmenter.segment(subStr)) count++;
-    } else {
-      let curr = 0;
-      while (curr < subStr.length) {
-        const code = subStr.charCodeAt(curr);
-        if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < subStr.length && subStr.charCodeAt(curr + 1) >= 0xDC00 && subStr.charCodeAt(curr + 1) <= 0xDFFF) {
-          count++; curr += 2; continue;
-        }
-        count++; curr++;
-      }
-    }
-    return count;*/
   }
 
   #readCodePointAndAdvance() {
