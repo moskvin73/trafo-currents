@@ -11,6 +11,7 @@
     <style>
 
         :root {
+            --chars_tab: 4;
             --close-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
             --close-icon-size: 16px;
             --color-resizer: #ccc;
@@ -530,8 +531,8 @@
             margin-bottom: var(--calc-echo-margin-bottom);
             border-left: 2px solid var(--calc-color-brand);
 
-            tab-size: 4; 
-            -moz-tab-size: 4; /* Для старых версий Firefox */        
+            tab-size: var(--chars_tab); 
+            -moz-tab-size: var(--chars_tab); /* Для старых версий Firefox */        
             
             /* Добавляем поддержку плавного скрытия */
             /*max-height: 500px;  Задаем заведомо большую высоту для анимации */
@@ -682,8 +683,8 @@
         box-sizing: border-box;     
         white-space: pre-wrap;
         word-break: break-word;
-        tab-size: 4; 
-        -moz-tab-size: 4; /* Для старых версий Firefox */        
+        tab-size: var(--chars_tab); 
+        -moz-tab-size: var(--chars_tab); /* Для старых версий Firefox */        
         }
 
         .textInput {
@@ -899,6 +900,16 @@
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
+
+        // Доступ к изменяемым переменным
+        function get_chars_tab() {
+            const currentTabSize = getComputedStyle(document.documentElement).getPropertyValue('--chars_tab').trim();
+            return currentTabSize;
+        }
+
+        function set_chars_tab(count) {  
+            document.documentElement.style.setProperty('--chars_tab', count);
+        }
 
         // Единая изолированная область памяти (контекст сессии калькулятора)
         // Переменные живут здесь, пока пользователь не обновит страницу
