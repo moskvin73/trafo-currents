@@ -388,8 +388,9 @@ export class MathLexer {
   /** Вспомогательный метод подсчета визуальных графем Юникода */
   countGraphemes(fromIndex, toIndex) {
     if (fromIndex >= toIndex) return 1;
-    const subStr = this.source.slice(fromIndex, toIndex);
-    return calcLineGraphemes(subStr, this.chars_tab, this._segmenter);
+    return calcSubstrGraphemes(this.source, fromIndex, toIndex, this.chars_tab, this._segmenter);
+    //const subStr = this.source.slice(fromIndex, toIndex);
+    //return calcLineGraphemes(subStr, this.chars_tab, this._segmenter);
   }
 
   #readCodePointAndAdvance() {
