@@ -1866,7 +1866,11 @@
             });
             textarea.addEventListener('keyup', updateCursorPosition);
             textarea.addEventListener('click', updateCursorPosition);
-            textarea.addEventListener('focus', updateCursorPosition);
+            textarea.addEventListener('focus', () => {
+            // Ждем, пока браузер обновит свойства выделения после фокуса
+            requestAnimationFrame(updateCursorPosition);
+            // Или альтернатива: setTimeout(updateCursorPosition, 0);
+            });
             window.addEventListener('resize', updateLineNumbers);
             textarea.addEventListener('keydown', (event) => {
                 if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
