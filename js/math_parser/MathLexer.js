@@ -177,6 +177,50 @@ function isUnicodeNumber(code) {
   return false;
 }
 
+export function calcLineGraphemes(subStr,  chars_tab = 4, segmenter = null) {
+  if (!subStr || subStr.length == 0) return 1;
+    let visualLength = 0;
+    if (!segmenter)
+    segmenter = typeof Intl.Segmenter !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+
+    if (segmenter) {
+        for (const segmentInfo of segmenter.segment(subStr)) {
+            const char = segmentInfo.segment;
+            
+            if (char === '\t') {
+                // Вычисляем, сколько позиций осталось до следующей таб-стопы
+                visualLength += chars_tab - (visualLength % chars_tab);
+            } else {
+                visualLength++;
+            }
+        }
+    } else {
+        let curr = 0;
+        while (curr < subStr.length) {
+            const code = subStr.charCodeAt(curr);
+            
+            // Проверка на суррогатную пару
+            if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < subStr.length && 
+                subStr.charCodeAt(curr + 1) >= 0xDC00 && subStr.charCodeAt(curr + 1) <= 0xDFFF) {
+                
+                visualLength++;
+                curr += 2;
+                continue;
+            }
+
+            // Проверка на обычный символ или табуляцию
+            if (subStr[curr] === '\t') {
+                visualLength += chars_tab - (visualLength % chars_tab);
+            } else {
+                visualLength++;
+            }
+            curr++;
+        }
+    }
+
+    return visualLength + 1;  
+}
+
 export class MathLexer {
   constructor(input, errors, baseLine = 1, include_trivia = false) {
     this.source = input;
