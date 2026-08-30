@@ -556,6 +556,10 @@ export class MathLexer {
               if (next === quote) break;
               if (next === 10 || next === 13 || next === 8232 || next === 8233 || next === 133 || next === 12)
               {
+                this.tokenStart = startIdx + 1; // Пропускаем открывающую кавычку
+                this.tokenEnd = this.i;
+                this.tokenStartLine = startLine;
+                this.tokenStartLineIdx = startLineIdx;
                 if (this.include_trivia) {
                   this.tokenEndLine = this.currentLine;
                   this.tokenEndLineIdx = this.lineStartIdx;
