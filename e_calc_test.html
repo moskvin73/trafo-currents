@@ -1834,6 +1834,7 @@
                     textarea.style.pointerEvents = 'none';
                     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
                     textarea.style.pointerEvents = 'auto';
+                    console.log(elementUnderMouse);
                     if (elementUnderMouse && elementUnderMouse.classList.contains('token-varable')) {
                         const varName = elementUnderMouse.textContent;
                         //showTooltip(varName, e.clientX, e.clientY);
