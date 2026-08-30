@@ -275,6 +275,8 @@ export class MathLexer {
   countGraphemes(fromIndex, toIndex) {
     if (fromIndex >= toIndex) return 1;
     const subStr = this.source.slice(fromIndex, toIndex);
+    return calcLineGraphemes(subStr, 4, this._segmenter);
+    /*const subStr = this.source.slice(fromIndex, toIndex);
     let count = 1;
     if (this._segmenter) {
       for (const _ of this._segmenter.segment(subStr)) count++;
@@ -288,7 +290,7 @@ export class MathLexer {
         count++; curr++;
       }
     }
-    return count;
+    return count;*/
   }
 
   #readCodePointAndAdvance() {
