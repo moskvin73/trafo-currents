@@ -1243,6 +1243,12 @@
                     e.preventDefault();
                     this.selectItem(this.currentIndex + this.pageLength);
                     break;
+                    case 'Enter':
+                    e.preventDefault();
+                    if (this.currentIndex >= 0 && this.currentIndex < items.length) {
+                        selectItem(this.currentIndex, true);
+                    }
+                    break;    
                 }
             });}
 
