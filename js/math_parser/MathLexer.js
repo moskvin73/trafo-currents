@@ -658,9 +658,10 @@ export class MathLexer {
         }
 
         // Поглощаем всю сложную ошибку (флаг, цвет кожи, семья) целиком, сохраняя счетчики строк
-        for (let step = 0; step < graphemeLength; step++) {
+        /*for (let step = 0; step < graphemeLength; step++) {
           this.#readCodePointAndAdvance();
-        }
+        }*/
+        this.i += graphemeLength;
         if (this.include_trivia) {
             this.tokenStart = startIdx;
             this.tokenEnd = this.i;
