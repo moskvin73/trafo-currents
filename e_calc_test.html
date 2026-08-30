@@ -1705,7 +1705,7 @@
                 const textBeforeCursor = text.substring(0, activePosition);
                 const lines = textBeforeCursor.split('\n');
                 const currentLine = lines.length;
-                const currentColumn = calcLineGraphemes(lines[lines.length - 1].length);
+                const currentColumn = calcLineGraphemes(lines[lines.length - 1]);
                 //const currentColumn = lines[lines.length - 1].length + 1;
 
                 if (cursorIndicator) {
