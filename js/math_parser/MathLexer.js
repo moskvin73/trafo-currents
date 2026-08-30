@@ -403,17 +403,17 @@ export class MathLexer {
 
   #readCodePointAndAdvance() {
     if (this.i >= this.source.length) return null;
-    const cp = this.source.codePointAt(this.i);
+    //const cp = this.source.codePointAt(this.i);
     const code = this.source.charCodeAt(this.i);
 
-    if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) {
+    /*if (code === 10 || code === 8232 || code === 8233 || code === 133 || code === 12) {
       this.currentLine++; this.i++; this.lineStartIdx = this.i; return code;
     }
     if (code === 13) {
       this.currentLine++; this.i++;
       if (this.i < this.source.length && this.source.charCodeAt(this.i) === 10) this.i++;
       this.lineStartIdx = this.i; return code;
-    }
+    }*/
     if (code >= 0xD800 && code <= 0xDBFF && 
         this.i + 1 < this.source.length && 
         this.source.charCodeAt(this.i + 1) >= 0xDC00 && 
