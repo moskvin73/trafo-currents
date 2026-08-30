@@ -248,53 +248,7 @@ export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
       curr += isSurrogate ? 2 : 1;
     }
   }
-
-  return visualLength + 1;
-
-  /*if (!line || line.length == 0) return 1;
-
-    let visualLength = 0;
-    // Используем современный Intl.Segmenter для точного подсчета графем (эмодзи, сложные знаки)
-    if (!segmenter) {
-      segmenter = typeof Intl.Segmenter !== 'undefined' 
-        ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) 
-        : null;
-    }
-
-    if (segmenter) {
-        for (const segmentInfo of segmenter.segment(line)) {
-            const char = segmentInfo.segment;            
-            if (char === '\t') {
-                // Вычисляем, сколько позиций осталось до следующей таб-стопы
-                visualLength += chars_tab - (visualLength % chars_tab);
-            } else {
-                visualLength++;
-            }
-        }
-    } else {
-      // Фолбек для старых сред (учитывает суррогатные пары)
-      let curr = 0;
-      while (curr < line.length) {
-        const char = line[curr];
-
-        if (char === '\t') {
-          visualLength += chars_tab - (visualLength % chars_tab);
-          curr++;
-        } else {
-          const code = line.charCodeAt(curr);
-          // Если это верхний суррогат и за ним идет нижний — это один символ (4 байта)
-          if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < line.length) {
-            const nextCode = line.charCodeAt(curr + 1);
-            if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
-              curr++; // Пропускаем второй хвост суррогатной пары
-            }
-          }
-          visualLength++;
-          curr++;
-        }      
-      }
-    }
-    return visualLength + 1;*/  
+  return visualLength + 1;  
 }
 
 export class MathLexer {
