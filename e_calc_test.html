@@ -1206,6 +1206,7 @@
                 });
                 // Двойной клик мыши
                 this.listElement.addEventListener('dblclick', (e) => {
+                    e.preventDefault();
                     const item = e.target.closest(this.itemSelector);
                     if (!item) return;
                     const items = Array.from(this.getItems());
