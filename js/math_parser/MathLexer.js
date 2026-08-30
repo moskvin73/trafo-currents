@@ -178,8 +178,8 @@ function isUnicodeNumber(code) {
 }
 
 // \p{Mn} или \p{Mc}
-function isMnOrMc(char) {
-  return /[\p{Mn}\p{Mc}]/u.test(char);
+function isUnicodeMnOrMc(code) {
+  return /[\p{Mn}\p{Mc}]/u.test(String.fromCodePoint(code));
 }
 
 /** Метод подсчета визуальных графем Юникода */
@@ -547,7 +547,7 @@ export class MathLexer {
               } else if (next > 127) {
                 // Если слово началось с латиницы, но продолжилось Юникод-буквами/числами
                 const nextCp = src.codePointAt(this.i);
-                if (isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
+                if (isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp) || isUnicodeMnOrMc(nextCp)) {
                   this.#readCodePointAndAdvance();
                 } else {
                   break;
