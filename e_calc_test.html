@@ -1070,7 +1070,7 @@
             }
         }
 
-        function scrollToCodeLine(loc) {
+        function scrollToCodeLine(loc, set_focus = false) {
             const scrollContainer = document.querySelector('.main-center');
             if (!textarea || !scrollContainer || !loc) return;
             const hasValidLoc = 
@@ -1083,10 +1083,18 @@
             if (!hasValidLoc) return;            
 
             const text = textarea.value;
-            setErrorHighlight(Math.min(loc.start, text.length), Math.min(loc.end, text.length)); 
+            const startPos = Math.min(loc.start, text.length);
+            const endPos = Math.min(loc.end, text.length);
+            setErrorHighlight(startPos, endPos); 
             
             // Ждем, пока браузер обновит DOM (микротаска)
             setTimeout(() => {
+                if (set_focus) {
+                    textarea.focus();
+                    // Устанавливаем каретку в начало (loc.start) без выделения текста
+                    textarea.setSelectionRange(startPos, startPos); 
+                }
+
                 const errorElement = document.getElementById('error-anchor');
                 if (!errorElement) return;
 
