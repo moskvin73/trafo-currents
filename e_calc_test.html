@@ -1727,7 +1727,7 @@
             const updateLineNumbers = () => {
 
                 // 1. Синхронизируем высоту textarea по ее содержимому
-                textarea.style.height = 'auto';
+                /*textarea.style.height = 'auto';
                 const currentScrollHeight = textarea.scrollHeight;
                 textarea.style.height = `${currentScrollHeight}px`;
                 highlightLayer.style.height = `${currentScrollHeight}px`;
@@ -1780,8 +1780,8 @@
                 }
 
                 // Удаляем хелпер и вставляем номера (не забудьте добавить этот шаг в конец вашей функции)
-                highlightLayer.removeChild(helperSpan);                
-                /*// 1. Синхронизируем высоту textarea по ее содержимому
+                highlightLayer.removeChild(helperSpan);*/                
+                // 1. Синхронизируем высоту textarea по ее содержимому
                 textarea.style.height = 'auto';
                 const currentScrollHeight = textarea.scrollHeight;
                 textarea.style.height = `${currentScrollHeight}px`;
@@ -1817,7 +1817,7 @@
                 });
 
                 // Удаляем временный элемент и обновляем DOM один раз
-                helperSpan.remove();*/
+                helperSpan.remove();
                 lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
