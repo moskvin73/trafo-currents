@@ -1867,9 +1867,8 @@
             textarea.addEventListener('keyup', updateCursorPosition);
             textarea.addEventListener('click', updateCursorPosition);
             textarea.addEventListener('focus', () => {
-            // Ждем, пока браузер обновит свойства выделения после фокуса
-            requestAnimationFrame(updateCursorPosition);
-            // Или альтернатива: setTimeout(updateCursorPosition, 0);
+                // Ждем, пока браузер обновит свойства выделения после фокуса
+                requestAnimationFrame(updateCursorPosition);
             });
             window.addEventListener('resize', updateLineNumbers);
             textarea.addEventListener('keydown', (event) => {
