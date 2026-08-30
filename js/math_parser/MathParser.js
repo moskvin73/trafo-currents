@@ -229,7 +229,17 @@ export class MathParser {
     this.flags = 0; // Изначально все запрещено (000)
   }
 
-    // 2. Метод для установки (включения) флагов
+  get chars_tab() {
+    return this.lexer.chars_tab;
+  }
+
+  set chars_tab(count) {
+    const parsed = parseInt(count, 10);
+    // Если передано не число, ставим дефолт 4, иначе зажимаем в диапазон [0, 16]
+    this.lexer.chars_tab = isNaN(parsed) ? 4 : Math.max(0, Math.min(parsed, 16));
+  }
+
+  // 2. Метод для установки (включения) флагов
   setFlags(flagMask) {
     this.flags |= flagMask; // Побитовое ИЛИ
   }
