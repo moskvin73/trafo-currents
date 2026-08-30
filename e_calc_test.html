@@ -984,15 +984,15 @@
         }
 
         function runLexerAndHighlight(text) {
-            let highlightedHtml = HighlightLerxer(text);
+            /*let highlightedHtml = HighlightLerxer(text);
             const lines = highlightedHtml.split('\n');
             const wrappedLines = lines.map(line => {
                     // Если строка пустая, добавляем <br>, иначе div сожмется до 0px по высоте
                     const content = line === '' ? '<br>' : line;
                     return `<div class="code-line">${content}</div>`;
                 });
-            return wrappedLines.join('');            
-            //return HighlightLerxer(text);
+            return wrappedLines.join('');*/            
+            return HighlightLerxer(text);
         }
         
         // Функция быстрого удаления ошибки
