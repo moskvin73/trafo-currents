@@ -551,7 +551,27 @@ export class MathLexer {
           case C_QUOTE: {
             const quote = code;
             this.#readCodePointAndAdvance();
-            while (this.i < len && src.charCodeAt(this.i) !== quote) this.#readCodePointAndAdvance();
+            while (this.i < len) {
+              const next = src.charCodeAt(this.i);
+              if (next === quote) break;
+              if (next === 10 || next === 13 || next === 8232 || next === 8233 || next === 133 || next === 12)
+              {
+                if (this.include_trivia) {
+                  this.tokenEndLine = this.currentLine;
+                  this.tokenEndLineIdx = this.lineStartIdx;
+                  return TokenType.ERROR_STR;
+                }
+                else
+                {
+                  const errLoc = new SourceLocation(this, startIdx, this.i, startLine, startLineIdx, this.currentLine, this.lineStartIdx);
+                  this.errors.push(new CompilerError(`Незакрытая текстовая строка`, errLoc));              
+                  this.tokenEndLine = this.currentLine;
+                  this.tokenEndLineIdx = this.lineStartIdx;
+                  return TokenType.TEXT_BLOCK;
+                }
+              }
+              this.#readCodePointAndAdvance();
+            }
 
             this.tokenStart = startIdx + 1; // Пропускаем открывающую кавычку
             this.tokenEnd = this.i;
