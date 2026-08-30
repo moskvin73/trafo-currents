@@ -199,6 +199,72 @@ function isUnicodeMnOrMc(code) {
   return /[\p{Mn}\p{Mc}]/u.test(String.fromCodePoint(code));
 }
 
+export function calcSubstrGraphemes(text, start, end, chars_tab = 4, segmenter = null) {
+  // Защита от выхода за границы и пустых диапазонов
+  if (!text || start >= end || start < 0) return 1; 
+  
+  let visualLength = 0;
+
+  if (!segmenter) {
+    segmenter = typeof Intl.Segmenter !== 'undefined' 
+      ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) 
+      : null;
+  }
+
+  const combiningMarksRegex = /\p{Mn}|\p{Mc}/gu;
+
+  if (segmenter) {
+    // Вырезаем кусок только для сегментера, так как Intl.Segmenter работает со строкой.
+    // Но это всё равно быстрее, чем делать substring во внешнем цикле для всего приложения.
+    const subStr = text.slice(start, end);
+    
+    for (const segmentInfo of segmenter.segment(subStr)) {
+      const char = segmentInfo.segment;
+      if (char === '\t') {
+        visualLength += chars_tab - (visualLength % chars_tab);
+        continue;
+      }
+
+      const codePoints = [...char];
+      const cleanCodePoints = codePoints.filter(cp => !combiningMarksRegex.test(cp));
+      visualLength += cleanCodePoints.length || 1;
+    }
+  } else {
+    // Полный отказ от выделения памяти: работаем напрямую с индексами буфера
+    let curr = start;
+    while (curr < end) {
+      const char = text[curr];
+      
+      if (char === '\t') {
+        visualLength += chars_tab - (visualLength % chars_tab);
+        curr++;
+        continue;
+      }
+
+      const code = text.charCodeAt(curr);
+      let isSurrogate = false;
+      
+      // Проверяем суррогатную пару в пределах [start, end)
+      if (code >= 0xD800 && code <= 0xDBFF && curr + 1 < end) {
+        const nextCode = text.charCodeAt(curr + 1);
+        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+          isSurrogate = true;
+        }
+      }
+
+      // Пропускаем комбинируемые символы (модификаторы диакритики)
+      // Если это не диакритика — учитываем длину
+      if (!combiningMarksRegex.test(char)) {
+        visualLength += 1; 
+      }
+
+      curr += isSurrogate ? 2 : 1;
+    }
+  }
+
+  return visualLength || 1;
+}
+
 /** Метод подсчета визуальных графем Юникода */
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
   if (!line || line.length === 0) return 1; // Для пустой строки позиций 0
