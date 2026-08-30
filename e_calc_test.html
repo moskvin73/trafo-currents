@@ -1753,42 +1753,6 @@
                 // Удаляем временный элемент и обновляем DOM один раз
                 helperSpan.remove();
                 lineNumbersEle.innerHTML = lineNumbersHtml;
-
-                /*textarea.style.height = 'auto'; // Сбрасываем высоту для корректного расчета
-                const currentScrollHeight = textarea.scrollHeight;
-                textarea.style.height = `${currentScrollHeight}px`; // Устанавливаем новую высоту по содержимом     
-                highlightLayer.style.height = `${currentScrollHeight}px`;
-
-                mirrorEle.style.width = `${textarea.clientWidth}px`;
-                const text = textarea.value;
-                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
-
-                const lines = text.split('\n');
-                mirrorEle.innerHTML = '';
-                
-                lines.forEach((line) => {
-                    const span = document.createElement('span');
-                    span.style.display = 'block';
-                    // Добавляем перенос длинных слов без пробелов
-                    span.style.wordBreak = 'break-all'; 
-                    span.style.whiteSpace = 'pre-wrap';
-                    span.textContent = line === '' ? ' ' : line;
-                    mirrorEle.appendChild(span);
-                });
-
-                const spans = mirrorEle.querySelectorAll('span');
-                let lineNumbersHtml = '';
-                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
-
-                spans.forEach((span, index) => {
-                    const spanHeight = span.getBoundingClientRect().height;
-                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-                    lineNumbersHtml += `<div>${index + 1}</div>`;
-                    for (let i = 1; i < subLinesCount; i++) {
-                        lineNumbersHtml += `<div>&nbsp;</div>`;
-                    }
-                });
-                lineNumbersEle.innerHTML = lineNumbersHtml;*/
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
