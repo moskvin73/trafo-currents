@@ -1706,7 +1706,6 @@
                 const lines = textBeforeCursor.split('\n');
                 const currentLine = lines.length;
                 const currentColumn = calcLineGraphemes(lines[lines.length - 1]);
-                //const currentColumn = lines[lines.length - 1].length + 1;
 
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
