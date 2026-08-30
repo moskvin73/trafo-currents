@@ -103,13 +103,13 @@ const C_NEWLINE  = 7;
 
 const asciiMap = new Uint8Array(128);
 
-// Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
-for (let c of ['\t', '\n', '\v', '\f', '\r', ' ']) {
+// Заполняем пробелы ASCII (табуляция 9, в.таб 11, пробел 32)
+for (let c of ['\t', '\v', ' ']) {
   asciiMap[c.charCodeAt(0)] = C_SPACE;
 }
 
-// Заполняем пробелы ASCII (табуляция 9, перевод строки 10, в.таб 11, ф.фид 12, возврат каретки 13, пробел 32)
-for (let c of ['\n', '\r']) {
+// Заполняем пробелы ASCII (перевод строки 10, ф.фид 12, возврат каретки 13)
+for (let c of ['\n', '\r', '\f']) {
   asciiMap[c.charCodeAt(0)] = C_NEWLINE;
 }
 
@@ -200,6 +200,9 @@ function isUnicodeNumber(code) {
   return false;
 }
 
+function isUnicodeNewLine(code) {
+  return (code === 8232 || code === 8233 || code === 133);
+}
 // \p{Mn} или \p{Mc}
 function isUnicodeMnOrMc(code) {
   return /[\p{Mn}\p{Mc}]/u.test(String.fromCodePoint(code));
