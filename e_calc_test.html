@@ -1775,10 +1775,29 @@
                     : textarea.selectionEnd;
 
                 const text = textarea.value;
-                const textBeforeCursor = text.substring(0, activePosition);
+                // 1. Считаем строки методом indexOf (без выделения памяти)
+                let currentLine = 1;
+                let lastNewLineIndex = -1;
+                let matchIndex = text.indexOf('\n');
+
+                while (matchIndex !== -1 && matchIndex < activePosition) {
+                    currentLine++;
+                    lastNewLineIndex = matchIndex;
+                    matchIndex = text.indexOf('\n', matchIndex + 1);
+                }
+
+                // 2. Выделяем подстроку текущей строки только для расчета графем/табуляций
+                const currentLineStart = lastNewLineIndex + 1;
+                const currentLineText = text.substring(currentLineStart, activePosition);
+                
+                // 3. Считаем колонки
+                const currentColumn = calcLineGraphemes(currentLineText, var_css.chars_tab);
+
+
+                /*const textBeforeCursor = text.substring(0, activePosition);
                 const lines = textBeforeCursor.split('\n');
                 const currentLine = lines.length;
-                const currentColumn = calcLineGraphemes(lines[lines.length - 1], var_css.chars_tab);
+                const currentColumn = calcLineGraphemes(lines[lines.length - 1], var_css.chars_tab);*/
 
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
