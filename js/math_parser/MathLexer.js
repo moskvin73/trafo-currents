@@ -625,7 +625,7 @@ export class MathLexer {
             const nextCp = src.codePointAt(this.i);
             const isAsciiPart = nextCp < 128 && (asciiMap[nextCp] === C_ALPHA || asciiMap[nextCp] === C_DIGIT);
             
-            if (isAsciiPart || isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp)) {
+            if (isAsciiPart || isUnicodeLetter(nextCp) || isUnicodeNumber(nextCp) || isUnicodeMnOrMc(nextCp)) {
               this.#readCodePointAndAdvance();
             } else {
               break;
