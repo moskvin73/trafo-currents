@@ -184,7 +184,7 @@ function isUnicodeMnOrMc(code) {
 
 /** Метод подсчета визуальных графем Юникода */
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
-  if (!line || line.length === 0) return 0; // Для пустой строки позиций 0
+  if (!line || line.length === 0) return 1; // Для пустой строки позиций 0
 
   let visualLength = 0;
 
@@ -249,7 +249,7 @@ export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
     }
   }
 
-  return visualLength;
+  return visualLength + 1;
 
   /*if (!line || line.length == 0) return 1;
 
