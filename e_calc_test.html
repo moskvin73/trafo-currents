@@ -1757,6 +1757,25 @@
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
             let currentlyHighlightedBrackets = [];
 
+            const clearHighlightedBrackets = () => {
+                if (currentlyHighlightedBrackets.length > 0) {
+                    currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
+                    currentlyHighlightedBrackets = [];                   
+                }
+            };
+
+            const setHighlightedBrackets = (span) => {
+                clearHighlightedBrackets();
+                if (span) {
+                    const bracketId = span.getAttribute('data-bracket-id');
+                    const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
+                    pairs.forEach(el => {
+                            el.classList.add('bracket-highlight');
+                            currentlyHighlightedBrackets.push(el);
+                            });
+                }
+            };
+
             const updateCursorPosition = () => {
                 const direction = textarea.selectionDirection;
                 // Если выделение назад (в противоположную сторону), то активный край в selectionStart
@@ -1780,21 +1799,8 @@
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
                 }
 
-                // --- НАЧАЛО БЛОКА ПОДСВЕТКИ СКОБОК ---
-                // 1. Очищаем предыдущую подсветку
-                currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
-                currentlyHighlightedBrackets = [];
-
                 const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
-                if (activeSpan) {
-                    const bracketId = activeSpan.getAttribute('data-bracket-id');
-                    const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
-                    pairs.forEach(el => {
-                            el.classList.add('bracket-highlight');
-                            currentlyHighlightedBrackets.push(el);
-                            });
-                }                
-                // --- КОНЕЦ БЛОКА ПОДСВЕТКИ СКОБОК                 
+                setHighlightedBrackets(activeSpan);
             };
 
             // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
@@ -1833,19 +1839,9 @@
                     textarea.style.pointerEvents = 'auto'; // Возвращаем как было
                     highlightLayer.style.pointerEvents = 'none'; // Возвращаем как было
                     if (elementUnderMouse && elementUnderMouse.classList.contains('token-bracket')) {
-                        // 1. Очищаем предыдущую подсветку
-                        currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
-                        currentlyHighlightedBrackets = [];
-
-                        const bracketId = elementUnderMouse.getAttribute('data-bracket-id');
-                        const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
-                        pairs.forEach(el => {
-                                el.classList.add('bracket-highlight');
-                                currentlyHighlightedBrackets.push(el);
-                                });
+                        setHighlightedBrackets(elementUnderMouse);
                     } else {
-                        currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
-                        currentlyHighlightedBrackets = [];
+                        clearHighlightedBrackets();
                     }                 
                 }
             });
