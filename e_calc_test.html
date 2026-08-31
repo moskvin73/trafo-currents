@@ -1844,7 +1844,8 @@
                                 currentlyHighlightedBrackets.push(el);
                                 });
                     } else {
-                        //hideTooltip();
+                        currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
+                        currentlyHighlightedBrackets = [];
                     }                 
                 }
             });
