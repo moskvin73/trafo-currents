@@ -1024,12 +1024,7 @@
                         endOffset = end - currentPos;
                     }
                     currentPos = nextPos;
-                } /*else {
-                    for (let child of node.childNodes) {
-                        traverse(child);
-                        if (startNode && endNode) break;
-                    }*/
-                    else if (node.nodeType === Node.ELEMENT_NODE) {
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
                         // Учитываем переносы строк между div, если они не содержат \n в тексте
                         for (let i = 0; i < node.childNodes.length; i++) {
                             traverse(node.childNodes[i]);
