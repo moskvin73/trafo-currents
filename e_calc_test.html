@@ -1750,6 +1750,40 @@
             document.body.appendChild(mirrorEle);*/
 
             const updateLineNumbers = () => {
+                // 1. Синхронизируем высоту textarea
+                textarea.style.height = 'auto';
+                const currentScrollHeight = textarea.scrollHeight;
+                textarea.style.height = `${currentScrollHeight}px`;
+                highlightLayer.style.height = `${currentScrollHeight}px`;
+
+                // 2. Подсвечиваем синтаксис (лексер теперь возвращает строки внутри <div class="code-line">)
+                const text = textarea.value;
+                highlightLayer.innerHTML = runLexerAndHighlight(text);
+
+                // 3. Получаем все сгенерированные строки из DOM
+                const lines = highlightLayer.querySelectorAll('.code-line');
+                let lineNumbersHtml = '';
+                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
+
+                // 4. Проходим по готовым строкам и считываем их реальную высоту
+                lines.forEach((lineElement, index) => {
+                    // getBoundingClientRect() на уже вставленном элементе
+                    const spanHeight = lineElement.getBoundingClientRect().height;
+                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
+
+                    // Добавляем номер строки
+                    lineNumbersHtml += `<div>${index + 1}</div>`;
+
+                    // Добавляем пустые блоки для перенесенных (wrapped) строк
+                    for (let i = 1; i < subLinesCount; i++) {
+                    lineNumbersHtml += '<div>&nbsp;</div>';
+                    }
+                });
+
+                // 5. Обновляем слой с номерами строк
+                lineNumbersEle.innerHTML = lineNumbersHtml;
+
+                /*
                 // 1. Синхронизируем высоту textarea по ее содержимому
                 textarea.style.height = 'auto';
                 const currentScrollHeight = textarea.scrollHeight;
@@ -1805,7 +1839,7 @@
 
                 // Удаляем хелпер и вставляем номера (не забудьте добавить этот шаг в конец вашей функции)
                 highlightLayer.removeChild(helperSpan);                
-                lineNumbersEle.innerHTML = lineNumbersHtml;
+                lineNumbersEle.innerHTML = lineNumbersHtml;*/
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
@@ -1886,7 +1920,6 @@
                     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
                     textarea.style.pointerEvents = 'auto'; // Возвращаем как было
                     highlightLayer.style.pointerEvents = 'none'; // Возвращаем как было
-                    console.log('Элемент под мышыю:', elementUnderMouse); 
                     if (elementUnderMouse && elementUnderMouse.classList.contains('token-varable')) {
                         const varName = elementUnderMouse.textContent;
                         //showTooltip(varName, e.clientX, e.clientY);
