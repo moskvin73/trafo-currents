@@ -983,18 +983,6 @@
             return  paddingTop + paddingBottom + marginTop + marginBottom;
         }
 
-        function runLexerAndHighlight(text) {
-            /*let highlightedHtml = HighlightLerxer(text);
-            const lines = highlightedHtml.split('\n');
-            const wrappedLines = lines.map(line => {
-                    // Если строка пустая, добавляем <br>, иначе div сожмется до 0px по высоте
-                    const content = line === '' ? '<br>' : line;
-                    return `<div class="code-line">${content}</div>`;
-                });
-            return wrappedLines.join('');*/            
-            return HighlightLerxer(text);
-        }
-        
         // Функция быстрого удаления ошибки
         function removeErrorHighlightDOM() {
             const errorSpan = document.getElementById('error-anchor');
@@ -1735,20 +1723,7 @@
 
             if (!textarea || !lineNumbersEle) return;
 
-            // --- [СОЗДАНИЕ ЗЕРКАЛА ДЛЯ РАСЧЕТА СТРОК — БЕЗ ИЗМЕНЕНИЙ] ---
-            //const mirrorEle = document.createElement('div');
             const textareaStyle = window.getComputedStyle(textarea);
-            /*mirrorEle.style.position = 'absolute';
-            mirrorEle.style.visibility = 'hidden';
-            mirrorEle.style.whiteSpace = textareaStyle.whiteSpace;
-            mirrorEle.style.wordBreak = textareaStyle.wordBreak;
-            mirrorEle.style.fontFamily = textareaStyle.fontFamily;
-            mirrorEle.style.fontSize = textareaStyle.fontSize;
-            mirrorEle.style.lineHeight = textareaStyle.lineHeight;
-            mirrorEle.style.padding = textareaStyle.padding;
-            mirrorEle.style.boxSizing = textareaStyle.boxSizing;
-            document.body.appendChild(mirrorEle);*/
-
             const updateLineNumbers = () => {
                 // 1. Синхронизируем высоту textarea
                 textarea.style.height = 'auto';
@@ -1758,7 +1733,7 @@
 
                 // 2. Подсвечиваем синтаксис (лексер теперь возвращает строки внутри <div class="code-line">)
                 const text = textarea.value;
-                highlightLayer.innerHTML = runLexerAndHighlight(text);
+                highlightLayer.innerHTML = HighlightLerxer(text);
 
                 // 3. Получаем все сгенерированные строки из DOM
                 const lines = highlightLayer.querySelectorAll('.code-line');
