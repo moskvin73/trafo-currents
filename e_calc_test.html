@@ -1832,9 +1832,17 @@
                     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
                     textarea.style.pointerEvents = 'auto'; // Возвращаем как было
                     highlightLayer.style.pointerEvents = 'none'; // Возвращаем как было
-                    if (elementUnderMouse && elementUnderMouse.classList.contains('token-varable')) {
-                        const varName = elementUnderMouse.textContent;
-                        //showTooltip(varName, e.clientX, e.clientY);
+                    if (elementUnderMouse && elementUnderMouse.classList.contains('token-bracket')) {
+                        // 1. Очищаем предыдущую подсветку
+                        currentlyHighlightedBrackets.forEach(el => el.classList.remove('bracket-highlight'));
+                        currentlyHighlightedBrackets = [];
+
+                        const bracketId = elementUnderMouse.getAttribute('data-bracket-id');
+                        const pairs = highlightLayer.querySelectorAll(`.token-bracket[data-bracket-id="${bracketId}"]`);
+                        pairs.forEach(el => {
+                                el.classList.add('bracket-highlight');
+                                currentlyHighlightedBrackets.push(el);
+                                });
                     } else {
                         //hideTooltip();
                     }                 
