@@ -128,10 +128,10 @@ export function HighlightLerxer(text) {
         }
     }
 
-    if (chunks.length > 0 && (chunks[chunks.length - 1].type === 'NL' || currentLine.length > 0)) {
-        const lineContent = currentLine.length === 0 ? '<br>' : currentLine.join('');
-        lines.push(`<div class="code-line">${lineContent}</div>`);
-    }    
+    if (currentLine.length > 0)
+        lines.push(`<div class="code-line">${currentLine.join('')}</div>`);
+    else if (chunks.length > 0 && (chunks[chunks.length - 1].type === 'NL'))
+        lines.push(`<div class="code-line"><br></div>`);   
 
     return lines.join(''); 
 }
