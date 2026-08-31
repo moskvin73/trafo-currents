@@ -771,6 +771,26 @@
         }       
         /* #endregion комндный контейнер */
 
+/* Стили для всплывающей подсказки */
+.custom-tooltip {
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    pointer-events: none; /* Чтобы тултип не мешал движениям мыши */
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    z-index: 9999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Класс для отображения */
+.custom-tooltip.visible {
+    opacity: 1;
+}
+
    </style>
 </head>
 <body>
@@ -905,6 +925,9 @@
             <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
         </div>
     </div>
+
+    <!-- Элемент подсказки (создается один раз в HTML) -->
+    <div id="custom-tooltip" class="custom-tooltip"></div>
 
     <script type="module">
         import { calcLineGraphemes, calcSubstrGraphemes } from './js/math_parser/MathLexer.js';
@@ -1831,15 +1854,33 @@
             });
 
             // Переменные для управления состоянием подсказки
+            const tooltipElement = document.getElementById('custom-tooltip');
             let hintTimeout = null;
             let currentHintElement = null;
             const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
 
             // Функция для отображения подсказки (реализуйте UI под вашу задачу)
             const showHint = (element, text) => {
-                // Пример: создание div или обновление существующего
-                console.log(`Показываем подсказку для ${text}`);
-                // Здесь ваш код позиционирования и показа кастомного тултипа
+                if (!element || !text) return;
+                
+                currentHintElement = element;
+                
+                // 1. Устанавливаем текст подсказки
+                tooltipElement.textContent = text;
+                
+                // 2. Получаем координаты целевого элемента на экране
+                const rect = element.getBoundingClientRect();
+                
+                // 3. Рассчитываем позицию (по центру сверху элемента с учетом прокрутки страницы)
+                const tooltipX = rect.left + window.scrollX + (rect.width / 2) - (tooltipElement.offsetWidth / 2);
+                const tooltipY = rect.top + window.scrollY - tooltipElement.offsetHeight - 8; // 8px — отступ сверху
+                
+                // 4. Применяем координаты
+                tooltipElement.style.left = `${tooltipX}px`;
+                tooltipElement.style.top = `${tooltipY}px`;
+                
+                // 5. Показываем подсказку, добавляя класс
+                tooltipElement.classList.add('visible');
             };
 
             // Функция для скрытия подсказки
@@ -1850,8 +1891,7 @@
                     hintTimeout = null;
                 }
                 currentHintElement = null;
-                console.log("Скрываем подсказку");
-                // Здесь ваш код скрытия кастомного тултипа
+                tooltipElement.classList.remove('visible');
             };
 
             const hintMouseMove =(elementUnderMouse) => {
