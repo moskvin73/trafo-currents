@@ -1830,6 +1830,36 @@
                 isDragging = false;
             });
 
+            const hintMouseMove =(elementUnderMouse) => {
+                switch (true) {
+                case elementUnderMouse.classList.contains('token-rw-characters'):
+                    break;
+                case elementUnderMouse.classList.contains('token-rw-constants'):
+                    break;
+                case elementUnderMouse.classList.contains('token-rw-words'):
+                    break;
+                case elementUnderMouse.classList.contains('token-bracket'):
+                    setHighlightedBrackets(elementUnderMouse);
+                    break;
+                case elementUnderMouse.classList.contains('token-comment'):
+                    break;
+                case elementUnderMouse.classList.contains('token-error-code'):
+                    break;
+                case elementUnderMouse.classList.contains('token-error-string'):
+                    break;
+                case elementUnderMouse.classList.contains('token-string'):
+                    break;
+                case elementUnderMouse.classList.contains('token-number'):
+                    break;
+                case elementUnderMouse.classList.contains('token-complex-number'):
+                    break;
+                case elementUnderMouse.classList.contains('token-varable'):
+                    break;
+                case elementUnderMouse.classList.contains('token-varable'):
+                    break;
+                }
+            }
+
             textarea.addEventListener('mousemove', (e) => {
                 if (isDragging) updateCursorPosition();
                 else {
