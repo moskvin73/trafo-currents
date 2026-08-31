@@ -1782,64 +1782,6 @@
 
                 // 5. Обновляем слой с номерами строк
                 lineNumbersEle.innerHTML = lineNumbersHtml;
-
-                /*
-                // 1. Синхронизируем высоту textarea по ее содержимому
-                textarea.style.height = 'auto';
-                const currentScrollHeight = textarea.scrollHeight;
-                textarea.style.height = `${currentScrollHeight}px`;
-                highlightLayer.style.height = `${currentScrollHeight}px`;
-
-                // 2. Подсвечиваем синтаксис
-                const text = textarea.value;
-                highlightLayer.innerHTML = runLexerAndHighlight(text) + (text.endsWith('\n') ? ' ' : '');
-
-                // 3. Генерируем номера строк без split('\n')
-                let lineNumbersHtml = '';
-                const lineHeight = parseFloat(textareaStyle.lineHeight) || 22.5;
-
-                // Временный фрагмент для точного замера высоты виртуальной строки
-                const helperSpan = document.createElement('span');
-                helperSpan.style.display = 'block';
-                helperSpan.style.wordBreak = 'break-all';
-                helperSpan.style.whiteSpace = 'pre-wrap';
-                highlightLayer.appendChild(helperSpan);
-
-                let start = 0;
-                let lineIndex = 0;
-                const textLength = text.length;
-
-                while (start <= textLength) {
-                    // Ищем следующий перевод строки
-                    let end = text.indexOf('\n', start);
-                    if (end === -1) end = textLength; // Если это последняя строка
-
-                    // Вырезаем подстроку без создания промежуточного массива строк
-                    const line = text.slice(start, end);
-
-                    // Заполняем временный span текущей строкой для замера ее высоты
-                    helperSpan.textContent = line === '' ? ' ' : line;
-                    const spanHeight = helperSpan.getBoundingClientRect().height;
-                    const subLinesCount = Math.max(1, Math.round(spanHeight / lineHeight));
-
-                    // Добавляем номер строки
-                    lineNumbersHtml += `<div>${lineIndex + 1}</div>`;
-                    
-                    // (Опционально) Если вам нужно было заполнять пустые блоки для перенесенных строк, 
-                    // вы можете использовать subLinesCount прямо здесь, как в вашем старом коде:
-                    for (let i = 1; i < subLinesCount; i++) { lineNumbersHtml += '<div>&nbsp;</div>'; }
-
-                    // Переходим к следующей строке
-                    start = end + 1;
-                    lineIndex++;
-
-                    // Особый случай: если текст заканчивается на '\n', нужно обработать финальную пустую строку
-                    if (end === textLength) break;
-                }
-
-                // Удаляем хелпер и вставляем номера (не забудьте добавить этот шаг в конец вашей функции)
-                highlightLayer.removeChild(helperSpan);                
-                lineNumbersEle.innerHTML = lineNumbersHtml;*/
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
