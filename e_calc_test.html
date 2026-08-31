@@ -696,13 +696,13 @@
         color: var(--calc-color-text);
         }
 
-.highlight-layer .code-line {
-    width: 100%;
-    line-height: 1.5; /* Должно строго совпадать с родителем */
-    white-space: pre-wrap; /* Наследуем правильный перенос */
-    word-break: break-word; /* Наследуем разрыв слов */
-    min-height: 1.5em; /* Гарантирует высоту строки, если она пустая */
-}        
+        .highlight-layer .code-line {
+            width: 100%;
+            line-height: 1.5; /* Должно строго совпадать с родителем */
+            white-space: pre-wrap; /* Наследуем правильный перенос */
+            word-break: break-word; /* Наследуем разрыв слов */
+            min-height: 1.5em; /* Гарантирует высоту строки, если она пустая */
+        }        
 
         .highlight-layer .token-error { background-color: red; }
 
@@ -770,25 +770,25 @@
         }       
         /* #endregion комндный контейнер */
 
-/* Стили для всплывающей подсказки */
-.custom-tooltip {
-    position: absolute;
-    background-color: #333;
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 13px;
-    pointer-events: none; /* Чтобы тултип не мешал движениям мыши */
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
-    z-index: 9999;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
+        /* Стили для всплывающей подсказки */
+        .custom-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            pointer-events: none; /* Чтобы тултип не мешал движениям мыши */
+            opacity: 0;
+            transition: opacity 0.15s ease-in-out;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
 
-/* Класс для отображения */
-.custom-tooltip.visible {
-    opacity: 1;
-}
+        /* Класс для отображения */
+        .custom-tooltip.visible {
+            opacity: 1;
+        }
 
    </style>
 </head>
