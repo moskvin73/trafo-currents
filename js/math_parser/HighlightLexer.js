@@ -128,10 +128,10 @@ export function HighlightLerxer(text) {
         }
     }
 
-    // Не забываем добавить последнюю строку, если текст не заканчивался на TokenType.NL
-    if (currentLine.length > 0) {
-        lines.push(`<div class="code-line">${currentLine.join('')}</div>`);
-    }
+    if (chunks.length > 0 && (chunks[chunks.length - 1].type === 'NL' || currentLine.length > 0)) {
+        const lineContent = currentLine.length === 0 ? '<br>' : currentLine.join('');
+        lines.push(`<div class="code-line">${lineContent}</div>`);
+    }    
 
     return lines.join(''); 
 }
