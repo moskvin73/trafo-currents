@@ -1830,33 +1830,85 @@
                 isDragging = false;
             });
 
+            // Переменные для управления состоянием подсказки
+            let hintTimeout = null;
+            let currentHintElement = null;
+            const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
+
+            // Функция для отображения подсказки (реализуйте UI под вашу задачу)
+            const showHint = (element, text) => {
+                // Пример: создание div или обновление существующего
+                console.log(`Показываем подсказку для ${text}`);
+                // Здесь ваш код позиционирования и показа кастомного тултипа
+            };
+
+            // Функция для скрытия подсказки
+            const hideHint = () => {
+                clearHighlightedBrackets();
+                if (hintTimeout) {
+                    clearTimeout(hintTimeout);
+                    hintTimeout = null;
+                }
+                currentHintElement = null;
+                console.log("Скрываем подсказку");
+                // Здесь ваш код скрытия кастомного тултипа
+            };
+
             const hintMouseMove =(elementUnderMouse) => {
+                // Если курсор ушел с предыдущего элемента, сбрасываем старый таймер
+                if (currentHintElement !== elementUnderMouse) {
+                    hideHint();
+                    currentHintElement = elementUnderMouse;
+                } else {
+                    // Если курсор двигается внутри того же элемента, ничего не делаем
+                    return;
+                }
+
+                if (!elementUnderMouse) return;
+
+                // Вспомогательная функция для запуска таймера
+                const queueHint = (text) => {
+                    hintTimeout = setTimeout(() => {
+                        showHint(elementUnderMouse, text);
+                    }, HINT_DELAY);
+                };                
                 switch (true) {
-                case elementUnderMouse.classList.contains('token-rw-characters'):
-                    break;
-                case elementUnderMouse.classList.contains('token-rw-constants'):
-                    break;
-                case elementUnderMouse.classList.contains('token-rw-words'):
-                    break;
-                case elementUnderMouse.classList.contains('token-bracket'):
-                    setHighlightedBrackets(elementUnderMouse);
-                    break;
-                case elementUnderMouse.classList.contains('token-comment'):
-                    break;
-                case elementUnderMouse.classList.contains('token-error-code'):
-                    break;
-                case elementUnderMouse.classList.contains('token-error-string'):
-                    break;
-                case elementUnderMouse.classList.contains('token-string'):
-                    break;
-                case elementUnderMouse.classList.contains('token-number'):
-                    break;
-                case elementUnderMouse.classList.contains('token-complex-number'):
-                    break;
-                case elementUnderMouse.classList.contains('token-varable'):
-                    break;
-                case elementUnderMouse.classList.contains('token-varable'):
-                    break;
+                    case elementUnderMouse.classList.contains('token-rw-characters'):
+                        queueHint('Спецсимвол');
+                        break;
+                    case elementUnderMouse.classList.contains('token-rw-constants'):
+                        queueHint('Константа');
+                        break;
+                    case elementUnderMouse.classList.contains('token-rw-words'):
+                        queueHint('Ключевое слово');
+                        break;
+                    case elementUnderMouse.classList.contains('token-bracket'):
+                        setHighlightedBrackets(elementUnderMouse);
+                        queueHint('Скобка');
+                        break;
+                    case elementUnderMouse.classList.contains('token-comment'):
+                        queueHint('Комментарий');
+                        break;
+                    case elementUnderMouse.classList.contains('token-error-code'):
+                        queueHint('Ошибка в коде');
+                        break;
+                    case elementUnderMouse.classList.contains('token-error-string'):
+                        queueHint('Ошибка в строке');
+                        break;
+                    case elementUnderMouse.classList.contains('token-string'):
+                        queueHint('Строка');
+                        break;
+                    case elementUnderMouse.classList.contains('token-number'):
+                    case elementUnderMouse.classList.contains('token-complex-number'):
+                        queueHint('Число');
+                        break;
+                    case elementUnderMouse.classList.contains('token-varable'):
+                        queueHint('Переменная');
+                        break;
+                    default:
+                        // Если элемент не токен — скрываем подсказку
+                        hideHint();
+                        break;
                 }
             }
 
@@ -1868,13 +1920,17 @@
                     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
                     textarea.style.pointerEvents = 'auto'; // Возвращаем как было
                     highlightLayer.style.pointerEvents = 'none'; // Возвращаем как было
-                    if (elementUnderMouse && elementUnderMouse.classList.contains('token-bracket')) {
+                    hintMouseMove(elementUnderMouse);
+                    /*if (elementUnderMouse && elementUnderMouse.classList.contains('token-bracket')) {
                         setHighlightedBrackets(elementUnderMouse);
                     } else {
                         clearHighlightedBrackets();
-                    }                 
+                    }*/                 
                 }
             });
+
+            textarea.addEventListener('mouseleave', hideHint);
+            highlightLayer.addEventListener('mouseleave', hideHint);
 
             // Стандартные слушатели для действий пользователя
             textarea.addEventListener('input', (event) => {
