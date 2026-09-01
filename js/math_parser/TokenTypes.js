@@ -84,7 +84,7 @@ export const TokenType = {};
 export const TokenDetails = new Array(tokensConfig.length);
 
 // Автоматически заполняем его: { EOF: 0, NUMBER: 1, COMPLEX_NUMBER: 2, ... }
-for (let i = 0; i < tokenNames.length; i++) {
+for (let i = 0; i < tokensConfig.length; i++) {
   const item = tokensConfig[i];
   TokenType[item.name] = i;
   TokenDetails[i] = {
