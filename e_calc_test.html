@@ -1607,15 +1607,17 @@
 
         function executeCurrentCommand() {
             // Если что-то уже запущено — отменяем старый запуск
-            if (currentController) {
-                currentController.abort();
-            }
+            if (currentController) return;
             
             toggleBottomPanel(false);
             errorNav.clear();
             const rawCode = textarea.value;
             if (!rawCode.trim()) return; // Игнорируем пустой ввод
             let resultBlock; let card; let parser;
+            // Создаем новый контроллер отмены
+            currentController = new AbortController();
+            const { signal } = currentController;
+
             try {
                 // Запускаем наш потоковый LL(1) компилятор
                 parser = new MathParser(rawCode, globalScope);
