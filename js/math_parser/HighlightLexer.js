@@ -105,7 +105,7 @@ export function HighlightLerxer(text) {
             default: throw new Error(`[HighlightLerxer]: неизвестный токен ${token}`);
         }
         token = lexer.next();
-        tokenDetails =  TokenDetails[token].hint;
+        tokenDetails =  TokenDetails[token].hint || '';
     }
     // ПОСТ-ОБРАБОТКА:
     // Если в стеке остались открывающие скобки, у которых нет закрывающих,
