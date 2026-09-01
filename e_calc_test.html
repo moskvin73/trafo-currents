@@ -1605,6 +1605,13 @@
 
         let currentController = null; // Ссылка для отмены текущего процесса
 
+        // Функция отмены (вызывается по клику на "Остановить")
+        function stopExecution() {
+        if (currentController) {
+            currentController.abort(); // Посылает сигнал (.aborted становится true)
+        }
+        }        
+
         function executeCurrentCommand() {
             // Если что-то уже запущено — отменяем старый запуск
             if (currentController) return;
