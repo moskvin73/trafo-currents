@@ -134,14 +134,23 @@ class reportRecord {
   get type_unit() { return this.node.type_unit; }
 }
 
+// Специальный класс ошибки для контролируемого прерывания
+export class ExecutionAbortedError extends Error {
+  constructor(message = "Execution aborted by user") {
+    super(message);
+    this.name = "ExecutionAbortedError";
+  }
+}
+
 class context_evallution
 {
-  constructor(scope_context, errors) {
+  constructor(scope_context, errors, signal = null) {
     this.errors = errors;
     this.scope_context = scope_context;
     this.code = null;
     this.index_code = 0;
     this.report = [];
+    this.signal = signal; // Храним ссылку на AbortSignal
   }
 
   call_code(code, index = 0) {
@@ -164,6 +173,11 @@ class context_evallution
 
   run() {
     while (this.index_code < this.code.length) {
+      // КРИТИЧЕСКАЯ ТОЧКА: Проверяем, не было ли отмены на этой итерации
+      if (this.signal && this.signal.aborted) {
+        throw new ExecutionAbortedError();
+      }
+
       const ast_op = this.code[this.index_code++];
       if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
       {
@@ -287,7 +301,7 @@ export class MathParser {
   /**
    * Главный метод запуска LL(1) анализа
    */
-  parse() {
+  parse(signal) {
     try {
         const code = [];
         this.#parseCode(code);
