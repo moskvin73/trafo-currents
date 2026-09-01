@@ -295,7 +295,7 @@ export class MathParser {
   }
 
   #create_evl_context(signal = null) {
-    return new context_evallution(this.context, this.errors);
+    return new context_evallution(this.context, this.errors, signal);
   }
 
   /**
