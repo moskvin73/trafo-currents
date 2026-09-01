@@ -260,6 +260,11 @@
             padding: 2px 6px;
         }
 
+        .panel-buttons {
+            display: flex;
+            /*gap: 8px;  Расстояние между кнопками */
+        }
+
         /* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
         #calc-submit-btn, 
         #calc-stop-btn {
@@ -940,9 +945,9 @@
             <div id="calc-floating-error-list" class="floating-error-list" tabindex="0"></div>
         </div>
         <div class="bottom-panel" id="bottomPanel">
-            <div>
-                </div><button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
-                </div><button id="calc-stop-btn" disabled title="Остановить выполнение">⏹ Прервать</button>
+            <div class="panel-buttons">
+                <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
+                <button id="calc-stop-btn" disabled title="Остановить выполнение">⏹ Прервать</button>
             </div>
             <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
         </div>
