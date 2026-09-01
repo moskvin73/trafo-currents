@@ -261,7 +261,8 @@
         }
 
         /* АККУРАТНАЯ КНОПКА ЗАПУСКА В ПАНЕЛИ */
-        #calc-submit-btn {
+        #calc-submit-btn, 
+        #calc-stop-btn {
             background: var(--calc-color-brand);
             color: white; 
             border: none;
@@ -276,8 +277,8 @@
             align-items: center;
             gap: 6px;
         }
-        #calc-submit-btn:hover { background: var(--calc-color-brand-hover); }
-        #calc-submit-btn:active { transform: scale(0.97); }
+        #calc-submit-btn:hover, #calc-stop-btn:hover { background: var(--calc-color-brand-hover); }
+        #calc-submit-btn:active, #calc-stop-btn:active { transform: scale(0.97); }
 
         /* ИНДИКАТОР КУРСОРA */
         .cursor-position {
@@ -939,7 +940,10 @@
             <div id="calc-floating-error-list" class="floating-error-list" tabindex="0"></div>
         </div>
         <div class="bottom-panel" id="bottomPanel">
-            <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
+            <div>
+                </div><button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
+                </div><button id="calc-stop-btn" title="Остановить выполнение">⏹ Прервать</button>
+            </div>
             <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
         </div>
     </div>
@@ -1552,6 +1556,7 @@
         //#endregion Size Paneles
 
         const submitBtn = document.getElementById("calc-submit-btn");
+        const stopBtn = document.getElementById("calc-stop-btn");
         const historyStream = document.getElementById("calc-history-stream");
 
         function createCard(rawCode) {
