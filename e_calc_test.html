@@ -686,7 +686,7 @@
             line-height: var(--main-line-height); /* Должно строго совпадать с родителем */
             white-space: pre-wrap; /* Наследуем правильный перенос */
             word-break: break-word; /* Наследуем разрыв слов */
-            min-height: 1.5em; /* Гарантирует высоту строки, если она пустая */
+            min-height: calc(var(--main-line-height) * 1em);  /* Гарантирует высоту строки, если она пустая */
         }        
 
         .highlight-layer .token-error { background-color: red; }
