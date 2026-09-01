@@ -16,7 +16,7 @@ export function HighlightLerxer(text) {
     const bracketStack = [];
     let bracketIdCounter = 0; 
     let token = lexer.next();
-    let hint =  TokenDetails[token].hint  || '';
+    let hint =  htmlEscape(TokenDetails[token].hint || '');
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
             chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${hint}">${lexer.stringValue()}</span>`});
@@ -105,7 +105,7 @@ export function HighlightLerxer(text) {
             default: throw new Error(`[HighlightLerxer]: неизвестный токен ${token}`);
         }
         token = lexer.next();
-        hint =  TokenDetails[token].hint || '';
+        hint =  htmlEscape(TokenDetails[token].hint || '');
     }
     // ПОСТ-ОБРАБОТКА:
     // Если в стеке остались открывающие скобки, у которых нет закрывающих,
