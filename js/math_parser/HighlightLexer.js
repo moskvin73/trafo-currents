@@ -91,16 +91,16 @@ export function HighlightLerxer(text) {
                 chunks.push({ type: 'TEXT', html: `<span class="token-varable" data-title="${tokenDetails}">${lexer.stringValue()}</span>`});
                 break;
             case TokenType.LT:       // <
-                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters" data-title="${tokenDetails}">&lt;</span>'});
+                chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${tokenDetails}">&lt;</span>`});
                 break;
             case TokenType.GT:       // >
-                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters" data-title="${tokenDetails}">&gt;</span>'});
+                chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${tokenDetails}">&gt;</span>`});
                 break;
             case TokenType.LTE:      // <=
-                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters" data-title="${tokenDetails}">&lt;=</span>'});
+                chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${tokenDetails}">&lt;=</span>`});
                 break;
             case TokenType.GTE:      // >=
-                chunks.push({ type: 'TEXT', html: '<span class="token-rw-characters" data-title="${tokenDetails}">&gt;=</span>'});
+                chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${tokenDetails}">&gt;=</span>`});
                 break;
             default: throw new Error(`[HighlightLerxer]: неизвестный токен ${token}`);
         }
