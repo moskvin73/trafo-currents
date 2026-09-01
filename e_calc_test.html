@@ -1607,9 +1607,9 @@
 
         // Функция отмены (вызывается по клику на "Остановить")
         function stopExecution() {
-        if (currentController) {
-            currentController.abort(); // Посылает сигнал (.aborted становится true)
-        }
+            if (currentController) {
+                currentController.abort(); // Посылает сигнал (.aborted становится true)
+            }
         }        
 
         function executeCurrentCommand() {
