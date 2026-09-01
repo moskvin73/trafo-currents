@@ -1622,7 +1622,7 @@
             }
         }        
 
-        function executeCurrentCommand() {
+        async function executeCurrentCommand() {
             // Если что-то уже запущено
             if (currentController) return;
             
@@ -1649,22 +1649,7 @@
                             reject(error);
                         }
                     }, 0);
-                }).then((report) => {
-                    console.log("Выполнение успешно завершено:", report);
-                })
-                .catch((error) => {
-                    if (error instanceof ExecutionAbortedError) {
-                        throw new Error("Выполнение было принудительно остановлено пользователем.");
-                    } else {
-                        throw error; 
-                    }
-                })
-                .finally(() => {
-                    // Сбрасываем состояние кнопок
-                    stopBtn.disabled = true;
-                    submitBtn.disabled = false;
-                    currentController = null;
-                });                
+                });            
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
                     toggleBottomPanel(true);
@@ -1764,6 +1749,12 @@
                 }
                 console.error(msg);
                 return;
+            } finally {
+                // Этот блок гарантированно выполнится в конце:
+                // и при успехе, и при ошибке, и при отмене.
+                stopBtn.disabled = true;
+                submitBtn.disabled = false;
+                currentController = null;
             }
             // 5. Вставляем готовую карточку в ленту истории
             historyStream.appendChild(card);
