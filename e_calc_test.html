@@ -1898,7 +1898,8 @@
                 // Вспомогательная функция для запуска таймера
                 const queueHint = (text) => {
                     hintTimeout = setTimeout(() => {
-                        showHint(elementUnderMouse, text);
+                        const title = span.getAttribute('data-title');
+                        showHint(elementUnderMouse, title || text);
                     }, HINT_DELAY);
                 };                
                 switch (true) {
@@ -1950,11 +1951,6 @@
                     textarea.style.pointerEvents = 'auto'; // Возвращаем как было
                     highlightLayer.style.pointerEvents = 'none'; // Возвращаем как было
                     hintMouseMove(elementUnderMouse);
-                    /*if (elementUnderMouse && elementUnderMouse.classList.contains('token-bracket')) {
-                        setHighlightedBrackets(elementUnderMouse);
-                    } else {
-                        clearHighlightedBrackets();
-                    }*/                 
                 }
             });
 
