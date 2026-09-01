@@ -16,7 +16,7 @@ export function HighlightLerxer(text) {
     const bracketStack = [];
     let bracketIdCounter = 0; 
     let token = lexer.next();
-    let tokenDetails =  TokenDetails[token];
+    let tokenDetails =  TokenDetails[token].hint;
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
             chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters data-title="${tokenDetails}">${lexer.stringValue()}</span>`});
