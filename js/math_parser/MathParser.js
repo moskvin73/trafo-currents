@@ -294,19 +294,19 @@ export class MathParser {
     this.errors.push(err);
   }
 
-  #create_evl_context() {
+  #create_evl_context(signal = null) {
     return new context_evallution(this.context, this.errors);
   }
 
   /**
    * Главный метод запуска LL(1) анализа
    */
-  parse(signal) {
+  parse(signal = null) {
     try {
         const code = [];
         this.#parseCode(code);
         if (this.errors.length === 0) {
-            const evl_context = this.#create_evl_context();
+            const evl_context = this.#create_evl_context(signal);
             evl_context.code = code;
             evl_context.run();
             this.#program.statements = evl_context.report;
