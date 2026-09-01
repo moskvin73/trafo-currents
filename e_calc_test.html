@@ -1868,22 +1868,51 @@
                 
                 currentHintElement = element;
                 
-                // 1. Устанавливаем текст подсказки
+                // Сначала сбрасываем старые стили положения (чтобы max-width считался честно)
+                tooltipElement.style.left = '-9999px';
+                tooltipElement.style.top = '-9999px';                
+                // Устанавливаем текст подсказки
                 tooltipElement.textContent = text;
-                
-                // 2. Получаем координаты целевого элемента на экране
-                const rect = element.getBoundingClientRect();
-                
-                // 3. Рассчитываем позицию (по центру сверху элемента с учетом прокрутки страницы)
-                const tooltipX = rect.left + window.scrollX + (rect.width / 2) - (tooltipElement.offsetWidth / 2);
-                const tooltipY = rect.top + window.scrollY - tooltipElement.offsetHeight - 8; // 8px — отступ сверху
-                
-                // 4. Применяем координаты
-                tooltipElement.style.left = `${tooltipX}px`;
-                tooltipElement.style.top = `${tooltipY}px`;
-                
-                // 5. Показываем подсказку, добавляя класс
-                tooltipElement.classList.add('visible');
+  // Делаем элемент видимым, чтобы браузер рассчитал его реальные offsetWidth/offsetHeight
+  //tooltipElement.classList.add('visible');                
+  // Получаем координаты целевого элемента и размеры экрана
+  const rect = element.getBoundingClientRect();
+  const tooltipWidth = tooltipElement.offsetWidth;
+  const tooltipHeight = tooltipElement.offsetHeight;
+  
+  const viewportWidth = window.innerWidth;
+  const padding = 10; // Минимальный отступ от края экрана
+
+  // Рассчитываем X координату с защитой от выхода за левый/правый край
+  let tooltipX = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+  
+  // Коррекция по левому краю
+  if (tooltipX < padding) {
+    tooltipX = padding;
+  }
+  // Коррекция по правому краю
+  if (tooltipX + tooltipWidth > viewportWidth - padding) {
+    tooltipX = viewportWidth - tooltipWidth - padding;
+  }
+  
+  // Добавляем прокрутку страницы к X
+  tooltipX += window.scrollX;
+
+  // Рассчитываем Y координату. Если сверху места нет, показываем ПОД элементом
+  let tooltipY = rect.top - tooltipHeight - 8; // По умолчанию сверху
+  
+  if (tooltipY < padding) { 
+    // Если сверху не помещается, перекидываем вниз элемента
+    tooltipY = rect.bottom + 8; 
+  }
+  
+  // Добавляем прокрутку страницы к Y
+  tooltipY += window.scrollY;
+
+  // 7. Применяем финальные координаты
+  tooltipElement.style.left = `${tooltipX}px`;
+  tooltipElement.style.top = `${tooltipY}px`;
+  tooltipElement.classList.add('visible');
             };
 
             // Функция для скрытия подсказки
