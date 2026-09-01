@@ -1898,7 +1898,7 @@
                 // Вспомогательная функция для запуска таймера
                 const queueHint = (text) => {
                     hintTimeout = setTimeout(() => {
-                        const title = span.getAttribute('data-title');
+                        const title = elementUnderMouse.getAttribute('data-title');
                         showHint(elementUnderMouse, title || text);
                     }, HINT_DELAY);
                 };                
