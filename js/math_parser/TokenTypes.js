@@ -1,43 +1,43 @@
 // Просто пишем список названий по порядку
-const tokenNames = [
-  'EOF',
+const tokensConfig = [
+  { name: 'EOF', hint: null },
 
-  'COMMENT',
-  'NL',
-  'SPACES',
-  'ERROR',
-  'ERROR_STR',
-  'NUMBER',
-  'COMPLEX_NUMBER',
-  'VARIABLE',
-  'TEXT_BLOCK',
+  { name: 'NL', hint: null },
+  { name: 'SPACES', hint: null },
+  { name: 'COMMENT', hint: 'Комментарий' },
+  { name: 'ERROR', hint: 'Лексическая ошибка' },
+  { name: 'ERROR_STR', hint: 'Незакрытая строка' },
+  { name: 'NUMBER', hint: 'Число' },
+  { name: 'COMPLEX_NUMBER', hint: 'Комплексное число' },
+  { name: 'VARIABLE', hint: 'Идентификатор / Переменная' },
+  { name: 'TEXT_BLOCK', hint: 'Текстовый блок' },
 
   // Зарезервированные символы
-  'PLUS',     // +
-  'MINUS',    // -
-  'MUL',      // *
-  'DIV',      // /
-  'POW',      // ** или ^
-  'ASSIGN',   // ==
-  'SEMICOLON',// ;
-  'SILENT',   // $
-  'COMMA',    // ,
-  'EQU',      // ==
-  'NOT_EQU',  // !=
+  { name: 'PLUS', hint: 'Оператор сложения' },    // +
+  { name: 'MINUS', hint: 'Оператор вычитания' },   // -
+  { name: 'MUL', hint: 'Оператор умножения' },     // *
+  { name: 'DIV', hint: 'Оператор деления' },     // /
+  { name: 'POW', hint: 'Оператор возвидения в стпень' },     // ** или ^
+  { name: 'ASSIGN', hint: 'Оператор присвоения' },  // =
+  { name: 'SEMICOLON', hint: 'Оператор разделителя инструкций с отображением результата' }, // ;
+  { name: 'SILENT', hint: 'Оператор разделителя инструкций без отображением результата' },   // $
+  { name: 'COMMA', hint: 'Оператор последовательного вычисление выражений' },   // ,
+  { name: 'EQU', hint: 'Оператор равенства' },     // ==
+  { name: 'NOT_EQU', hint: 'Оператор не равенства' }, // !=
 
   // Экронируемые символы
-  'LT',       // <
-  'GT',       // >
-  'LTE',      // <=
-  'GTE',      // >=
+  { name: 'LT', hint: 'Оператор меньше' },      // <
+  { name: 'GT', hint: 'Оператор больше' },      // >
+  { name: 'LTE', hint: 'Оператор меньше или равно' },     // <=
+  { name: 'GTE', hint: 'Оператор больше или равно' },     // >=
 
   // Cкобки
-  'LPAREN',   // (
-  'LSQUARE',  // [
-  'RSQUARE',  // ]
-  'RPAREN',   // )
-  'LBRACE',   // {
-  'RBRACE',   // }
+  { name: 'LPAREN', hint: 'Открывающаяся скобка группировки выражений' },  // (
+  { name: 'RPAREN', hint: 'Зарывающаяся скобка группировки выражений' },  // )
+  { name: 'LSQUARE', hint: 'Начало составного оператора' }, // [
+  { name: 'LBRACE', hint: 'Окончание составного оператора' },  // {
+  { name: 'RSQUARE', hint: 'Начало оператора индексации' }, // ]
+  { name: 'RBRACE', hint: 'Окончание  оператора индексации' },  // }
 
   // Зарезервированные констаны начинающиеся на %
   'MATH_PI',
@@ -80,9 +80,18 @@ const tokenNames = [
 // Создаем пустой объект перечисления
 export const TokenType = {};
 
+// Экспортируем подсказки и код для доступа по индексу токена: TokenDetails[6]
+export const TokenDetails = new Array(tokensConfig.length);
+
 // Автоматически заполняем его: { EOF: 0, NUMBER: 1, COMPLEX_NUMBER: 2, ... }
 for (let i = 0; i < tokenNames.length; i++) {
-  TokenType[tokenNames[i]] = i;
+  const item = tokensConfig[i];
+  TokenType[item.name] = i;
+  TokenDetails[i] = {
+    name: item.name,
+    hint: item.hint,
+    action: item.action || null // Если кода нет, пишем null
+  };
 }
 
 TokenType.FIRST_RESERVED_CHARACTERS = TokenType.PLUS;
@@ -95,3 +104,4 @@ TokenType.FIRST_RESERVED_WORDS = TokenType.RW_PRINT;
 TokenType.LAST_RESERVED_WORDS = TokenType.RW_ERROR;
 // Замораживаем для оптимизации V8
 Object.freeze(TokenType);
+Object.freeze(TokenDetails);
