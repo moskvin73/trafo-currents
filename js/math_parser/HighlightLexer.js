@@ -19,7 +19,7 @@ export function HighlightLerxer(text) {
     let tokenDetails =  TokenDetails[token].hint  || '';
     while (token !== TokenType.EOF) {
         if (token >= TokenType.FIRST_RESERVED_CHARACTERS && token <= TokenType.LAST_RESERVED_CHARACTERS)
-            chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters data-title="${tokenDetails}">${lexer.stringValue()}</span>`});
+            chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${tokenDetails}">${lexer.stringValue()}</span>`});
         else if (token >= TokenType.FIRST_RESERVED_CONSTANTS && token <= TokenType.LAST_RESERVED_CONSTANTS)
             chunks.push({ type: 'TEXT', html: `<span class="token-rw-constants" data-title="${tokenDetails}">${lexer.source.slice(lexer.tokenStart, lexer.tokenEnd)}</span>`});
         else if (token >= TokenType.FIRST_RESERVED_WORDS && token <= TokenType.LAST_RESERVED_WORDS)
