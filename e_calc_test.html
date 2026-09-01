@@ -13,7 +13,7 @@
             --chars_tab: 4;
             --main-line-height: 1.5; /* межстрочный интервал (высоту строки). */
             --main-font: 'Fira Code', 'Courier New', monospace;
-            
+
             --close-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
             --close-icon-size: 16px;
             --color-resizer: #ccc;
@@ -683,7 +683,7 @@
 
         .highlight-layer .code-line {
             width: 100%;
-            line-height: 1.5; /* Должно строго совпадать с родителем */
+            line-height: var(--main-line-height); /* Должно строго совпадать с родителем */
             white-space: pre-wrap; /* Наследуем правильный перенос */
             word-break: break-word; /* Наследуем разрыв слов */
             min-height: 1.5em; /* Гарантирует высоту строки, если она пустая */
