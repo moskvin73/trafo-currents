@@ -759,6 +759,7 @@
 
         /* Стили для всплывающей подсказки */
         .custom-tooltip {
+            font-family: 'Cascadia Code', 'Consolas', 'Fira Code', 'JetBrains Mono', monospace;
             position: absolute;
             background-color: #333;
             color: #fff;
@@ -790,6 +791,17 @@
         .custom-tooltip.visible {
             opacity: 1;
         }
+
+        .custom-tooltip * {
+            font-family: inherit; /* Распространяет шрифт на span, b, code и т.д. */
+        }
+
+        /* Если внутри тултипа будут блоки кода или форматированный текст */
+        .custom-tooltip pre, 
+        .custom-tooltip code {
+            margin: 0;
+            white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
+        }       
 
    </style>
 </head>
