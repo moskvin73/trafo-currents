@@ -1641,10 +1641,11 @@
                 parser.chars_tab = var_css.chars_tab;
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
-                new Promise((resolve, reject) => {
+                await new Promise((resolve, reject) => {
                     setTimeout(() => {
                         try {
                             parser.parse(signal);
+                            resolve(); 
                         } catch (error) {
                             reject(error);
                         }
