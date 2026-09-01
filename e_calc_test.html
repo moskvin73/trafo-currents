@@ -1863,8 +1863,8 @@
             const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
 
             // Функция для отображения подсказки (реализуйте UI под вашу задачу)
-            const showHint = (element, text) => {
-                if (!element || !text) return;
+            const showHint = (element, htmlText) => {
+                if (!element || !htmlText) return;
                 
                 currentHintElement = element;
                 
@@ -1872,7 +1872,7 @@
                 tooltipElement.style.left = '-9999px';
                 tooltipElement.style.top = '-9999px';                
                 // Устанавливаем текст подсказки
-                tooltipElement.textContent = text;
+                tooltipElement.innerHTML = htmlText;
                 // Получаем координаты целевого элемента и размеры экрана
                 const rect = element.getBoundingClientRect();
                 const tooltipWidth = tooltipElement.offsetWidth;
