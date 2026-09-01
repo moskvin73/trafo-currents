@@ -1603,7 +1603,14 @@
             return { card: card, resultBlock: resultBlock  };
         }
 
+        let currentController = null; // Ссылка для отмены текущего процесса
+
         function executeCurrentCommand() {
+            // Если что-то уже запущено — отменяем старый запуск
+            if (currentController) {
+                currentController.abort();
+            }
+            
             toggleBottomPanel(false);
             errorNav.clear();
             const rawCode = textarea.value;
