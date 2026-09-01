@@ -48,12 +48,12 @@ const tokensConfig = [
 
   // Зарезервированные слова
   { name: 'RW_PRINT', hint: 'Оператор вывода значения последовательности аргументов\nprint ( аргумент , ... ).\nГде аргумент — это <строка> или <выражение>.' },
-  { name: 'RW_TRUE', hint: '' },
-  { name: 'RW_FALSE', hint: '' },
-  { name: 'RW_BOOL', hint: '' },
-  { name: 'RW_REAL', hint: '' },
-  { name: 'RW_COMPLEX', hint: '' },
-  { name: 'RW_MATRIX', hint: '' },
+  { name: 'RW_TRUE', hint: 'Логическая истина. Логический тип (bool)' },
+  { name: 'RW_FALSE', hint: 'Логическая ложь. Логический тип (bool)' },
+  { name: 'RW_BOOL', hint: 'Логический тип данных.\nПринимает значения true или false' },
+  { name: 'RW_REAL', hint: 'Числовые тип (вещественное число).' },
+  { name: 'RW_COMPLEX', hint: 'Числовые тип (Комплексное число).' },
+  { name: 'RW_MATRIX', hint: 'Структура данных (Двумерный массив (таблица) или одномерный массив (вектор строка).)' },
   { name: 'RW_PLOT_INIT', hint: '' },
   { name: 'RW_PLOT_CONFIG', hint: '' },
   { name: 'RW_PLOT_LAYER', hint: '' },
