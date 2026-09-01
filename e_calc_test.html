@@ -1622,7 +1622,29 @@
                 // Запускаем наш потоковый LL(1) компилятор
                 parser = new MathParser(rawCode, globalScope);
                 parser.chars_tab = var_css.chars_tab;
-                parser.parse();
+                new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        try {
+                            parser.parse(signal);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    }, 0);
+                }).then((report) => {
+                    console.log("Выполнение успешно завершено:", report);
+                })
+                .catch((error) => {
+                    if (error instanceof ExecutionAbortedError) {
+                    console.warn("Выполнение было принудительно остановлено пользователем.");
+                    } else {
+                    console.error("Произошла ошибка во время выполнения:", error);
+                    }
+                })
+                .finally(() => {
+                    // Сбрасываем состояние кнопок
+                    //document.getElementById('stopBtn').disabled = true;
+                    currentController = null;
+                });                
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
                     toggleBottomPanel(true);
