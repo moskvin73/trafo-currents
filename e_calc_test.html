@@ -1642,6 +1642,12 @@
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
                 await new Promise((resolve, reject) => {
+                    // Если отмена произошла еще до запуска
+                    if (signal.aborted) return reject(new DOMException('Aborted', 'AbortError'));
+                    
+                    // Слушаем событие отмены во время ожидания в очереди макротасок
+                    signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+
                     setTimeout(() => {
                         try {
                             parser.parse(signal);
