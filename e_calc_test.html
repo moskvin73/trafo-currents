@@ -1635,9 +1635,9 @@
                 })
                 .catch((error) => {
                     if (error instanceof ExecutionAbortedError) {
-                    console.warn("Выполнение было принудительно остановлено пользователем.");
+                        throw new Error("Выполнение было принудительно остановлено пользователем.");
                     } else {
-                    console.error("Произошла ошибка во время выполнения:", error);
+                        throw error; 
                     }
                 })
                 .finally(() => {
