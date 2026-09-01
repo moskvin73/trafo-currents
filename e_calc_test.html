@@ -770,6 +770,20 @@
             transition: opacity 0.15s ease-in-out;
             z-index: 9999;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+            
+            /* Ограничение размеров относительно экрана */
+            max-width: 40vw;         /* Максимум 40% от ширины экрана */
+            max-height: 20vh;        /* Максимум 20% от высоты экрана */
+            
+            /* Перенос слов и монолитных строк */
+            word-break: break-word;  /* Перенос по словам, длинные слова режутся */
+            overflow: hidden;        /* Прячем все, что не влезло */
+            
+            /* Многоточие при переполнении по высоте */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;   /* Максимальное количество строк, затем ... */            
         }
 
         /* Класс для отображения */
