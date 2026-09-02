@@ -200,7 +200,7 @@ class context_evallution
         const index = Math.min(this.index_code, this.code.length - 2); 
         const ast_op = this.code[index];
         this.error(err.message, ast_op.loc);
-      }
+    }
   }
 
   get count() { return this.errors.length; }
