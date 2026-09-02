@@ -181,7 +181,7 @@ class context_evallution
     this.scope_context = scope_context;
     this.code = null;
     this.index_code = 0;
-    this.report = [];//new LimitedStack(100);
+    this.report = new LimitedStack(100);
     this.signal = signal; // Храним ссылку на AbortSignal
   }
 
