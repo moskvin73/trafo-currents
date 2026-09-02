@@ -1646,6 +1646,9 @@
                 parser.chars_tab = var_css.chars_tab;
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
+                parser.addEventListener('parse-progress', (event) => {
+                    uiLogContainer.innerHTML += `<div>${event.detail.message}</div>`;
+                });
                 parser.parse(signal).then(() => {
                     currentController = null;
                     stopBtn.disabled = true;
