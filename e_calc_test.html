@@ -1833,6 +1833,8 @@
 
                 // 2. Подсвечиваем синтаксис (лексер теперь возвращает строки внутри <div class="code-line">)
                 const text = textarea.value;
+                if (text.trim()) submitBtn.disabled = false;
+                else submitBtn.disabled = true;
                 highlightLayer.innerHTML = HighlightLerxer(text);
 
                 // 3. Получаем все сгенерированные строки из DOM
