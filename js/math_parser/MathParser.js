@@ -331,8 +331,9 @@ export class MathParser {
   async parse(signal = null, onMessage = null) {
     try {
         const code = [];
-        this.#parseCode(code);
+        this.#parseCode(code);           
         if (this.errors.length === 0) {
+            if (onMessage) onMessage("Выпронение");
             const evl_context = this.#create_evl_context(signal);
             evl_context.code = code;
             await evl_context.run();
