@@ -178,7 +178,7 @@ class context_evallution
     while (this.index_code < this.code.length) {
         // Проверка прерывания
         if (this.signal?.aborted) {
-            throw new DOMException("Execution aborted", "AbortError"); 
+            throw new DOMException("Выполнение остановлено пользователем", "AbortError"); 
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
