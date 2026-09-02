@@ -953,6 +953,7 @@
             <div class="panel-buttons">
                 <button id="calc-submit-btn" title="Запустить код (Ctrl+Enter)">▶ Выполнить</button>
                 <button id="calc-stop-btn" disabled title="Остановить выполнение">⏹ Прервать</button>
+                <div id="calc-log"></div>
             </div>
             <div id="calc-cursor-position" class="cursor-position">Стр 1, Кол 1</div>
         </div>
@@ -1568,6 +1569,7 @@
         const submitBtn = document.getElementById("calc-submit-btn");
         const stopBtn = document.getElementById("calc-stop-btn");
         const historyStream = document.getElementById("calc-history-stream");
+        const uiLogContainer = document.getElementById("calc-log");
 
         function createCard(rawCode) {
             rawCode = HighlightLerxer(rawCode.replace(/^[\s\u2028\u2029\u0085\u000C]*\n/gm, ''));
