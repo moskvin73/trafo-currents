@@ -1638,11 +1638,12 @@
                 // Запускаем наш потоковый LL(1) компилятор
                 parser = new MathParser(rawCode, globalScope);
                 parser.chars_tab = var_css.chars_tab;
-                //stopBtn.disabled = false;
-                //submitBtn.disabled = true;
+                stopBtn.disabled = false;
+                submitBtn.disabled = true;
                 parser.parse(signal).then(() => {
                     currentController = null;
-
+                    stopBtn.disabled = true;
+                    submitBtn.disabled = false;
                     if (parser.errors.length > 0) {
                         errorNav.setItems(parser.errors);
                         toggleBottomPanel(true);
