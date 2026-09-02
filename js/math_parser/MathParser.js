@@ -136,8 +136,9 @@ class reportRecord {
 
 // Специальный класс ошибки для контролируемого прерывания
 export class ExecutionAbortedError extends Error {
-  constructor(message = "Execution aborted by user") {
+  constructor(loc, message = "Execution aborted by user") {
     super(message);
+    this.loc = loc;
     this.name = "ExecutionAbortedError";
   }
 }
@@ -159,7 +160,7 @@ class context_evallution
     this.code = code;
     this.index_code = index;
     const len = this.report.length;
-    this.run();
+    this.#intrnalRun();
     this.code = sw_code;
     this.index_code = sw_index;
     // Если код что то вывел в отчёт
@@ -171,14 +172,14 @@ class context_evallution
     }
   }
 
-  run() {
+  #intrnalRun() {
     while (this.index_code < this.code.length) {
+      const ast_op = this.code[this.index_code++];
       // КРИТИЧЕСКАЯ ТОЧКА: Проверяем, не было ли отмены на этой итерации
       if (this.signal && this.signal.aborted) {
-        throw new ExecutionAbortedError();
+        throw new ExecutionAbortedError(ast_op.loc);
       }
 
-      const ast_op = this.code[this.index_code++];
       if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
       {
         const value = ast_op.node.evaluate(this);
@@ -189,6 +190,17 @@ class context_evallution
       }
       else ast_op.node.evaluate(this);
     }
+  }
+
+  run() {
+    try
+    {
+      this.#intrnalRun();
+    } catch(err) {
+        const index = Math.min(this.index_code, this.code.length - 2); 
+        const ast_op = this.code[index];
+        this.error(err.message, ast_op.loc);
+      }
   }
 
   get count() { return this.errors.length; }
