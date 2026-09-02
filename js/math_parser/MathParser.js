@@ -142,6 +142,34 @@ export class ExecutionAbortedError extends Error {
   }
 }
 
+class LimitedStack {
+    constructor(maxSize = 100) {
+        this.maxSize = maxSize;
+        this.items = [];
+    }
+
+    push(item) {
+        this.items.push(item);
+        if (this.items.length > this.maxSize) {
+            this.items.shift(); // Удаляем первый (старый) элемент
+        }
+    }
+
+    pop() {
+        return this.items.pop();
+    }
+
+    get length() {
+        return this.items.length;
+    }
+    
+    // Позволит перебирать отчет, если это нужно (например, в цикле for-of)
+    [Symbol.iterator]() {
+        return this.items[Symbol.iterator]();
+    }
+}
+
+
 class context_evallution
 {
   constructor(scope_context, errors, signal = null) {
@@ -149,7 +177,7 @@ class context_evallution
     this.scope_context = scope_context;
     this.code = null;
     this.index_code = 0;
-    this.report = [];
+    this.report = new LimitedStack(100);
     this.signal = signal; // Храним ссылку на AbortSignal
   }
 
