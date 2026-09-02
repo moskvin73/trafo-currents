@@ -249,6 +249,7 @@ export class MathParser extends EventTarget {
    * @throws {TypeError} Если `context` не является экземпляром SymbolTableContext.
    */
   constructor(input, context, baseLine = 1) {
+    super();
     // 1. Валидация входной строки
     if (typeof input !== 'string') {
         throw new TypeError(`Ожидалась строка в параметре 'input', получено: ${typeof input}`);
