@@ -818,17 +818,19 @@
         }       
 
         #calc-log {
-        display: flex;
-        align-items: center; /* Центрирование по вертикали */
-        white-space: nowrap; /* Запрет переноса строки */
-        overflow: hidden; /* Скрытие выходящего текста */
-        text-overflow: ellipsis; /* Добавление многоточия */
-        font-family: 'Fira Code', monospace;
-        font-size: 11px;
-        color: var(--calc-color-echo);
-        
-        /* Обязательно укажите ширину (или max-width) и высоту */
-        width: 100%; 
+            display: flex;
+            align-items: center; /* Центрирование по вертикали */
+            white-space: nowrap; /* Запрет переноса строки */
+            overflow: hidden; /* Скрытие выходящего текста */
+            text-overflow: ellipsis; /* Добавление многоточия */
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: var(--calc-color-echo);
+            height: 22px; /* Высота, равная высоте ваших кнопок */
+            line-height: 1;
+            
+            /* Обязательно укажите ширину (или max-width) и высоту */
+            width: 100%; 
         }
 
    </style>
