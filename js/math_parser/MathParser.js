@@ -179,7 +179,6 @@ class context_evallution
         // Проверка прерывания
         if (this.signal?.aborted) {
             throw new DOMException("Execution aborted", "AbortError"); 
-            // Или ваш ExecutionAbortedError(ast_op.loc)
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
