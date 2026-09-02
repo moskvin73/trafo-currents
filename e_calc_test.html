@@ -1642,6 +1642,8 @@
                 //stopBtn.disabled = false;
                 //submitBtn.disabled = true;
                 parser.parse(signal).then(() => {
+                    currentController = null;
+                    
                     if (parser.errors.length > 0) {
                         errorNav.setItems(parser.errors);
                         toggleBottomPanel(true);
@@ -1780,7 +1782,7 @@
                 // и при успехе, и при ошибке, и при отмене.
                 //stopBtn.disabled = true;
                 //submitBtn.disabled = false;
-                currentController = null;
+                //currentController = null;
             }
             /*// 5. Вставляем готовую карточку в ленту истории
             historyStream.appendChild(card);
