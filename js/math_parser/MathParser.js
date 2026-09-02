@@ -229,7 +229,7 @@ class context_evallution
 /**
  * Финальный отказоустойчивый Парсер (Рекурсивный спуск)
  */
-export class MathParser {
+export class MathParser extends EventTarget {
   #program;
   #listUndefinedIdentifiers = new IndexedMap();
 
@@ -328,12 +328,14 @@ export class MathParser {
   /**
    * Главный метод запуска LL(1) анализа
    */
-  async parse(signal = null, onMessage = null) {
+  async parse(signal = null) {
     try {
         const code = [];
         this.#parseCode(code);           
         if (this.errors.length === 0) {
-            if (onMessage) onMessage("Выпронение");
+            this.dispatchEvent(new CustomEvent('parse-progress', { 
+              detail: { message: `Выполнение` } 
+            }));
             const evl_context = this.#create_evl_context(signal);
             evl_context.code = code;
             await evl_context.run();
