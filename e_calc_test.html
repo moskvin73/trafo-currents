@@ -1624,8 +1624,7 @@
 
         function executeCurrentCommand() {
             // Если что-то уже запущено
-            if (currentController) return;
-            
+            if (currentController) return;            
             toggleBottomPanel(false);
             errorNav.clear();
             const rawCode = textarea.value;
@@ -1643,7 +1642,7 @@
                 //submitBtn.disabled = true;
                 parser.parse(signal).then(() => {
                     currentController = null;
-                    
+
                     if (parser.errors.length > 0) {
                         errorNav.setItems(parser.errors);
                         toggleBottomPanel(true);
