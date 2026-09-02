@@ -1641,23 +1641,7 @@
                 parser.chars_tab = var_css.chars_tab;
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
-                
-                await new Promise((resolve, reject) => {
-                    // Если отмена произошла еще до запуска
-                    if (signal.aborted) return reject(new DOMException('Aborted', 'AbortError'));
-                    
-                    // Слушаем событие отмены во время ожидания в очереди макротасок
-                    signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
-
-                    setTimeout(() => {
-                        try {
-                            parser.parse(signal);
-                            resolve(); 
-                        } catch (error) {
-                            reject(error);
-                        }
-                    }, 0);
-                });            
+                parser.parse(signal);
                 if (parser.errors.length > 0) {
                     errorNav.setItems(parser.errors);
                     toggleBottomPanel(true);
