@@ -167,6 +167,10 @@ class LimitedStack {
     [Symbol.iterator]() {
         return this.items[Symbol.iterator]();
     }
+
+    map(callback) {
+        return this.items.map(callback);
+    }
 }
 
 
