@@ -206,7 +206,7 @@ class context_evallution
     if (!this.code) return;
     try
     {
-      this.#intrnalRun();
+      await this.#intrnalRun();
     } catch(err) {
         const index = Math.min(this.index_code, this.code.length - 1); 
         const ast_op = this.code[index];
@@ -324,14 +324,14 @@ export class MathParser {
   /**
    * Главный метод запуска LL(1) анализа
    */
-  parse(signal = null) {
+  async parse(signal = null) {
     try {
         const code = [];
         this.#parseCode(code);
         if (this.errors.length === 0) {
             const evl_context = this.#create_evl_context(signal);
             evl_context.code = code;
-            evl_context.run();
+            await evl_context.run();
             this.#program.statements = evl_context.report;
         }
       } catch (error) {
