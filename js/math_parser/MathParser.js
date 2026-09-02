@@ -210,7 +210,7 @@ class context_evallution
     } catch(err) {
         const index = Math.min(this.index_code, this.code.length - 1); 
         const ast_op = this.code[index];
-        this.error(err.message, ast_op.loc);
+        this.error(err.message, ast_op.node.loc);
     }
   }
 
