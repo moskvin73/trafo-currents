@@ -136,9 +136,8 @@ class reportRecord {
 
 // Специальный класс ошибки для контролируемого прерывания
 export class ExecutionAbortedError extends Error {
-  constructor(loc, message = "Execution aborted by user") {
+  constructor(message = "Execution aborted by user") {
     super(message);
-    this.loc = loc;
     this.name = "ExecutionAbortedError";
   }
 }
@@ -181,6 +180,10 @@ class context_evallution
             throw new DOMException("Выполнение остановлено пользователем", "AbortError"); 
         }
 
+        if ( this.errors.length > 0) {
+          throw new ExecutionAbortedError();
+        }
+
         // Квантование времени (освобождаем поток для UI и событий прерывания)
         if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
             iterationsSinceYield = 0;
@@ -208,6 +211,7 @@ class context_evallution
     {
       await this.#intrnalRun();
     } catch(err) {
+        if (err instanceof ExecutionAbortedError) return;
         const index = Math.min(this.index_code, this.code.length - 1); 
         const ast_op = this.code[index];
         this.error(err.message, ast_op.node.loc);
