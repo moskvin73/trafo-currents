@@ -154,7 +154,7 @@ class context_evallution
     this.signal = signal; // Храним ссылку на AbortSignal
   }
 
-  call_code(code, index = 0) {
+  async call_code(code, index = 0) {
     const sw_code = this.code;
     const sw_index = this.index_code;
     this.code = code;
@@ -172,14 +172,25 @@ class context_evallution
     }
   }
 
-  #intrnalRun() {
+  async #intrnalRun() {
+    let iterationsSinceYield = 0;
+    const MAX_ITERATIONS_PER_TICK = 100; 
     while (this.index_code < this.code.length) {
-      const ast_op = this.code[this.index_code++];
-      // КРИТИЧЕСКАЯ ТОЧКА: Проверяем, не было ли отмены на этой итерации
-      if (this.signal && this.signal.aborted) {
-        throw new ExecutionAbortedError(ast_op.loc);
-      }
+        // Проверка прерывания
+        if (this.signal?.aborted) {
+            throw new DOMException("Execution aborted", "AbortError"); 
+            // Или ваш ExecutionAbortedError(ast_op.loc)
+        }
 
+        // Квантование времени (освобождаем поток для UI и событий прерывания)
+        if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
+            iterationsSinceYield = 0;
+            // Даем браузеру обработать клики/события (включая abort)
+            await new Promise(resolve => setTimeout(resolve, 0)); 
+        }
+
+      const ast_op = this.code[this.index_code++];
+      iterationsSinceYield++;
       if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
       {
         const value = ast_op.node.evaluate(this);
@@ -192,13 +203,13 @@ class context_evallution
     }
   }
 
-  run() {
+  async run() {
     if (!this.code) return;
     try
     {
       this.#intrnalRun();
     } catch(err) {
-        const index = Math.min(this.index_code, this.code.length - 2); 
+        const index = Math.min(this.index_code, this.code.length - 1); 
         const ast_op = this.code[index];
         this.error(err.message, ast_op.loc);
     }
