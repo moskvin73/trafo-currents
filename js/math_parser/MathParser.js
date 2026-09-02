@@ -159,7 +159,7 @@ class context_evallution
     this.code = code;
     this.index_code = index;
     const len = this.report.length;
-    this.#intrnalRun();
+    await this.#intrnalRun();
     this.code = sw_code;
     this.index_code = sw_index;
     // Если код что то вывел в отчёт
@@ -332,7 +332,7 @@ export class MathParser extends EventTarget {
   async parse(signal = null) {
     try {
         const code = [];
-        this.#parseCode(code);           
+        await this.#parseCode(code);           
         if (this.errors.length === 0) {
             this.dispatchEvent(new CustomEvent('parse-progress', { 
               detail: { message: `Выполнение` } 
