@@ -1641,6 +1641,7 @@
                 parser.chars_tab = var_css.chars_tab;
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
+                
                 await new Promise((resolve, reject) => {
                     // Если отмена произошла еще до запуска
                     if (signal.aborted) return reject(new DOMException('Aborted', 'AbortError'));
