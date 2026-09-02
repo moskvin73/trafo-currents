@@ -1645,7 +1645,7 @@
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
                 parser.addEventListener('parse-progress', (event) => {
-                    uiLogContainer.innerHTML += `<div>${event.detail.message}</div>`;
+                    uiLogContainer.innerHTML = `<div>${event.detail.message}</div>`;
                 });
                 // Создаем новый контроллер отмены
                 currentController = new AbortController();
