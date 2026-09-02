@@ -411,8 +411,17 @@ export class MathParser {
     TokenType.MINUS,
   ]));
 
-  #parseCode(code) {
-    while (this.c_token !== TokenType.EOF) this.#parseStatement(code);
+  async #parseCode(code) {
+    let counter = 0;
+    while (this.c_token !== TokenType.EOF) {
+     if (counter++ % 50 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 0)); 
+        this.dispatchEvent(new CustomEvent('parse-progress', { 
+          detail: { message: `Парсинг обработано ${counter}% кода ` } 
+        }));
+      }
+      this.#parseStatement(code); 
+    }
   }
 
   #parseStatement(code, f_out = false) {
