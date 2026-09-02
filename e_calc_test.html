@@ -1779,47 +1779,7 @@
                     toggleBottomPanel(true);
                 }
                 console.error(msg);
-                return;
-            } finally {
-                // Этот блок гарантированно выполнится в конце:
-                // и при успехе, и при ошибке, и при отмене.
-                //stopBtn.disabled = true;
-                //submitBtn.disabled = false;
-                //currentController = null;
-            }
-            /*// 5. Вставляем готовую карточку в ленту истории
-            historyStream.appendChild(card);
-            // 6. Очищаем поле ввода и возвращаем на него фокус для следующей команды
-            textarea.value = "";
-            textarea.focus();
-            // Внутренняя функция для идеального скролла
-            const performSmartScroll = () => {
-                const activeBlock = document.querySelector(".active-input-block") || textarea;
-                if (activeBlock) {
-                    activeBlock.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'end' 
-                    });
-                }
-            };
-
-            // 8. Запускаем рендеринг MathJax и строго ПОСЛЕ его завершения крутим экран
-            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-                window.MathJax.typesetPromise([resultBlock])
-                    .then(() => {
-                        // Формулы отрисованы, высота карточки финальная. 
-                        // Делаем микро-задержку, чтобы мобильная клавиатура успела занять свое место
-                        setTimeout(performSmartScroll, 80);
-                    })
-                    .catch((mjErr) => {
-                        console.error("[Calculator UI] Ошибка рендеринга MathJax:", mjErr);
-                        // Даже если MathJax упал, все равно скроллим
-                        setTimeout(performSmartScroll, 30);
-                    });
-            } else {
-                // Если MathJax не загружен, скроллим с минимальной задержкой
-                setTimeout(performSmartScroll, 50);
-            }*/                          
+            }                          
         }
 
         // Слушатель клика по кнопке Enter
