@@ -193,6 +193,7 @@ class context_evallution
   }
 
   run() {
+    if (!this.code) return;
     try
     {
       this.#intrnalRun();
