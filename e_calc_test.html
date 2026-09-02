@@ -1656,7 +1656,7 @@
                 parser.chars_tab = var_css.chars_tab;
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
-                uiLogContainer.innerHTML = '';
+                uiLogContainer.textContent = '';
                 parser.addEventListener('parse-progress', (event) => {
                     uiLogContainer.textContent = htmlEscape(event.detail.message);
                 });
@@ -1664,7 +1664,7 @@
                 currentController = new AbortController();
                 const { signal } = currentController;
                 parser.parse(signal).then(() => {
-                    uiLogContainer.innerHTML = '';
+                    uiLogContainer.textContent = '';
                     currentController = null;
                     stopBtn.disabled = true;
                     submitBtn.disabled = false;
