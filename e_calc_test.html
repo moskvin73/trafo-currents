@@ -258,10 +258,14 @@
             align-items: center;
             user-select: none;
             padding: 2px 6px;
+            align-items: stretch;
         }
 
         .panel-buttons {
             display: flex;
+    align-items: center; /* Центрирует внутренние элементы по вертикали */
+    justify-content: center; /* Центрирует текст/элементы по горизонтали */
+    flex-shrink: 0; /* ЗАПРЕЩАЕТ панели сжиматься, сохраняя видимость элементов */            
             /*gap: 8px;  Расстояние между кнопками */
         }
 
@@ -295,6 +299,8 @@
             font-family: 'Fira Code', monospace;
             font-size: 11px;
             color: var(--calc-color-echo);
+            flex-shrink: 0; /* Гарантирует, что этот блок никогда не сожмется */
+            white-space: nowrap; /* Текст позиции не будет переноситься */
         }
         /* #endregion Нижняя панель */
 
@@ -819,15 +825,15 @@
 
         #calc-log {
             display: flex;
-            align-items: center; /* Центрирование по вертикали */
-            white-space: nowrap; /* Запрет переноса строки */
-            overflow: hidden; /* Скрытие выходящего текста */
-            text-overflow: ellipsis; /* Добавление многоточия */
+            align-items: center;      /* Центрирует текст по вертикали внутри flex-контейнера */
+            justify-content: center;   /* Центрирует текст по горизонтали */
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
             font-family: 'Fira Code', monospace;
             font-size: 11px;
             color: var(--calc-color-echo);
-            height: 22px; /* Высота, равная высоте ваших кнопок */
-            line-height: 1;
+            height: 100%;             /* Растягивается на всю доступную высоту родителя */
         }
 
    </style>
