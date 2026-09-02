@@ -328,7 +328,7 @@ export class MathParser {
   /**
    * Главный метод запуска LL(1) анализа
    */
-  async parse(signal = null) {
+  async parse(signal = null, onMessage = null) {
     try {
         const code = [];
         this.#parseCode(code);
