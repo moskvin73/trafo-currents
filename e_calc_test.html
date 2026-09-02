@@ -817,6 +817,18 @@
             white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
         }       
 
+#calc-log {
+  display: flex;
+  align-items: center; /* Центрирование по вертикали */
+  white-space: nowrap; /* Запрет переноса строки */
+  overflow: hidden; /* Скрытие выходящего текста */
+  text-overflow: ellipsis; /* Добавление многоточия */
+  
+  /* Обязательно укажите ширину (или max-width) и высоту */
+  width: 100%; 
+  height: 100px; 
+}
+
    </style>
 </head>
 <body>
@@ -965,7 +977,7 @@
     <script type="module">
         import { calcLineGraphemes, calcSubstrGraphemes } from './js/math_parser/MathLexer.js';
         import { MathParser,  ExecutionAbortedError } from './js/math_parser/MathParser.js';
-        import { HighlightLerxer } from './js/math_parser/HighlightLexer.js';
+        import { HighlightLerxer, htmlEscape } from './js/math_parser/HighlightLexer.js';
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
@@ -1646,7 +1658,7 @@
                 submitBtn.disabled = true;
                 uiLogContainer.innerHTML = '';
                 parser.addEventListener('parse-progress', (event) => {
-                    uiLogContainer.innerHTML = `<div>${event.detail.message}</div>`;
+                    uiLogContainer.textContent = htmlEscape(event.detail.message);
                 });
                 // Создаем новый контроллер отмены
                 currentController = new AbortController();
