@@ -383,22 +383,26 @@ export class MathParser extends EventTarget {
   async parse(signal = null) {
     try {
         const code = [];
-        await this.#parseCode(code);           
+        await this.#parseCode(code);
+        const evl_context = this.#create_evl_context(signal);
+        evl_context.code = code;
+        return evl_context;
+        /*           
         if (this.errors.length === 0) {
             this.dispatchEvent(new CustomEvent('parse-progress', { 
               detail: { message: `Выполнение` } 
             }));
             const evl_context = this.#create_evl_context(signal);
             evl_context.code = code;
-            await evl_context.run();
+            //await evl_context.run();
             this.#program.statements = evl_context.report;
-        }
+        }*/
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
       }
   }
 
-  toTex() {
+  /*toTex() {
     if (this.errors.length > 0) {
       return [];
     }
@@ -416,7 +420,7 @@ export class MathParser extends EventTarget {
           return { type: 'expr', value:  `$$${renderString}$$` };
         }
       });
-  }
+  }*/
 
   static parseStatement_FALLOW = Object.freeze(new Set([
     TokenType.EOF,
