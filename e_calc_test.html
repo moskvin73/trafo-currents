@@ -1771,9 +1771,11 @@
 
         function errorExecuteCurrentCommand(msg, parser) {
             resetUIState();
-            const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
-            errorNav.setItems(errors);
-            toggleBottomPanel(true);
+            if (parser) {
+                const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
+                errorNav.setItems(errors);
+                toggleBottomPanel(true);
+            }
             console.error(msg);
         }
 
@@ -1834,8 +1836,7 @@
                 });                     
             }
             catch (runtimeError) {
-                if (parser)
-                    errorExecuteCurrentCommand(runtimeError.message, parser);
+                errorExecuteCurrentCommand(runtimeError.message, parser);
             }                          
         }
 
