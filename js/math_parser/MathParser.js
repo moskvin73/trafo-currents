@@ -445,7 +445,7 @@ export class MathParser extends EventTarget {
     const rawCodeLen = this.lexer.source.length;
     while (this.c_token !== TokenType.EOF) {
       if (signal?.aborted) {
-          this.error("Выполнение остановлено пользователем", this.#location;);
+          this.error("Выполнение остановлено пользователем", this.#location);
           return; 
       }
       if (proc % 5 === 0) {
