@@ -272,7 +272,7 @@ class context_evallution
       }
       else {
         this.scope_context.scopes = [];
-        const max_count_report = this.scope_context.max_count_report;
+        const max_count_report = this.scope_context.settings.max_count_report;
         const len = this.report.length;
         if (len > max_count_report) {
           this.report.splice(0, len - max_count_report);
