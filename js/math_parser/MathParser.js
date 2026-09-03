@@ -280,7 +280,14 @@ class context_evallution
         else ast_op.node.evaluate(this);
       }
       if (this.push_call.length > 0) {
-
+        st = this.push_call[this.push_call.length - 1];
+        this.code = st.code;
+        this.index_code = st.index_code;
+        if (this.report.length > 0) {
+          const data = this.report[this.report.length - 1];
+          st.report.push(data);
+        }
+        this.report = st.report;
       }
       else break;
   }
