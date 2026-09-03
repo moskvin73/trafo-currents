@@ -237,11 +237,15 @@ class context_evallution
         // Проверка прерывания
         if (this.signal?.aborted) {
             this.error("Выполнение остановлено пользователем", ast_op.node.loc);
-            return; 
+            this.scope_context.scopes = [];
+            this.push_call = [];
+            break; 
         }
 
         if ( this.errors.length > 0) {
-          return;
+          this.scope_context.scopes = [];
+          this.push_call = [];
+          break;
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
@@ -269,6 +273,7 @@ class context_evallution
         this.index_code = st.index_code;
       }
       else {
+        this.scope_context.scopes = [];
         const len = this.report.length;
         if (len > 100) {
           this.report.splice(0, len - 100);
