@@ -190,23 +190,6 @@ class context_evallution
     this.push_call.push({code: this.code, index_code: this.index_code});
     this.code = code;
     this.index_code = index;
-    //this.report = new LimitedStack(100);
-
-    /*const sw_code = this.code;
-    const sw_index = this.index_code;
-    this.code = code;
-    this.index_code = index;
-    const len = this.report.length;
-    await this.#intrnalRun();
-    this.code = sw_code;
-    this.index_code = sw_index;
-    // Если код что то вывел в отчёт
-    if (len !== this.report.length) {
-      // Удаляем последнию команду
-      const data = this.report[this.report.length - 1];
-      this.report.pop();
-      return data.value;
-    }*/
   }
 
   async #intrnalRun() {
