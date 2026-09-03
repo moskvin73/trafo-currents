@@ -14,6 +14,7 @@ export class SymbolTableContext {
       angleMode:     ANGLE_MODE.RADIANS,
       precision:     4,
       matrixFormat: 'bmatrix', // 'bmatrix', 'pmatrix', 'matrix'
+      max_count_report: 100
     };
 
     // Статическая часть

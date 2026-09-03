@@ -237,13 +237,11 @@ class context_evallution
         // Проверка прерывания
         if (this.signal?.aborted) {
             this.error("Выполнение остановлено пользователем", ast_op.node.loc);
-            this.scope_context.scopes = [];
             this.push_call = [];
             break; 
         }
 
         if ( this.errors.length > 0) {
-          this.scope_context.scopes = [];
           this.push_call = [];
           break;
         }
@@ -274,9 +272,10 @@ class context_evallution
       }
       else {
         this.scope_context.scopes = [];
+        const max_count_report = this.scope_context.max_count_report;
         const len = this.report.length;
-        if (len > 100) {
-          this.report.splice(0, len - 100);
+        if (len > max_count_report) {
+          this.report.splice(0, len - max_count_report);
         } 
         return; 
       }
