@@ -187,7 +187,7 @@ class context_evallution
   }
 
   async call_code(code, index = 0) {
-    this.push_call({code: this.code, index_code: this.index_code, report: this.report});
+    this.push_call.push({code: this.code, index_code: this.index_code, report: this.report});
     this.code = code;
     this.index_code = index;
     this.report = new LimitedStack(100);
@@ -281,6 +281,7 @@ class context_evallution
       }
       if (this.push_call.length > 0) {
         st = this.push_call[this.push_call.length - 1];
+        this.push_call.pop();
         this.code = st.code;
         this.index_code = st.index_code;
         if (this.report.length > 0) {
