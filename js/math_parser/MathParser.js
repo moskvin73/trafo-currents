@@ -319,6 +319,7 @@ export class MathParser extends EventTarget {
     this.#consume();
     this.#program = new ProgramNode();
     this.flags = 0; // Изначально все запрещено (000)
+    this.proc = 0;
   }
 
   get chars_tab() {
