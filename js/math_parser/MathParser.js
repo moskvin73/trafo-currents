@@ -319,7 +319,6 @@ export class MathParser extends EventTarget {
     this.#consume();
     this.#program = new ProgramNode();
     this.flags = 0; // Изначально все запрещено (000)
-    this.proc = 0;
   }
 
   get chars_tab() {
@@ -381,6 +380,7 @@ export class MathParser extends EventTarget {
    * Главный метод запуска LL(1) анализа
    */
   async parse(signal = null) {
+    proc = 0;
     const evl_context = new ContextEvaluation(this.context, this.errors);
     try {
         const code = [];
@@ -445,7 +445,7 @@ export class MathParser extends EventTarget {
     let proc = 0;
     const rawCodeLen = this.lexer.source.length;
     while (this.c_token !== TokenType.EOF) {
-      if (signal?.aborted) {
+      /*if (signal?.aborted) {
           this.error("Выполнение остановлено пользователем", this.#location);
           return; 
       }
@@ -454,14 +454,26 @@ export class MathParser extends EventTarget {
           this.dispatchEvent(new CustomEvent('parse-progress', { 
             detail: { message: `Парсинг обработано ${proc}% кода` } 
           }));
-      }
+      }*/
       this.#parseStatement(code);
       proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
     }
   }
 
+  getProc() {
+    const rawCodeLen = this.lexer.source.length;
+    this.proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
+  }
+
   #parseStatement(code, f_out = false) {
     let exprNode = null;
+
+    if (getProc() % 5 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        this.dispatchEvent(new CustomEvent('parse-progress', { 
+          detail: { message: `Парсинг обработано ${proc}% кода` } 
+        }));
+    }
 
     switch(this.c_token)
     {
