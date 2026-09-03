@@ -466,7 +466,7 @@ export class MathParser extends EventTarget {
     let exprNode = null;
 
     const proc = getProc();
-    if ( % 5 === 0) {
+    if (proc % 5 === 0) {
         await new Promise(resolve => setTimeout(resolve, 3000)); 
         this.dispatchEvent(new CustomEvent('parse-progress', { 
           detail: { message: `Парсинг обработано ${proc}% кода` } 
