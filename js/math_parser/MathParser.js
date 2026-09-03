@@ -449,7 +449,7 @@ export class MathParser extends EventTarget {
       }
       const proc = this.lexer.tokenEnd * 100 / codeLen;
       if (proc % 5 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 0)); 
+          await new Promise(resolve => setTimeout(resolve, 3000)); 
           this.dispatchEvent(new CustomEvent('parse-progress', { 
             detail: { message: `Парсинг обработано ${proc}% кода ` } 
           }));
