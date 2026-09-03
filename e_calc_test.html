@@ -840,6 +840,29 @@
             height: 100%;             /* Растягивается на всю доступную высоту родителя */
         }
 
+        /* Стили для выпадающего списка */
+        .dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            font-family: monospace;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .dropdown li {
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+        .dropdown li:hover, .dropdown li.active {
+            background-color: #007fff;
+            color: white;
+        }
    </style>
 </head>
 <body>
