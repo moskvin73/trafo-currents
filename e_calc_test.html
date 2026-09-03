@@ -1769,6 +1769,14 @@
             textarea.readOnly = false;
         }
 
+        function errorExecuteCurrentCommand(msg, parser) {
+            resetUIState();
+            const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
+            errorNav.setItems(errors);
+            toggleBottomPanel(true);
+            console.error(msg);
+        }
+
         async function executeCurrentCommand() {
             // Если что-то уже запущено
             if (currentController) return;            
@@ -1805,31 +1813,29 @@
 
                 if (out_errors())  { 
                     resetUIState();
-                    return; 
+                    return;                     
                 }
+
+                const startTime = performance.now(); // Засекаем время старта
+                
+                const timerId = setInterval(() => {
+                    const elapsedTime = ((performance.now() - startTime) / 1000).toFixed(1);
+                    uiLogContainer.textContent = `Выполнение... Прошло секунд: ${elapsedTime}`;
+                }, 100); // Обновляем каждые 100 мс
+
                 evl_context.run(signal).then(() => {
-                    uiLogContainer.textContent = '';
                     resetUIState();
                     if (out_errors()) return;
                     createCard(rawCode, evl_context.toTex());
                 }).catch((error) => {
-                    const msg = runtimeError.message;
-                    resetUIState();
-                    const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
-                    errorNav.setItems(errors);
-                    toggleBottomPanel(true);
+                    errorExecuteCurrentCommand(error.message, parser);
+                }).finally(() => {
+                    clearInterval(timerId);
                 });                     
             }
             catch (runtimeError) {
-                const msg = runtimeError.message;
                 if (parser)
-                {
-                    resetUIState();
-                    const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
-                    errorNav.setItems(errors);
-                    toggleBottomPanel(true);
-                }
-                console.error(msg);
+                    errorExecuteCurrentCommand(runtimeError.message, parser);
             }                          
         }
 
