@@ -183,10 +183,16 @@ class context_evallution
     this.index_code = 0;
     this.report = new LimitedStack(100);
     this.signal = signal; // Храним ссылку на AbortSignal
+    this.push_call = [];
   }
 
   async call_code(code, index = 0) {
-    const sw_code = this.code;
+    this.push_call({code: this.code, index_code: this.index_code, report: this.report});
+    this.code = code;
+    this.index_code = index;
+    this.report = new LimitedStack(100);
+
+    /*const sw_code = this.code;
     const sw_index = this.index_code;
     this.code = code;
     this.index_code = index;
@@ -200,7 +206,7 @@ class context_evallution
       const data = this.report[this.report.length - 1];
       this.report.pop();
       return data.value;
-    }
+    }*/
   }
 
   async #intrnalRun() {
@@ -239,7 +245,47 @@ class context_evallution
 
   async run() {
     if (!this.code) return;
-    try
+
+    let iterationsSinceYield = 0;
+    const MAX_ITERATIONS_PER_TICK = 100; 
+    while(true) {
+      while (this.index_code < this.code.length) {
+          // Проверка прерывания
+          if (this.signal?.aborted) {
+              this.error("Выполнение остановлено пользователем", ast_op.node.loc);
+              return; 
+          }
+
+          if ( this.errors.length > 0) {
+            return;
+          }
+
+          // Квантование времени (освобождаем поток для UI и событий прерывания)
+          if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
+              iterationsSinceYield = 0;
+              // Даем браузеру обработать клики/события (включая abort)
+              await new Promise(resolve => setTimeout(resolve, 0)); 
+          }
+
+        const ast_op = this.code[this.index_code++];
+        iterationsSinceYield++;
+        if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
+        {
+          const value = ast_op.node.evaluate(this);
+          if (value) {
+            const rn = new reportRecord(ast_op.node, value);
+            this.report.push(rn);
+          }
+        }
+        else ast_op.node.evaluate(this);
+      }
+      if (this.push_call.length > 0) {
+
+      }
+      else break;
+  }
+
+    /*try
     {
       await this.#intrnalRun();
     } catch(err) {
@@ -247,7 +293,7 @@ class context_evallution
         const index = Math.min(this.index_code, this.code.length - 1); 
         const ast_op = this.code[index];
         this.error(err.message, ast_op.node.loc);
-    }
+    }*/
   }
 
   get count() { return this.errors.length; }
