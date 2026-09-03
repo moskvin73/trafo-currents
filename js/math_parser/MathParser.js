@@ -200,7 +200,7 @@ class ContextEvaluation
       while (this.index_code < this.code.length) {
         const ast_op = this.code[this.index_code++];
         // Проверка прерывания
-        if (this.signal?.aborted) {
+        if (signal?.aborted) {
             this.error("Выполнение остановлено пользователем", ast_op.node.loc);
             this.callStack = [];
             break; 
