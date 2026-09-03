@@ -455,7 +455,7 @@ export class MathParser extends EventTarget {
           }));
       }
       this.#parseStatement(code);
-      proc = this.lexer.tokenEnd * 100 / codeLen;
+      proc = Math.round(this.lexer.tokenEnd * 100 / codeLen);
     }
   }
 
