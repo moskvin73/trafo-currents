@@ -1935,6 +1935,17 @@
 
                 const caretPos = textarea.selectionStart;
                 const find_span = findSpanByPosition(caretPos);
+                if (find_span) {
+                    if (find_span.classList.contains('token-varable')) {
+                        const text = find_span ? find_span.textContent.trim() : '';
+                        console.log(`Вводится зарезервированное слово или перемена ${text}`);
+                    }
+                    else if (find_span.classList.contains('token-error-code')) {
+                        const text = find_span ? find_span.textContent.trim() : '';
+                        if (text.startsWith('%'))
+                            console.log(`возможно вводится констана ${text}`);
+                    }
+                }
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
