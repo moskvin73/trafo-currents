@@ -384,7 +384,7 @@ export class MathParser extends EventTarget {
     try {
         const code = [];
         await this.#parseCode(code);
-        const evl_context = this.#create_evl_context(signal);
+        const evl_context = new ContextEvaluation(this.context, this.errors, signal);
         if (this.errors.length === 0) evl_context.code = code;
         return evl_context;
         /*           
@@ -399,7 +399,7 @@ export class MathParser extends EventTarget {
         }*/
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
-        const evl_context = this.#create_evl_context(signal);
+        const evl_context = new ContextEvaluation(this.context, this.errors, signal);
         return evl_context;
       }
   }
