@@ -465,7 +465,8 @@ export class MathParser extends EventTarget {
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-    const proc = getProc();
+    const rawCodeLen = this.lexer.source.length;
+    const proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
     (async () => {
     if (proc % 5 === 0) {
         await new Promise(resolve => setTimeout(resolve, 3000)); 
