@@ -281,7 +281,7 @@ class context_evallution
       }
       if (this.push_call.length > 0) {
         this.scope_context.scopes.pop();
-        st = this.push_call[this.push_call.length - 1];
+        const st = this.push_call[this.push_call.length - 1];
         this.push_call.pop();
         this.code = st.code;
         this.index_code = st.index_code;
