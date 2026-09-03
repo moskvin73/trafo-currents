@@ -184,7 +184,6 @@ class ContextEvaluation
     this.code = null;
     this.index_code = 0;
     this.report = [];
-    this.signal = signal; // Храним ссылку на AbortSignal
     this.callStack = [];
   }
 
