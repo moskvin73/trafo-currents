@@ -440,14 +440,23 @@ export class MathParser extends EventTarget {
     TokenType.MINUS,
   ]));
 
-  async #parseCode(code) {
+  async #parseCode(code, signal) {
     let counter = 0;
     while (this.c_token !== TokenType.EOF) {
-     if (counter++ % 5 === 0) {
-        await new Promise(resolve => setTimeout(resolve, 3500)); 
-        this.dispatchEvent(new CustomEvent('parse-progress', { 
-          detail: { message: `Парсинг обработано ${counter}% кода ` } 
-        }));
+      if (signal?.aborted) {
+          this.error("Выполнение остановлено пользователем", ast_op.node.loc);
+          this.callStack = [];
+          break; 
+      }
+      // Квантование времени (освобождаем поток для UI и событий прерывания)
+      // Даем браузеру обработать клики/события (включая abort)
+      await new Promise(resolve => setTimeout(resolve, 0)); 
+
+      if (counter++ % 5 === 0) {
+          await new Promise(resolve => setTimeout(resolve, 0)); 
+          this.dispatchEvent(new CustomEvent('parse-progress', { 
+            detail: { message: `Парсинг обработано ${counter}% кода ` } 
+          }));
       }
       this.#parseStatement(code); 
     }
