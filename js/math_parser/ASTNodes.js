@@ -277,7 +277,7 @@ export class VarableCode {
         // 3. Выполняем тело функции
         ret = context.call_code(this.statements);
     } finally {
-        scopeCtrl.scopes.pop();
+        //scopeCtrl.scopes.pop();
     }
     return ret;
   }
