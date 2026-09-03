@@ -462,13 +462,14 @@ export class MathParser extends EventTarget {
 
   getProc() {
     const rawCodeLen = this.lexer.source.length;
-    this.proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
+    return Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
   }
 
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-    if (getProc() % 5 === 0) {
+    const proc = getProc();
+    if ( % 5 === 0) {
         await new Promise(resolve => setTimeout(resolve, 3000)); 
         this.dispatchEvent(new CustomEvent('parse-progress', { 
           detail: { message: `Парсинг обработано ${proc}% кода` } 
