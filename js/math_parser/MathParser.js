@@ -440,7 +440,7 @@ export class MathParser extends EventTarget {
     TokenType.MINUS,
   ]));
 
-  async #parseCode(code, signal) {
+  #parseCode(code, signal) {
     while (this.c_token !== TokenType.EOF) {
       /*if (signal?.aborted) {
           this.error("Выполнение остановлено пользователем", this.#location);
@@ -448,6 +448,9 @@ export class MathParser extends EventTarget {
       }*/
       this.#parseStatement(code);
     }
+    this.dispatchEvent(new CustomEvent('parse-progress', { 
+          detail: { message: `Парсинг обработано 100% кода` } 
+    }));
   }
 
   #parseStatement(code, f_out = false) {
