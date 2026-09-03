@@ -1652,7 +1652,7 @@
             }
         }        
 
-        function executeCurrentCommand() {
+        async function executeCurrentCommand() {
             // Если что-то уже запущено
             if (currentController) return;            
             toggleBottomPanel(false);
@@ -1674,13 +1674,21 @@
                 // Создаем новый контроллер отмены
                 currentController = new AbortController();
                 const { signal } = currentController;
-                parser.parse(signal).then(() => {
+                const evl_context = await parser.parse(signal);
+
+                if (evl_context.errors.length > 0) {
+                    errorNav.setItems(evl_context.errors);
+                    toggleBottomPanel(true);
+                    return;
+                }
+                
+                evl_context.run().then(() => {
                     uiLogContainer.textContent = '';
                     currentController = null;
                     stopBtn.disabled = true;
                     submitBtn.disabled = false;
-                    if (parser.errors.length > 0) {
-                        errorNav.setItems(parser.errors);
+                    if (evl_context.errors.length > 0) {
+                        errorNav.setItems(evl_context.errors);
                         toggleBottomPanel(true);
                         return;
                     }
