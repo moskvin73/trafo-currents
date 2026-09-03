@@ -387,7 +387,6 @@ export class MathParser extends EventTarget {
         const code = [];
         await this.#parseCode(code);
         if (this.errors.length === 0 && code.length > 0) evl_context.code = code;
-        #signal = null;
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
         evl_context.code = null;
@@ -395,6 +394,15 @@ export class MathParser extends EventTarget {
         #signal = null;
         return evl_context;
       }
+  }
+
+  #parseCode(code, signal) {
+    while (this.c_token !== TokenType.EOF) {
+      this.#parseStatement(code);
+    }
+    this.dispatchEvent(new CustomEvent('parse-progress', { 
+          detail: { message: `Парсинг обработано 100% кода` } 
+    }));
   }
 
   static parseStatement_FALLOW = Object.freeze(new Set([
@@ -444,21 +452,11 @@ export class MathParser extends EventTarget {
     TokenType.MINUS,
   ]));
 
-  #parseCode(code, signal) {
-    while (this.c_token !== TokenType.EOF) {
-      this.#parseStatement(code);
-    }
-    this.dispatchEvent(new CustomEvent('parse-progress', { 
-          detail: { message: `Парсинг обработано 100% кода` } 
-    }));
-  }
-
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-    if (signal?.aborted) {
-        this.error("Выполнение остановлено пользователем", this.#location);
-        return; 
+    if (#signal?.aborted) {
+        throw new Error("Выполнение остановлено пользователем")
     }
     const rawCodeLen = this.lexer.source.length;
     const proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
