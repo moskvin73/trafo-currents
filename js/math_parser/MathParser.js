@@ -250,24 +250,23 @@ class context_evallution
     const MAX_ITERATIONS_PER_TICK = 100; 
     while(true) {
       while (this.index_code < this.code.length) {
-          // Проверка прерывания
-          if (this.signal?.aborted) {
-              this.error("Выполнение остановлено пользователем", ast_op.node.loc);
-              return; 
-          }
-
-          if ( this.errors.length > 0) {
-            return;
-          }
-
-          // Квантование времени (освобождаем поток для UI и событий прерывания)
-          if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
-              iterationsSinceYield = 0;
-              // Даем браузеру обработать клики/события (включая abort)
-              await new Promise(resolve => setTimeout(resolve, 0)); 
-          }
-
         const ast_op = this.code[this.index_code++];
+        // Проверка прерывания
+        if (this.signal?.aborted) {
+            this.error("Выполнение остановлено пользователем", ast_op.node.loc);
+            return; 
+        }
+
+        if ( this.errors.length > 0) {
+          return;
+        }
+
+        // Квантование времени (освобождаем поток для UI и событий прерывания)
+        if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
+            iterationsSinceYield = 0;
+            // Даем браузеру обработать клики/события (включая abort)
+            await new Promise(resolve => setTimeout(resolve, 0)); 
+        }
         iterationsSinceYield++;
         if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
         {
@@ -285,24 +284,9 @@ class context_evallution
         this.push_call.pop();
         this.code = st.code;
         this.index_code = st.index_code;
-        /*if (this.report.length > 0) {
-          const data = this.report[this.report.length - 1];
-          st.report.push(data);
-        }
-        this.report = st.report;*/
       }
       else return;
-  }
-
-    /*try
-    {
-      await this.#intrnalRun();
-    } catch(err) {
-        if (err instanceof ExecutionAbortedError) return;
-        const index = Math.min(this.index_code, this.code.length - 1); 
-        const ast_op = this.code[index];
-        this.error(err.message, ast_op.node.loc);
-    }*/
+    }
   }
 
   get count() { return this.errors.length; }
