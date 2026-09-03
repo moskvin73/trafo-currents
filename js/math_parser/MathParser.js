@@ -444,7 +444,7 @@ export class MathParser extends EventTarget {
   async #parseCode(code) {
     let counter = 0;
     while (this.c_token !== TokenType.EOF) {
-     if (counter++ % 50 === 0) {
+     if (counter++ % 5 === 0) {
         await new Promise(resolve => setTimeout(resolve, 3500)); 
         this.dispatchEvent(new CustomEvent('parse-progress', { 
           detail: { message: `Парсинг обработано ${counter}% кода ` } 
