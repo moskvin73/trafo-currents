@@ -1676,22 +1676,22 @@
                 const { signal } = currentController;
                 const evl_context = await parser.parse(signal);
 
-                if (evl_context.errors.length > 0) {
-                    errorNav.setItems(evl_context.errors);
-                    toggleBottomPanel(true);
-                    return;
-                }
+                const out_errors  = () => {
+                    if (evl_context.errors.length > 0) {
+                        errorNav.setItems(evl_context.errors);
+                        toggleBottomPanel(true);
+                        return true;
+                    }
+                    return false;
+                };
 
+                if (out_errors()) return;
                 evl_context.run().then(() => {
                     uiLogContainer.textContent = '';
                     currentController = null;
                     stopBtn.disabled = true;
                     submitBtn.disabled = false;
-                    if (evl_context.errors.length > 0) {
-                        errorNav.setItems(evl_context.errors);
-                        toggleBottomPanel(true);
-                        return;
-                    }
+                    if (out_errors()) return;
                     const cc = createCard(rawCode);
                     card = cc.card;
                     resultBlock = cc.resultBlock;
