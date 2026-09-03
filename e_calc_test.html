@@ -1932,6 +1932,9 @@
 
                 // 5. Обновляем слой с номерами строк
                 lineNumbersEle.innerHTML = lineNumbersHtml;
+
+                const caretPos = textarea.selectionStart;
+                const find_span = findSpanByPosition(caretPos);
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
