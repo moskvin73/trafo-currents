@@ -381,7 +381,7 @@ export class MathParser extends EventTarget {
    * Главный метод запуска LL(1) анализа
    */
   async parse(signal = null) {
-    #signal = signal;
+    this.#signal = signal;
     const evl_context = new ContextEvaluation(this.context, this.errors);
     try {
         const code = [];
@@ -391,7 +391,7 @@ export class MathParser extends EventTarget {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
         evl_context.code = null;
       } finally {
-        #signal = null;
+        this.#signal = null;
         return evl_context;
       }
   }
@@ -455,7 +455,7 @@ export class MathParser extends EventTarget {
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-    if (#signal?.aborted) {
+    if (this.#signal?.aborted) {
         throw new Error("Выполнение остановлено пользователем")
     }
     const rawCodeLen = this.lexer.source.length;
