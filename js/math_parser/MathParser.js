@@ -289,7 +289,7 @@ class context_evallution
         }
         this.report = st.report;
       }
-      else break;
+      else return;
   }
 
     /*try
