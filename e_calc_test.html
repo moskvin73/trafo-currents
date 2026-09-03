@@ -1804,6 +1804,7 @@
                 };
 
                 if (out_errors())  { 
+                    resetUIState();
                     return; 
                 }
                 evl_context.run(signal).then(() => {
@@ -1811,6 +1812,11 @@
                     resetUIState();
                     if (out_errors()) return;
                     createCard(rawCode, evl_context.toTex());
+                }).catch((error) => {
+                    resetUIState();
+                    const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
+                    errorNav.setItems(errors);
+                    toggleBottomPanel(true);
                 });                     
             }
             catch (runtimeError) {
