@@ -1612,6 +1612,7 @@
         document.getElementById('close_btn_error').addEventListener('click', function() { toggleBottomPanel(false) });
         //#endregion Size Paneles
 
+        //#region Execute
         const submitBtn = document.getElementById("calc-submit-btn");
         const stopBtn = document.getElementById("calc-stop-btn");
         const historyStream = document.getElementById("calc-history-stream");
@@ -1864,6 +1865,7 @@
         // Слушатель клика по кнопке Enter
         submitBtn.addEventListener("click", executeCurrentCommand);
         stopBtn.addEventListener("click", stopExecution);
+        //#endregion Execute
         
          //#region Line editor
         function findSpanByPosition(targetPos) {
