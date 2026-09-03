@@ -1841,8 +1841,59 @@
         // Слушатель клика по кнопке Enter
         submitBtn.addEventListener("click", executeCurrentCommand);
         stopBtn.addEventListener("click", stopExecution);
+        
+         //#region Line editor
+        function findSpanByPosition(targetPos) {
+            const container = highlightLayer;
+            if (!container) return null;
 
-         //#region Line editor        
+            let currentPos = 0;
+            const lines = container.querySelectorAll('.code-line');
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Учитываем символ переноса строки \n между линиями (кроме первой)
+                if (i > 0) {
+                    if (currentPos === targetPos) {
+                        // Позиция как раз на переносе строки
+                        return null;
+                    }
+                    currentPos += 1; // длина '\n'
+                }
+
+                const lineLength = line.textContent.length;
+
+                // Проверяем, находится ли targetPos внутри текущей строки
+                if (targetPos >= currentPos && targetPos <= currentPos + lineLength) {
+                    const spans = line.querySelectorAll('span');
+                    
+                    // Если в строке нет span (пустая строка), возвращаем саму строку
+                    if (spans.length === 0) {
+                        return { element: line, type: 'line', localOffset: targetPos - currentPos };
+                    }
+
+                    // Перебираем span-ы внутри найденной строки
+                    for (let span of spans) {
+                        const spanLength = span.textContent.length;
+                        
+                        if (targetPos >= currentPos && targetPos <= currentPos + spanLength) {
+                            return {
+                                element: span,
+                                type: 'span',
+                                localOffset: targetPos - currentPos // Смещение внутри самого span
+                            };
+                        }
+                        currentPos += spanLength;
+                    }
+                } else {
+                    // Если позиция не в этой строке, пропускаем её целиком
+                    currentPos += lineLength;
+                }
+            }
+            return null; // Позиция вне диапазона текста
+        }         
+         
         function initLineNumbers() {
             const lineNumbersEle = document.getElementById('calc-line-numbers');
             const cursorIndicator = document.getElementById('calc-cursor-position');
