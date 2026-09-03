@@ -384,7 +384,7 @@ export class MathParser extends EventTarget {
     try {
         const code = [];
         await this.#parseCode(code);
-        if (this.errors.length === 0) evl_context.code = code;
+        if (this.errors.length === 0 && code.length > 0) evl_context.code = code;
         return evl_context;
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
