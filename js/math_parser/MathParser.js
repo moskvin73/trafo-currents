@@ -456,6 +456,10 @@ export class MathParser extends EventTarget {
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
+    if (signal?.aborted) {
+        this.error("Выполнение остановлено пользователем", this.#location);
+        return; 
+    }
     const rawCodeLen = this.lexer.source.length;
     const proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
     this.dispatchEvent(new CustomEvent('parse-progress', { 
