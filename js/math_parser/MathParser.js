@@ -455,9 +455,7 @@ export class MathParser extends EventTarget {
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-    let t = 0;
-    while (t < 10000) {
-    if (this.#signal?.aborted) {
+\    if (this.#signal?.aborted) {
         throw new Error("Выполнение остановлено пользователем")
     }
     const rawCodeLen = this.lexer.source.length;
@@ -465,9 +463,7 @@ export class MathParser extends EventTarget {
     this.dispatchEvent(new CustomEvent('parse-progress', { 
           detail: { message: `Парсинг обработано ${proc}% кода` } 
     }));
-    t = t + 1;
-  }
-
+ 
     switch(this.c_token)
     {
       case TokenType.RW_PRINT:
