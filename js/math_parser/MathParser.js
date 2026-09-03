@@ -269,7 +269,7 @@ class ContextEvaluation
           return { type: 'mixed', value: stmt.value };
         }
         else {
-          const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+          const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.scope_context);
           return { type: 'expr', value:  `$$${renderString}$$` };
         }
       });
