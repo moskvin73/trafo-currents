@@ -174,9 +174,9 @@ class LimitedStack {
 }
 
 
-class context_evallution
+class ContextEvaluation
 {
-  static MAX_ITERATIONS_PER_TICK = 100;
+  static #MAX_ITERATIONS_PER_TICK = 100;
 
   constructor(scope_context, errors, signal = null) {
     this.errors = errors;
@@ -185,11 +185,11 @@ class context_evallution
     this.index_code = 0;
     this.report = [];
     this.signal = signal; // Храним ссылку на AbortSignal
-    this.push_call = [];
+    this.callStack = [];
   }
 
   async call_code(code, index = 0) {
-    this.push_call.push({code: this.code, index_code: this.index_code});
+    this.callStack.push({code: this.code, index_code: this.index_code});
     this.code = code;
     this.index_code = index;
   }
@@ -203,17 +203,17 @@ class context_evallution
         // Проверка прерывания
         if (this.signal?.aborted) {
             this.error("Выполнение остановлено пользователем", ast_op.node.loc);
-            this.push_call = [];
+            this.callStack = [];
             break; 
         }
 
         if ( this.errors.length > 0) {
-          this.push_call = [];
+          this.callStack = [];
           break;
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
-        if (iterationsSinceYield >= context_evallution.MAX_ITERATIONS_PER_TICK) {
+        if (iterationsSinceYield >= ContextEvaluation.#MAX_ITERATIONS_PER_TICK) {
             iterationsSinceYield = 0;
             // Даем браузеру обработать клики/события (включая abort)
             await new Promise(resolve => setTimeout(resolve, 0)); 
@@ -229,10 +229,10 @@ class context_evallution
         }
         else ast_op.node.evaluate(this);
       }
-      if (this.push_call.length > 0) {
+      if (this.callStack.length > 0) {
         this.scope_context.scopes.pop();
-        const st = this.push_call[this.push_call.length - 1];
-        this.push_call.pop();
+        const st = this.callStack[this.callStack.length - 1];
+        this.callStack.pop();
         this.code = st.code;
         this.index_code = st.index_code;
       }
@@ -254,6 +254,27 @@ class context_evallution
     const err = new CompilerError(message, loc, severity);
     this.errors.push(err);
   }
+
+  toTex() {
+    if (this.errors.length > 0) {
+      return [];
+    }
+
+    return this.report
+      .map((stmt) => {
+        if (stmt.value instanceof DiagramDescriptor) {
+          return { type: 'plot', value: stmt.value };
+        }
+        else if (typeof stmt.value === 'string' || stmt.value instanceof String) {
+          return { type: 'mixed', value: stmt.value };
+        }
+        else {
+          const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
+          return { type: 'expr', value:  `$$${renderString}$$` };
+        }
+      });
+  }
+
 }
 
 /**
@@ -353,7 +374,7 @@ export class MathParser extends EventTarget {
   }
 
   #create_evl_context(signal = null) {
-    return new context_evallution(this.context, this.errors, signal);
+    return new ContextEvaluation(this.context, this.errors, signal);
   }
 
   /**
