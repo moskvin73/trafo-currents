@@ -1870,6 +1870,92 @@
         
         //#region Line editor
         const dropdown = document.getElementById('suggestions');
+
+        function showDropdown(items, caretPos) {
+            dropdown.innerHTML = '';
+            activeIndex = 0;
+
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                if (index === 0) li.classList.add('active');
+                
+                // Клик мышкой по элементу списка
+                li.addEventListener('click', () => insertWord(item));
+                dropdown.appendChild(li);
+            });
+
+            // Позиционируем дропдаун примерно под курсором текста
+            // Для идеального позиционирования используют библиотеки (например, textarea-caret-position)
+            // В данном случае просто сдвигаем список вниз textarea
+            dropdown.style.left = '10px'; 
+            dropdown.style.top = (textarea.offsetHeight - 20) + 'px';
+            dropdown.style.display = 'block';
+        }
+
+        function hideDropdown() {
+            dropdown.style.display = 'none';
+        }
+
+        function insertWord(word) {
+            const text = textarea.value;
+            const caretPos = textarea.selectionStart;
+            
+            // Вырезаем старое недописанное слово и вставляем выбранное полное
+            const before = text.slice(0, currentWordStart);
+            const after = text.slice(caretPos);
+            
+            textarea.value = before + word + ' ' + after;
+            
+            // Возвращаем фокус и ставим курсор после вставленного слова
+            textarea.focus();
+            const newCaretPos = currentWordStart + word.length + 1;
+            textarea.setSelectionRange(newCaretPos, newCaretPos);
+            
+            hideDropdown();
+        }
+
+        function handleKeyDown(e) {
+            if (dropdown.style.display === 'block') {
+                const items = dropdown.getElementsByTagName('li');
+
+                // Стрелка вниз
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    items[activeIndex].classList.remove('active');
+                    activeIndex = (activeIndex + 1) % items.length;
+                    items[activeIndex].classList.add('active');
+                    items[activeIndex].scrollIntoView({ block: 'nearest' });
+                }
+                // Стрелка вверх
+                else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    items[activeIndex].classList.remove('active');
+                    activeIndex = (activeIndex - 1 + items.length) % items.length;
+                    items[activeIndex].classList.add('active');
+                    items[activeIndex].scrollIntoView({ block: 'nearest' });
+                }
+                // Enter или Tab для выбора
+                else if (e.key === 'Enter' || e.key === 'Tab') {
+                    e.preventDefault();
+                    if (items[activeIndex]) {
+                        insertWord(items[activeIndex].textContent);
+                    }
+                }
+                // Escape для закрытия
+                else if (e.key === 'Escape') {
+                    hideDropdown();
+                }
+            }
+        }
+
+        // Закрывать список при клике в любое другое место
+        document.addEventListener('click', (e) => {
+            if (e.target !== textarea && e.target !== dropdown) {
+                hideDropdown();
+            }
+        });
+
         function findSpanByPosition(targetPos) {
             const container = highlightLayer;
             if (!container) return null;
