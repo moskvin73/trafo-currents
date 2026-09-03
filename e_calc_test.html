@@ -1778,6 +1778,7 @@
                 stopBtn.disabled = false;
                 submitBtn.disabled = true;
                 uiLogContainer.textContent = '';
+                textarea.readOnly = true;
                 parser.addEventListener('parse-progress', (event) => {
                     uiLogContainer.textContent = htmlEscape(event.detail.message);
                 });
@@ -1803,6 +1804,7 @@
                     submitBtn.disabled = false;
                     if (out_errors()) return;
                     createCard(rawCode, evl_context.toTex());
+                    textarea.readOnly = false;
                 });                     
             }
             catch (runtimeError) {
