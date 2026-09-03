@@ -455,7 +455,7 @@ export class MathParser extends EventTarget {
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
-\    if (this.#signal?.aborted) {
+    if (this.#signal?.aborted) {
         throw new Error("Выполнение остановлено пользователем")
     }
     const rawCodeLen = this.lexer.source.length;
