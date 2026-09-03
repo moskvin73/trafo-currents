@@ -1868,7 +1868,8 @@
         stopBtn.addEventListener("click", stopExecution);
         //#endregion Execute
         
-         //#region Line editor
+        //#region Line editor
+        const dropdown = document.getElementById('suggestions');
         function findSpanByPosition(targetPos) {
             const container = highlightLayer;
             if (!container) return null;
