@@ -1802,9 +1802,9 @@
                     currentController = null;
                     stopBtn.disabled = true;
                     submitBtn.disabled = false;
+                    textarea.readOnly = false;
                     if (out_errors()) return;
                     createCard(rawCode, evl_context.toTex());
-                    textarea.readOnly = false;
                 });                     
             }
             catch (runtimeError) {
