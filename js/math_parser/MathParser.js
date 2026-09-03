@@ -178,7 +178,7 @@ class ContextEvaluation
 {
   static #MAX_ITERATIONS_PER_TICK = 100;
 
-  constructor(scope_context, errors, signal = null) {
+  constructor(scope_context, errors) {
     this.errors = errors;
     this.scope_context = scope_context;
     this.code = null;
@@ -194,7 +194,7 @@ class ContextEvaluation
     this.index_code = index;
   }
 
-  async run() {
+  async run(signal = null) {
     if (!this.code) return;
     let iterationsSinceYield = 0;
     while(true) {
@@ -373,8 +373,8 @@ export class MathParser extends EventTarget {
     this.errors.push(err);
   }
 
-  #create_evl_context(signal = null) {
-    return new ContextEvaluation(this.context, this.errors, signal);
+  #create_evl_context() {
+    return new ContextEvaluation(this.context, this.errors);
   }
 
   /**
@@ -384,45 +384,15 @@ export class MathParser extends EventTarget {
     try {
         const code = [];
         await this.#parseCode(code);
-        const evl_context = new ContextEvaluation(this.context, this.errors, signal);
+        const evl_context = new ContextEvaluation(this.context, this.errors);
         if (this.errors.length === 0) evl_context.code = code;
         return evl_context;
-        /*           
-        if (this.errors.length === 0) {
-            this.dispatchEvent(new CustomEvent('parse-progress', { 
-              detail: { message: `Выполнение` } 
-            }));
-            const evl_context = this.#create_evl_context(signal);
-            evl_context.code = code;
-            //await evl_context.run();
-            this.#program.statements = evl_context.report;
-        }*/
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
-        const evl_context = new ContextEvaluation(this.context, this.errors, signal);
+        const evl_context = new ContextEvaluation(this.context, this.errors);
         return evl_context;
       }
   }
-
-  /*toTex() {
-    if (this.errors.length > 0) {
-      return [];
-    }
-
-    return this.#program.statements
-      .map((stmt) => {
-        if (stmt.value instanceof DiagramDescriptor) {
-          return { type: 'plot', value: stmt.value };
-        }
-        else if (typeof stmt.value === 'string' || stmt.value instanceof String) {
-          return { type: 'mixed', value: stmt.value };
-        }
-        else {
-          const renderString = TeXOutputFormatter.format(stmt.node, stmt.value, this.context);
-          return { type: 'expr', value:  `$$${renderString}$$` };
-        }
-      });
-  }*/
 
   static parseStatement_FALLOW = Object.freeze(new Set([
     TokenType.EOF,
