@@ -380,15 +380,15 @@ export class MathParser extends EventTarget {
    * Главный метод запуска LL(1) анализа
    */
   async parse(signal = null) {
+    const evl_context = new ContextEvaluation(this.context, this.errors);
     try {
         const code = [];
         await this.#parseCode(code);
-        const evl_context = new ContextEvaluation(this.context, this.errors);
         if (this.errors.length === 0) evl_context.code = code;
         return evl_context;
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
-        const evl_context = new ContextEvaluation(this.context, this.errors);
+        evl_context.code = null;
         return evl_context;
       }
   }
