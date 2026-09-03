@@ -282,6 +282,7 @@ class ContextEvaluation
 export class MathParser extends EventTarget {
   #program;
   #listUndefinedIdentifiers = new IndexedMap();
+  #signal
 
   // 1. Определяем константы флагов (степени двойки)
   static ALLOW_BREAK = 1;    // 001 в двоичной
@@ -380,15 +381,18 @@ export class MathParser extends EventTarget {
    * Главный метод запуска LL(1) анализа
    */
   async parse(signal = null) {
+    #signal = signal;
     const evl_context = new ContextEvaluation(this.context, this.errors);
     try {
         const code = [];
         await this.#parseCode(code);
         if (this.errors.length === 0 && code.length > 0) evl_context.code = code;
-        return evl_context;
+        #signal = null;
       } catch (error) {
         this.errors.push(new CompilerError(`[ФАТАЛЬНЯ ОШИБКА] ${error.message}`, this.#location));
         evl_context.code = null;
+      } finally {
+        #signal = null;
         return evl_context;
       }
   }
@@ -442,10 +446,6 @@ export class MathParser extends EventTarget {
 
   #parseCode(code, signal) {
     while (this.c_token !== TokenType.EOF) {
-      /*if (signal?.aborted) {
-          this.error("Выполнение остановлено пользователем", this.#location);
-          return; 
-      }*/
       this.#parseStatement(code);
     }
     this.dispatchEvent(new CustomEvent('parse-progress', { 
