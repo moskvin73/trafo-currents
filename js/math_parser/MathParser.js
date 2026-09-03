@@ -289,6 +289,7 @@ class context_evallution
           st.report.push(data);
         }
         this.report = st.report;
+        this.scope_context.scopes.pop();
       }
       else return;
   }
