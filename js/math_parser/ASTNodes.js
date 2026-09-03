@@ -273,14 +273,6 @@ export class VarableCode {
     }
     scopeCtrl.scopes.push(frame);
     context.call_code(this.statements);
-    /*let ret;
-    try {
-        // 3. Выполняем тело функции
-        ret = context.call_code(this.statements);
-    } finally {
-        //scopeCtrl.scopes.pop();
-    }
-    return ret;*/
   }
 }
 regAST(VarableCode);
