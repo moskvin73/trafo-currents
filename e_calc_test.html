@@ -1762,6 +1762,13 @@
             }
         }        
 
+        function resetUIState() {
+            currentController = null;
+            stopBtn.disabled = true;
+            submitBtn.disabled = false;
+            textarea.readOnly = false;
+        }
+
         async function executeCurrentCommand() {
             // Если что-то уже запущено
             if (currentController) return;            
@@ -1796,13 +1803,12 @@
                     return false;
                 };
 
-                if (out_errors()) return;
+                if (out_errors())  { 
+                    return; 
+                }
                 evl_context.run(signal).then(() => {
                     uiLogContainer.textContent = '';
-                    currentController = null;
-                    stopBtn.disabled = true;
-                    submitBtn.disabled = false;
-                    textarea.readOnly = false;
+                    resetUIState();
                     if (out_errors()) return;
                     createCard(rawCode, evl_context.toTex());
                 });                     
@@ -1811,11 +1817,7 @@
                 const msg = runtimeError.message;
                 if (parser)
                 {
-                    uiLogContainer.textContent = '';
-                    currentController = null;
-                    stopBtn.disabled = true;
-                    submitBtn.disabled = false;
-
+                    resetUIState();
                     const errors = [new CompilerError(`Критическая ошибка вычисления:${msg}`, parser.lexer.createLocation())];
                     errorNav.setItems(errors);
                     toggleBottomPanel(true);
