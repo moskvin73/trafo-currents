@@ -1870,7 +1870,7 @@
                     
                     // Если в строке нет span (пустая строка), возвращаем саму строку
                     if (spans.length === 0) {
-                        return { element: line, type: 'line', localOffset: targetPos - currentPos };
+                        return null;
                     }
 
                     // Перебираем span-ы внутри найденной строки
@@ -1878,11 +1878,7 @@
                         const spanLength = span.textContent.length;
                         
                         if (targetPos >= currentPos && targetPos <= currentPos + spanLength) {
-                            return {
-                                element: span,
-                                type: 'span',
-                                localOffset: targetPos - currentPos // Смещение внутри самого span
-                            };
+                            return span;
                         }
                         currentPos += spanLength;
                     }
