@@ -280,6 +280,7 @@ class context_evallution
         else ast_op.node.evaluate(this);
       }
       if (this.push_call.length > 0) {
+        this.scope_context.scopes.pop();
         st = this.push_call[this.push_call.length - 1];
         this.push_call.pop();
         this.code = st.code;
@@ -289,7 +290,6 @@ class context_evallution
           st.report.push(data);
         }
         this.report = st.report;
-        this.scope_context.scopes.pop();
       }
       else return;
   }
