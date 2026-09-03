@@ -461,12 +461,9 @@ export class MathParser extends EventTarget {
 
     const rawCodeLen = this.lexer.source.length;
     const proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
-    (async () => {    
-        await new Promise(resolve => setTimeout(resolve, 3000)); 
-        this.dispatchEvent(new CustomEvent('parse-progress', { 
+    this.dispatchEvent(new CustomEvent('parse-progress', { 
           detail: { message: `Парсинг обработано ${proc}% кода` } 
-        }));
-    })();
+    }));
 
     switch(this.c_token)
     {
