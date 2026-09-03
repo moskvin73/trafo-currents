@@ -441,21 +441,17 @@ export class MathParser extends EventTarget {
   ]));
 
   async #parseCode(code, signal) {
-    let counter = 0;
+    const codeLen = this.lexer.source.length;
     while (this.c_token !== TokenType.EOF) {
       if (signal?.aborted) {
-          this.error("Выполнение остановлено пользователем", ast_op.node.loc);
-          this.callStack = [];
-          break; 
+          this.error("Выполнение остановлено пользователем", this.#location;);
+          return; 
       }
-      // Квантование времени (освобождаем поток для UI и событий прерывания)
-      // Даем браузеру обработать клики/события (включая abort)
-      await new Promise(resolve => setTimeout(resolve, 0)); 
-
-      if (counter++ % 5 === 0) {
+      const proc = this.lexer.tokenEnd * 100 / codeLen;
+      if (proc % 5 === 0) {
           await new Promise(resolve => setTimeout(resolve, 0)); 
           this.dispatchEvent(new CustomEvent('parse-progress', { 
-            detail: { message: `Парсинг обработано ${counter}% кода ` } 
+            detail: { message: `Парсинг обработано ${proc}% кода ` } 
           }));
       }
       this.#parseStatement(code); 
