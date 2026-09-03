@@ -1765,11 +1765,11 @@
         async function executeCurrentCommand() {
             // Если что-то уже запущено
             if (currentController) return;            
+            const rawCode = textarea.value;
+            if (!rawCode.trim()) return; // Игнорируем пустой ввод
             toggleBottomPanel(false);
             errorNav.clear();
             removeErrorHighlightDOM();
-            const rawCode = textarea.value;
-            if (!rawCode.trim()) return; // Игнорируем пустой ввод
             let resultBlock; let card; let parser;
             try {
                 // Запускаем наш потоковый LL(1) компилятор
