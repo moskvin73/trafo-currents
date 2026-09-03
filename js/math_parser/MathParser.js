@@ -176,6 +176,8 @@ class LimitedStack {
 
 class context_evallution
 {
+  static MAX_ITERATIONS_PER_TICK = 100;
+
   constructor(scope_context, errors, signal = null) {
     this.errors = errors;
     this.scope_context = scope_context;
@@ -192,45 +194,9 @@ class context_evallution
     this.index_code = index;
   }
 
-  async #intrnalRun() {
-    let iterationsSinceYield = 0;
-    const MAX_ITERATIONS_PER_TICK = 100; 
-    while (this.index_code < this.code.length) {
-        // Проверка прерывания
-        if (this.signal?.aborted) {
-            throw new DOMException("Выполнение остановлено пользователем", "AbortError"); 
-        }
-
-        if ( this.errors.length > 0) {
-          throw new ExecutionAbortedError();
-        }
-
-        // Квантование времени (освобождаем поток для UI и событий прерывания)
-        if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
-            iterationsSinceYield = 0;
-            // Даем браузеру обработать клики/события (включая abort)
-            await new Promise(resolve => setTimeout(resolve, 0)); 
-        }
-
-      const ast_op = this.code[this.index_code++];
-      iterationsSinceYield++;
-      if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
-      {
-        const value = ast_op.node.evaluate(this);
-        if (value) {
-          const rn = new reportRecord(ast_op.node, value);
-          this.report.push(rn);
-        }
-      }
-      else ast_op.node.evaluate(this);
-    }
-  }
-
   async run() {
     if (!this.code) return;
-
     let iterationsSinceYield = 0;
-    const MAX_ITERATIONS_PER_TICK = 100; 
     while(true) {
       while (this.index_code < this.code.length) {
         const ast_op = this.code[this.index_code++];
@@ -247,7 +213,7 @@ class context_evallution
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
-        if (iterationsSinceYield >= MAX_ITERATIONS_PER_TICK) {
+        if (iterationsSinceYield >= context_evallution.MAX_ITERATIONS_PER_TICK) {
             iterationsSinceYield = 0;
             // Даем браузеру обработать клики/события (включая abort)
             await new Promise(resolve => setTimeout(resolve, 0)); 
