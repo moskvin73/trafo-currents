@@ -268,7 +268,13 @@ class context_evallution
         this.code = st.code;
         this.index_code = st.index_code;
       }
-      else return;
+      else {
+        const len = this.report.length;
+        if (len > 100) {
+          this.report.splice(0, len - 100);
+        } 
+        return; 
+      }
     }
   }
 
