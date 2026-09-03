@@ -456,7 +456,7 @@ export class MathParser extends EventTarget {
     let exprNode = null;
 
     let t = 0;
-    while (t < 1000000) {
+    while (t < 10000) {
     if (this.#signal?.aborted) {
         throw new Error("Выполнение остановлено пользователем")
     }
