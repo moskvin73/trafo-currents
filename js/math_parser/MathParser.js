@@ -181,16 +181,16 @@ class context_evallution
     this.scope_context = scope_context;
     this.code = null;
     this.index_code = 0;
-    this.report = new LimitedStack(100);
+    this.report = [];//new LimitedStack(100);
     this.signal = signal; // Храним ссылку на AbortSignal
     this.push_call = [];
   }
 
   async call_code(code, index = 0) {
-    this.push_call.push({code: this.code, index_code: this.index_code, report: this.report});
+    this.push_call.push({code: this.code, index_code: this.index_code});
     this.code = code;
     this.index_code = index;
-    this.report = new LimitedStack(100);
+    //this.report = new LimitedStack(100);
 
     /*const sw_code = this.code;
     const sw_index = this.index_code;
@@ -285,11 +285,11 @@ class context_evallution
         this.push_call.pop();
         this.code = st.code;
         this.index_code = st.index_code;
-        if (this.report.length > 0) {
+        /*if (this.report.length > 0) {
           const data = this.report[this.report.length - 1];
           st.report.push(data);
         }
-        this.report = st.report;
+        this.report = st.report;*/
       }
       else return;
   }
