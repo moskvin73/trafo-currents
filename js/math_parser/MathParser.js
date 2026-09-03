@@ -442,8 +442,6 @@ export class MathParser extends EventTarget {
   ]));
 
   async #parseCode(code, signal) {
-    let proc = 0;
-    const rawCodeLen = this.lexer.source.length;
     while (this.c_token !== TokenType.EOF) {
       /*if (signal?.aborted) {
           this.error("Выполнение остановлено пользователем", this.#location);
@@ -456,7 +454,6 @@ export class MathParser extends EventTarget {
           }));
       }*/
       this.#parseStatement(code);
-      proc = Math.round(this.lexer.tokenStart * 100 / rawCodeLen);
     }
   }
 
