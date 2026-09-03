@@ -1681,7 +1681,7 @@
                     toggleBottomPanel(true);
                     return;
                 }
-                
+
                 evl_context.run().then(() => {
                     uiLogContainer.textContent = '';
                     currentController = null;
@@ -1696,7 +1696,7 @@
                     card = cc.card;
                     resultBlock = cc.resultBlock;
                     resultBlock.innerHTML = "";
-                    const parseResult = parser.toTex();
+                    const parseResult = evl_context.toTex();
                     parseResult.forEach((res) => {
                         switch (res.type)
                         {
