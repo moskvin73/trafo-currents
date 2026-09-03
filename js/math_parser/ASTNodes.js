@@ -272,14 +272,15 @@ export class VarableCode {
         frame.symbols[i].value = args[i];
     }
     scopeCtrl.scopes.push(frame);
-    let ret;
+    context.call_code(this.statements);
+    /*let ret;
     try {
         // 3. Выполняем тело функции
         ret = context.call_code(this.statements);
     } finally {
         //scopeCtrl.scopes.pop();
     }
-    return ret;
+    return ret;*/
   }
 }
 regAST(VarableCode);
