@@ -2262,7 +2262,7 @@
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     window.MathJax.typesetPromise([tooltipElement]).then(() => {
                     // Этот код выполнится ПОСЛЕ того, как формулы отрисуются
-                    setTimeout(positionTooltip(element), 80);
+                    positionTooltip(element);
                     }).catch((err) => {
                         console.error("MathJax typesetting failed: ", err);
                         positionTooltip(element); // Всё равно позиционируем в случае ошибки
