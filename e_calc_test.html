@@ -2077,7 +2077,11 @@ const dictionary = [
                     if (find_span.classList.contains('token-varable')) {
                         const text = find_span.textContent.trim();
                         currentWordStart = caretPos - text.length;
-                        showDropdown(dictionary, find_span);
+                        // Фильтруем словарь по введенным символам (регистронезависимо)
+                        const filtered = dictionary.filter(word => 
+                            word.startsWith(text) && word !== text
+                        );
+                        showDropdown(filtered, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
                         const text = find_span.textContent.trim();
