@@ -2079,7 +2079,7 @@
                         let all;
                         if (globalScope.varNames.length > 0) {
                             all = [
-                                dictionary,
+                                ...dictionary,
                                 ...globalScope.varNames
                             ];
                         }
