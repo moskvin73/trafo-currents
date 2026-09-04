@@ -859,10 +859,21 @@
             padding: 6px 12px;
             cursor: pointer;
         }
-        .dropdown li:hover, .dropdown li.active {
+        /* Состояние при наведении (более светлый оттенок) */
+        .dropdown li:hover {
+            background-color: #3399ff; /* Светлее, чем #007fff */
+            color: white;
+        }
+
+        /* Активное состояние (ваш исходный базовый цвет) */
+        .dropdown li.active {
             background-color: #007fff;
             color: white;
         }
+        /* Если наводят на уже активный пункт, делаем его еще чуть темнее */
+        .dropdown li.active:hover {
+            background-color: #0066cc; 
+        }       
    </style>
 </head>
 <body>
