@@ -1929,7 +1929,7 @@
             
             // Возвращаем фокус и ставим курсор после вставленного слова
             textarea.focus();
-            const newCaretPos = currentWordStart + word.length + 1;
+            const newCaretPos = currentWordStart + word.length;
             textarea.setSelectionRange(newCaretPos, newCaretPos);
             
             hideDropdown();
