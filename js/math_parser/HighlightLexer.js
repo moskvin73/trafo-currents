@@ -1,6 +1,6 @@
 import { TokenType, TokenDetails } from './TokenTypes.js';
 import { MathLexer } from './MathLexer.js';
-import { SymbolTableContext } from './SymbolTableContext.js';
+import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 
 export function htmlEscape(text) {
     return text
@@ -97,8 +97,25 @@ export function HighlightLerxer(text, context) {
             case TokenType.COMPLEX_NUMBER:
                 chunks.push({ type: 'TEXT', html: `<span class="token-complex-number" data-title="${hint}">${lexer.stringValue()}</span>`});
                 break;
-            case TokenType.VARIABLE:
-                chunks.push({ type: 'TEXT', html: `<span class="token-varable" data-title="${hint}">${lexer.stringValue()}</span>`});
+            case TokenType.VARIABLE: {
+                    const name = lexer.stringValue();
+                    const id = getIdByName(name);
+                    if (id) {
+                        const sym = getParseSymbolById(id);
+                        switch (sym.type) {
+                            case SYM_UNDEFINED:
+                                hint = 'Идентификатор объявлен, но значения еще нет';
+                                break;
+                            case SYM_VARIABLE:
+                                hint = 'переменная';
+                                break;
+                            case SYM_BUILTIN:
+                                hint = 'Встроенная системная функция';
+                                break;
+                        }
+                    }
+                    chunks.push({ type: 'TEXT', html: `<span class="token-varable" data-title="${hint}">${name}</span>`});
+                }
                 break;
             case TokenType.LT:       // <
                 chunks.push({ type: 'TEXT', html: `<span class="token-rw-characters" data-title="${hint}">&lt;</span>`});
