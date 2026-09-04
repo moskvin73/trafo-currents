@@ -1871,7 +1871,7 @@
         //#region Line editor
         const dropdown = document.getElementById('suggestions');
 
-        function showDropdown(items, find_span) {
+        function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
             activeIndex = 0;
 
@@ -1885,12 +1885,28 @@
                 dropdown.appendChild(li);
             });
 
-            // Позиционируем дропдаун примерно под курсором текста
-            // Для идеального позиционирования используют библиотеки (например, textarea-caret-position)
-            // В данном случае просто сдвигаем список вниз textarea
-            dropdown.style.left = '10px'; 
-            dropdown.style.top = (textarea.offsetHeight - 20) + 'px';
-            dropdown.style.display = 'block';
+            // 1. Получаем координаты span относительно экрана
+            const rect = spanElement.getBoundingClientRect();
+            
+            // 2. Считаем доступное место сверху и снизу (учитываем прокрутку)
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            
+            // Высота вашего списка (можно задать фиксированную или измерить у скрытого элемента)
+            const dropdownHeight = dropdown.offsetHeight || 200; 
+
+            // 3. Логика позиционирования
+            if (spaceBelow >= dropdownHeight || spaceBelow > spaceAbove) {
+                // Выводим СНИЗУ
+                dropdown.style.top = `${window.scrollY + rect.bottom}px`;
+            } else {
+                // Выводим СВЕРХУ
+                dropdown.style.top = `${window.scrollY + rect.top - dropdownHeight}px`;
+            }
+
+            // Позиционирование по горизонтали (выравнивание по левому краю span)
+            dropdown.style.left = `${window.scrollX + rect.left}px`;
+            dropdown.style.display = 'block';            
         }
 
         function hideDropdown() {
