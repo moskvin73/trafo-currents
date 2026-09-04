@@ -1930,6 +1930,10 @@
             currentWordStart = -1;
         }
 
+        function isHideDropdown() {
+            return dropdown.style.display === 'none';
+        }
+
         function insertWord(word) {
             if (currentWordStart < 0) return;
             const text = textarea.value;
