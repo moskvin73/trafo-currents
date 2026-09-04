@@ -99,9 +99,9 @@ export function HighlightLerxer(text, context) {
                 break;
             case TokenType.VARIABLE: {
                     const name = lexer.stringValue();
-                    const id = getIdByName(name);
+                    const id = context.getIdByName(name);
                     if (id) {
-                        const sym = getParseSymbolById(id);
+                        const sym = context.getParseSymbolById(id);
                         switch (sym.type) {
                             case SYM_UNDEFINED:
                                 hint = 'Идентификатор объявлен, но значения еще нет';
