@@ -1,6 +1,46 @@
 import { TokenType, TokenDetails } from './TokenTypes.js';
 import { MathLexer } from './MathLexer.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
+import ASTNode, {
+  IF_Node,
+  Goto_Node,
+  IsOpNode,
+  ErrorNode,
+  CastOpNode,
+  NumberNode,
+  UnaryOpNode, 
+  UnaryOpNodePlus,
+  UnaryOpNodeMinus,
+  UnaryOpNodeNot,
+  BinaryOpNode,
+  OrNode,
+  XorNode,
+  AndNode,
+  EquNode,
+  NotEquNode,
+  LtNode,
+  GtNode,
+  LteNode,
+  GteNode,
+  AddNode,
+  SubNode,
+  MulNode,
+  DivNode,
+  ModNode,
+  PowNode,
+  CallNode,
+  RefNode, 
+  AssignNode, 
+  VariableNode, 
+  PrintNode, 
+  ProgramNode,
+  MatrixNode,
+  IndexNode,
+  VarableCode,
+  DefineVarableCodeNode,
+  StatementNode,
+  ConstantNode } from './ASTNodes.js';
+
 
 export function htmlEscape(text) {
     return text
@@ -106,13 +146,18 @@ export function HighlightLerxer(text, context) {
                             case SYM_UNDEFINED:
                                 hint = 'Идентификатор объявлен, но значения еще нет';
                                 break;
-                            case SYM_VARIABLE:
+                            case SYM_VARIABLE: {
                                 hint = 'Переменная';
+                                if (sym.value instanceof VarableCode)
+
+                                const v = sym.value;
                                 break;
-                            case SYM_BUILTIN:
+                            }
+                            case SYM_BUILTIN: {
                                 hint = 'Встроенная системная функция';
                                 const v = sym.value;
                                 break;
+                            }
                         }
                     }
                     chunks.push({ type: 'TEXT', html: `<span class="token-varable" data-title="${hint}">${name}</span>`});
