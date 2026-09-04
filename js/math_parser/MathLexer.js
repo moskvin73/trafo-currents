@@ -39,7 +39,7 @@ const reservedWordsMap = {
   'error': TokenType.RW_ERROR,
 };
 
-export const dictionaryReservedWordsMap = [...reservedWordsMap.keys()]
+export const dictionaryReservedWordsMap = Object.keys(reservedWordsMap);
 
 /**
  * Превращает невидимые, управляющие или битые символы в строку вида U+XXXX,
