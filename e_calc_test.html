@@ -1872,7 +1872,8 @@
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
         let currentWordStart = 0;
-        //const dictionary = dictionaryReservedWordsMap;
+        const dictionary = [...dictionaryReservedWordsMap,
+                            ...globalScope.fixedNames];
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
@@ -2075,15 +2076,14 @@
                         const text = find_span.textContent.trim();
                         currentWordStart = caretPos - text.length;
                         // Фильтруем словарь по введенным символам (регистронезависимо)
-                        const fullDictionary = [
-                            ...dictionaryReservedWordsMap,
-                            ...Object.keys(globalScope.fixedHash),
-                            ...Object.keys(globalScope.varHash)
+                        const all = [
+                            dictionary,
+                            ...globalScope.varNames
                         ];
-                        const filtered = fullDictionary;
-                        /*const filtered = dictionary.filter(word => 
+                        const sortedDictionary =  Array.from(new Set(allWords)).sort();
+                        const filtered = sortedDictionary.filter(word => 
                             word.startsWith(text) && word !== text
-                        );*/
+                        );
                         showDropdown(filtered, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
