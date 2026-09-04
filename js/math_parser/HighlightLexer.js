@@ -1,5 +1,6 @@
 import { TokenType, TokenDetails } from './TokenTypes.js';
 import { MathLexer } from './MathLexer.js';
+import { SymbolTableContext } from './SymbolTableContext.js';
 
 export function htmlEscape(text) {
     return text
