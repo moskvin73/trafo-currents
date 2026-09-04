@@ -2271,44 +2271,6 @@
                     // Если MathJax не загружен, просто позиционируем текст
                     positionTooltip(element);
                 }
-                /*// Получаем координаты целевого элемента и размеры экрана
-                const rect = element.getBoundingClientRect();
-                const tooltipWidth = tooltipElement.offsetWidth;
-                const tooltipHeight = tooltipElement.offsetHeight;
-                
-                const viewportWidth = window.innerWidth;
-                const padding = 10; // Минимальный отступ от края экрана
-
-                // Рассчитываем X координату с защитой от выхода за левый/правый край
-                let tooltipX = rect.left + (rect.width / 2) - (tooltipWidth / 2);
-                
-                // Коррекция по левому краю
-                if (tooltipX < padding) {
-                    tooltipX = padding;
-                }
-                // Коррекция по правому краю
-                if (tooltipX + tooltipWidth > viewportWidth - padding) {
-                    tooltipX = viewportWidth - tooltipWidth - padding;
-                }
-                
-                // Добавляем прокрутку страницы к X
-                tooltipX += window.scrollX;
-
-                // Рассчитываем Y координату. Если сверху места нет, показываем ПОД элементом
-                let tooltipY = rect.top - tooltipHeight - 8; // По умолчанию сверху
-                
-                if (tooltipY < padding) { 
-                    // Если сверху не помещается, перекидываем вниз элемента
-                    tooltipY = rect.bottom + 8; 
-                }
-                
-                // Добавляем прокрутку страницы к Y
-                tooltipY += window.scrollY;
-
-                // 7. Применяем финальные координаты
-                tooltipElement.style.left = `${tooltipX}px`;
-                tooltipElement.style.top = `${tooltipY}px`;
-                tooltipElement.classList.add('visible');*/
             };
 
             // Функция для скрытия подсказки
