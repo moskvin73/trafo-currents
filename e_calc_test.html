@@ -2076,12 +2076,16 @@
                         const text = find_span.textContent.trim();
                         currentWordStart = caretPos - text.length;
                         // Фильтруем словарь по введенным символам (регистронезависимо)
-                        const all = [
-                            dictionary,
-                            ...globalScope.varNames
-                        ];
+                        let all;
+                        if (globalScope.varNames.length > 0) {
+                            all = [
+                                dictionary,
+                                ...globalScope.varNames
+                            ];
+                        }
+                        else all = ictionary;
                         const sortedDictionary = Array.from(new Set(all)).sort();
-                        const filtered = dictionary.filter(word => 
+                        const filtered = sortedDictionary.filter(word => 
                             word.startsWith(text) && word !== text
                         );
                         showDropdown(filtered, find_span);
