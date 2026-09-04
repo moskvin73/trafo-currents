@@ -2086,7 +2086,7 @@
                         else all = ictionary;
                         const sortedDictionary = Array.from(new Set(all)).sort();
                         const filtered = sortedDictionary.filter(word => 
-                            word.startsWith(text) && word !== text
+                            word.startsWith(text)
                         );
                         showDropdown(filtered, find_span);
                     }
