@@ -150,7 +150,7 @@ export function HighlightLerxer(text, context) {
                                 const value = sym.value;
                                 if (value instanceof VarableCode)  {
                                     const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
-                                    hint = `Переменная функции: ${name}(${str_parms})`;
+                                    hint = `Переменная функции:<br>${name}(${str_parms})`;
                                 }
                                 else hint = 'Переменная';
                                 break;
