@@ -153,7 +153,7 @@ export function HighlightLerxer(text, context) {
                                     const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
                                     hint = `Переменная функции:<br>${name}(${str_parms})`;
                                 }
-                                else hint = 'Переменная';
+                                else hint = `Переменная<br>типа: ${getTypeNameString(value)},<br>значение: ${value}`;
                                 break;
                             }
                             case SYM_BUILTIN: {
