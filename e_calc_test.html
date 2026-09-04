@@ -1872,10 +1872,10 @@
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
         let currentWordStart = 0;
-const dictionary = [
-    "SELECT", "FROM", "WHERE", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", // Ключевые слова
-    "id", "name", "user_id", "created_at", "updated_at", "status", "email"       // Идентификаторы
-];
+        const dictionary = [
+            "SELECT", "FROM", "WHERE", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", // Ключевые слова
+            "id", "name", "user_id", "created_at", "updated_at", "status", "email"       // Идентификаторы
+        ];
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
