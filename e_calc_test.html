@@ -2081,7 +2081,7 @@
                             ...globalScope.varNames
                         ];
                         const sortedDictionary =  Array.from(new Set(all)).sort();
-                        const filtered = sortedDictionary.filter(word => 
+                        const filtered = all.filter(word => 
                             word.startsWith(text) && word !== text
                         );
                         showDropdown(filtered, find_span);
