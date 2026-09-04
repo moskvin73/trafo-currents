@@ -1927,6 +1927,7 @@
 
         function hideDropdown() {
             dropdown.style.display = 'none';
+            currentWordStart = -1;
         }
 
         function insertWord(word) {
@@ -2108,7 +2109,9 @@
                         if (text.startsWith('%'))
                             console.log(`возможно вводится констана ${text}`);
                     }
-                } else hideDropdown();
+                } else {
+                    hideDropdown();
+                }
             };
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
@@ -2159,6 +2162,8 @@
 
                 const activeSpan = highlightLayer.querySelector(`[data-index="${activePosition}"]`);
                 setHighlightedBrackets(activeSpan);
+                if (textarea.selectionStart !== textarea.selectionEnd) hideDropdown();
+                
             };
 
             // --- РЕШЕНИЕ НЮАНСА: АВТО-ПЕРЕХВАТЧИК ОЧИСТКИ ИЗ JS-КОДА ---
