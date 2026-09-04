@@ -1988,12 +1988,11 @@ const dictionary = [
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
-                
-                // Учитываем символ переноса строки \n между линиями (кроме первой)
+
+                // Учитываем символ переноса строки \n между линиями
                 if (i > 0) {
                     if (currentPos === targetPos) {
-                        // Позиция как раз на переносе строки
-                        return null;
+                        return null; // Позиция на переносе строки
                     }
                     currentPos += 1; // длина '\n'
                 }
@@ -2002,27 +2001,30 @@ const dictionary = [
 
                 // Проверяем, находится ли targetPos внутри текущей строки
                 if (targetPos >= currentPos && targetPos <= currentPos + lineLength) {
-                    const spans = line.querySelectorAll('span');
-                    
-                    // Если в строке нет span (пустая строка), возвращаем саму строку
-                    if (spans.length === 0) {
-                        return null;
-                    }
+                    // Используем childNodes, чтобы учесть и теги, и текст/пробелы между ними
+                    const childNodes = line.childNodes;
 
-                    // Перебираем span-ы внутри найденной строки
-                    for (let span of spans) {
-                        const spanLength = span.textContent.length;
-                        
-                        if (targetPos >= currentPos && targetPos <= currentPos + spanLength) {
-                            return span;
+                    for (let node of childNodes) {
+                        const nodeLength = node.textContent.length;
+
+                        // Если это элемент SPAN и позиция попадает в него
+                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
+                            if (targetPos >= currentPos && targetPos <= currentPos + nodeLength) {
+                                return node;
+                            }
                         }
-                        currentPos += spanLength;
+
+                        // Смещаем позицию на длину узла (будь то спан или пробел)
+                        currentPos += nodeLength;
                     }
+                    
+                    return null; // Если внутри строки позиция попала на пробел вне спана
                 } else {
                     // Если позиция не в этой строке, пропускаем её целиком
                     currentPos += lineLength;
                 }
             }
+
             return null; // Позиция вне диапазона текста
         }         
          
