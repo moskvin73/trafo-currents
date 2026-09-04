@@ -1010,7 +1010,7 @@
     <ul id="suggestions" class="dropdown"></ul>
 
     <script type="module">
-        import { calcLineGraphemes, calcSubstrGraphemes } from './js/math_parser/MathLexer.js';
+        import { calcLineGraphemes, calcSubstrGraphemes, dictionaryReservedWordsMap } from './js/math_parser/MathLexer.js';
         import { MathParser,  ExecutionAbortedError } from './js/math_parser/MathParser.js';
         import { HighlightLerxer, htmlEscape } from './js/math_parser/HighlightLexer.js';
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
@@ -1872,10 +1872,7 @@
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
         let currentWordStart = 0;
-        const dictionary = [
-            "SELECT", "FROM", "WHERE", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", // Ключевые слова
-            "id", "name", "user_id", "created_at", "updated_at", "status", "email"       // Идентификаторы
-        ];
+        const dictionary = dictionaryReservedWordsMap;
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
@@ -2078,9 +2075,10 @@
                         const text = find_span.textContent.trim();
                         currentWordStart = caretPos - text.length;
                         // Фильтруем словарь по введенным символам (регистронезависимо)
-                        const filtered = dictionary.filter(word => 
+                        const filtered = dictionary;
+                        /*const filtered = dictionary.filter(word => 
                             word.startsWith(text) && word !== text
-                        );
+                        );*/
                         showDropdown(filtered, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
