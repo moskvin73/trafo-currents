@@ -107,7 +107,7 @@ export function HighlightLerxer(text, context) {
                                 hint = 'Идентификатор объявлен, но значения еще нет';
                                 break;
                             case SYM_VARIABLE:
-                                hint = 'переменная';
+                                hint = 'Переменная';
                                 break;
                             case SYM_BUILTIN:
                                 hint = 'Встроенная системная функция';
