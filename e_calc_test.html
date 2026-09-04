@@ -2207,17 +2207,7 @@
             let currentHintElement = null;
             const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
 
-            // Функция для отображения подсказки
-            const showHint = (element, htmlText) => {
-                if (!element || !htmlText) return;
-                
-                currentHintElement = element;
-                
-                // Сначала сбрасываем старые стили положения (чтобы max-width считался честно)
-                tooltipElement.style.left = '-9999px';
-                tooltipElement.style.top = '-9999px';                
-                // Устанавливаем текст подсказки
-                tooltipElement.innerHTML = htmlText;
+            const positionTooltip = (element) => {
                 // Получаем координаты целевого элемента и размеры экрана
                 const rect = element.getBoundingClientRect();
                 const tooltipWidth = tooltipElement.offsetWidth;
@@ -2256,6 +2246,69 @@
                 tooltipElement.style.left = `${tooltipX}px`;
                 tooltipElement.style.top = `${tooltipY}px`;
                 tooltipElement.classList.add('visible');
+            };            
+
+            // Функция для отображения подсказки
+            const showHint = (element, htmlText) => {
+                if (!element || !htmlText) return;
+                
+                currentHintElement = element;
+                
+                // Сначала сбрасываем старые стили положения (чтобы max-width считался честно)
+                tooltipElement.style.left = '-9999px';
+                tooltipElement.style.top = '-9999px';                
+                // Устанавливаем текст подсказки
+                tooltipElement.innerHTML = htmlText;
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([tooltipElement]).then(() => {
+                    // Этот код выполнится ПОСЛЕ того, как формулы отрисуются
+                    positionTooltip(element);
+                    }).catch((err) => {
+                        console.error("MathJax typesetting failed: ", err);
+                        positionTooltip(element); // Всё равно позиционируем в случае ошибки
+                    });
+                } else {
+                    // Если MathJax не загружен, просто позиционируем текст
+                    positionTooltip(element);
+                }
+                /*// Получаем координаты целевого элемента и размеры экрана
+                const rect = element.getBoundingClientRect();
+                const tooltipWidth = tooltipElement.offsetWidth;
+                const tooltipHeight = tooltipElement.offsetHeight;
+                
+                const viewportWidth = window.innerWidth;
+                const padding = 10; // Минимальный отступ от края экрана
+
+                // Рассчитываем X координату с защитой от выхода за левый/правый край
+                let tooltipX = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+                
+                // Коррекция по левому краю
+                if (tooltipX < padding) {
+                    tooltipX = padding;
+                }
+                // Коррекция по правому краю
+                if (tooltipX + tooltipWidth > viewportWidth - padding) {
+                    tooltipX = viewportWidth - tooltipWidth - padding;
+                }
+                
+                // Добавляем прокрутку страницы к X
+                tooltipX += window.scrollX;
+
+                // Рассчитываем Y координату. Если сверху места нет, показываем ПОД элементом
+                let tooltipY = rect.top - tooltipHeight - 8; // По умолчанию сверху
+                
+                if (tooltipY < padding) { 
+                    // Если сверху не помещается, перекидываем вниз элемента
+                    tooltipY = rect.bottom + 8; 
+                }
+                
+                // Добавляем прокрутку страницы к Y
+                tooltipY += window.scrollY;
+
+                // 7. Применяем финальные координаты
+                tooltipElement.style.left = `${tooltipX}px`;
+                tooltipElement.style.top = `${tooltipY}px`;
+                tooltipElement.classList.add('visible');*/
             };
 
             // Функция для скрытия подсказки
