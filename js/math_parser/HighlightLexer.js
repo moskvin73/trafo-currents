@@ -144,7 +144,7 @@ export function HighlightLerxer(text, context) {
                         const sym = context.getParseSymbolById(id);
                         switch (sym.type) {
                             case SYM_UNDEFINED:
-                                hint = 'Идентификатор объявлен, но значения еще нет';
+                                hint = 'Идентификатор объявлен, но значения нет';
                                 break;
                             case SYM_VARIABLE: {
                                 const value = sym.value;
