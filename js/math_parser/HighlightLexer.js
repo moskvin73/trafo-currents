@@ -38,6 +38,7 @@ import ASTNode, {
   IndexNode,
   VarableCode,
   DefineVarableCodeNode,
+  getTypeNameString,
   StatementNode,
   ConstantNode } from './ASTNodes.js';
 
