@@ -165,7 +165,7 @@ export function HighlightLerxer(text, context) {
                                     const type_str = getTypeNameString(getTypeLink(value));
                                     let value_str; 
                                     if (typeof value?.toTeX === 'function')
-                                        value_str = value.toTeX(); 
+                                        value_str = `<div>${value.toTeX(context.settings, displayMode = 'block'}</div>`); 
                                     else
                                         value_str = `<code>${value}</code>`;
                                     hint = `Переменная<br>тип: <code>${type_str}</code>,<br>значение: ${value_str}`;
