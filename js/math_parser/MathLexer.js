@@ -39,6 +39,7 @@ const reservedWordsMap = {
   'error': TokenType.RW_ERROR,
 };
 
+const dictionaryReservedWordsMap = [...reservedWordsMap.keys()]
 
 /**
  * Превращает невидимые, управляющие или битые символы в строку вида U+XXXX,
