@@ -1883,7 +1883,7 @@
         //#region Line editor
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
-        let currentWordStart = 0;
+        let currentWordStart = -1;
         const dictionary = [...dictionaryReservedWordsMap,
                             ...globalScope.fixedNames];
 
@@ -1930,6 +1930,7 @@
         }
 
         function insertWord(word) {
+            if (currentWordStart < 0) return;
             const text = textarea.value;
             const caretPos = textarea.selectionStart;
             
@@ -2151,6 +2152,7 @@
                     matchIndex = text.indexOf('\n', matchIndex + 1);
                 }
                 const currentColumn = calcSubstrGraphemes(text, lastNewLineIndex + 1, activePosition, var_css.chars_tab);
+
                 if (cursorIndicator) {
                     cursorIndicator.textContent = `Стр ${currentLine}, Кол ${currentColumn}`;
                 }
