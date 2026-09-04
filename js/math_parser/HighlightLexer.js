@@ -147,10 +147,12 @@ export function HighlightLerxer(text, context) {
                                 hint = 'Идентификатор объявлен, но значения еще нет';
                                 break;
                             case SYM_VARIABLE: {
-                                hint = 'Переменная';
-                                if (sym.value instanceof VarableCode)
-
-                                const v = sym.value;
+                                const value = sym.value;
+                                if (value instanceof VarableCode)  {
+                                    const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
+                                    hint = `Переменная функции: ${name}(${str_parms})`;
+                                }
+                                else hint = 'Переменная';
                                 break;
                             }
                             case SYM_BUILTIN: {
