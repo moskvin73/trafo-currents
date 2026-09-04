@@ -2074,7 +2074,7 @@
                 if (find_span) {
                     if (find_span.classList.contains('token-varable')) {
                         const text = find_span.textContent.trim();
-                        currentWordStart = caretPos - text.length - 1;
+                        currentWordStart = caretPos - text.length;
                         // Фильтруем словарь по введенным символам (регистронезависимо)
                         let all;
                         if (globalScope.varNames.length > 0) {
