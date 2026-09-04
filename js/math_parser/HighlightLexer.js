@@ -168,7 +168,7 @@ export function HighlightLerxer(text, context) {
                                         value_str = value.toTeX(); 
                                     else
                                         value_str = `${value}`;
-                                    hint = `Переменная<br>типа: <code>${type_str}</code>,<br>значение: <code>${value_str}</code>`;
+                                    hint = `Переменная<br>тип: <code>${type_str}</code>,<br>значение: <code>${value_str}</code>`;
                                 }
                                 break;
                             }
