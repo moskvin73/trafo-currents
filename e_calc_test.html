@@ -1872,7 +1872,7 @@
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
         let currentWordStart = 0;
-        const dictionary = dictionaryReservedWordsMap;
+        //const dictionary = dictionaryReservedWordsMap;
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
@@ -2075,7 +2075,12 @@
                         const text = find_span.textContent.trim();
                         currentWordStart = caretPos - text.length;
                         // Фильтруем словарь по введенным символам (регистронезависимо)
-                        const filtered = dictionary;
+                        const fullDictionary = [
+                            ...dictionaryReservedWordsMap,
+                            ...Object.keys(globalScope.fixedHash),
+                            ...Object.keys(globalScope.varHash)
+                        ];
+                        const filtered = fullDictionary;
                         /*const filtered = dictionary.filter(word => 
                             word.startsWith(text) && word !== text
                         );*/
