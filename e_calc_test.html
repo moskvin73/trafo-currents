@@ -1870,6 +1870,8 @@
         
         //#region Line editor
         const dropdown = document.getElementById('suggestions');
+        let activeIndex = 0;
+        let currentWordStart = 0;
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
