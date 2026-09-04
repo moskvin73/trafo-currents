@@ -1632,7 +1632,7 @@
         const uiLogContainer = document.getElementById("calc-log");
 
         function createCard(rawCode, parseResult) {
-            rawCode = HighlightLerxer(rawCode.replace(/^[\s\u2028\u2029\u0085\u000C]*\n/gm, ''));
+            rawCode = HighlightLerxer(rawCode.replace(/^[\s\u2028\u2029\u0085\u000C]*\n/gm, ''), globalScope);
             // 1. Создаем контейнер для новой карточки в ленте истории
             const card = document.createElement("div");
             card.className = "calc-card";
@@ -2062,7 +2062,7 @@
                 const text = textarea.value;
                 if (text.trim()) submitBtn.disabled = false;
                 else submitBtn.disabled = true;
-                highlightLayer.innerHTML = HighlightLerxer(text);
+                highlightLayer.innerHTML = HighlightLerxer(text, globalScope);
 
                 // 3. Получаем все сгенерированные строки из DOM
                 const lines = highlightLayer.querySelectorAll('.code-line');
