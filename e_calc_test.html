@@ -1872,6 +1872,10 @@
         const dropdown = document.getElementById('suggestions');
         let activeIndex = 0;
         let currentWordStart = 0;
+const dictionary = [
+    "SELECT", "FROM", "WHERE", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", // Ключевые слова
+    "id", "name", "user_id", "created_at", "updated_at", "status", "email"       // Идентификаторы
+];
 
         function showDropdown(items, spanElement) {
             dropdown.innerHTML = '';
@@ -2068,11 +2072,12 @@
                 const find_span = findSpanByPosition(caretPos);
                 if (find_span) {
                     if (find_span.classList.contains('token-varable')) {
-                        const text = find_span ? find_span.textContent.trim() : '';
-                        console.log(`Вводится зарезервированное слово или перемена ${text}`);
+                        const text = find_span.textContent.trim();
+                        currentWordStart = caretPos - text.length;
+                        showDropdown(dictionary, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
-                        const text = find_span ? find_span.textContent.trim() : '';
+                        const text = find_span.textContent.trim();
                         if (text.startsWith('%'))
                             console.log(`возможно вводится констана ${text}`);
                     }
