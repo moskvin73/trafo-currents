@@ -42,6 +42,14 @@ import ASTNode, {
   StatementNode,
   ConstantNode } from './ASTNodes.js';
 
+function getTypeLink(value) {
+  // null и undefined не имеют конструктора, обрабатываем их отдельно
+  if (value === null) return null;
+  if (value === undefined) return undefined;
+  
+  // Возвращаем ссылку на конструктор/класс
+  return value.constructor;
+}  
 
 export function htmlEscape(text) {
     return text
@@ -153,7 +161,7 @@ export function HighlightLerxer(text, context) {
                                     const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
                                     hint = `Переменная функции:<br><code>${name}(${str_parms})</code>`;
                                 }
-                                else hint = `Переменная<br>типа: <code>${getTypeNameString(value)}</code>,<br>значение: ${value}`;
+                                else hint = `Переменная<br>типа: <code>${getTypeNameString(getTypeLink(value))}</code>,<br>значение: ${value}`;
                                 break;
                             }
                             case SYM_BUILTIN: {
