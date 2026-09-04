@@ -151,9 +151,9 @@ export function HighlightLerxer(text, context) {
                                 const value = sym.value;
                                 if (value instanceof VarableCode)  {
                                     const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
-                                    hint = `Переменная функции:<br>${name}(${str_parms})`;
+                                    hint = `Переменная функции:<br><code>${name}(${str_parms})</code>`;
                                 }
-                                else hint = `Переменная<br>типа: ${getTypeNameString(value)},<br>значение: ${value}`;
+                                else hint = `Переменная<br>типа: <code>${getTypeNameString(value)}</code>,<br>значение: ${value}`;
                                 break;
                             }
                             case SYM_BUILTIN: {
