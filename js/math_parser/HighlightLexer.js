@@ -11,7 +11,16 @@ export function htmlEscape(text) {
             .replace(/'/g, "&#039;");
 }
 
-export function HighlightLerxer(text) {
+export function HighlightLerxer(text, context) {
+    // Проверяем, что text является строкой
+    if (typeof text !== 'string') {
+        throw new TypeError('Аргумент "text" должен быть строкой');
+    }
+
+    // Проверяем, что context является экземпляром класса SymbolTableContext
+    if (!(context instanceof SymbolTableContext)) {
+        throw new TypeError('Аргумент "context" должен быть экземпляром SymbolTableContext');
+    }    
     const lexer = new MathLexer(text, [], 1, true);
     const chunks = [];
     const bracketStack = [];
