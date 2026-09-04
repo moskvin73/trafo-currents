@@ -1971,7 +1971,7 @@ const dictionary = [
             }
         }
 
-        dropdown.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
         // Закрывать список при клике в любое другое место
         document.addEventListener('click', (e) => {
             if (e.target !== textarea && e.target !== dropdown) {
