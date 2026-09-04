@@ -2168,7 +2168,9 @@
                 setHighlightedBrackets(activeSpan);
                 if (textarea.selectionStart !== textarea.selectionEnd) hideDropdown();
                 else if (!isHideDropdown()) {
-                    
+                    const span_active_pos = findSpanByPosition(activePosition);
+                    const span_currentWordStart = findSpanByPosition(currentWordStart);
+                    if (span_active_pos !== span_currentWordStart)  hideDropdown();
                 }
             };
 
