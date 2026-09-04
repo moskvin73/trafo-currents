@@ -629,7 +629,7 @@ const REVERSE_TYPE_CLASSES = new Map(
  * @param {Map} reverseMap - Ваш словарь REVERSE_TYPE_CLASSES (Маппинг: Класс -> Строка)
  * @returns {string} - Понятное имя типа для пользователя
  */
-export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSE) {
+export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
   // 1. Защита от пустых значений (если что-то пошло не так в AST)
   if (typeRef === null || typeRef === undefined) {
     return 'empty';
