@@ -161,7 +161,8 @@ export function HighlightLerxer(text, context) {
                                     const str_parms = Array.from({ length: sym.value.paramsCount }, (_, i) => `param${i + 1}`).join(', '); 
                                     hint = `Переменная функции:<br><code>${name}(${str_parms})</code>`;
                                 }
-                                else hint = `Переменная<br>типа: <code>${getTypeNameString(getTypeLink(value))}</code>,<br>значение: ${value}`;
+                                else  { 
+                                    hint = `Переменная<br>типа: <code>${getTypeNameString(getTypeLink(value))}</code>,<br>значение: <code>${value}</code>`; }
                                 break;
                             }
                             case SYM_BUILTIN: {
