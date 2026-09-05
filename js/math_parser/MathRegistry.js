@@ -458,16 +458,19 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.divide(2 * Math.PI) },
   ]}],
 
+  // Градусы (deg) в Радианы (rad)
   ['fom_deg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 180) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 180) },
   ]],
 
+  // Грады (grad) в Радианы (rad)
   ['fom_grad', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
   ]],
 
+  // Обороты (rev) в Радианы (rad) 
   ['fom_rev', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(2 * Math.PI) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply1(2 * Math.PI) },
