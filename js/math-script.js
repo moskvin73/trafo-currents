@@ -8,7 +8,7 @@ window.MathJax = {
     options: {
         ignoreHtmlClass: 'tex2jax_ignore',
         processHtmlClass: 'tex2jax_process'
-    }
+    },
     // Добавляем настройки для компонента вывода (CommonHTML)
     chtml: {
         displayAlign: 'center', // Выравнивание блочных формул (по умолчанию)
