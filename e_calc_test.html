@@ -2428,6 +2428,7 @@
             window.addEventListener('resize', updateLineNumbers);
             textarea.addEventListener('keydown', (event) => {
                 if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                    hideHint();
                     event.preventDefault(); // Предотвращаем стандартный перенос строки в textarea
                     executeCurrentCommand();
                 }                
