@@ -490,17 +490,21 @@ export const COMPILER_REGISTRY = new Map([
 
   // === ЛОГАРИФМЫ ===
   ['ln', {
-    description: 'Возвращает натуральный логарифм числа $x$. Поддерживает комплексные числа.'+
+    description: 'Вычисляет <b>натуральный логарифм</b> числа $x$. Поддерживает комплексные числа.'+
                  ' Если $x = 0$, возвращает $-\\infty$. Для $x < 0$ возвращает комплексное значение.'+
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'instance', method: 'log' },
     { types: [ComplexNumber], callType: 'instance', method: 'log' }
   ]}],
-  ['lg', [
+  ['lg', {
+    description: 'Вычисляет <b>десятичный логарифм</b> числа $x$. Поддерживает комплексные числа.'+
+                 ' Если $x = 0$, возвращает $-\\infty$. Для $x < 0$ возвращает комплексное значение.'+
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'instance', method: 'log10' },
     { types: [ComplexNumber], callType: 'instance', method: 'log10' }
-  ]],
+  ]}],
   ['log', [
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'logBase' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'logBase' }
