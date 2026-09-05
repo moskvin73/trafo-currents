@@ -815,7 +815,7 @@
             0%, 20% {
                 transform: translateY(0); /* Стоим на месте в начале (задержка) */
             }
-            50%, 80% {
+            50%, 70% {
                 transform: translateY(var(--scroll-amount)); /* Прокручиваем до конца вниз и замираем */
             }
             100% {
@@ -2241,7 +2241,7 @@
 
                 if (totalHeight > visibleHeight) {
                     // 2. Задаем желаемую скорость (например, 40 пикселей в секунду)
-                    const pixelsPerSecond = 40; 
+                    const pixelsPerSecond = 10; 
                     // Вычисляем, на сколько пикселей нужно сдвинуть контент вверх.
                     // Вычитаем padding, чтобы текст не прижимался вплотную к краям.
                     const scrollAmount = totalHeight - visibleHeight;
