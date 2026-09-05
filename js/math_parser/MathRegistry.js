@@ -552,7 +552,6 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
   ]],
 
-
   // Единичная матрица: принимает размерность (вещественное число)
   ['zeros', [
     {
