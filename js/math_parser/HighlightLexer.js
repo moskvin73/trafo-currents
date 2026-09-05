@@ -173,7 +173,7 @@ export function HighlightLerxer(text, context) {
                                 break;
                             }
                             case SYM_BUILTIN: {
-                                hint = `Встроенная системная функция: ${sym.description}`;
+                                hint = `Встроенная системная функция:<br>${sym.description}`;
                                 break;
                             }
                         }
