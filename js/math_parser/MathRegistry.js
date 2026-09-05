@@ -438,10 +438,16 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // Радианы (rad) в Грады (grad)
-  ['grad', [
+  ['grad', { 
+    description: 'функция, которая преобразует угол из радиан в грады (гоны). '+
+                 'Она принимает значение x в радианах и возвращает его эквивалент в градах, где '+
+                 '$2\\pi\\text{ рад} = 400\\text{ град}$ (или $1\\text{ рад} = \\frac{200}{\\pi}\text{ град}$). '+
+                 'При работе с комплексными числами функция применяется отдельно к действительной и мнимой частям аргумента.'
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
-  ]],
+  ]}],
 
   // Радианы (rad) в Обороты (rev)
   ['rev', [
