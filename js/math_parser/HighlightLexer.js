@@ -149,7 +149,7 @@ export function HighlightLerxer(text, context) {
             case TokenType.VARIABLE: {
                     const name = lexer.stringValue();
                     const id = context.getIdByName(name);
-                    if (id != null) {
+                    if (id !== null) {
                         const sym = context.getParseSymbolById(id);
                         switch (sym.type) {
                             case SYM_UNDEFINED:
