@@ -532,47 +532,88 @@ export const COMPILER_REGISTRY = new Map([
   ]],
 
   // === ТРИГОНОМЕТРИЯ И СИНОНИМЫ ===
-  ['sin',  [{ types: [RealNumber], callType: 'instance', method: 'sin' }, { types: [ComplexNumber], callType: 'instance', method: 'sin' }]],
-  ['cos',  [{ types: [RealNumber], callType: 'instance', method: 'cos' }, { types: [ComplexNumber], callType: 'instance', method: 'cos' }]],
-  ['tan',  [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
-  ['tg',   [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
+  ['sin',  [
+    { types: [RealNumber], callType: 'instance', method: 'sin' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'sin' }
+  ]],
+  ['cos',  [
+    { types: [RealNumber], callType: 'instance', method: 'cos' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'cos' }
+  ]],
+  ['tan',  [
+    { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'tan' }
+  ]],
+  ['tg',   [
+    { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'tan' }
+  ]],
 
   // === ГИПЕРБОЛИЧЕСКИЕ ФУКЦИИ ===
-  ['sinh',  [{ types: [RealNumber], callType: 'instance', method: 'sin' }, { types: [ComplexNumber], callType: 'instance', method: 'sin' }]],
-  ['cosh',  [{ types: [RealNumber], callType: 'instance', method: 'cos' }, { types: [ComplexNumber], callType: 'instance', method: 'cos' }]],
-  ['tanh',  [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
-  ['tgh',   [{ types: [RealNumber], callType: 'instance', method: 'tan' }, { types: [ComplexNumber], callType: 'instance', method: 'tan' }]],
+  ['sinh',  [
+    { types: [RealNumber], callType: 'instance', method: 'sin' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'sin' }
+  ]],
+  ['cosh',  [
+    { types: [RealNumber], callType: 'instance', method: 'cos' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'cos' }
+  ]],
+  ['tanh',  [
+    { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'tan' }
+  ]],
+  ['tgh',   [
+    { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'tan' }
+  ]],
 
   // === ОБРАТНЫЕ ФУНКЦИИ ===
-  ['arcsin',  [{ types: [RealNumber], callType: 'instance', method: 'arcsin' },  { types: [ComplexNumber], callType: 'instance', method: 'arcsin' }]],
-  ['arccos',  [{ types: [RealNumber], callType: 'instance', method: 'arccos' },  { types: [ComplexNumber], callType: 'instance', method: 'arccos' }]],
-  ['arctan',  [{ types: [RealNumber], callType: 'instance', method: 'arctan' },  { types: [ComplexNumber], callType: 'instance', method: 'arctan' }]],
-  ['arctg',   [{ types: [RealNumber], callType: 'instance', method: 'arctan' },  { types: [ComplexNumber], callType: 'instance', method: 'arctan' }]],
-  ['arcsinh', [{ types: [RealNumber], callType: 'instance', method: 'arcsinh' }, { types: [ComplexNumber], callType: 'instance', method: 'arcsinh' }]],
-  ['arccosh', [{ types: [RealNumber], callType: 'instance', method: 'arccosh' }, { types: [ComplexNumber], callType: 'instance', method: 'arccosh' }]],
-  ['arctanh', [{ types: [RealNumber], callType: 'instance', method: 'arctanh' }, { types: [ComplexNumber], callType: 'instance', method: 'arctanh' }]],
+  ['arcsin',  [
+    { types: [RealNumber], callType: 'instance', method: 'arcsin' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arcsin' }
+  ]],
+  ['arccos',  [
+    { types: [RealNumber], callType: 'instance', method: 'arccos' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arccos' }
+  ]],
+  ['arctan',  [
+    { types: [RealNumber], callType: 'instance', method: 'arctan' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arctan' }
+  ]],
+  ['arctg',   [
+    { types: [RealNumber], callType: 'instance', method: 'arctan' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arctan' }
+  ]],
+  ['arcsinh', [
+    { types: [RealNumber], callType: 'instance', method: 'arcsinh' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'arcsinh' }
+  ]],
+  ['arccosh', [
+    { types: [RealNumber], callType: 'instance', method: 'arccosh' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'arccosh' }
+  ]],
+  ['arctanh', [
+    { types: [RealNumber], callType: 'instance', method: 'arctanh' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'arctanh' }
+  ]],
 
   // === СОСТАВНЫЕ ФУНКЦИИ ПРЯМО В ТАБЛИЦЕ (Без раздувания числовых классов) ===
   ['sec', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) }
   ]],
-
   ['arcsec', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() }
   ]],
-
   ['csc', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) }
   ]],
-
   ['arccsc', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(0, Infinity): x.inverse().arcsin() },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(0, Infinity): x.inverse().arcsin() }
   ]],
-
   ['ctg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
