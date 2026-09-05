@@ -797,17 +797,6 @@
             /* Ограничение размеров относительно экрана */
             max-width: 40vw;         /* Максимум 40% от ширины экрана */
             max-height: 40vh;        /* Максимум 40% от высоты экрана */
-            
-            /* Перенос слов и монолитных строк */
-            word-break: break-word;  /* Перенос по словам, длинные слова режутся */
-            overflow: hidden;        /* Прячем все, что не влезло */
-            
-            /* Корректный перенос текста */
-            white-space: pre-wrap; /* Важно для HTML и переносов кода */
-            word-break: break-word;
-            overflow: hidden;      /* Прячет то, что не влезло в max-height */
-            
-            /* Убираем жесткий -webkit-line-clamp, чтобы строки не ограничивались числом */
             display: block;             
         }
 
@@ -819,13 +808,6 @@
         .custom-tooltip * {
             font-family: inherit; /* Распространяет шрифт на span, b, code и т.д. */
         }
-
-        /* Если внутри тултипа будут блоки кода или форматированный текст */
-        .custom-tooltip pre, 
-        .custom-tooltip code {
-            margin: 0;
-            white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
-        }       
 
         /* Создаем анимацию прокрутки вверх-вниз */
         @keyframes scrollTooltip {
@@ -846,15 +828,28 @@
             width: 100%;
             height: auto;
             padding: 6px 10px;
+            margin: 0;
+            /* Корректный перенос текста */
+            white-space: pre-wrap; /* Важно для HTML и переносов кода */
+            word-break: break-word;
+            overflow: hidden;      /* Прячет то, что не влезло в max-height */
             transition: transform 0.3s ease-out;
         }
+
+        /* Если внутри тултипа будут блоки кода или форматированный текст */
+        .custom-tooltip-scroller pre, 
+        .custom-tooltip-scroller code {
+            margin: 0;
+            white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
+        }       
+
 
         /* Класс, который JS добавит только если текст НЕ помещается */
         .custom-tooltip.animated .custom-tooltip-scroller {
             /* 8 секунд на цикл, бесконечно, плавно */
             animation: scrollTooltip 8s ease-in-out infinite; 
         }
-                
+
         #calc-log {
             display: flex;
             align-items: center;      /* Центрирует текст по вертикали внутри flex-контейнера */
