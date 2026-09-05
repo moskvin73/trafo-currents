@@ -412,17 +412,20 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   ['arg', {
-    description: 'Возвращает аргумент (угoл) комплексного числа $z$ в диапазоне $(-\pi; \pi]$ (<i>для вещественных чисел возвращает угол $0$</i>)' +
+    description: 'Возвращает аргумент (угoл) комплексного числа $z$ в диапазоне $(-\pi; \pi]$ (<i>для вещественных чисел возвращает угол $\\qty{0}{\\radian}$</i>)' +
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.phase },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.phase) },
   ]}],
 
-  ['imag', [
+  ['imag',  {
+    description: 'Возвращает мнимую часть числа $x$. Если $x$ вещественное, возвращает $0$.' +
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(0) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.imaginary) },
-  ]],
+  ]}],
 
   // Радианы (rad) в Градусы (deg)
   ['deg', [
