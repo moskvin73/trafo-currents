@@ -481,7 +481,7 @@ export const COMPILER_REGISTRY = new Map([
   // Обороты (rev) в Радианы (rad) 
   ['from_rev', {
     description: 'Преобразует угол из оборотов (rev) в радианы (rad). '+
-                 'Поддерживает работу с комплексными числами (домножает на $2\\pi$). Значение в радианах ($rev  2 \\pi$).'+
+                 'Поддерживает работу с комплексными числами (домножает на $2\\pi$). Значение в радианах ($rev \\times 2 \\pi$).'+
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(2 * Math.PI) },
