@@ -411,10 +411,13 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.conjugate },
   ]}],
 
-  ['phase', [
+  ['arg', {
+    description: 'Возвращает аргумент (угoл) комплексного числа $z$ в диапазоне $(-\pi; \pi]$ (<i>для вещественных чисел возвращает угол $0$</i>)' +
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.phase },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new RealNumber(x.phase) },
-  ]],
+  ]}],
 
   ['imag', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => new RealNumber(0) },
