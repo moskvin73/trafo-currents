@@ -2251,7 +2251,7 @@
                     const moveDuration = scrollAmount / pixelsPerSecond;
     
                     // 4. Добавляем время на паузы (в вашей анимации паузы занимают около 50% времени цикла)
-                    const totalDuration = Math.max(5, 4 + (scrollAmount / 40));//moveDuration * 2;                     
+                    const totalDuration = Math.max(5, 4 + (scrollAmount / 20));//moveDuration * 2;                     
 
                     // Передаем значение в CSS (минус, так как сдвигаем через translateY вверх)
                     scroller.style.setProperty('--scroll-amount', `-${scrollAmount}px`);
