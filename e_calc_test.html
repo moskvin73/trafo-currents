@@ -2238,6 +2238,13 @@
                 requestAnimationFrame(() => {
                 // 4. Проверяем, помещается ли текст по высоте
                 const totalHeight = scroller.scrollHeight;       // Полная высота контента
+
+    // Получаем точные padding сверху и снизу у скроллера
+    const scrollerStyle = window.getComputedStyle(scroller);
+    const paddingTop = parseFloat(scrollerStyle.paddingTop) || 0;
+    const paddingBottom = parseFloat(scrollerStyle.paddingBottom) || 0;
+    const totalPadding = paddingTop + paddingBottom;
+                    
                 const visibleHeight = tooltipElement.clientHeight; // Доступная высота (с учетом max-height)
 
                 if (totalHeight > visibleHeight) {
