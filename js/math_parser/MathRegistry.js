@@ -412,7 +412,7 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   ['arg', {
-    description: 'Возвращает аргумент (угoл) комплексного числа $z$ в диапазоне $(-\pi; \pi]$ (<i>для вещественных чисел возвращает угол $0 \\, \\mathrm{рад}$</i>)' +
+    description: 'Возвращает аргумент (угoл) комплексного числа $z$ в диапазоне $(-\\pi; \\pi]$ (<i>для вещественных чисел возвращает угол $0 \\, \\mathrm{рад}$</i>)' +
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.phase },
@@ -441,7 +441,7 @@ export const COMPILER_REGISTRY = new Map([
   ['grad', { 
     description: 'функция, которая преобразует угол из радиан в грады (гоны). '+
                  'Она принимает значение x в радианах и возвращает его эквивалент в градах, где '+
-                 '$2\\pi\\text{ рад} = 400\\text{ град}$ (или $1\\text{ рад} = \\frac{200}{\\pi}\text{ град}$). '+
+                 '$2\\pi\\text{ рад} = 400\\text{ град}$ (или $1\\text{ рад} = \\frac{200}{\\pi}\\text{ град}$). '+
                  'При работе с комплексными числами функция применяется отдельно к действительной и мнимой частям аргумента.'
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
@@ -450,10 +450,13 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // Радианы (rad) в Обороты (rev)
-  ['rev', [
+  ['rev', {
+    description: 'Преобразует угол из радиан в обороты (полные циклы). Поддерживает комплексные числа: $\\mathtt{rev(z)} \\implies \\frac{z}{2\\piπ}$.'+
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.divide(2 * Math.PI) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.divide(2 * Math.PI) },
-  ]],
+  ]}],
 
   ['rad_deg', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 180) },
