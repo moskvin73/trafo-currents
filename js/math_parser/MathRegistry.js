@@ -514,7 +514,7 @@ export const COMPILER_REGISTRY = new Map([
                  '<li>Аргумент равен нулю ($x = 0$): возвращает $-\\infty$ (минус бесконечность).</li>'+
                  '<li>Аргумент и основание равены нулю ($x = 0, base = 0$): возвращает $\\color{red}\\text{NaN}$.</li>'+
                  '<li>Основание равно нулю ($base = 0$): возвращает $-j0$ (мнимый ноль с отрицательным знаком)</li>'+
-                 '</ul><br>Тип данных аргумента <code>real, complex</code>.',
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
     overloads: [
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'logBase' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'logBase' }
