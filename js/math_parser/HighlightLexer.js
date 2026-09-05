@@ -174,8 +174,7 @@ export function HighlightLerxer(text, context) {
                                 break;
                             }
                             case SYM_BUILTIN: {
-                                hint = 'Встроенная системная функция';
-                                const v = sym.value;
+                                hint = `Встроенная системная функция: ${}`;
                                 break;
                             }
                         }

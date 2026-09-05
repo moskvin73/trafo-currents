@@ -27,7 +27,9 @@ export class SymbolTableContext {
 
     for (let i = 0; i < this.CD; i++) {
       const name = this.fixedNames[i];
-      const overloads = getCommandInfo(name).overloads; // COMPILER_REGISTRY.get(name);
+      const data = getCommandInfo(name);
+      const overloads = data.overloads; // COMPILER_REGISTRY.get(name);
+      const description = data.description;
 
       this.fixedSymbols[i] = {
         get type() { return SYM_BUILTIN; },
@@ -39,7 +41,8 @@ export class SymbolTableContext {
         },
         set value(val) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
-        }
+        },
+        get description() { return description; }
       };
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
