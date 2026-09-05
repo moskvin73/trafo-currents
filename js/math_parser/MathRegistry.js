@@ -446,7 +446,7 @@ export const COMPILER_REGISTRY = new Map([
                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(200 / Math.PI) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new ComplexNumber(x.real * 200 / Math.PI, x.imaginary * 200 / Math.PI) },
   ]}],
 
   // Радианы (rad) в Обороты (rev)
