@@ -402,10 +402,13 @@ export const COMPILER_REGISTRY = new Map([
   ['ceil',    ceilRules],
   ['abs',     absRules],
 
-  ['conjugate', [
+  ['conjugate', {
+     description: 'Возвращает комплексное сопряжённое число. Меняет знак мнимой части на противоположный <code>conjugate(z)</code> $\\overline{z}$.' + 
+                  '<br>Типы данных <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.conjugate },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.conjugate },
-  ]],
+  ]}],
 
   ['phase', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.phase },
