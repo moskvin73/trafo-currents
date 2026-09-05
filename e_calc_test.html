@@ -2235,6 +2235,7 @@
             const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
 
             const positionTooltip = (element) => {
+                requestAnimationFrame(() => {
                 // 4. Проверяем, помещается ли текст по высоте
                 const totalHeight = scroller.scrollHeight;       // Полная высота контента
                 const visibleHeight = tooltipElement.clientHeight; // Доступная высота (с учетом max-height)
@@ -2299,6 +2300,7 @@
                 tooltipElement.style.left = `${tooltipX}px`;
                 tooltipElement.style.top = `${tooltipY}px`;
                 tooltipElement.classList.add('visible');
+                });
             };            
 
             // Функция для отображения подсказки
