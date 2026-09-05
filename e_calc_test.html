@@ -827,33 +827,34 @@
             white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
         }       
 
-/* Создаем анимацию прокрутки вверх-вниз */
-@keyframes scrollTooltip {
-    0%, 20% {
-        transform: translateY(0); /* Стоим на месте в начале (задержка) */
-    }
-    50%, 70% {
-        transform: translateY(var(--scroll-amount)); /* Прокручиваем до конца вниз и замираем */
-    }
-    100% {
-        transform: translateY(0); /* Возвращаемся наверх */
-    }
-}
+        /* Создаем анимацию прокрутки вверх-вниз */
+        @keyframes scrollTooltip {
+            0%, 20% {
+                transform: translateY(0); /* Стоим на месте в начале (задержка) */
+            }
+            50%, 70% {
+                transform: translateY(var(--scroll-amount)); /* Прокручиваем до конца вниз и замираем */
+            }
+            100% {
+                transform: translateY(0); /* Возвращаемся наверх */
+            }
+        }
 
-/* Обертка для контента, которую мы будем двигать */
-.custom-tooltip-scroller {
-    display: block;
-    width: 100%;
-    height: auto;
-    padding: 6px 10px;
-    transition: transform 0.3s ease-out;
-}
+        /* Обертка для контента, которую мы будем двигать */
+        .custom-tooltip-scroller {
+            display: block;
+            width: 100%;
+            height: auto;
+            padding: 6px 10px;
+            transition: transform 0.3s ease-out;
+        }
 
-/* Класс, который JS добавит только если текст НЕ помещается */
-.custom-tooltip.animated .custom-tooltip-scroller {
-    /* 8 секунд на цикл, бесконечно, плавно */
-    animation: scrollTooltip 8s ease-in-out infinite; 
-}        
+        /* Класс, который JS добавит только если текст НЕ помещается */
+        .custom-tooltip.animated .custom-tooltip-scroller {
+            /* 8 секунд на цикл, бесконечно, плавно */
+            animation: scrollTooltip 8s ease-in-out infinite; 
+        }
+                
         #calc-log {
             display: flex;
             align-items: center;      /* Центрирует текст по вертикали внутри flex-контейнера */
