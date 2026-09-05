@@ -403,7 +403,7 @@ export const COMPILER_REGISTRY = new Map([
   ['abs',     absRules],
 
   ['conjugate', {
-     description: 'Возвращает комплексное сопряжённое число. Меняет знак мнимой части на противоположный <code>conjugate(z)</code> $\\overline{z}$.' + 
+     description: 'Возвращает комплексное сопряжённое число. Меняет знак мнимой части на противоположный <code>conjugate(z)</code> — $\\overline{z}$.' + 
                   '<br>Типы данных <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.conjugate },
