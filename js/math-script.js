@@ -79,7 +79,7 @@ const setTxt = (id, val) => {
 };
 
 // Автоматическое внедрение глобальной иконки для всего сайта аналитики
-(function() {
+/*(function() {
     // Если на странице уже жестко прописана своя иконка (как на калькуляторе), ничего не делаем
     if (document.querySelector("link[rel*='icon']")) return;
     
@@ -90,7 +90,7 @@ const setTxt = (id, val) => {
     globalLink.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>';
     
     document.head.appendChild(globalLink);
-})();
+})();*/
 
 // Автоматический перехват копирования для Microsoft Word
 document.addEventListener('copy', function(e) {
