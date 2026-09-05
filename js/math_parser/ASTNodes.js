@@ -2191,6 +2191,7 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
   }],
 
   ["conjugate", { render: ([val]) =>  `\\overline{${val}}`}],
+  ["arg",    {tex: '\\arg' }],
 
   // === 3. ПРЯМАЯ ТРИГОНОМЕТРИЯ ===
   ['sin',    { tex: '\\sin' }],
