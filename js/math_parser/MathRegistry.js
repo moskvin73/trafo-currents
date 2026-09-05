@@ -459,22 +459,30 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // Градусы (deg) в Радианы (rad)
-  ['fom_deg', [
+  ['from_deg', {
+    description: 'Преобразует значение угла из градусов в радианы. '+
+                 'Поддерживает работу с комплексными числами $z = x + jy$, где мнимая часть интерпретируется как гиперболический компонент.'+
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 180) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 180) },
-  ]],
+  ]}],
 
   // Грады (grad) в Радианы (rad)
-  ['fom_grad', [
+  ['from_grad', {
+    description: '',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
-  ]],
+  ]}],
 
   // Обороты (rev) в Радианы (rad) 
-  ['fom_rev', [
+  ['from_rev', {
+    description: '',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(2 * Math.PI) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply1(2 * Math.PI) },
-  ]],
+  ]}],
 
   // === ЛОГАРИФМЫ ===
   ['ln', [
