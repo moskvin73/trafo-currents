@@ -2192,6 +2192,9 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
 
   ["conjugate", { render: ([val]) =>  `\\overline{${val}}`}],
   ["arg",    {tex: '\\arg' }],
+  ["fom_deg",    {tex: '\\operatorname{fom_deg}' }],
+  ["fom_grad",    {tex: '\\operatorname{fom_grad}' }],
+  ["fom_rev",    {tex: '\\operatorname{fom_rev}' }],
 
   // === 3. ПРЯМАЯ ТРИГОНОМЕТРИЯ ===
   ['sin',    { tex: '\\sin' }],
