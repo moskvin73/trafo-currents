@@ -470,10 +470,12 @@ export const COMPILER_REGISTRY = new Map([
 
   // Грады (grad) в Радианы (rad)
   ['from_grad', {
-    description: '',
+    description: 'Преобразует величину угла из градов в радианы по формуле $rad = grad \\times \\frac{\\pi}{200}$. '+
+                 'Поддерживает работу с комплексными числами (масштабирует как действительную, так и мнимую часть).'+
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
-    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(Math.PI / 200) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => new ComplexNumber(x.real * Math.PI / 200, x.imaginary * Math.PI / 200) },
   ]}],
 
   // Обороты (rev) в Радианы (rad) 
