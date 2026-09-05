@@ -389,7 +389,7 @@ export const COMPILER_REGISTRY = new Map([
   ['sqrt', {
     description: 'Вычисление квадратного корня <code>sqrt(x)</code> — $\\sqrt{x}$ или ' + 
                  'вычисление корня заданной степени <code>sqrt(x, y)</code> — $\\sqrt[y]{x}$.<br>' + 
-                 'Типы данных <code>real, complex</code>.', 
+                 'Типы данных аргументов <code>real, complex</code>.', 
     overloads:[
     { types: [RealNumber], callType: 'instance', method: 'sqrt' },
     { types: [ComplexNumber], callType: 'instance', method: 'sqrt' },
@@ -403,8 +403,9 @@ export const COMPILER_REGISTRY = new Map([
   ['abs',     absRules],
 
   ['conjugate', {
-     description: 'Возвращает комплексное сопряжённое число. Меняет знак мнимой части на противоположный (<i>для вещественных чисел возвращает тоже число</i>) $\\mathtt{conjugate(3-3i)} \\implies \\overline{3 - j3} = 3 + j3$.' + 
-                  '<br>Типы данных <code>real, complex</code>.',
+     description: 'Возвращает комплексное сопряжённое число. Меняет знак мнимой части на противоположный ' + 
+                  '(<i>для вещественных чисел возвращает тоже число</i>) $\\mathtt{conjugate(3-3i)} \\implies \\overline{3 - j3} = 3 + j3$.' + 
+                  '<br>Тип данных аргумента <code>real, complex</code>.',
     overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.conjugate },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.conjugate },
