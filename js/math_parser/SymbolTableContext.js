@@ -27,7 +27,7 @@ export class SymbolTableContext {
 
     for (let i = 0; i < this.CD; i++) {
       const name = this.fixedNames[i];
-      const overloads = getCommandInfo(name).overloads; //COMPILER_REGISTRY.get(name);
+      const overloads = getCommandInfo(name).overloads; // COMPILER_REGISTRY.get(name);
 
       this.fixedSymbols[i] = {
         get type() { return SYM_BUILTIN; },
