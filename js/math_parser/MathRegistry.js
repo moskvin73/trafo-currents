@@ -289,7 +289,7 @@ export function getCommandInfo(commandName) {
 
   return {
     // Если есть явное описание — берем его, иначе — дефолтный текст
-    description: isObjectWithDescription ? entry.description : 'Описание отсутсвует aetотсутствует',
+    description: isObjectWithDescription ? entry.description : 'Описание отсутсвует',
     // Вытаскиваем массив перегрузок в любом случае
     overloads: isObjectWithDescription ? entry.overloads : entry
   };
