@@ -2185,7 +2185,6 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
   // === 2. ЛОГАРИФМЫ ===
   ['ln',     { tex: '\\ln' }],
   ['lg',     { tex: '\\lg' }],
-  //['log',    { tex: '\\log' }], // Стандартный \log(x)
   ['log', {
     render: ([val, base]) => base ? `\\log_{${base}}\\left(${val}\\right)` : `\\log\\left(${val}\\right)`
   }],
