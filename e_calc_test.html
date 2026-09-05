@@ -847,7 +847,8 @@
         /* Класс, который JS добавит только если текст НЕ помещается */
         .custom-tooltip.animated .custom-tooltip-scroller {
             /* 8 секунд на цикл, бесконечно, плавно */
-            animation: scrollTooltip 15s ease-in-out infinite; 
+            /*animation: scrollTooltip 15s ease-in-out infinite;*/
+            animation: scrollTooltip var(--scroll-duration, 10s) ease-in-out infinite; 
         }
 
         #calc-log {
@@ -2239,12 +2240,21 @@
                 const visibleHeight = tooltipElement.clientHeight; // Доступная высота (с учетом max-height)
 
                 if (totalHeight > visibleHeight) {
+                    // 2. Задаем желаемую скорость (например, 40 пикселей в секунду)
+                    const pixelsPerSecond = 40; 
                     // Вычисляем, на сколько пикселей нужно сдвинуть контент вверх.
                     // Вычитаем padding, чтобы текст не прижимался вплотную к краям.
                     const scrollAmount = totalHeight - visibleHeight;
                     
+                    // 3. Считаем чистое время движения (в секундах)
+                    const moveDuration = scrollAmount / pixelsPerSecond;
+    
+                    // 4. Добавляем время на паузы (в вашей анимации паузы занимают около 50% времени цикла)
+                    const totalDuration = moveDuration * 2;                     
+
                     // Передаем значение в CSS (минус, так как сдвигаем через translateY вверх)
-                    tooltipElement.style.setProperty('--scroll-amount', `-${scrollAmount}px`);
+                    scroller.style.setProperty('--scroll-amount', `-${scrollAmount}px`);
+                    scroller.style.setProperty('--scroll-duration', `${totalDuration}s`);
                     
                     // Включаем анимацию
                     tooltipElement.classList.add('animated');
