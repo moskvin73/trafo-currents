@@ -1,4 +1,4 @@
-import { COMPILER_REGISTRY } from './MathRegistry.js';
+import { COMPILER_REGISTRY, getCommandInfo } from './MathRegistry.js';
 import { COMPLEX_FORMAT, ANGLE_MODE } from './ConstantsDef.js';
 import { restoreDataType } from '../DataTypeRegistry.js';
 
@@ -27,7 +27,7 @@ export class SymbolTableContext {
 
     for (let i = 0; i < this.CD; i++) {
       const name = this.fixedNames[i];
-      const overloads = COMPILER_REGISTRY.get(name);
+      const overloads = getCommandInfo(name).overloads; //COMPILER_REGISTRY.get(name);
 
       this.fixedSymbols[i] = {
         get type() { return SYM_BUILTIN; },

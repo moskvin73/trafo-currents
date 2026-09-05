@@ -280,6 +280,21 @@ function executeMatrixOperationUniversal(matrix, extraArgs, overloads) {
   return new Matrix(newData);
 }
 
+export function getCommandInfo(commandName) {
+  const entry = COMPILER_REGISTRY.get(commandName);
+  if (!entry) return null;
+
+  // Проверяем: это объект с описанием (как у 'sqrt') или прямой массив (как у 'conjugate')?
+  const isObjectWithDescription = !Array.isArray(entry) && entry.overloads;
+
+  return {
+    // Если есть явное описание — берем его, иначе — дефолтный текст
+    description: isObjectWithDescription ? entry.description : 'Описание отсутствует',
+    // Вытаскиваем массив перегрузок в любом случае
+    overloads: isObjectWithDescription ? entry.overloads : entry
+  };
+}
+
 // =========================================================================
 // 2. ДЕКЛАРАТИВНЫЙ РЕЕСТР СИГНАТУР ФУНКЦИЙ (COMPILER REGISTRY)
 // =========================================================================
