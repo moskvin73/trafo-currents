@@ -2242,7 +2242,7 @@
 
                 if (totalHeight > visibleHeight) {
                     // 2. Задаем желаемую скорость (например, 40 пикселей в секунду)
-                    const pixelsPerSecond = 10; 
+                    const pixelsPerSecond = 20; 
                     // Вычисляем, на сколько пикселей нужно сдвинуть контент вверх.
                     // Вычитаем padding, чтобы текст не прижимался вплотную к краям.
                     const scrollAmount = totalHeight - visibleHeight;
@@ -2251,7 +2251,7 @@
                     const moveDuration = scrollAmount / pixelsPerSecond;
     
                     // 4. Добавляем время на паузы (в вашей анимации паузы занимают около 50% времени цикла)
-                    const totalDuration = Math.max(5, 4 + (scrollAmount / 20));//moveDuration * 2;                     
+                    const totalDuration = Math.max(5, 4 + moveDuration);                     
 
                     // Передаем значение в CSS (минус, так как сдвигаем через translateY вверх)
                     scroller.style.setProperty('--scroll-amount', `-${scrollAmount}px`);
