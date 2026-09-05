@@ -387,8 +387,8 @@ absRules =
 export const COMPILER_REGISTRY = new Map([
   // === ФУНКЦИЯ SQRT (1 или 2 аргумента) ===
   ['sqrt', {
-    description: 'Вычисление квадратного корня <code>sqrt(x)</code> — $\\sqrt{x}$ или ' + 
-                 'вычисление корня заданной степени <code>sqrt(x, y)</code> — $\\sqrt[y]{x}$.<br>' + 
+    description: 'Вычисление квадратного корня $\\mathtt{sqrt(x)} \\implies \\sqrt{x}$ или ' + 
+                 'вычисление корня заданной степени $\\mathtt{sqrt(x, y)} \\implies \\sqrt[y]{x}$.<br>' + 
                  'Типы данных аргументов <code>real, complex</code>.', 
     overloads:[
     { types: [RealNumber], callType: 'instance', method: 'sqrt' },
