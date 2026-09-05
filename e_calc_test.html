@@ -827,6 +827,32 @@
             white-space: pre-wrap; /* Сохраняет пробелы и переносит строки */
         }       
 
+/* Создаем анимацию прокрутки вверх-вниз */
+@keyframes scrollTooltip {
+    0%, 20% {
+        transform: translateY(0); /* Стоим на месте в начале (задержка) */
+    }
+    50%, 70% {
+        transform: translateY(var(--scroll-amount)); /* Прокручиваем до конца вниз и замираем */
+    }
+    100% {
+        transform: translateY(0); /* Возвращаемся наверх */
+    }
+}
+
+/* Обертка для контента, которую мы будем двигать */
+.custom-tooltip-scroller {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease-out;
+}
+
+/* Класс, который JS добавит только если текст НЕ помещается */
+.custom-tooltip.animated .custom-tooltip-scroller {
+    /* 8 секунд на цикл, бесконечно, плавно */
+    animation: scrollTooltip 8s ease-in-out infinite; 
+}        
         #calc-log {
             display: flex;
             align-items: center;      /* Центрирует текст по вертикали внутри flex-контейнера */
@@ -1018,7 +1044,9 @@
     </div>
 
     <!-- Элемент подсказки (создается один раз в HTML) -->
-    <div id="custom-tooltip" class="custom-tooltip"></div>
+    <div id="custom-tooltip" class="custom-tooltip">
+        <div class="custom-tooltip-scroller"></div>
+    </div>
     <ul id="suggestions" class="dropdown"></ul>
 
     <script type="module">
@@ -2203,11 +2231,29 @@
 
             // Переменные для управления состоянием подсказки
             const tooltipElement = document.getElementById('custom-tooltip');
+            const scroller = tooltipElement.querySelector('.custom-tooltip-scroller');
             let hintTimeout = null;
             let currentHintElement = null;
             const HINT_DELAY = 500; // Задержка в миллисекундах (0.5 сек)
 
             const positionTooltip = (element) => {
+                // 4. Проверяем, помещается ли текст по высоте
+                const totalHeight = scroller.scrollHeight;       // Полная высота контента
+                const visibleHeight = tooltipElement.clientHeight; // Доступная высота (с учетом max-height)
+
+                if (totalHeight > visibleHeight) {
+                    // Вычисляем, на сколько пикселей нужно сдвинуть контент вверх.
+                    // Вычитаем padding, чтобы текст не прижимался вплотную к краям.
+                    const scrollAmount = totalHeight - visibleHeight;
+                    
+                    // Передаем значение в CSS (минус, так как сдвигаем через translateY вверх)
+                    tooltipElement.style.setProperty('--scroll-amount', `-${scrollAmount}px`);
+                    
+                    // Включаем анимацию
+                    tooltipElement.classList.add('animated');
+                }
+
+
                 // Получаем координаты целевого элемента и размеры экрана
                 const rect = element.getBoundingClientRect();
                 const tooltipWidth = tooltipElement.offsetWidth;
@@ -2254,11 +2300,14 @@
                 
                 currentHintElement = element;
                 
+                // 1. Сбрасываем старую анимацию и стили
+                tooltipElement.classList.remove('animated');
+                tooltipElement.style.setProperty('--scroll-amount', '0px');                
                 // Сначала сбрасываем старые стили положения (чтобы max-width считался честно)
                 tooltipElement.style.left = '-9999px';
                 tooltipElement.style.top = '-9999px';                
                 // Устанавливаем текст подсказки
-                tooltipElement.innerHTML = htmlText;
+                scroller.innerHTML = htmlText;
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     window.MathJax.typesetPromise([tooltipElement]).then(() => {
                     // Этот код выполнится ПОСЛЕ того, как формулы отрисуются
@@ -2281,7 +2330,7 @@
                     hintTimeout = null;
                 }
                 currentHintElement = null;
-                tooltipElement.classList.remove('visible');
+                tooltipElement.classList.remove('visible', 'animated');
             };
 
             const hintMouseMove =(elementUnderMouse) => {
