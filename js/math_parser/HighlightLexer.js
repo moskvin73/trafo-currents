@@ -1,4 +1,5 @@
 import { TokenType, TokenDetails } from './TokenTypes.js';
+import { getCommandInfo } from './MathRegistry.js';
 import { MathLexer } from './MathLexer.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import ASTNode, {
