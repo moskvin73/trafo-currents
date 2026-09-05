@@ -9,6 +9,11 @@ window.MathJax = {
         ignoreHtmlClass: 'tex2jax_ignore',
         processHtmlClass: 'tex2jax_process'
     }
+    // Добавляем настройки для компонента вывода (CommonHTML)
+    chtml: {
+        displayAlign: 'center', // Выравнивание блочных формул (по умолчанию)
+        adaptiveCSS: true
+    }    
 };
 
 // 2. Функция обновления формул (остается прежней)
@@ -131,4 +136,19 @@ document.addEventListener('copy', function(e) {
     script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
     script.async = true;
     document.head.appendChild(script);
+
+  // 2. Добавление CSS-стилей для принудительного переноса строк
+  const style = document.createElement('style');
+  style.innerHTML = `
+    /* Разрешаем перенос для строчных формул внутри текста */
+    mjx-container[jax="CHTML"] {
+      white-space: normal !important;
+    }
+    /* Разрешаем перенос элементов внутри формулы */
+    mjx-container[jax="CHTML"] mjx-math {
+      white-space: normal !important;
+      flex-wrap: wrap;
+    }
+  `;
+  document.head.appendChild(style);    
 })();
