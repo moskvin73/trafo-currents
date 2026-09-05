@@ -386,12 +386,14 @@ absRules =
 
 export const COMPILER_REGISTRY = new Map([
   // === ФУНКЦИЯ SQRT (1 или 2 аргумента) ===
-  ['sqrt', [
+  ['sqrt', {
+    description: 'Вычисление квадратного корня', 
+    overloads:[
     { types: [RealNumber], callType: 'instance', method: 'sqrt' },
     { types: [ComplexNumber], callType: 'instance', method: 'sqrt' },
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'sqrt' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'sqrt' },
-  ]],
+  ]}],
 
   ['round',   roundRules],
   ['floor',   floorRules],
