@@ -2190,6 +2190,8 @@ const TEX_FUNCTIONS_REGISTRY = new Map([
     render: ([val, base]) => base ? `\\log_{${base}}\\left(${val}\\right)` : `\\log\\left(${val}\\right)`
   }],
 
+  ["conjugate", { render: ([val]) =>  `\\overline{${val}}`}],
+
   // === 3. ПРЯМАЯ ТРИГОНОМЕТРИЯ ===
   ['sin',    { tex: '\\sin' }],
   ['cos',    { tex: '\\cos' }],
