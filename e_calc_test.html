@@ -797,7 +797,8 @@
             /* Ограничение размеров относительно экрана */
             max-width: 40vw;         /* Максимум 40% от ширины экрана */
             max-height: 40vh;        /* Максимум 40% от высоты экрана */
-            display: block;             
+            display: block;
+            overflow: hidden;             
         }
 
         /* Класс для отображения */
@@ -807,6 +808,7 @@
 
         .custom-tooltip * {
             font-family: inherit; /* Распространяет шрифт на span, b, code и т.д. */
+            box-sizing: border-box; /* Важно, чтобы паддинги внутренних элементов не ломали размеры */
         }
 
         /* Создаем анимацию прокрутки вверх-вниз */
@@ -832,7 +834,6 @@
             /* Корректный перенос текста */
             white-space: pre-wrap; /* Важно для HTML и переносов кода */
             word-break: break-word;
-            overflow: hidden;      /* Прячет то, что не влезло в max-height */
             transition: transform 0.3s ease-out;
         }
 
