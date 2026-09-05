@@ -428,10 +428,14 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // Радианы (rad) в Градусы (deg)
-  ['deg', [
+  ['deg', {
+    description: 'Преобразует угол x из радиан в градусы $(x \\times \\frac{180}{\\pi})$. '+
+                 'Поддерживает вещественные и комплексные числа (обрабатывает мнимую часть как гиперболический угол).'+
+                 '<br>Тип данных аргумента <code>real, complex</code>.',
+    overloads: [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.multiply(180 / Math.PI) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.multiply(180 / Math.PI) },
-  ]],
+  ]}],
 
   // Радианы (rad) в Грады (grad)
   ['grad', [
