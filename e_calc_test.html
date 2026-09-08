@@ -2184,8 +2184,32 @@
                     }
                     else if (find_span.classList.contains('token-error-code')) {
                         const text = find_span.textContent.trim();
-                        if (text.startsWith('%'))
+                        if (text.startsWith('%')) {
+                            // Получаем узел, который идет сразу после текущего span
+                            const nextNode = find_span.nextSibling;
+                            if (nextNode && nextNode.nodeType === 1 && nextNode.classList.contains('.token-varable, .token-rw-words')) {
+                                const all_text = text + nextNode.textContent.trim();
+                                findPosWord = caretPos;
+                                currentWordStart = findPosWord - text.length;
+                        // Фильтруем словарь по введенным символам (регистронезависимо)
+                        let all;
+                        if (globalScope.varNames.length > 0) {
+                            all = [
+                                ...dictionary,
+                                ...globalScope.varNames
+                            ];
+                        }
+                        else all = dictionary;
+                        const sortedDictionary = Array.from(new Set(all)).sort();
+                        const filtered = sortedDictionary.filter(word => 
+                            word.startsWith(text) && text !== word
+                        );
+                        showDropdown(filtered, find_span);
+
+
+                            }                            
                             console.log(`возможно вводится констана ${text}`);
+                        }
                     }
                 } else {
                     hideDropdown();
