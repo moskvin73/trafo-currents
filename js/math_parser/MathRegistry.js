@@ -968,6 +968,7 @@ export const COMPILER_REGISTRY = new Map([
 
   ['zeros', {
     description: 'Создание нулевой матрицы заданного размера $\\mathtt{zeros(n, m)}$.<br>' +
+                 'или квадратную матрицы заданного размера $\\mathtt{zeros(n)}$.<br>'+
                  'Аргументы задают количество строк и столбцов.',
     overloads: [
       {
