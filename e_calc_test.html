@@ -1914,6 +1914,7 @@
                             ...globalScope.fixedNames];
 
         function showDropdown(items, spanElement) {
+            if (items.length === 0) return;
             dropdown.innerHTML = '';
             activeIndex = 0;
 
@@ -1926,7 +1927,8 @@
                 li.addEventListener('click', () => insertWord(item));
                 dropdown.appendChild(li);
             });
-             dropdown.style.display = 'block';
+            ropdown.style.visibility = 'hidden';
+            dropdown.style.display = 'block';
 
             // 1. Получаем координаты span относительно экрана
             const rect = spanElement.getBoundingClientRect();
@@ -1936,7 +1938,7 @@
             const spaceAbove = rect.top;
             
             // Высота вашего списка (можно задать фиксированную или измерить у скрытого элемента)
-            const dropdownHeight = dropdown.offsetHeight || 200; 
+            const dropdownHeight = dropdown.offsetHeight || 150; 
 
             // 3. Логика позиционирования
             if (spaceBelow >= dropdownHeight || spaceBelow > spaceAbove) {
@@ -1949,7 +1951,7 @@
 
             // Позиционирование по горизонтали (выравнивание по левому краю span)
             dropdown.style.left = `${window.scrollX + rect.left}px`;
-            dropdown.style.display = 'block';            
+            dropdown.style.visibility = 'visible';           
         }
 
         function hideDropdown() {
