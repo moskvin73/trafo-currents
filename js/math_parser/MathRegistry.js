@@ -971,6 +971,14 @@ export const COMPILER_REGISTRY = new Map([
                  'Аргументы задают количество строк и столбцов.',
     overloads: [
       {
+        types: [RealNumber],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const n = finalArgs[0].value;
+          return Matrix.create(n, n);
+        }
+      },
+      {
         types: [RealNumber, RealNumber],
         callType: 'custom',
         execute: (finalArgs) => {
