@@ -603,7 +603,7 @@ export const COMPILER_REGISTRY = new Map([
                   '<br><b>Поведение при особых значениях</b>' +
                   '<ul>' +
                   '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>' +
-                  '<li>Точки разрыва ($x = \\frac{\\pi}{2} + \\pi k$): возвращает $\\pm\\infty$ или $\\color{red}\\text{NaN}$ в зависимости от точности float.</li>' +
+                  '<li>Точки разрыва ($x = \\frac{\\pi}{2} + \\pi k$): возвращает $\\pm\\infty$</li>' +
                   '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
       overloads: [ 
         { types: [RealNumber], callType: 'instance', method: 'tan' }, 
@@ -735,7 +735,102 @@ export const COMPILER_REGISTRY = new Map([
   ]],*/
 
   // === ОБРАТНЫЕ ФУНКЦИИ ===
-  ['arcsin',  [
+  ['arcsin', {
+    description: 'Возвращает арксинус математического выражения $\\mathtt{arcsin(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Выход за пределы отрезка ($|x| > 1$ для `real`): возвращает комплексное число с мнимой частью.</li>'+
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает комплексное значение.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arcsin' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arcsin' }
+  ]}],
+
+  ['arccos', {
+    description: 'Возвращает арккосинус математического выражения $\\mathtt{arccos(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Выход за пределы отрезка ($|x| > 1$ для `real`): возвращает комплексное число с мнимой частью.</li>'+
+                 '<li>Аргумент равен единице ($x = 1$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает комплексное значение.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arccos' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arccos' }
+  ]}],
+
+  ['arctan', {
+    description: 'Возвращает арктангенс математического выражения $\\mathtt{arctan(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен мнимой единице ($x = \\pm j$): точки ветвления, возвращает $\\pm j\\infty$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\pm\\frac{\\pi}{2}$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arctan' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arctan' }
+  ]}],
+
+  ['arctg', {
+    description: 'Возвращает арктангенс математического выражения $\\mathtt{arctg(x)}$. Синоним функции <code>arctan</code>. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен мнимой единице ($x = \\pm j$): точки ветвления, возвращает $\\pm j\\infty$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\pm\\frac{\\pi}{2}$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arctan' },  
+    { types: [ComplexNumber], callType: 'instance', method: 'arctan' }
+  ]}],
+
+  ['arcsinh', {
+    description: 'Возвращает гиперболический арксинус математического выражения $\\mathtt{arcsinh(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\pm\\infty$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arcsinh' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'arcsinh' }
+  ]}],
+
+  ['arccosh', {
+    description: 'Возвращает гиперболический арккосинус математического выражения $\\mathtt{arccosh(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент меньше единицы ($x < 1$ для `real`): возвращает комплексное число с мнимой частью.</li>'+
+                 '<li>Аргумент равен единице ($x = 1$): возвращает $0$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = +\\infty$): возвращает $+\\infty$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arccosh' },
+    { types: [ComplexNumber], callType: 'instance', method: 'arccosh' }
+  ]}],
+  ['arctanh', {
+    description: 'Возвращает значение гиперболического арктангенса $\\mathtt{arctanh(x)} \\implies \\operatorname{artanh}(x) = \\frac{1}{2} \\ln\\left(\\frac{1 + x}{1 - x}\\right)$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент по модулю больше единицы ($|x| > 1$): возвращает комплексное число с мнимой частью.</li>'+
+                 '<li>Аргумент равен единице ($x = 1$): возвращает $+\\infty$ (плюс бесконечность).</li>'+
+                 '<li>Аргумент равен минус единице ($x = -1$): возвращает $-\\infty$ (минус бесконечность).</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'instance', method: 'arctanh' }, 
+    { types: [ComplexNumber], callType: 'instance', method: 'arctanh' }
+  ]}],    
+  /*['arcsin',  [
     { types: [RealNumber], callType: 'instance', method: 'arcsin' },  
     { types: [ComplexNumber], callType: 'instance', method: 'arcsin' }
   ]],
@@ -762,10 +857,91 @@ export const COMPILER_REGISTRY = new Map([
   ['arctanh', [
     { types: [RealNumber], callType: 'instance', method: 'arctanh' }, 
     { types: [ComplexNumber], callType: 'instance', method: 'arctanh' }
-  ]],
+  ]],*/
 
   // === СОСТАВНЫЕ ФУНКЦИИ ПРЯМО В ТАБЛИЦЕ (Без раздувания числовых классов) ===
-  ['sec', [
+  ['sec', {
+    description: 'Возвращает тригонометрический секанс угла $\\mathtt{sec(x)} \\implies \\sec(x) = \\frac{1}{\\cos(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Точки разрыва ($x = \\frac{\\pi}{2} + \\pi k, k \\in \\mathbb{Z}$): возвращает $\\pm\\infty$ или вызывает деление на ноль.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\color{red}\\text{NaN}$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) }
+  ]}],
+
+  ['arcsec', {
+    description: 'Возвращает арксеканс числа $\\mathtt{arcsec(x)} \\implies \\operatorname{arcsec}(x) = \\arccos\\left(\\frac{1}{x}\\right)$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Аргумент внутри интервала ($-1 < x < 1, x \\neq 0$): возвращает комплексное число с мнимой частью.</li>'+
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает комплексное число $\\frac{\\pi}{2} - j\\infty$.</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): стремится к $\\frac{\\pi}{2}$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(Math.PI * 0.5, -Infinity): x.inverse().arccos() }
+  ]}],
+
+  ['csc', {
+    description: 'Возвращает тригонометрический косеканс угла $\\mathtt{csc(x)} \\implies \\csc(x) = \\frac{1}{\\sin(x)}$. '+
+                 'Функция полностью поддерживает комплексные числа.'+
+                 '<br><b>Поведение при особых значениях</b>'+
+                 '<ul>'+
+                 '<li>Точки разрыва ($x = \\pi k, k \\in \\mathbb{Z}$): возвращает $\\pm\\infty$ (при $x = 0$ возвращает бесконечность с соответствующим знаком).</li>'+
+                 '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\color{red}\\text{NaN}$.</li>'+
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+    { types: [RealNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) },
+    { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.sin().accuratePow(new RealNumber(-1)) }
+  ]}],
+    ['arccsc', {
+    description: 'Возвращает значение арккосеканса $\\mathtt{arccsc(x)} \\implies \\operatorname{arccsc}(x) = \\operatorname{arcsin}\\left(\\frac{1}{x}\\right)$. ' +
+                 'Функция полностью поддерживает комплексные числа.' +
+                 '<br><b>Поведение при особых значениях</b>' +
+                 '<ul>' +
+                 '<li>Аргумент внутри интервала ($|x| < 1$ для real, кроме 0): возвращает комплексное число с мнимой частью.</li>' +
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает комплексную бесконечность (в коде: $\\mathtt{0 + j\\infty}$).</li>' +
+                 '<li>Аргумент стремится к бесконечности ($x = \\pm\\infty$): возвращает $0$.</li>' +
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+      { types: [RealNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(0, Infinity) : x.inverse().arcsin() },
+      { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.equals(0) ? new ComplexNumber(0, Infinity) : x.inverse().arcsin() }
+    ]
+  }],
+
+  ['ctg', {
+    description: 'Возвращает значение котангенса $\\mathtt{ctg(x)} \\implies \\operatorname{ctg}(x) = \\frac{1}{\\operatorname{tg}(x)}$. ' +
+                 'Функция полностью поддерживает комплексные числа.' +
+                 '<br><b>Поведение при особых значениях</b>' +
+                 '<ul>' +
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $\\infty$ (бесконечность).</li>' +
+                 '<li>Точки разрыва ($x = \\pi k, k \\in \\mathbb{Z}$): стремится к бесконечности.</li>' +
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+      { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
+      { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
+    ]
+  }],
+
+  ['cot', {
+    description: 'Синоним функции котангенса $\\mathtt{cot(x)} \\implies \\operatorname{cot}(x) = \\frac{1}{\\operatorname{tan}(x)}$. ' +
+                 'Функция полностью поддерживает комплексные числа.' +
+                 '<br><b>Поведение при особых значениях</b>' +
+                 '<ul>' +
+                 '<li>Аргумент равен нулю ($x = 0$): возвращает $\\infty$ (бесконечность).</li>' +
+                 '<li>Точки разрыва ($x = \\pi k, k \\in \\mathbb{Z}$): стремится к бесконечности.</li>' +
+                 '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>',
+    overloads: [
+      { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
+      { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
+    ]
+  }],
+  /*['sec', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.cos().accuratePow(new RealNumber(-1)) }
   ]],
@@ -788,7 +964,7 @@ export const COMPILER_REGISTRY = new Map([
   ['cot', [
     { types: [RealNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) },
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
-  ]],
+  ]],*/
 
   // Единичная матрица: принимает размерность (вещественное число)
   ['zeros', [
