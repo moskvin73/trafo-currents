@@ -1914,7 +1914,6 @@
                             ...globalScope.fixedNames];
 
         function showDropdown(items, spanElement) {
-            dropdown.style.display = 'block';
             dropdown.innerHTML = '';
             activeIndex = 0;
 
@@ -1927,6 +1926,7 @@
                 li.addEventListener('click', () => insertWord(item));
                 dropdown.appendChild(li);
             });
+             dropdown.style.display = 'block';
 
             // 1. Получаем координаты span относительно экрана
             const rect = spanElement.getBoundingClientRect();
