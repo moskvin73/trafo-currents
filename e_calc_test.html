@@ -2163,7 +2163,7 @@
                 const caretPos = textarea.selectionStart;
                 const find_span = findSpanByPosition(caretPos);
                 if (find_span) {
-                    if (find_span.classList.contains('.token-varable, .token-rw-words, .token-rw-constants')) {
+                    if (find_span.matches('.token-varable, .token-rw-words, .token-rw-constants')) {
                         const text = find_span.textContent.trim();
                         findPosWord = caretPos;
                         currentWordStart = findPosWord - text.length;
@@ -2187,7 +2187,7 @@
                         if (text.startsWith('%')) {
                             // Получаем узел, который идет сразу после текущего span
                             const nextNode = find_span.nextSibling;
-                            if (nextNode && nextNode.nodeType === 1 && nextNode.classList.contains('.token-varable, .token-rw-words')) {
+                            if (nextNode && nextNode.nodeType === 1 && nextNode.matches('.token-varable, .token-rw-words')) {
                                 const all_text = text + nextNode.textContent.trim();
                                 findPosWord = caretPos;
                                 currentWordStart = findPosWord - text.length;
