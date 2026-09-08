@@ -521,7 +521,174 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // === СТЕПЕНЬ ===
-  ['pow', [
+  [
+    'pow', 
+    { 
+      description: 'Возвращает значение математического выражения $\\mathtt{pow(x, y)} \\implies x^y$. ' +
+                  'Функция полностью поддерживает комплексные числа.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Отрицательное основание при дробной степени ($x < 0$, $y \\notin \\mathbb{Z}$): возвращает комплексное число с мнимой частью.</li>' +
+                  '<li>Основание равно нулю при отрицательной степени ($x = 0, y < 0$): возвращает $+\\infty$ или $-\\infty$ в зависимости от четности/знака.</li>' +
+                  '<li>Основание и степень равны нулю ($x = 0, y = 0$): возвращает $1$ или $\\color{red}\\text{NaN}$ в зависимости от математического стандарта библиотеки.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber, RealNumber], callType: 'instance', method: 'accuratePow' }, 
+        { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'accuratePow' } 
+      ]
+    }
+  ],
+
+  [
+    'exp', 
+    { 
+      description: 'Возвращает значение математического выражения $\\mathtt{exp(x)} \\implies e^x$, где $e$ — число Эйлера. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле Эйлера: $e^{a+bi} = e^a(\\cos(b) + i\\sin(b))$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен минус бесконечности ($x = -\\infty$): возвращает $0$.</li>' +
+                  '<li>Аргумент равен плюс бесконечности ($x = +\\infty$): возвращает $+\\infty$.</li>' +
+                  '<li>Аргумент равен чистой мнимой единице ($x = j\\pi$): возвращает $-1$.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'exp' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'exp' } 
+      ]
+    }
+  ],
+
+  // === ТРИГОНОМЕТРИЯ И СИНОНИМЫ ===
+
+  [
+    'sin', 
+    { 
+      description: 'Возвращает тригонометрический синус угла. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\sin(z) = \\frac{e^{iz} - e^{-iz}}{2i}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>' +
+                  '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\color{red}\\text{NaN}$ для вещественного типа.</li>' +
+                  '<li>Для комплексного аргумента значение может стремиться к бесконечности при росте мнимой части.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'sin' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'sin' } 
+      ]
+    }
+  ],
+
+  [
+    'cos', 
+    { 
+      description: 'Возвращает тригонометрический косинус угла. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\cos(z) = \\frac{e^{iz} + e^{-iz}}{2}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $1$.</li>' +
+                  '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\color{red}\\text{NaN}$ для вещественного типа.</li>' +
+                  '<li>Для комплексного аргумента значение может стремиться к бесконечности при росте мнимой части.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'cos' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'cos' } 
+      ]
+    }
+  ],
+
+  [
+    'tan', 
+    { 
+      description: 'Возвращает тригонометрический тангенс угла. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\tan(z) = \\frac{\\sin(z)}{\\cos(z)}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>' +
+                  '<li>Точки разрыва ($x = \\frac{\\pi}{2} + \\pi k$): возвращает $\\pm\\infty$ или $\\color{red}\\text{NaN}$ в зависимости от точности float.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'tan' } 
+      ]
+    }
+  ],
+
+  [
+    'tg', 
+    { 
+      description: 'Синоним функции <code>tan</code>. Возвращает тригонометрический тангенс угла. ' +
+                  'Полностью поддерживает комплексные числа.', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'tan' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'tan' } 
+      ]
+    }
+  ],
+
+  // === ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ ===
+
+  [
+    'sinh', 
+    { 
+      description: 'Возвращает гиперболический синус аргумента. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\sinh(z) = \\frac{e^z - e^{-z}}{2}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>' +
+                  '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $\\pm\\infty$.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'sinh' }, // Исправлен метод с 'sin' на 'sinh'
+        { types: [ComplexNumber], callType: 'instance', method: 'sinh' } 
+      ]
+    }
+  ],
+
+  [
+    'cosh', 
+    { 
+      description: 'Возвращает гиперболический косинус аргумента. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\cosh(z) = \\frac{e^z + e^{-z}}{2}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $1$.</li>' +
+                  '<li>Аргумент равен бесконечности ($x = \\pm\\infty$): возвращает $+\\infty$.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'cosh' }, // Исправлен метод с 'cos' на 'cosh'
+        { types: [ComplexNumber], callType: 'instance', method: 'cosh' } 
+      ]
+    }
+  ],
+
+  [
+    'tanh', 
+    { 
+      description: 'Возвращает гиперболический тангенс аргумента. ' +
+                  'Функция полностью поддерживает комплексные числа по формуле: $\\tanh(z) = \\frac{\\sinh(z)}{\\cosh(z)}$.' +
+                  '<br><b>Поведение при особых значениях</b>' +
+                  '<ul>' +
+                  '<li>Аргумент равен нулю ($x = 0$): возвращает $0$.</li>' +
+                  '<li>Аргумент стремится к бесконечности ($x \\to \\pm\\infty$): возвращает $\\pm 1$.</li>' +
+                  '</ul><div>Тип данных аргумента <code>real, complex</code>.</div>', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'tanh' }, // Исправлен метод с 'tan' на 'tanh'
+        { types: [ComplexNumber], callType: 'instance', method: 'tanh' } 
+      ]
+    }
+  ],
+
+  [
+    'tgh', 
+    { 
+      description: 'Синоним функции <code>tanh</code>. Возвращает гиперболический тангенс аргумента. ' +
+                  'Полностью поддерживает комплексные числа.', 
+      overloads: [ 
+        { types: [RealNumber], callType: 'instance', method: 'tanh' }, 
+        { types: [ComplexNumber], callType: 'instance', method: 'tanh' } 
+      ]
+    }
+  ]  
+  /*['pow', [
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'accuratePow' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'accuratePow' }
   ]],
@@ -565,7 +732,7 @@ export const COMPILER_REGISTRY = new Map([
   ['tgh',   [
     { types: [RealNumber], callType: 'instance', method: 'tan' }, 
     { types: [ComplexNumber], callType: 'instance', method: 'tan' }
-  ]],
+  ]],*/
 
   // === ОБРАТНЫЕ ФУНКЦИИ ===
   ['arcsin',  [
