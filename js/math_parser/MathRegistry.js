@@ -687,7 +687,7 @@ export const COMPILER_REGISTRY = new Map([
         { types: [ComplexNumber], callType: 'instance', method: 'tanh' } 
       ]
     }
-  ]  
+  ],  
   /*['pow', [
     { types: [RealNumber, RealNumber], callType: 'instance', method: 'accuratePow' },
     { types: [ComplexNumber, ComplexNumber], callType: 'instance', method: 'accuratePow' }
