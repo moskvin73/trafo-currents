@@ -1206,7 +1206,9 @@ export const COMPILER_REGISTRY = new Map([
   ]],*/
 
   // Диагональная матрица
-  ['diag', [
+  ['diag', {
+    description: 'Создание диагональной матрицы из одномерного списка элементов.',
+    overloads: [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1220,10 +1222,12 @@ export const COMPILER_REGISTRY = new Map([
         return Matrix.diagonal(diagonalElements);
       }
     }
-  ]],
+  ]}],
 
   // Вектор-столбец
-  ['colvector', [
+  ['colvector', {
+    description: 'Создание вектор-столбца из одномерного списка элементов.',
+    overloads: [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1237,10 +1241,12 @@ export const COMPILER_REGISTRY = new Map([
         return Matrix.columnVector(vectorElements);
       }
     }
-  ]],
+  ]}],
 
   // === ТРАНСПОНИРОВАНИЕ МАТРИЦЫ ===
-  ['transpose', [
+  ['transpose', {
+    description: 'Транспонирование заданной матрицы (поменяв местами строки и столбцы).',
+    overloads: [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1249,12 +1255,14 @@ export const COMPILER_REGISTRY = new Map([
         return inputMatrix.transpose();
       }
     }
-  ]],  
+  ]}],  
 
    // === ОПРЕДЕЛИТЕЛЬ МАТРИЦЫ ===
-  ['det', [
+  ['det', {
+    description: 'Вычисление определителя квадратной матрицы.',
+    overloads: [
     { types: [Matrix], callType: 'instance', method: 'det' }
-  ]],
+  ]}],
 
   // === РЕШЕНИЕ СИСТЕМ ЛИНЕЙНЫХ УРАВНЕНИЙ (СЛАУ) ===
   ['linsolve', [
