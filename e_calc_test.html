@@ -2083,6 +2083,7 @@
             if (!textarea || !lineNumbersEle) return;
 
             const textareaStyle = window.getComputedStyle(textarea);
+
             const updateLineNumbers = () => {
                 // 1. Синхронизируем высоту textarea
                 textarea.style.height = 'auto';
@@ -2091,10 +2092,10 @@
                 highlightLayer.style.height = `${currentScrollHeight}px`;
 
                 // 2. Подсвечиваем синтаксис (лексер теперь возвращает строки внутри <div class="code-line">)
-                const text = textarea.value;
+                /*const text = textarea.value;
                 if (text.trim()) submitBtn.disabled = false;
                 else submitBtn.disabled = true;
-                highlightLayer.innerHTML = HighlightLerxer(text, globalScope);
+                highlightLayer.innerHTML = HighlightLerxer(text, globalScope);*/
 
                 // 3. Получаем все сгенерированные строки из DOM
                 const lines = highlightLayer.querySelectorAll('.code-line');
@@ -2118,6 +2119,44 @@
 
                 // 5. Обновляем слой с номерами строк
                 lineNumbersEle.innerHTML = lineNumbersHtml;
+
+                /*const caretPos = textarea.selectionStart;
+                const find_span = findSpanByPosition(caretPos);
+                if (find_span) {
+                    if (find_span.classList.contains('token-varable')) {
+                        const text = find_span.textContent.trim();
+                        currentWordStart = caretPos - text.length;
+                        // Фильтруем словарь по введенным символам (регистронезависимо)
+                        let all;
+                        if (globalScope.varNames.length > 0) {
+                            all = [
+                                ...dictionary,
+                                ...globalScope.varNames
+                            ];
+                        }
+                        else all = dictionary;
+                        const sortedDictionary = Array.from(new Set(all)).sort();
+                        const filtered = sortedDictionary.filter(word => 
+                            word.startsWith(text) && text !== word
+                        );
+                        showDropdown(filtered, find_span);
+                    }
+                    else if (find_span.classList.contains('token-error-code')) {
+                        const text = find_span.textContent.trim();
+                        if (text.startsWith('%'))
+                            console.log(`возможно вводится констана ${text}`);
+                    }
+                } else {
+                    hideDropdown();
+                }*/
+            };
+
+            const updateText = () => {
+                const text = textarea.value;
+                if (text.trim()) submitBtn.disabled = false;
+                else submitBtn.disabled = true;
+                highlightLayer.innerHTML = HighlightLerxer(text, globalScope);
+                updateLineNumbers();
 
                 const caretPos = textarea.selectionStart;
                 const find_span = findSpanByPosition(caretPos);
@@ -2149,6 +2188,7 @@
                     hideDropdown();
                 }
             };
+
 
             // Переменная для хранения текущих подсвеченных элементов (чтобы быстро их очищать)
             let currentlyHighlightedBrackets = [];
@@ -2422,7 +2462,7 @@
 
             // Стандартные слушатели для действий пользователя
             textarea.addEventListener('input', (event) => {
-                updateLineNumbers();
+                updateText();
                 updateCursorPosition();
             });
             textarea.addEventListener('keyup', updateCursorPosition);
@@ -2451,7 +2491,7 @@
                 }
                 else if (event.key === 'Backspace' || event.key === 'Delete') {
                 // Используем setTimeout, чтобы значение успело обновиться в DOM
-                setTimeout(updateLineNumbers, 0);
+                setTimeout(updateText, 0);
             }});
 
             if (window.ResizeObserver) {
