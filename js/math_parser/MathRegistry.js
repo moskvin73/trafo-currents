@@ -966,8 +966,69 @@ export const COMPILER_REGISTRY = new Map([
     { types: [ComplexNumber], callType: 'custom', execute: ([x]) => x.tan().accuratePow(new RealNumber(-1)) }
   ]],*/
 
+  ['zeros', {
+    description: 'Создание нулевой матрицы заданного размера $\\mathtt{zeros(n, m)}$.<br>' +
+                 'Аргументы задают количество строк и столбцов.',
+    overloads: [
+      {
+        types: [RealNumber, RealNumber],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const n = finalArgs[0].value;
+          const m = finalArgs[1].value;
+          return Matrix.create(n, m);
+        }
+      }
+    ]
+  }],
+
+  // === ФУНКЦИЯ IDENT ===
+  ['ident', {
+    description: 'Создание квадратной единичной матрицы размера $n \\times n$ $\\mathtt{ident(n)}$.',
+    overloads: [
+      {
+        types: [RealNumber],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const n = finalArgs[0].value; 
+          return Matrix.identity(n);
+        }
+      }
+    ]
+  }],
+
+  // === ФУНКЦИЯ COLUMNS ===
+  ['columns', {
+    description: 'Возвращает количество столбцов (колонок) в переданной матрице.',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return new RealNumber(inputMatrix.colCount);
+        }
+      }
+    ]
+  }],
+
+  // === ФУНКЦИЯ ROWS ===
+  ['rows', {
+    description: 'Возвращает количество строк в переданной матрице.',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return new RealNumber(inputMatrix.rowCount);
+        }
+      }
+    ]
+  }],
+
   // Нулевая матрица: принимает размерность (вещественное число)
-  ['zeros', [
+  /*['zeros', [
     {
       types: [RealNumber, RealNumber],
       callType: 'custom',
@@ -1015,10 +1076,12 @@ export const COMPILER_REGISTRY = new Map([
         return new RealNumber(inputMatrix.rowCount);
       }
     }
-  ]],
+  ]],*/
 
   // Квадаратная матрица
-  ['is_square', [
+  ['is_square', {
+    description: 'Проверяет, является ли матрица квадратной (количество строк равно количеству столбцов).',
+    overloads: [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1027,7 +1090,7 @@ export const COMPILER_REGISTRY = new Map([
         return new BoolValue(inputMatrix.isSquare);
       }
     }
-  ]],
+  ]}],
 
   // Матрица вектор
   ['is_vector', [
