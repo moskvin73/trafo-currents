@@ -993,6 +993,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Кол колонок в матрице
   ['columns', [
     {
       types: [Matrix],
@@ -1004,6 +1005,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Кол строк в матрице
   ['rows', [
     {
       types: [Matrix],
@@ -1015,6 +1017,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Квадаратная матрица
   ['is_square', [
     {
       types: [Matrix],
@@ -1026,6 +1029,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Матрица вектор
   ['is_vector', [
     {
       types: [Matrix],
@@ -1037,6 +1041,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Возыращет минмальный элимент матрцы
   ['min', [
     {
       types: [Matrix],
@@ -1048,6 +1053,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Возыращет максимальный элимент матрцы
   ['max', [
     {
       types: [Matrix],
@@ -1059,6 +1065,7 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]],
 
+  // Возыращет средние значение элиментов матрцы
   ['avg', [
     {
       types: [Matrix],
