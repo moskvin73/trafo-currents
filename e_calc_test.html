@@ -2258,7 +2258,7 @@
                 set(newValue) {
                     valueDescriptor.set.call(this, newValue); // Записываем текст как обычно
                     // Автоматически дергаем обновление интерфейса, так как это было сделано из JS
-                    updateLineNumbers();
+                    updateText();
                     updateCursorPosition();
                 },
                 configurable: true
