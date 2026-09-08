@@ -1914,7 +1914,10 @@
                             ...globalScope.fixedNames];
 
         function showDropdown(items, spanElement) {
-            if (items.length === 0) return;
+            if (items.length === 0) {
+                hideDropdown();
+                return 
+            };
             dropdown.innerHTML = '';
             activeIndex = 0;
 
