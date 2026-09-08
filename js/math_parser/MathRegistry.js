@@ -1101,8 +1101,64 @@ export const COMPILER_REGISTRY = new Map([
     }
   ]}],
 
+  ['is_vector', {
+    description: 'Проверяет, является ли матрица вектором (столбцом).',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return new BoolValue(inputMatrix.isVector);
+        }
+      }
+    ]
+  }],
+
+  ['min', {
+    description: 'Возвращает минимальный элемент в переданной матрице.',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return inputMatrix.min();
+        }
+      }
+    ]
+  }],
+
+  ['max', {
+    description: 'Возвращает максимальный элемент в переданной матрице.',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return inputMatrix.max();
+        }
+      }
+    ]
+  }],
+
+  ['avg', {
+    description: 'Возвращает среднее арифметическое значение всех элементов матрицы.',
+    overloads: [
+      {
+        types: [Matrix],
+        callType: 'custom',
+        execute: (finalArgs) => {
+          const [inputMatrix] = finalArgs;
+          return inputMatrix.avg();
+        }
+      }
+    ]
+  }],
+      
   // Матрица вектор
-  ['is_vector', [
+  /*['is_vector', [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1147,7 +1203,7 @@ export const COMPILER_REGISTRY = new Map([
         return inputMatrix.avg();
       }
     }
-  ]],
+  ]],*/
 
   // Диагональная матрица
   ['diag', [
