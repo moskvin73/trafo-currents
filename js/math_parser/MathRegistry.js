@@ -1265,7 +1265,9 @@ export const COMPILER_REGISTRY = new Map([
   ]}],
 
   // === РЕШЕНИЕ СИСТЕМ ЛИНЕЙНЫХ УРАВНЕНИЙ (СЛАУ) ===
-  ['linsolve', [
+  ['linsolve', {
+    description: 'Решение системы линейных уравнений (СЛАУ).',
+    overloads: [
     {
       types: [Matrix, Matrix],
       callType: 'custom',
@@ -1282,10 +1284,12 @@ export const COMPILER_REGISTRY = new Map([
         return Matrix.solveSystem(l, r);
       }
     }
-  ]],  
+  ]}],  
   
   // === ОБРАТНАЯ МАТРИЦА ===
-  ['invert', [
+  ['invert', {
+    description: 'Создание обратной матрицы.',
+    overloads: [
     {
       types: [Matrix],
       callType: 'custom',
@@ -1294,7 +1298,7 @@ export const COMPILER_REGISTRY = new Map([
         return inputMatrix.invert();
       }
     }
-  ]],  
+  ]}],  
   // === СТАТИЧЕСКИЕ СТРУКТУРНЫЕ ВЫЗОВЫ (Пример на будущее) ===
   /*['solve', [
     { types: ['Matrix', 'Vector'], callType: 'static', target: 'LinearAlgebra', method: 'solve' }
