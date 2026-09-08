@@ -929,7 +929,7 @@ export const COMPILER_REGISTRY = new Map([
   }],
 
   ['cot', {
-    description: 'Синоним функции котангенса $\\mathtt{cot(x)} \\implies \\operatorname{cot}(x) = \\frac{1}{\\operatorname{tan}(x)}$. ' +
+    description: 'Синоним функции котангенса $\\mathtt{ctg(x)} \\implies \\operatorname{cot}(x) = \\frac{1}{\\operatorname{tan}(x)}$. ' +
                  'Функция полностью поддерживает комплексные числа.' +
                  '<br><b>Поведение при особых значениях</b>' +
                  '<ul>' +
