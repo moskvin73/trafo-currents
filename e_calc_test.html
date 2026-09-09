@@ -1913,6 +1913,7 @@
         let currentSpanElement = null; // Храним ссылку на текущий активный span
         let intersectionObserver = null; // Наблюдатель за видимостью
         let resizeObserver = null;
+        let carentItems = null;
 
         const dictionary = [...dictionaryReservedWordsMap,
                             ...globalScope.fixedNames];
@@ -1983,6 +1984,7 @@
                 hideDropdown();
                 return 
             };
+            carentItems = tems;
             dropdown.innerHTML = '';
             activeIndex = 0;
             currentSpanElement = spanElement;
@@ -2013,6 +2015,7 @@
             dropdown.style.display = 'none';
             findPosWord = -1;
             currentSpanElement = null;
+            carentItems = null;
             if (intersectionObserver) {
                 intersectionObserver.disconnect();
             }
@@ -2068,8 +2071,9 @@
                 // Enter или Tab для выбора
                 else if (e.key === 'Enter' || e.key === 'Tab') {
                     e.preventDefault();
-                    if (items[activeIndex]) {
-                        insertWord(items[activeIndex].textContent);
+                    if (items[activeIndex] && carentItems) {
+                        insertWord(carentItems[activeIndex]);
+                        //insertWord(items[activeIndex].textContent);
                     }
                 }
                 // Escape для закрытия
@@ -2179,15 +2183,15 @@
                 if (caretPos === 0) return;
                 findPosWord = caretPos;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
-                let all;
+                let all_dictionary;
                 if (globalScope.varNames.length > 0) {
-                    all = [
+                    all_dictionary = [
                         ...dictionary,
                         ...globalScope.varNames
                     ];
                 }
-                else all = dictionary;
-                const sortedDictionary = Array.from(new Set(all)).sort();
+                else all_dictionary = dictionary;
+                const sortedDictionary = Array.from(new Set(all_dictionary)).sort();
                 const filtered = sortedDictionary.filter(word => 
                     word.startsWith(text) && text !== word
                 );
