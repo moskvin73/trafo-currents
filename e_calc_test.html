@@ -2117,7 +2117,8 @@
                 lineNumbersEle.innerHTML = lineNumbersHtml;
             };
 
-            const showFilter = (text, find_span) => {
+            const showFilter = (caretPos, text, find_span) => {
+                findPosWord = caretPos;
                 currentWordStart = findPosWord - text.length;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
                 let all;
@@ -2147,14 +2148,12 @@
                 if (find_span) {
                     if (find_span.matches('.token-varable, .token-rw-words, .token-rw-constants')) {
                         const text = find_span.textContent.trim();
-                        findPosWord = caretPos;
-                        showFilter(text, find_span);
+                        showFilter(caretPos, text, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
                         const text = find_span.textContent.trim();
                         if (text.startsWith('%')) {
-                            findPosWord = caretPos;
-                            showFilter(text, find_span);
+                            showFilter(caretPos, text, find_span);
                         }
                     }
                 } else {
