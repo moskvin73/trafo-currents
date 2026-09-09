@@ -1984,8 +1984,7 @@
             // Возвращаем фокус и ставим курсор после вставленного слова
             textarea.focus();
             const newCaretPos = slice_pos + word.length;
-            textarea.setSelectionRange(newCaretPos, newCaretPos);
-            
+            textarea.setSelectionRange(newCaretPos, newCaretPos);            
             hideDropdown();
         }
 
