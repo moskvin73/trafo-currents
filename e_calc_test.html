@@ -1969,19 +1969,19 @@
         }
 
         function insertWord(word) {
-            if (currentWordStart < 0) return;
+            if (findPosWord < 0) return;
             const text = textarea.value;
             const caretPos = textarea.selectionStart;
             
             // Вырезаем старое недописанное слово и вставляем выбранное полное
-            const before = text.slice(0, currentWordStart);
+            const before = text.slice(0, findPosWord);
             const after = text.slice(caretPos);
             
             textarea.value = before + word + after;
             
             // Возвращаем фокус и ставим курсор после вставленного слова
             textarea.focus();
-            const newCaretPos = currentWordStart + word.length;
+            const newCaretPos = findPosWord + word.length;
             textarea.setSelectionRange(newCaretPos, newCaretPos);
             
             hideDropdown();
