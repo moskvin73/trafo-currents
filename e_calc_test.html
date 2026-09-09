@@ -1913,6 +1913,7 @@
         let findPosWord = -1;
         let currentSpanElement = null; // Храним ссылку на текущий активный span
         let intersectionObserver = null; // Наблюдатель за видимостью
+        let resizeObserver = null;
 
         const dictionary = [...dictionaryReservedWordsMap,
                             ...globalScope.fixedNames];
@@ -1949,6 +1950,9 @@
             if (intersectionObserver) {
                 intersectionObserver.disconnect();
             }
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
 
             intersectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1962,6 +1966,17 @@
             });
 
             intersectionObserver.observe(spanElement);
+
+            // 3. Инициализируем ResizeObserver для textarea
+            if (window.ResizeObserver) {
+                resizeObserver = new ResizeObserver((entries) => {
+                    for (let entry of entries) {
+                        updateDropdownPosition();
+                    }
+                });
+
+                resizeObserver.observe(spanElement);
+            }
         }        
 
         function showDropdown(items, spanElement) {
@@ -2026,6 +2041,9 @@
             currentSpanElement = null;
             if (intersectionObserver) {
                 intersectionObserver.disconnect();
+            }
+            if (resizeObserver) {
+                resizeObserver.disconnect();
             }
         }
 
