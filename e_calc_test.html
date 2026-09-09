@@ -1911,8 +1911,58 @@
         let activeIndex = 0;
         let currentWordStart = -1;
         let findPosWord = -1;
+        let currentSpanElement = null; // Храним ссылку на текущий активный span
+        let intersectionObserver = null; // Наблюдатель за видимостью
+
         const dictionary = [...dictionaryReservedWordsMap,
                             ...globalScope.fixedNames];
+
+        // 1. Функция обновления позиции (вызывается при скролле и ресайзе)
+        function updateDropdownPosition() {
+            if (!currentSpanElement || dropdown.style.display !== 'block') return;
+
+            const rect = currentSpanElement.getBoundingClientRect();
+            
+            // Проверяем, не стал ли элемент невидимым (на всякий случай, дублируя Observer)
+            if (rect.bottom < 0 || rect.top > window.innerHeight || rect.right < 0 || rect.left > window.innerWidth) {
+                hideDropdown();
+                return;
+            }
+
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const dropdownHeight = dropdown.offsetHeight || 150; 
+
+            // Позиционирование по вертикали
+            if (spaceBelow >= dropdownHeight || spaceBelow > spaceAbove) {
+                dropdown.style.top = `${window.scrollY + rect.bottom}px`;
+            } else {
+                dropdown.style.top = `${window.scrollY + rect.top - dropdownHeight}px`;
+            }
+
+            // Позиционирование по горизонтали
+            dropdown.style.left = `${window.scrollX + rect.left}px`;
+        }
+
+        // Функция для отслеживания видимости через IntersectionObserver
+        function watchSpanVisibility(spanElement) {
+            if (intersectionObserver) {
+                intersectionObserver.disconnect();
+            }
+
+            intersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // Если span полностью или частично перестал быть видимым во вьюпорте
+                    if (!entry.isIntersecting) {
+                        hideDropdown();
+                    }
+                });
+            }, {
+                threshold: 0 // Срабатывает, как только элемент пересекает границу экрана хотя бы на 1 пиксель
+            });
+
+            intersectionObserver.observe(spanElement);
+        }        
 
         function showDropdown(items, spanElement) {
             if (items.length === 0) {
@@ -1921,6 +1971,7 @@
             };
             dropdown.innerHTML = '';
             activeIndex = 0;
+            currentSpanElement = spanElement;
 
             items.forEach((item, index) => {
                 const li = document.createElement('li');
@@ -1934,6 +1985,11 @@
             dropdown.style.visibility = 'hidden';
             dropdown.style.display = 'block';
 
+            updateDropdownPosition();
+            dropdown.style.visibility = 'visible';
+            watchSpanVisibility(spanElement);
+
+            /*
             // 1. Получаем координаты span относительно экрана
             const rect = spanElement.getBoundingClientRect();
             
@@ -1955,13 +2011,17 @@
 
             // Позиционирование по горизонтали (выравнивание по левому краю span)
             dropdown.style.left = `${window.scrollX + rect.left}px`;
-            dropdown.style.visibility = 'visible';           
+            dropdown.style.visibility = 'visible';*/           
         }
 
         function hideDropdown() {
             dropdown.style.display = 'none';
             currentWordStart = -1;
             findPosWord = -1;
+            currentSpanElement = null;
+            if (intersectionObserver) {
+                intersectionObserver.disconnect();
+            }
         }
 
         function isHideDropdown() {
