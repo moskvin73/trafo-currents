@@ -2017,8 +2017,7 @@
         //  Добавляем слушатели событий (желательно один раз при инициализации приложения)
         // Использование { passive: true } оптимизирует прокрутку
         window.addEventListener('scroll', updateDropdownPosition, { passive: true });
-        //window.addEventListener('resize', updateDropdownPosition);
-        textarea.addEventListener('resize', updateDropdownPosition);        
+        window.addEventListener('resize', updateDropdownPosition);
 
         function hideDropdown() {
             dropdown.style.display = 'none';
