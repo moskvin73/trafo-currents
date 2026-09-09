@@ -2145,58 +2145,58 @@
             }
 
             return null; // Позиция вне диапазона текста*/
-  const container = highlightLayer;
-  if (!container) return null;
+            const container = highlightLayer;
+            if (!container) return null;
 
-  let currentPos = 0;
-  const lines = container.querySelectorAll('.code-line');
+            let currentPos = 0;
+            const lines = container.querySelectorAll('.code-line');
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
 
-    // Учитываем символ переноса строки \n между линиями
-    if (i > 0) {
-      if (currentPos === targetPos) {
-        return null; // Позиция на переносе строки
-      }
-      currentPos += 1; // длина '\n'
-    }
+                // Учитываем символ переноса строки \n между линиями
+                if (i > 0) {
+                if (currentPos === targetPos) {
+                    return null; // Позиция на переносе строки
+                }
+                currentPos += 1; // длина '\n'
+                }
 
-    const lineLength = line.textContent.length;
+                const lineLength = line.textContent.length;
 
-    // Проверяем, находится ли targetPos внутри текущей строки
-    if (targetPos >= currentPos && targetPos <= currentPos + lineLength) {
-      const childNodes = line.childNodes;
+                // Проверяем, находится ли targetPos внутри текущей строки
+                if (targetPos >= currentPos && targetPos <= currentPos + lineLength) {
+                const childNodes = line.childNodes;
 
-      for (let node of childNodes) {
-        const nodeLength = node.textContent.length;
-        
-        // Запоминаем глобальное начало текущего узла (span или текстового узла)
-        const nodeStartPos = currentPos; 
+                for (let node of childNodes) {
+                    const nodeLength = node.textContent.length;
+                    
+                    // Запоминаем глобальное начало текущего узла (span или текстового узла)
+                    const nodeStartPos = currentPos; 
 
-        // Если это элемент SPAN и позиция попадает в него
-        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
-          if (targetPos >= nodeStartPos && targetPos <= nodeStartPos + nodeLength) {
-            // Возвращаем объект с узлом и его начальной позицией
-            return {
-              node: node,
-              startPos: nodeStartPos
-            };
-          }
-        }
+                    // Если это элемент SPAN и позиция попадает в него
+                    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
+                    if (targetPos >= nodeStartPos && targetPos <= nodeStartPos + nodeLength) {
+                        // Возвращаем объект с узлом и его начальной позицией
+                        return {
+                        node: node,
+                        startPos: nodeStartPos
+                        };
+                    }
+                    }
 
-        // Смещаем позицию на длину узла
-        currentPos += nodeLength;
-      }
+                    // Смещаем позицию на длину узла
+                    currentPos += nodeLength;
+                }
 
-      return null; // Если внутри строки позиция попала на текстовый узел вне спана
-    } else {
-      // Если позиция не в этой строке, пропускаем её целиком
-      currentPos += lineLength;
-    }
-  }
+                return null; // Если внутри строки позиция попала на текстовый узел вне спана
+                } else {
+                // Если позиция не в этой строке, пропускаем её целиком
+                currentPos += lineLength;
+                }
+            }
 
-  return null;            
+            return null;            
         }         
          
         function initLineNumbers() {
