@@ -2028,6 +2028,18 @@
             }
         }        
 
+        function scrollToActiveItem() {
+            // Находим элемент с классом active внутри dropdown
+            const activeItem = dropdown.querySelector('li.active');
+            
+            if (activeItem) {
+                activeItem.scrollIntoView({
+                behavior: 'smooth', // Плавная прокрутка (можно заменить на 'auto' для мгновенной)
+                block: 'nearest'    // Прокручивает ровно до тех пор, пока элемент не появится в поле зрения
+                });
+            }
+        }
+
         function showDropdown(items, spanElement) {
             if (items.length === 0) {
                 hideDropdown();
@@ -2063,6 +2075,7 @@
 
             updateDropdownPosition();
             dropdown.style.visibility = 'visible';
+            scrollToActiveItem();
             watchSpanVisibility(spanElement);           
         }
 
