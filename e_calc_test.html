@@ -2270,12 +2270,12 @@
                     const find_span = find.node;
                     if (find_span.matches('.token-varable, .token-rw-words, .token-rw-constants')) {
                         const text = find_span.textContent.trim();
-                        showFilter(find.startPos, text, find_span);
+                        showFilter(find.startPos + 1, text, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
                         const text = find_span.textContent.trim();
                         if (text.startsWith('%')) {
-                            showFilter(find.startPos, text, find_span);
+                            showFilter(find.startPos + 1, text, find_span);
                         }
                     }
                 } else {
