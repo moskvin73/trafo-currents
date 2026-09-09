@@ -2037,13 +2037,14 @@
             const slice_pos = findPosWord - 1; 
             const before = text.slice(0, slice_pos);
             const after = text.slice(caretPos);
+            const insetWord = word.type = 'function' ? word.name + "()" : word.name;
             if (after.length == 0 || /^\s/.test(after))
-                textarea.value = before + word + after;
+                textarea.value = before + insetWord + after;
             else
-                textarea.value = before + word + ' ' + after;
+                textarea.value = before + insetWord + ' ' + after;
             // Возвращаем фокус и ставим курсор после вставленного слова
             textarea.focus();
-            const newCaretPos = slice_pos + word.length;
+            const newCaretPos = slice_pos + insetWord.length;
             textarea.setSelectionRange(newCaretPos, newCaretPos);            
             hideDropdown();
         }
@@ -2073,7 +2074,6 @@
                     e.preventDefault();
                     if (items[activeIndex] && carentItems) {
                         insertWord(carentItems[activeIndex]);
-                        //insertWord(items[activeIndex].textContent);
                     }
                 }
                 // Escape для закрытия
