@@ -2153,6 +2153,24 @@
                 }*/
             };
 
+            const showFilter = (text, find_span) => {
+                currentWordStart = findPosWord - text.length;
+                // Фильтруем словарь по введенным символам (регистронезависимо)
+                let all;
+                if (globalScope.varNames.length > 0) {
+                    all = [
+                        ...dictionary,
+                        ...globalScope.varNames
+                    ];
+                }
+                else all = dictionary;
+                const sortedDictionary = Array.from(new Set(all)).sort();
+                const filtered = sortedDictionary.filter(word => 
+                    word.startsWith(text) && text !== word
+                );
+                showDropdown(filtered, find_span);
+            };
+
             const updateText = () => {
                 const text = textarea.value;
                 if (text.trim()) submitBtn.disabled = false;
@@ -2166,43 +2184,13 @@
                     if (find_span.matches('.token-varable, .token-rw-words, .token-rw-constants')) {
                         const text = find_span.textContent.trim();
                         findPosWord = caretPos;
-                        currentWordStart = findPosWord - text.length;
-                        // Фильтруем словарь по введенным символам (регистронезависимо)
-                        let all;
-                        if (globalScope.varNames.length > 0) {
-                            all = [
-                                ...dictionary,
-                                ...globalScope.varNames
-                            ];
-                        }
-                        else all = dictionary;
-                        const sortedDictionary = Array.from(new Set(all)).sort();
-                        const filtered = sortedDictionary.filter(word => 
-                            word.startsWith(text) && text !== word
-                        );
-                        showDropdown(filtered, find_span);
+                        showFilter(text, find_span);
                     }
                     else if (find_span.classList.contains('token-error-code')) {
                         const text = find_span.textContent.trim();
                         if (text.startsWith('%')) {
-\                        // Фильтруем словарь по введенным символам (регистронезависимо)
-                        let all;
-                        if (globalScope.varNames.length > 0) {
-                            all = [
-                                ...dictionary,
-                                ...globalScope.varNames
-                            ];
-                        }
-                        else all = dictionary;
-                        const sortedDictionary = Array.from(new Set(all)).sort();
-                        const filtered = sortedDictionary.filter(word => 
-                            word.startsWith(text) && text !== word
-                        );
-                        showDropdown(filtered, find_span);
-
-
-                            }                            
-                            console.log(`возможно вводится констана ${text}`);
+                            findPosWord = caretPos;
+                            showFilter(text, find_span);
                         }
                     }
                 } else {
