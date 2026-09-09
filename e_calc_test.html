@@ -1089,6 +1089,22 @@
     </div>
     <ul id="suggestions" class="dropdown"></ul>
 
+    <!--  Код инициализации выполнится мгновенно -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const textarea = document.getElementById('calc-terminal-input');
+            const highlightLayer = document.getElementById('calc-highlight');
+            
+            if (textarea && highlightLayer) {
+                textarea.style.height = 'auto';
+                const currentScrollHeight = textarea.scrollHeight;
+                textarea.style.height = `${currentScrollHeight}px`;
+                highlightLayer.style.height = `${currentScrollHeight}px`;
+                textarea.focus();
+            }
+        });
+    </script>    
+
     <script type="module">
         import { calcLineGraphemes, calcSubstrGraphemes, dictionaryReservedWordsMap } from './js/math_parser/MathLexer.js';
         import { MathParser,  ExecutionAbortedError } from './js/math_parser/MathParser.js';
