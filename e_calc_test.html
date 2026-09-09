@@ -2108,7 +2108,7 @@
         document.addEventListener('keydown', handleKeyDown);
         // Закрывать список при клике в любое другое место
         document.addEventListener('click', (e) => {
-            if (e.target !== textarea && e.target !== dropdown) {
+            if (e.target !== textarea && e.target !== dropdown && e.target !== resizer_x && e.target !== resizer_y) {
                 hideDropdown();
             }
         });
