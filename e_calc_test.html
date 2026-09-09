@@ -2336,7 +2336,7 @@
                 else if (!isHideDropdown()) {
                     const span_active_pos = findSpanByPosition(activePosition);
                     const span_currentWordStart = findSpanByPosition(findPosWord);
-                    if (span_active_pos !== span_currentWordStart) hideDropdown();
+                    if (span_active_pos.startPos !== span_currentWordStart.startPos) hideDropdown();
                 }
             };
 
