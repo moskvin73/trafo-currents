@@ -2041,8 +2041,12 @@
             if (word.type === 'function') {
                 insetWord += "()";
                 len_w++;
-            } 
-            if (after.length == 0 || /^[\s)\]]/.test(after))
+                if (after.length == 0 || /^[\s)\]]/.test(after))
+                    textarea.value = before + insetWord + after;
+                else
+                    textarea.value = before + insetWord + ' ' + after;                
+            }
+            else if (after.length == 0 || /^\s/.test(after))
                 textarea.value = before + insetWord + after;
             else
                 textarea.value = before + insetWord + ' ' + after;
