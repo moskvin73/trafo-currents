@@ -2030,11 +2030,11 @@
 
         function insertWord(word) {
             const caretPos = textarea.selectionStart;
-            if (findPosWord < 0 || caretPos !== textarea.selectionEnd) return;
+            if (findPosWord < 1 || caretPos !== textarea.selectionEnd) return;
             const text = textarea.value;            
             
             // Вырезаем старое недописанное слово и вставляем выбранное полное
-            const slice_pos = findPosWord; 
+            const slice_pos = findPosWord - 1; 
             const before = text.slice(0, slice_pos);
             const after = text.slice(caretPos);
             let insetWord = word.name; let len_w = insetWord.length;
@@ -2099,52 +2099,6 @@
         });
 
         function findSpanByPosition(targetPos) {
-            /*const container = highlightLayer;
-            if (!container) return null;
-
-            let currentPos = 0;
-            const lines = container.querySelectorAll('.code-line');
-
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-
-                // Учитываем символ переноса строки \n между линиями
-                if (i > 0) {
-                    if (currentPos === targetPos) {
-                        return null; // Позиция на переносе строки
-                    }
-                    currentPos += 1; // длина '\n'
-                }
-
-                const lineLength = line.textContent.length;
-
-                // Проверяем, находится ли targetPos внутри текущей строки
-                if (targetPos >= currentPos && targetPos <= currentPos + lineLength) {
-                    // Используем childNodes, чтобы учесть и теги, и текст/пробелы между ними
-                    const childNodes = line.childNodes;
-
-                    for (let node of childNodes) {
-                        const nodeLength = node.textContent.length;
-
-                        // Если это элемент SPAN и позиция попадает в него
-                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
-                            if (targetPos >= currentPos && targetPos <= currentPos + nodeLength) {
-                                return node;
-                            }
-                        }
-
-                        // Смещаем позицию на длину узла (будь то спан или пробел)
-                        currentPos += nodeLength;
-                    }
-                    
-                    return null; // Если внутри строки позиция попала на пробел вне спана
-                } else {
-                    // Если позиция не в этой строке, пропускаем её целиком
-                    currentPos += lineLength;
-                }
-            }
-
-            return null; // Позиция вне диапазона текста*/
             const container = highlightLayer;
             if (!container) return null;
 
