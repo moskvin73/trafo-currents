@@ -2235,7 +2235,7 @@
                     ];
                 }
                 else allItems = dictionary;
-                const filtered = sortedDictionary.filter(word => 
+                const filtered = allItems.filter(word => 
                     word.name.startsWith(text) && (text.length === 1 || text !== word.name)
                 );
                 const uniqueFiltered = Array.from(new Map(filtered.map(item => [item.name, item])).values());
