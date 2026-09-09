@@ -2033,10 +2033,12 @@
             const activeItem = dropdown.querySelector('li.active');
             
             if (activeItem) {
-                activeItem.scrollIntoView({
-                behavior: 'smooth', // Плавная прокрутка (можно заменить на 'auto' для мгновенной)
-                block: 'nearest'    // Прокручивает ровно до тех пор, пока элемент не появится в поле зрения
-                });
+            requestAnimationFrame(() => {
+                    activeItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                });            
             }
         }
 
