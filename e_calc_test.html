@@ -2239,7 +2239,7 @@
             };
 
             const showFilter = (caretPos, text, find_span) => {
-                if (caretPos && caretPos < 0) return;
+                if (caretPos < 0) return;
                 findPosWord = caretPos;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
                 let all_dictionary;
