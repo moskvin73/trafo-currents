@@ -1915,8 +1915,8 @@
         let resizeObserver = null;
         let carentItems = null;
 
-        const dictionary = [...dictionaryReservedWordsMap,
-                            ...globalScope.fixedNames];
+        const dictionary = [...dictionaryReservedWordsMap.map(name => ({ name, type: 'keyword' })),
+                            ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
         // 1. Функция обновления позиции (вызывается при скролле и ресайзе)
         function updateDropdownPosition() {
@@ -2187,7 +2187,7 @@
                 if (globalScope.varNames.length > 0) {
                     all_dictionary = [
                         ...dictionary,
-                        ...globalScope.varNames
+                        ...globalScope.varNames.map(name => ({ name, type: 'variable' }))
                     ];
                 }
                 else all_dictionary = dictionary;
