@@ -915,9 +915,11 @@
             font-weight: bold;
             background-color: white !important;
         }
-        .icon-keyword { padding-left: 3px; color: #0066cc !important; } /* Ключевые слова — синие */
-        .icon-function { padding-left: 3px; color: #cc0066 !important; } /* Функции — розовые */
-        .icon-variable { padding-left: 3px; color: #009933 !important; } /* Переменные — зеленые */
+        .text-dropdeown { padding-left: 3px; }
+
+        .icon-keyword { color: #0066cc !important; } /* Ключевые слова — синие */
+        .icon-function { color: #cc0066 !important; } /* Функции — розовые */
+        .icon-variable { color: #009933 !important; } /* Переменные — зеленые */
         
    </style>
 </head>
@@ -2028,6 +2030,7 @@
 
                 // Создаем текст
                 const textSpan = document.createElement('span');
+                textSpan.className = 'text-dropdeown'
                 textSpan.textContent = item.name;
 
                 li.appendChild(iconSpan);
