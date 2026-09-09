@@ -898,7 +898,19 @@
         /* Если наводят на уже активный пункт, делаем его еще чуть темнее */
         .dropdown li.active:hover {
             background-color: #0066cc; 
-        }       
+        }
+        
+        /* Иконки для типов данных */
+        .icon {
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .icon-keyword { color: #0066cc; } /* Ключевые слова — синие */
+        .icon-function { color: #cc0066; } /* Функции — розовые */
+        .icon-variable { color: #009933; } /* Переменные — зеленые */
+        
    </style>
 </head>
 <body>
@@ -1915,6 +1927,13 @@
         let resizeObserver = null;
         let carentItems = null;
 
+        // Символы или иконки для каждого типа
+        const icons = {
+            keyword: { text: 'K', className: 'icon-keyword' },
+            function: { text: 'F', className: 'icon-function' },
+            variable: { text: 'V', className: 'icon-variable' }
+        };
+
         const dictionary = [...dictionaryReservedWordsMap.map(name => ({ name, type: 'keyword' })),
                             ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
@@ -1991,9 +2010,21 @@
 
             items.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.textContent = item.name;
+                //li.textContent = item.name;
                 if (index === 0) li.classList.add('active');
-                
+
+                // Создаем иконку
+                const iconSpan = document.createElement('span');
+                iconSpan.className = `icon ${icons[item.type].className}`;
+                iconSpan.textContent = icons[item.type].text;
+
+                // Создаем текст
+                const textSpan = document.createElement('span');
+                textSpan.textContent = item.name;
+
+                li.appendChild(iconSpan);
+                li.appendChild(textSpan);                
+
                 // Клик мышкой по элементу списка
                 li.addEventListener('click', () => insertWord(item));
                 dropdown.appendChild(li);
