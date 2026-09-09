@@ -1969,9 +1969,9 @@
         }
 
         function insertWord(word) {
-            if (findPosWord < 1) return;
-            const text = textarea.value;
             const caretPos = textarea.selectionStart;
+            if (findPosWord < 1 || caretPos !== textarea.selectionEnd) return;
+            const text = textarea.value;            
             
             // Вырезаем старое недописанное слово и вставляем выбранное полное
             const slice_pos = findPosWord - 1; 
