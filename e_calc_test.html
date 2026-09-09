@@ -881,6 +881,7 @@
             margin: 0;
             padding: 0;
         }
+
         .dropdown li {
             margin: 0;
             padding-left: 0;
@@ -888,6 +889,8 @@
             padding-top: 0;
             padding-bottom: 0;
             cursor: pointer;
+            display: flex;
+            align-items: center; /* Выравнивает иконку и текст строго по центру по вертикали */
         }
         /* Состояние при наведении (более светлый оттенок) */
         .dropdown li:hover {
@@ -907,15 +910,16 @@
         
         /* Иконки для типов данных */
         .dropdown li .icon {
+            box-sizing: border-box;
             padding-left: 3px;
             padding-right: 3px;
             padding-top: 3px;
             padding-bottom: 4px;
             display: inline-block;
             width: 12px;
-            height: 5px;
+            height: 12px;
             background-color: rgb(248, 244, 244) !important;
-            background-size: auto 100%;
+            background-size: contain;
             background-repeat: no-repeat;
             background-position: center;  
         }
@@ -925,7 +929,6 @@
             padding-left: 3px;
             padding-top: 3px;
             padding-bottom: 4px;
-            text-align: center; 
         }
 
         /* Сами SVG маски */
