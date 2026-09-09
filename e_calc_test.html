@@ -2227,19 +2227,20 @@
                 if (caretPos < 0) return;
                 findPosWord = caretPos + 1;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
-                let all_dictionary;
+                let allItems;
                 if (globalScope.varNames.length > 0) {
-                    all_dictionary = [
+                    allItems = [
                         ...dictionary,
                         ...globalScope.varNames.map(name => ({ name, type: 'variable' }))
                     ];
                 }
-                else all_dictionary = dictionary;
-                const sortedDictionary = Array.from(new Set(all_dictionary)).sort();
+                else allItems = dictionary;
                 const filtered = sortedDictionary.filter(word => 
                     word.name.startsWith(text) && (text.length === 1 || text !== word.name)
                 );
-                showDropdown(filtered, find_span);
+                const uniqueFiltered = Array.from(new Map(filtered.map(item => [item.name, item])).values());
+                uniqueFiltered.sort((a, b) => a.name.localeCompare(b.name));
+                showDropdown(uniqueFiltered, find_span);
             };
 
             const updateText = () => {
