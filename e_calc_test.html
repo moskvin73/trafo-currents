@@ -1974,7 +1974,7 @@
             const caretPos = textarea.selectionStart;
             
             // Вырезаем старое недописанное слово и вставляем выбранное полное
-            const before = text.slice(0, findPosWord);
+            const before = text.slice(0, findPosWord - 1);
             const after = text.slice(caretPos);
             
             textarea.value = before + word + after;
