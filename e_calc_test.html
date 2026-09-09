@@ -2040,13 +2040,11 @@
 
             items.forEach((item, index) => {
                 const li = document.createElement('li');
-                //li.textContent = item.name;
                 if (index === 0) li.classList.add('active');
 
                 // Создаем иконку
                 const iconSpan = document.createElement('span');
                 iconSpan.className = `icon ${icons[item.type].className}`;
-                //iconSpan.textContent = ' ' //icons[item.type].text;
 
                 // Создаем текст
                 const textSpan = document.createElement('span');
