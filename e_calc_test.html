@@ -2237,7 +2237,7 @@
                 else all_dictionary = dictionary;
                 const sortedDictionary = Array.from(new Set(all_dictionary)).sort();
                 const filtered = sortedDictionary.filter(word => 
-                    word.name.startsWith(text) && text !== word.name
+                    word.name.startsWith(text) && (text.length === 1 || text !== word.name)
                 );
                 showDropdown(filtered, find_span);
             };
