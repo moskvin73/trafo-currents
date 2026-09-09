@@ -2030,7 +2030,7 @@
 
         // Добавляем слушатели событий (желательно один раз при инициализации приложения)
         // Использование { passive: true } оптимизирует прокрутку
-        window.addEventListener('scroll', updateDropdownPosition, { passive: true });
+        document.querySelector('.main-center').addEventListener('scroll', updateDropdownPosition, { passive: true });
         window.addEventListener('resize', updateDropdownPosition);
 
         function hideDropdown() {
