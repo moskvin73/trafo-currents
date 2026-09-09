@@ -2001,31 +2001,7 @@
 
             updateDropdownPosition();
             dropdown.style.visibility = 'visible';
-            watchSpanVisibility(spanElement);
-
-            /*
-            // 1. Получаем координаты span относительно экрана
-            const rect = spanElement.getBoundingClientRect();
-            
-            // 2. Считаем доступное место сверху и снизу (учитываем прокрутку)
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const spaceAbove = rect.top;
-            
-            // Высота вашего списка (можно задать фиксированную или измерить у скрытого элемента)
-            const dropdownHeight = dropdown.offsetHeight || 150; 
-
-            // 3. Логика позиционирования
-            if (spaceBelow >= dropdownHeight || spaceBelow > spaceAbove) {
-                // Выводим СНИЗУ
-                dropdown.style.top = `${window.scrollY + rect.bottom}px`;
-            } else {
-                // Выводим СВЕРХУ
-                dropdown.style.top = `${window.scrollY + rect.top - dropdownHeight}px`;
-            }
-
-            // Позиционирование по горизонтали (выравнивание по левому краю span)
-            dropdown.style.left = `${window.scrollX + rect.left}px`;
-            dropdown.style.visibility = 'visible';*/           
+            watchSpanVisibility(spanElement);           
         }
 
         // Добавляем слушатели событий (желательно один раз при инициализации приложения)
