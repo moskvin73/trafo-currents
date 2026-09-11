@@ -106,7 +106,7 @@ export class SymbolTableContext {
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; listeners.forEach(callback => callback(...args));  }
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; listeners.forEach(callback => callback(this));  }
       };   
   }
 
