@@ -108,13 +108,6 @@ export class SymbolTableContext {
     }    
   }
   unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
-  subscribeUpdateVarable(callback) {
-   if (typeof callback === 'function') {
-      this.#listenersUpdateVarable.add(callback);
-    }    
-  }
-  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); }
-  #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
   subscribeDeleteVarable(callback) {
    if (typeof callback === 'function') {
       this.#listenersDeleteVarable.add(callback);
