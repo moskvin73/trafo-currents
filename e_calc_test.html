@@ -1984,7 +1984,7 @@
                             ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
         function aadVarable(context, id) {
-            console.log("добавлено id");
+            console.log(`добавлено ${id}`);
         }
         
         globalScope.subscribeAddVarable(aadVarable);
