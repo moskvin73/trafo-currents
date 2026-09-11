@@ -30,11 +30,26 @@ export class SymbolTableContext {
           state_settings.complexFormat =  v;
           update_format('complexFormat', v);
       },
-      complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
-      angleMode:     ANGLE_MODE.RADIANS,
-      precision:     4,
-      matrixFormat: 'bmatrix', // 'bmatrix', 'pmatrix', 'matrix'
-      max_count_report: 100
+      get angleMode() { return state_settings.angleMode; },
+      set angleMode(v) {
+        state_settings.angleMode = v;
+        update_format('angleMode', v);
+      },
+      get precision() { return state_settings.precision; },
+      set precision(v) {
+        state_settings.precision = v;
+        update_format('precision', v);
+      },
+      get matrixFormat() { return state_settings.matrixFormat; },
+      set matrixFormat(v) {
+        state_settings.matrixFormat = v;
+        update_format('matrixFormat', v);
+      },
+      get max_count_report() { return state_settings.max_count_report; },
+      set max_count_report(v) {
+        state_settings.max_count_report = v;
+        update_format('max_count_report', v);
+      }
     };
 
     this.#listenersAddVarable = new Set();
