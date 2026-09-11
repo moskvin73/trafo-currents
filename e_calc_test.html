@@ -1984,9 +1984,9 @@
                             ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
         function aadVarable(context, id) {
-            context.getIdByName(id);
-            if (id != null) {
-                dictionary.push()
+            const name = context.getNameById(id);
+            if (name != null) {
+                dictionary.push({ name: name,  type: 'variable' });
             }
             //console.log(`добавлено ${id}`);
         }
