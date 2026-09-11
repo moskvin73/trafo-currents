@@ -99,13 +99,14 @@ export class SymbolTableContext {
     this.LOCAL_MARKER = 1000000;     
   }
 
-  static #initVarable() {
+  static #initVarable(listeners) {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
+        set update(func) { state.func = func; },
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; listeners.forEach(callback => callback(...args));  }
       };   
   }
 
