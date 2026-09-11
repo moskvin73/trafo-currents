@@ -120,7 +120,7 @@ export class SymbolTableContext {
       symbols: [],               
       outer: outerFrame 
     };
-    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable());
+    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable(this.#listenersUpdateVarable));
     return frame;
   }
 
@@ -189,7 +189,7 @@ export class SymbolTableContext {
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
-      const localSymbol = SymbolTableContext.#initVarable(this.#listenersUpdateVarable);
+      const localSymbol = SymbolTableContext.#initVarable();
 
       const newLocalIdx = currentScope.symbols.length;
       currentScope.names.push(name);
