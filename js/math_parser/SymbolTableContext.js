@@ -102,7 +102,6 @@ export class SymbolTableContext {
   static #initVarable(listeners) {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
-        set update(func) { state.func = func; },
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
