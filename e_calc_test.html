@@ -1991,11 +1991,11 @@
             const types = is_variable_func_id(context, id);
             if (name != null) {
                 const push_data = { name: name,  type: 'variable' };
-                const l_sym = context.getParseSymbolById(id);
+                const sym = context.getParseSymbolById(id);
                 const updateVar = (sym) => {
                   push_data.type = value_is_func(sym.value) ? 'varfunc' : 'variable';  
                 };
-                l_sym.subscribeUpdateVarable(updateVar)
+                sym.subscribeUpdateVarable(updateVar)
                 dictionary.push(push_data);
             }
         }
