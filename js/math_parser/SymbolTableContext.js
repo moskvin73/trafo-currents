@@ -276,7 +276,6 @@ export class SymbolTableContext {
     if (id >= 0 && id < this.CD) {
       return this.fixedNames[id];
     }
-
     return null;
   }
 
