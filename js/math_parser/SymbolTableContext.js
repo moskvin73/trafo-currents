@@ -14,7 +14,22 @@ export class SymbolTableContext {
   #listenersUpdateSettings;
 
   constructor() {
+    const state_settings = {
+      complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
+      angleMode:     ANGLE_MODE.RADIANS,
+      precision:     4,
+      matrixFormat: 'bmatrix', // 'bmatrix', 'pmatrix', 'matrix'
+      max_count_report: 100
+    };
+    const update_format = (name, value) => {
+      this.#invokeUpdateSettings(name, value);
+    };
     this.settings = {
+      get complexFormat() { return state_settings.complexFormat; },
+      set complexFormat(v) {
+          state_settings.complexFormat =  v;
+          update_format('complexFormat', v);
+      },
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
       angleMode:     ANGLE_MODE.RADIANS,
       precision:     4,
