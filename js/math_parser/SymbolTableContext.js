@@ -254,7 +254,7 @@ export class SymbolTableContext {
     return newGlobalId;
   }
 
-  getNameByid(id) {
+  getNameById(id) {
     if (id >= this.LOCAL_MARKER) {
       const payload = id - this.LOCAL_MARKER;
       const delta = payload >> 16;       
