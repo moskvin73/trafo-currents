@@ -140,7 +140,7 @@ export class SymbolTableContext {
           state.value = v; 
           state.type = SYM_VARIABLE;
           func(this);
-        }
+        },
       };   
   }
 
