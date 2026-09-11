@@ -99,7 +99,7 @@ export class SymbolTableContext {
     this.LOCAL_MARKER = 1000000;     
   }
 
-  static #initVarable() {
+  initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
