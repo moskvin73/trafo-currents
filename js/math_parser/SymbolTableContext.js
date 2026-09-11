@@ -9,7 +9,6 @@ export const SYM_BUILTIN   = 2; // Встроенная системная фу�
 
 export class SymbolTableContext {
   #listenersAddVarable;
-  #listenersUpdateVarable;
   #listenersDeleteVarable;
   #listenersUpdateSettings;
 
@@ -53,8 +52,8 @@ export class SymbolTableContext {
     };
 
     this.#listenersAddVarable = new Set();
-    this.#listenersUpdateVarable = new Set();
     this.#listenersDeleteVarable = new Set();
+    this.#listenersUpdateSettings = new Set();
 
     // Статическая часть
     this.fixedNames = Array.from(COMPILER_REGISTRY.keys());
