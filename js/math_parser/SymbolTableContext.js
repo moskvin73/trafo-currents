@@ -106,7 +106,6 @@ export class SymbolTableContext {
       const func = this.#invokeUpdateVarable;
       return {
         get type() { return state.type; },
-        //set type(t) { state.type = t; },
         get value() { return state.value; },
         set value(v) { 
           state.value = v; 
