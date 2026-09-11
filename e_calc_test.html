@@ -1986,7 +1986,7 @@
         const dictionary = [...dictionaryReservedWordsMap.map(name => ({ name, type: 'keyword' })),
                             ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
-        function aadVarable(context, id) {
+        function addVarable(context, id) {
             const name = context.getNameById(id);
             const types = is_variable_func_id(context, id);
             if (name != null) {
@@ -2000,7 +2000,7 @@
             }
         }
         
-        globalScope.subscribeAddVarable(aadVarable);
+        globalScope.subscribeAddVarable(addVarable);
 
         // 1. Функция обновления позиции (вызывается при скролле и ресайзе)
         function updateDropdownPosition() {
