@@ -122,7 +122,7 @@ export class SymbolTableContext {
   unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
-  #initVarable(listeners = null) {
+  #initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
       const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
@@ -241,7 +241,7 @@ export class SymbolTableContext {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
     
-    const userSymbol = this.#initVarable(this.#listenersUpdateVarable);
+    const userSymbol = this.#initVarable();
 
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
