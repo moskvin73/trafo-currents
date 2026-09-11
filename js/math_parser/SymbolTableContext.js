@@ -137,6 +137,12 @@ export class SymbolTableContext {
       return {
         get type() { return state.type; },
         get value() { return state.value; },
+        subscribeUpdateVarable(callback) {
+          if (typeof callback === 'function') {
+              listenersUpdateVarable.add(callback);
+          }    
+        },      
+        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
         set value(v) { 
           state.value = v; 
           state.type = SYM_VARIABLE;
