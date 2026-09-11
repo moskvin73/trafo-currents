@@ -2298,13 +2298,13 @@
                 findPosWord = caretPos + 1;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
                 let allItems;
-                if (globalScope.varNames.length > 0) {
+                /*if (globalScope.varNames.length > 0) {
                     allItems = [
                         ...dictionary,
                         ...globalScope.varNames.map(name => ({ name, type: 'variable' }))
                     ];
                 }
-                else allItems = dictionary;
+                else*/ allItems = dictionary;
                 const filtered = allItems.filter(word => 
                     word.name.startsWith(text) && (text.length === 1 || text !== word.name)
                 );
