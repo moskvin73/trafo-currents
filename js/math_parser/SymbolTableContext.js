@@ -196,7 +196,7 @@ export class SymbolTableContext {
       currentScope.symbols.push(localSymbol);
       currentScope.hash[name] = newLocalIdx;
 
-      const newLocalId = this.LOCAL_MARKER + (0 << 16) + newLocalIdx;
+      const newLocalId = this.LOCAL_MARKER + (0 << 16) + newLocalIdx;      
       this.#invokeAddVarable(this, newLocalId);
       return newLocalId;
     }    
@@ -220,6 +220,7 @@ export class SymbolTableContext {
     this.varHash[name] = newVarIdx;
 
     const newGlobalId = newVarIdx + this.CD;
+    this.#invokeAddVarable(this, newGlobalId);
     return newGlobalId;
   }
 
