@@ -1110,7 +1110,7 @@
     <script type="module">
         import { calcLineGraphemes, calcSubstrGraphemes, dictionaryReservedWordsMap } from './js/math_parser/MathLexer.js';
         import { MathParser,  ExecutionAbortedError } from './js/math_parser/MathParser.js';
-        import { HighlightLerxer, htmlEscape, is_variable_func_id } from './js/math_parser/HighlightLexer.js';
+        import { HighlightLerxer, htmlEscape, is_variable_func_id, value_is_func } from './js/math_parser/HighlightLexer.js';
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
@@ -1993,7 +1993,7 @@
                 const push_data = { name: name,  type: 'variable' };
                 const l_sym = context.getParseSymbolById(id);
                 const updateVar = (sym) => {
-                  push_data.type = sym.value instanceof VarableCode ? 'varfunc' : 'variable';  
+                  push_data.type = value_is_func(sym.value) ? 'varfunc' : 'variable';  
                 };
                 l_sym.subscribeUpdateVarable(updateVar)
                 dictionary.push(push_data);

@@ -60,6 +60,8 @@ export function htmlEscape(text) {
             .replace(/'/g, "&#039;");
 }
 
+export function value_is_func(value) { return value instanceof VarableCode; }
+
 export function is_variable_func_id(context, id) {
     if (id === null) return "NOT_FOUND";
 
