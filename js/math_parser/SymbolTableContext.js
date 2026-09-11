@@ -9,37 +9,9 @@ export const SYM_BUILTIN   = 2; // Встроенная системная фу�
 
 export class SymbolTableContext {
   #listenersAddVarable;
-  #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
-  subscribeAddVarable(callback) {
-   if (typeof callback === 'function') {
-      this.#listenersAddVarable.add(callback);
-    }    
-  }
-  unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
   #listenersUpdateVarable;
-  subscribeUpdateVarable(callback) {
-   if (typeof callback === 'function') {
-      this.#listenersUpdateVarable.add(callback);
-    }    
-  }
-  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); }
-  #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
   #listenersDeleteVarable;
-  subscribeDeleteVarable(callback) {
-   if (typeof callback === 'function') {
-      this.#listenersDeleteVarable.add(callback);
-    }    
-  }
-  unsubscribeDeleteVarable(callback) { this.#listenersDeleteVarable.delete(callback); }
-  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
   #listenersUpdateSettings;
-  subscribeUpdateSettings(callback) {
-   if (typeof callback === 'function') {
-      this.#listenersUpdateSettings.add(callback);
-    }    
-  }
-  unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
-  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
   constructor() {
     this.settings = {
@@ -98,6 +70,36 @@ export class SymbolTableContext {
     // Локальный ID = LOCAL_MARKER + (инндекс_слоя << 16) + индекс_переменной_в_слое
     this.LOCAL_MARKER = 1000000;     
   }
+
+  #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
+  subscribeAddVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersAddVarable.add(callback);
+    }    
+  }
+  unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
+  subscribeUpdateVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersUpdateVarable.add(callback);
+    }    
+  }
+  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); }
+  #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
+  subscribeDeleteVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersDeleteVarable.add(callback);
+    }    
+  }
+  unsubscribeDeleteVarable(callback) { this.#listenersDeleteVarable.delete(callback); }
+  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
+  subscribeUpdateSettings(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersUpdateSettings.add(callback);
+    }    
+  }
+  unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
+  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
+
 
   #initVarable(listeners = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
