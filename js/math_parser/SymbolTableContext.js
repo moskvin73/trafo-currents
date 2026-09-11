@@ -10,6 +10,12 @@ export const SYM_BUILTIN   = 2; // Встроенная системная фу�
 export class SymbolTableContext {
   #listenersAddVarable;
   #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
+  subscribeAddVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersAddVarable.add(callback);
+    }    
+  }
+  unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
   #listenersUpdateVarable;
   #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
   #listenersDeleteVarable;
