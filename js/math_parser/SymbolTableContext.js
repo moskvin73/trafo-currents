@@ -11,7 +11,9 @@ export class SymbolTableContext {
   #listenersAddVarable;
   #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
   #listenersUpdateVarable;
+  #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
   #listenersDeleteVarable;
+  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
   #listenersUpdatesettings;
 
   constructor() {
