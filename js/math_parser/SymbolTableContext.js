@@ -197,6 +197,7 @@ export class SymbolTableContext {
       currentScope.hash[name] = newLocalIdx;
 
       const newLocalId = this.LOCAL_MARKER + (0 << 16) + newLocalIdx;
+      this.#invokeAddVarable(this, newLocalId);
       return newLocalId;
     }    
 
