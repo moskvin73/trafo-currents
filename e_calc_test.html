@@ -2044,7 +2044,7 @@
 
         // 1. Функция обновления позиции (вызывается при скролле и ресайзе)
         function updateDropdownPosition() {
-            if (!currentSpanElement || dropdown.style.display !== 'block') return;
+            if (!currentSpanElement || dropdown.style.display !== 'flex') return;
 
             const rect = currentSpanElement.getBoundingClientRect();
             
@@ -2148,7 +2148,7 @@
                 dropdown_list.appendChild(li);
             });
             dropdown.style.visibility = 'hidden';
-            dropdown.style.display = 'block';
+            dropdown.style.display = 'flex';
 
             updateDropdownPosition();
             dropdown.style.visibility = 'visible';
@@ -2207,7 +2207,7 @@
         }
 
         function handleKeyDown(e) {
-            if (dropdown.style.display === 'block') {
+            if (dropdown.style.display === 'flex') {
                 const items = dropdown.getElementsByTagName('li');
 
                 // Стрелка вниз
