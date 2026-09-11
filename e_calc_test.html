@@ -2143,7 +2143,7 @@
             const before = text.slice(0, slice_pos);
             const after = text.slice(caretPos);
             let insetWord = word.name; let len_w = insetWord.length;
-            if (word.type === 'function') {
+            if (word.type === 'function' || word.type === 'varfunc') {
                 len_w++;
                 if (after.length == 0 || /^[\s)\]]/.test(after))
                     textarea.value = before + insetWord + '()' + after;
