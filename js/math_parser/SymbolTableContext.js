@@ -189,7 +189,7 @@ export class SymbolTableContext {
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
-      const localSymbol = SymbolTableContext.#initVarable();
+      const localSymbol = SymbolTableContext.#initVarable(this.#listenersUpdateVarable);
 
       const newLocalIdx = currentScope.symbols.length;
       currentScope.names.push(name);
@@ -211,7 +211,7 @@ export class SymbolTableContext {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
     
-    const userSymbol = SymbolTableContext.#initVarable();
+    const userSymbol = SymbolTableContext.#initVarable(this.#listenersUpdateVarable);
 
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
