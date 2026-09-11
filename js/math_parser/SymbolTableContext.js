@@ -103,7 +103,7 @@ export class SymbolTableContext {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
-        set type(t) { state.type = t; },
+        //set type(t) { state.type = t; },
         get value() { return state.value; },
         set value(v) { 
           state.value = v; 
@@ -119,7 +119,7 @@ export class SymbolTableContext {
       symbols: [],               
       outer: outerFrame 
     };
-    while(count_vars-- > 0)  frame.symbols.push(SymbolTableContext.#initVarable());
+    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable());
     return frame;
   }
 
