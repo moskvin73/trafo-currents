@@ -1120,8 +1120,9 @@
     <div id="custom-tooltip" class="custom-tooltip">
         <div class="custom-tooltip-scroller"></div>
     </div>
+
     <ul id="suggestions" class="dropdown">
-        <ul class="dropdown-list"></ul>
+        <ul class="dropdown-list" id="suggestions-list"></ul>
         <div class="dropdown-footer">
             <button class="filter-btn" data-type="all">Все</button>
             <button class="filter-btn" data-type="type1">Тип 1</button>
@@ -2006,6 +2007,7 @@
          
         //#region Line editor
         const dropdown = document.getElementById('suggestions');
+        const dropdown_list = document.getElementById('suggestions-list');
         let activeIndex = 0;
         let findPosWord = -1;
         let currentSpanElement = null; // Храним ссылку на текущий активный span
@@ -2121,7 +2123,7 @@
                 return 
             };
             carentItems = items;
-            dropdown.innerHTML = '';
+            dropdown_list.innerHTML = '';
             activeIndex = 0;
             currentSpanElement = spanElement;
 
@@ -2143,7 +2145,7 @@
 
                 // Клик мышкой по элементу списка
                 li.addEventListener('click', () => insertWord(item));
-                dropdown.appendChild(li);
+                dropdown_list.appendChild(li);
             });
             dropdown.style.visibility = 'hidden';
             dropdown.style.display = 'block';
