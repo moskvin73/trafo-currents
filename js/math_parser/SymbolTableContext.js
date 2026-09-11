@@ -17,6 +17,8 @@ export class SymbolTableContext {
       max_count_report: 100
     };
 
+    this.#listeners = new Set();
+
     // Статическая часть
     this.fixedNames = Array.from(COMPILER_REGISTRY.keys());
     this.CD = this.fixedNames.length;
