@@ -868,21 +868,27 @@
         .dropdown {
             position: absolute;
             background: white;
-            border: 1px solid #000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 150px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             min-width: 100px;
             overflow-y: auto;
             display: none;
+            flex-direction: column;
             z-index: 1000;
             font-family: monospace;
             font-size: 11px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
         }
 
-        .dropdown li {
+/* Внутренний список элементов со скроллом */
+.dropdown-list {
+    max-height: 150px; /* Ограничение высоты только для прокрутки элементов */
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}        
+
+        .dropdown-list li {
             margin: 0;
             padding-left: 0;
             padding-right: 3px;
@@ -893,23 +899,23 @@
             align-items: center; /* Выравнивает иконку и текст строго по центру по вертикали */
         }
         /* Состояние при наведении (более светлый оттенок) */
-        .dropdown li:hover {
+        .dropdown-list li:hover {
             background-color: #3399ff; /* Светлее, чем #007fff */
             color: white;
         }
 
         /* Активное состояние (ваш исходный базовый цвет) */
-        .dropdown li.active {
+        .dropdown-list li.active {
             background-color: #007fff; 
             color: white;
         }
         /* Если наводят на уже активный пункт, делаем его еще чуть темнее */
-        .dropdown li.active:hover {
+        .dropdown-list li.active:hover {
             background-color: #0066cc; 
         }
         
         /* Иконки для типов данных */
-        .dropdown li .icon {
+        .dropdown-list li .icon {
             box-sizing: content-box;
             padding-left: 3px;
             padding-right: 3px;
@@ -924,7 +930,7 @@
             background-position: center;  
         }
 
-        .dropdown li .text-dropdeown { 
+        .dropdown-list li .text-dropdeown { 
             padding-left: 3px;
             padding-top: 3px;
             padding-bottom: 4px;
