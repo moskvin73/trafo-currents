@@ -60,6 +60,31 @@ export function htmlEscape(text) {
             .replace(/'/g, "&#039;");
 }
 
+export function is_varable_func(context, name) {
+    const id = context.getIdByName(name);
+    if (id !== null) {
+        const sym = context.getParseSymbolById(id);
+        switch (sym.type) {
+            case SYM_UNDEFINED:
+                // Идентификатор объявлен, но значения нет
+                break;
+            case SYM_VARIABLE: {
+                const value = sym.value;
+                if (value instanceof VarableCode)  {
+                    // Переменная функции
+                }
+                else {
+                    // Перименная
+                }
+                break;
+            }
+            case SYM_BUILTIN: {
+                // Встроенная системная функция
+            }
+        }
+    }    
+}
+
 export function HighlightLerxer(text, context) {
     // Проверяем, что text является строкой
     if (typeof text !== 'string') {
