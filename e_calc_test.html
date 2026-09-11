@@ -1983,6 +1983,12 @@
         const dictionary = [...dictionaryReservedWordsMap.map(name => ({ name, type: 'keyword' })),
                             ...globalScope.fixedNames.map(name => ({ name, type: 'function' }))];
 
+        function aadVarable(context, id) {
+            console.log("добавлено id");
+        }
+        
+        globalScope.subscribeAddVarable(aadVarable);
+
         // 1. Функция обновления позиции (вызывается при скролле и ресайзе)
         function updateDropdownPosition() {
             if (!currentSpanElement || dropdown.style.display !== 'block') return;
