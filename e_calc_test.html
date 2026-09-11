@@ -1990,7 +1990,7 @@
         function aadVarable(context, id) {
             const name = context.getNameById(id);
             const types = is_variable_func_id(context, id);
-            if (name != null && types !== "UNKNOWN") {
+            if (name != null) {
                 dictionary.push({ name: name,  type: types !== "FUNCTION_VARIABLE" ?  'varfunc' : 'variable' });
             }
         }
