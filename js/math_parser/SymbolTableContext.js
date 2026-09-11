@@ -99,7 +99,7 @@ export class SymbolTableContext {
     this.LOCAL_MARKER = 1000000;     
   }
 
-  static #initVarable(listeners = null) {
+  #initVarable(listeners = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
@@ -120,7 +120,7 @@ export class SymbolTableContext {
       symbols: [],               
       outer: outerFrame 
     };
-    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable(this.#listenersUpdateVarable));
+    while(count_vars-- > 0) frame.symbols.push(this.#initVarable());
     return frame;
   }
 
@@ -189,7 +189,7 @@ export class SymbolTableContext {
       // Если в цепочке функций переменная не найдена, создаем новую ЛОКАЛЬНУЮ переменную
       const currentScope = this.scopes[currentScopeIdx];
       
-      const localSymbol = SymbolTableContext.#initVarable();
+      const localSymbol = this.#initVarable();
 
       const newLocalIdx = currentScope.symbols.length;
       currentScope.names.push(name);
@@ -211,7 +211,7 @@ export class SymbolTableContext {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
     
-    const userSymbol = SymbolTableContext.#initVarable(this.#listenersUpdateVarable);
+    const userSymbol = this.#initVarable(this.#listenersUpdateVarable);
 
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
