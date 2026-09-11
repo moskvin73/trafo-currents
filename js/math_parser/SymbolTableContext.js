@@ -8,6 +8,7 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolTableContext {
+  #listeners;
   constructor() {
     this.settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
