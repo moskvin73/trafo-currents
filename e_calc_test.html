@@ -1992,7 +1992,7 @@
             const name = context.getNameById(id);
             const types = is_variable_func_id(context, id);
             if (name != null) {
-                dictionary.push({ name: name,  type: types !== "FUNCTION_VARIABLE" ?  'varfunc' : 'variable' });
+                dictionary.push({ name: name,  type: types === "FUNCTION_VARIABLE" ?  'varfunc' : 'variable' });
             }
         }
         
