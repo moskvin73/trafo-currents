@@ -17,10 +17,28 @@ export class SymbolTableContext {
   }
   unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
   #listenersUpdateVarable;
+  subscribeUpdateVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersUpdateVarable.add(callback);
+    }    
+  }
+  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); }
   #invokeUpdateVarable(...args) { this.#listenersUpdateVarable.forEach(callback => callback(...args)); }
   #listenersDeleteVarable;
+  subscribeDeleteVarable(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersDeleteVarable.add(callback);
+    }    
+  }
+  unsubscribeDeleteVarable(callback) { this.#listenersDeleteVarable.delete(callback); }
   #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
   #listenersUpdateSettings;
+  subscribeUpdateSettings(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersUpdateSettings.add(callback);
+    }    
+  }
+  unsubscribeUpdateSettings(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
   constructor() {
