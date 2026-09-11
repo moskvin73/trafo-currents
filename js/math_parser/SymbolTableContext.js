@@ -8,7 +8,12 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolTableContext {
-  #listeners;
+  #listenersAddVarable;
+  #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
+  #listenersUpdateVarable;
+  #listenersDeleteVarable;
+  #listenersUpdatesettings;
+
   constructor() {
     this.settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
@@ -18,7 +23,9 @@ export class SymbolTableContext {
       max_count_report: 100
     };
 
-    this.#listeners = new Set();
+    this.#listenersAddVarable = new Set();
+    this.#listenersUpdateVarable = new Set();
+    this.#listenersDeleteVarable = new Set();
 
     // Статическая часть
     this.fixedNames = Array.from(COMPILER_REGISTRY.keys());
@@ -64,7 +71,6 @@ export class SymbolTableContext {
     // Локальный ID = LOCAL_MARKER + (инндекс_слоя << 16) + индекс_переменной_в_слое
     this.LOCAL_MARKER = 1000000;     
   }
-
 
   static #initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
