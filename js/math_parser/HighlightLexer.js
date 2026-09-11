@@ -60,30 +60,36 @@ export function htmlEscape(text) {
             .replace(/'/g, "&#039;");
 }
 
-export function is_varable_func(context, name) {
+/**
+ * Определяет тип и статус символа (переменной/функции) в заданном контексте по его имени.
+ *
+ * @param {Object} context - Объект контекста выполнения или парсера.
+ * @param {function(string): (number|string|null)} context.getIdByName - Метод, возвращающий ID символа по его имени.
+ * @param {function(number|string): Object} context.getParseSymbolById - Метод, возвращающий объект символа по его ID.
+ * @param {string} name - Имя проверяемого символа.
+ * 
+ * @returns {"NOT_FOUND" | "UNDEFINED" | "BUILTIN" | "VARIABLE" | "FUNCTION_VARIABLE" | "UNKNOWN"} Строковый идентификатор типа символа:
+ * - `"NOT_FOUND"`: Символ с таким именем вообще не зарегистрирован в контексте.
+ * - `"UNDEFINED"`: Символ найден, но имеет тип `SYM_UNDEFINED` (объявлен, но не определен).
+ * - `"BUILTIN"`: Символ является встроенной системной функцией или константой (`SYM_BUILTIN`).
+ * - `"VARIABLE"`: Символ является обычной переменной (`SYM_VARIABLE`).
+ * - `"FUNCTION_VARIABLE"`: Символ является переменной, содержащей исполняемый код/функцию (`sym.value` является экземпляром `VariableCode`).
+ * - `"UNKNOWN"`: Символ существует, но его тип не обрабатывается текущей логикой.
+ */
+export function is_variable_func(context, name) {
     const id = context.getIdByName(name);
-    if (id !== null) {
-        const sym = context.getParseSymbolById(id);
-        switch (sym.type) {
-            case SYM_UNDEFINED:
-                // Идентификатор объявлен, но значения нет
-                break;
-            case SYM_VARIABLE: {
-                const value = sym.value;
-                if (value instanceof VarableCode)  {
-                    // Переменная функции
-                }
-                else {
-                    // Перименная
-                }
-                break;
-            }
-            case SYM_BUILTIN: {
-                // Встроенная системная функция
-            }
-        }
+    if (id === null) return "NOT_FOUND";
+
+    const sym = context.getParseSymbolById(id);
+
+    switch (sym.type) {
+        case SYM_UNDEFINED: return "UNDEFINED";
+        case SYM_BUILTIN:   return "BUILTIN";
+        case SYM_VARIABLE: 
+            return (sym.value instanceof VarableCode) ? "FUNCTION_VARIABLE" : "VARIABLE";
+        default: 
+            return "UNKNOWN";
     }
-    return null;    
 }
 
 export function HighlightLerxer(text, context) {
