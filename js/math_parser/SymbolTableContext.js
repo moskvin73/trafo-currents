@@ -101,6 +101,7 @@ export class SymbolTableContext {
 
   #initVarable(listeners = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
+      const func = this.#invokeUpdateVarable;
       return {
         get type() { return state.type; },
         //set type(t) { state.type = t; },
@@ -108,8 +109,7 @@ export class SymbolTableContext {
         set value(v) { 
           state.value = v; 
           state.type = SYM_VARIABLE;
-          if (listeners)
-            listeners.forEach(callback => callback(this));  
+          func(this);
         }
       };   
   }
