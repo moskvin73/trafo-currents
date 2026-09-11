@@ -2296,15 +2296,7 @@
                 if (caretPos < 0) return;
                 findPosWord = caretPos + 1;
                 // Фильтруем словарь по введенным символам (регистронезависимо)
-                let allItems;
-                /*if (globalScope.varNames.length > 0) {
-                    allItems = [
-                        ...dictionary,
-                        ...globalScope.varNames.map(name => ({ name, type: 'variable' }))
-                    ];
-                }
-                else*/ allItems = dictionary;
-                const filtered = allItems.filter(word => 
+                const filtered = dictionary.filter(word => 
                     word.name.startsWith(text) && (text.length === 1 || text !== word.name)
                 );
                 const uniqueFiltered = Array.from(new Map(filtered.map(item => [item.name, item])).values());
