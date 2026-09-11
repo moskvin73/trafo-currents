@@ -1990,7 +1990,13 @@
             const name = context.getNameById(id);
             const types = is_variable_func_id(context, id);
             if (name != null) {
-                dictionary.push({ name: name,  type: types === "FUNCTION_VARIABLE" ?  'varfunc' : 'variable' });
+                const push_data = { name: name,  type: 'variable' };
+                const l_sym = context.getParseSymbolById(id);
+                const updateVar = (sym) => {
+                  push_data.type = sym.value instanceof VarableCode ? 'varfunc' : 'variable';  
+                };
+                l_sym.subscribeUpdateVarable(updateVar)
+                dictionary.push(push_data);
             }
         }
         
