@@ -38,8 +38,8 @@ export class SymbolTableContext {
       this.#listenersUpdateSettings.add(callback);
     }    
   }
-  unsubscribeUpdateSettings(callback) { this.#listenersUpdateSettings.delete(callback); }
-  invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
+  unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
+  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
   constructor() {
     this.settings = {
@@ -99,16 +99,13 @@ export class SymbolTableContext {
     this.LOCAL_MARKER = 1000000;     
   }
 
-  initVarable() {
+  static #initVarable() {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
         set type(t) { state.type = t; },
         get value() { return state.value; },
-        set value(v) {
-          state.value = v; state.type = SYM_VARIABLE;
-          invokeUpdateVarable(this);
-        }
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };   
   }
 
