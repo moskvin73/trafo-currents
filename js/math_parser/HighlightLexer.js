@@ -60,6 +60,21 @@ export function htmlEscape(text) {
             .replace(/'/g, "&#039;");
 }
 
+export function is_variable_func_id(context, id) {
+    if (id === null) return "NOT_FOUND";
+
+    const sym = context.getParseSymbolById(id);
+
+    switch (sym.type) {
+        case SYM_UNDEFINED: return "UNDEFINED";
+        case SYM_BUILTIN:   return "BUILTIN";
+        case SYM_VARIABLE: 
+            return (sym.value instanceof VarableCode) ? "FUNCTION_VARIABLE" : "VARIABLE";
+        default: 
+            return "UNKNOWN";
+    }
+}
+
 /**
  * Определяет тип и статус символа (переменной/функции) в заданном контексте по его имени.
  *
@@ -78,7 +93,8 @@ export function htmlEscape(text) {
  */
 export function is_variable_func(context, name) {
     const id = context.getIdByName(name);
-    if (id === null) return "NOT_FOUND";
+    return is_variable_func_id(context, id);
+    /*if (id === null) return "NOT_FOUND";
 
     const sym = context.getParseSymbolById(id);
 
@@ -89,7 +105,7 @@ export function is_variable_func(context, name) {
             return (sym.value instanceof VarableCode) ? "FUNCTION_VARIABLE" : "VARIABLE";
         default: 
             return "UNKNOWN";
-    }
+    }*/
 }
 
 export function HighlightLerxer(text, context) {

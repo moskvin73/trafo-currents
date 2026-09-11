@@ -1111,7 +1111,7 @@
     <script type="module">
         import { calcLineGraphemes, calcSubstrGraphemes, dictionaryReservedWordsMap } from './js/math_parser/MathLexer.js';
         import { MathParser,  ExecutionAbortedError } from './js/math_parser/MathParser.js';
-        import { HighlightLerxer, htmlEscape } from './js/math_parser/HighlightLexer.js';
+        import { HighlightLerxer, htmlEscape, is_variable_func_id } from './js/math_parser/HighlightLexer.js';
         import { SourceLocation, IndependentSourceLocation, CompilerError } from './js/math_parser/CompilerErrors.js';
         import { COMPLEX_FORMAT, ANGLE_MODE } from './js/math_parser/ConstantsDef.js';
         import { SymbolTableContext } from './js/math_parser/SymbolTableContext.js';
@@ -1989,8 +1989,9 @@
 
         function aadVarable(context, id) {
             const name = context.getNameById(id);
-            if (name != null) {
-                dictionary.push({ name: name,  type: 'variable' });
+            const types = is_variable_func_id(id);
+            if (name != null && types !== "UNKNOWN") {
+                dictionary.push({ name: name,  type: types !== "FUNCTION_VARIABLE" ?  'varfunc' : 'variable' });
             }
         }
         
