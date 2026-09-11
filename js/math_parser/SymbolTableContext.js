@@ -99,7 +99,7 @@ export class SymbolTableContext {
     this.LOCAL_MARKER = 1000000;     
   }
 
-  static #initVarable(listeners) {
+  static #initVarable(listeners = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
       return {
         get type() { return state.type; },
@@ -120,7 +120,7 @@ export class SymbolTableContext {
       symbols: [],               
       outer: outerFrame 
     };
-    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable(this.#listenersUpdateVarable));
+    while(count_vars-- > 0) frame.symbols.push(SymbolTableContext.#initVarable());
     return frame;
   }
 
