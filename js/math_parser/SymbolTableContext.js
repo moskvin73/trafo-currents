@@ -130,7 +130,6 @@ export class SymbolTableContext {
   unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
-
   #initVarable(listeners = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
       const func = (sym) => { this.#invokeUpdateVarable (sym); };
@@ -255,6 +254,32 @@ export class SymbolTableContext {
     return newGlobalId;
   }
 
+  getNameByid(id) {
+    if (id >= this.LOCAL_MARKER) {
+      const payload = id - this.LOCAL_MARKER;
+      const delta = payload >> 16;       
+      const localIdx = payload & 0xFFFF;
+      const currentScopeIdx = this.scopes.length - delta - 1;
+      if (currentScopeIdx >= 0) {
+        const scope_names = this.scopes[currentScopeIdx].names;
+        if (localIdx < scope_names.length)
+          return scope_names[localIdx];
+      }
+      throw new Error(`Внутренняя ошибка: Область видимости потеряна при декодировании ID: ${id}`);
+    }
+    if (id >= this.CD) {
+      const globalIdx = id - this.CD;
+      return this.varNames[globalIdx];
+    }
+
+    // В) Системная встроенная функция
+    if (id >= 0 && id < this.CD) {
+      return this.fixedNames[id];
+    }
+
+    return null;
+  }
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID.
@@ -299,7 +324,7 @@ export class SymbolTableContext {
       const localIdx = payload & 0xFFFF;
       const currentScopeIdx = this.scopes.length - delta - 1;
       if (currentScopeIdx >= 0) {
-        const scope_sym = this.scopes[tcurrentScopeIdx].symbols;
+        const scope_sym = this.scopes[currentScopeIdx].symbols;
         if (localIdx < scope_sym.length)
           return scope_sym[localIdx];
       }
