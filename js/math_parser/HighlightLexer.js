@@ -82,7 +82,8 @@ export function is_varable_func(context, name) {
                 // Встроенная системная функция
             }
         }
-    }    
+    }
+    return null;    
 }
 
 export function HighlightLerxer(text, context) {
