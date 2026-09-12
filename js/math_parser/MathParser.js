@@ -194,6 +194,11 @@ class ContextEvaluation
     this.index_code = index;
   }
 
+  async call_code(code, index = 0) {
+    this.code = code;
+    this.index_code = index;
+  }
+
   #iterationsSinceYield;
   #signal;
   async #internalRun() {
