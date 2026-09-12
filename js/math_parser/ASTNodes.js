@@ -272,7 +272,7 @@ export class VarableCode {
         frame.symbols[i].value = args[i];
     }
     scopeCtrl.scopes.push(frame);
-    context.call_code(this.statements);
+    return context.call_code(this.statements);
   }
 }
 regAST(VarableCode);
