@@ -1,6 +1,6 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
-class EvaluateError  extends Error {
+class EvaluateError extends Error {
   constructor(message) {
     super(message);
     this.name = "EvaluateError";
@@ -46,7 +46,7 @@ export class ErrorCode extends ASTNode {
     }
 
   internal_evaluate(context) {
-    throw this.msg;
+    throw new EvaluateError(this.msg);
   }
 }
 
