@@ -199,9 +199,13 @@ class ContextEvaluation
     this.code = code;
     const old_index_code = this.index_code;
     this.index_code = index;
+    const len = this.report.length;
     await this.#evaluate();
     this.code = old_code;
     this.index_code = old_index_code;
+    if (len !== this.report.length) {
+      return this.report[this.report.length - 1].value;
+    }
   }
 
   #iterationsSinceYield;
