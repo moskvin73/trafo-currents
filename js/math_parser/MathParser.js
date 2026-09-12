@@ -209,11 +209,6 @@ class ContextEvaluation
   async #evaluate() {
     while (this.index_code < this.code.length) {
       const ast_op = this.code[this.index_code++];
-        // Проверка прерывания
-        if (this.#signal?.aborted) {
-          throw new ExecutionAbortedError("Выполнение остановлено пользователем", ast_op.node.loc);
-        }
-
         if ( this.errors.length > 0) {
           throw new ExecutionAbortedError(null, ast_op.node.loc);
         }
@@ -223,6 +218,10 @@ class ContextEvaluation
             this.#iterationsSinceYield = 0;
             // Даем браузеру обработать клики/события (включая abort)
             await new Promise(resolve => setTimeout(resolve, 0)); 
+            // Проверка прерывания
+            if (this.#signal?.aborted) {
+              throw new ExecutionAbortedError("Выполнение остановлено пользователем", ast_op.node.loc);
+            }
         }
         this.#iterationsSinceYield++;
         if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
