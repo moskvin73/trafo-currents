@@ -11,7 +11,7 @@ import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.j
 import { TYPE_UNIT } from './ConstantsDef.js';
 import { restoreLocation } from './CompilerErrors.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
-import VarableCode from '../varables/Matrix.js';
+import VarableCode from '../varables/VarableCode.js';
 
 Matrix.registerRealNumberClass(RealNumber);
 
