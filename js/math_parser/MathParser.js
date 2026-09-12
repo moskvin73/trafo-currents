@@ -204,6 +204,7 @@ class ContextEvaluation
         }
 
         if ( this.errors.length > 0) {
+          this.error(null, ast_op.node.loc);
         }
 
     }
@@ -223,7 +224,7 @@ class ContextEvaluation
         }
 
         if ( this.errors.length > 0) {
-          this.error(null, ast_op.node.loc);
+          this.callStack = [];
           break;
         }
 
