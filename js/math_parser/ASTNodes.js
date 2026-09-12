@@ -87,6 +87,10 @@ export default class ASTNode {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
 
+  createCode() {
+    throw new Error("[ASTNode]: Метод createCode() не реализован.");
+  }
+  
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX(context) {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
