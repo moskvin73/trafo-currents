@@ -229,6 +229,8 @@ class ContextEvaluation
 
   async _run(signal = null) {
     try {
+      if (!this.code) return;
+      this.#iterationsSinceYield = 0;
       this.#signal = signal;
       this.#internalRun();
     }
