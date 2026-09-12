@@ -33,7 +33,16 @@ export class Code {
     /** Внутренний метод вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
     internal_evaluate(context) {
         throw new Error("[Code]: Метод evaluate() не реализован.");
-    }    
+    }
+
+  toJSON() {
+    return {
+      dataType: this.constructor.dataTypeName,
+      loc: this.loc, 
+      astNode: this.astNode
+    };
+  }
+
 }
 
 function regCode(ClassRef) {
