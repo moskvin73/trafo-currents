@@ -2288,7 +2288,7 @@ export class CallNode extends MathNode {
       yield* this.args;
   }
 
-  internal_evaluate(context) {
+  async internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
       const sym = context.scope_context.getSymbolById(this.id_name);
@@ -2303,7 +2303,7 @@ export class CallNode extends MathNode {
           this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${p_c}]"`);
           return this.errorValue();
         }
-        return sym.value.evaluate(context, evaluatedArgs);
+        return await sym.value.evaluate(context, evaluatedArgs);
       } else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
         return this.errorValue();
