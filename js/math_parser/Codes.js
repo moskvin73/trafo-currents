@@ -50,8 +50,8 @@ function regCode(ClassRef) {
 }
 
 export class ErrorCode extends ASTNode {
-    constructor(msg, loc) {
-        super(null);
+    constructor(msg, loc, astNode = null) {
+        super(loc, astNode);
         this.msg = msg;
     }
 
@@ -72,7 +72,8 @@ export class ErrorCode extends ASTNode {
   static fromJSON(data) {
     return new ErrorCode(
       data.msg,
-      restoreLocation(data.loc)
+      restoreLocation(data.loc),
+      data.astNode
     );
   }
 }
