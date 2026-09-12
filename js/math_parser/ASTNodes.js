@@ -265,14 +265,14 @@ export class VarableCode {
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  evaluate(context, args) {
+  async evaluate(context, args) {
     const scopeCtrl = context.scope_context;
     const frame = scopeCtrl.createFrame(this.localsCount, this.lexicalParentFrame);
     for (let i = 0; i < this.paramsCount; i++) {
         frame.symbols[i].value = args[i];
     }
     scopeCtrl.scopes.push(frame);
-    return context.call_code(this.statements);
+    return await context.call_code(this.statements);
   }
 }
 regAST(VarableCode);
