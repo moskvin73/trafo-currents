@@ -199,7 +199,7 @@ class ContextEvaluation
     this.code = code;
     const old_index_code = this.index_code;
     this.index_code = index;
-    sync #internalRun();
+    await this.#internalRun();
     this.code = old_code;
     this.index_code = old_index_code;
   }
