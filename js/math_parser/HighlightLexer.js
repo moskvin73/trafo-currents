@@ -36,11 +36,11 @@ import ASTNode, {
   ProgramNode,
   MatrixNode,
   IndexNode,
-  VarableCode,
   DefineVarableCodeNode,
   getTypeNameString,
   StatementNode,
   ConstantNode } from './ASTNodes.js';
+  import VarableCode from '../varables/VarableCode.js';
 
 function getTypeLink(value) {
   // null и undefined не имеют конструктора, обрабатываем их отдельно
