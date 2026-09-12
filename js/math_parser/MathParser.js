@@ -207,6 +207,22 @@ class ContextEvaluation
           this.error(null, ast_op.node.loc);
         }
 
+        // Квантование времени (освобождаем поток для UI и событий прерывания)
+        if (iterationsSinceYield >= ContextEvaluation.#MAX_ITERATIONS_PER_TICK) {
+            iterationsSinceYield = 0;
+            // Даем браузеру обработать клики/события (включая abort)
+            await new Promise(resolve => setTimeout(resolve, 0)); 
+        }
+        iterationsSinceYield++;
+        if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
+        {
+          const value = ast_op.node.evaluate(this);
+          if (value) {
+            const rn = new reportRecord(ast_op.node, value);
+            this.report.push(rn);
+          }
+        }
+        else ast_op.node.evaluate(this);
     }
   }
 
