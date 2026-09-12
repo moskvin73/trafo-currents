@@ -8,7 +8,7 @@ class EvaluateError  extends Error {
 }
 
 export class Code {
-    constructor(loc = null, astNode = null) {
+    constructor(loc, astNode = null) {
         this.astNode = astNode;
         this.loc = loc;
     }
@@ -40,7 +40,7 @@ function regCode(ClassRef) {
 }
 
 export class ErrorCode extends ASTNode {
-    constructor(msg) {
+    constructor(msg, loc) {
         super(null);
         this.msg = msg;
     }
