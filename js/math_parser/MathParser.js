@@ -195,25 +195,26 @@ class ContextEvaluation
   }
 
   #iterationsSinceYield;
+  #signal;
   async #internalRun() {
     while (this.index_code < this.code.length) {
       const ast_op = this.code[this.index_code++];
         // Проверка прерывания
-        if (signal?.aborted) {
+        if (this.#signal?.aborted) {
           throw new ExecutionAbortedError("Выполнение остановлено пользователем", ast_op.node.loc);
         }
 
         if ( this.errors.length > 0) {
-          this.error(null, ast_op.node.loc);
+          throw new ExecutionAbortedError(null, ast_op.node.loc);
         }
 
         // Квантование времени (освобождаем поток для UI и событий прерывания)
-        if (iterationsSinceYield >= ContextEvaluation.#MAX_ITERATIONS_PER_TICK) {
-            iterationsSinceYield = 0;
+        if (this.#iterationsSinceYield >= ContextEvaluation.#MAX_ITERATIONS_PER_TICK) {
+            this.#iterationsSinceYield = 0;
             // Даем браузеру обработать клики/события (включая abort)
             await new Promise(resolve => setTimeout(resolve, 0)); 
         }
-        iterationsSinceYield++;
+        this.#iterationsSinceYield++;
         if (!ast_op.isSilent && ast_op.type_unit !== TYPE_UNIT.EMPTY)
         {
           const value = ast_op.node.evaluate(this);
