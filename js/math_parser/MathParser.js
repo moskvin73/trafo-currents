@@ -227,6 +227,20 @@ class ContextEvaluation
     }
   }
 
+  async _run(signal = null) {
+    try {
+
+    }
+    catch (error) {
+      if (error instanceof ExecutionAbortedError) {
+        if (error.message !== null)
+          this.error(error.message, error.loc);
+      }
+      else throw error;
+    }
+  }
+
+
   async run(signal = null) {
     if (!this.code) return;
     let iterationsSinceYield = 0;
