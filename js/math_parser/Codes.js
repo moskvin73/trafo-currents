@@ -1,10 +1,9 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
 class EvaluateError  extends Error {
-  constructor(message, loc) {
+  constructor(message) {
     super(message);
     this.name = "EvaluateError";
-    this.loc = loc;
   }
 }
 
