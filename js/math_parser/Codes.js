@@ -42,7 +42,6 @@ export class Code {
       astNode: this.astNode
     };
   }
-
 }
 
 function regCode(ClassRef) {
@@ -73,7 +72,7 @@ export class ErrorCode extends ASTNode {
     return new ErrorCode(
       data.msg,
       restoreLocation(data.loc),
-      data.astNode
+      restoreDataType(data.astNode)
     );
   }
 }
