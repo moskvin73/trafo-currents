@@ -265,14 +265,14 @@ export class VarableCode {
 
   toRawTeX(settings) { return "\\text{code}"; }
 
-  async evaluate(context, args) {
+  evaluate(context, args) {
     const scopeCtrl = context.scope_context;
     const frame = scopeCtrl.createFrame(this.localsCount, this.lexicalParentFrame);
     for (let i = 0; i < this.paramsCount; i++) {
         frame.symbols[i].value = args[i];
     }
     scopeCtrl.scopes.push(frame);
-    return await context.call_code(this.statements);
+    return context.call_code(this.statements);
   }
 }
 regAST(VarableCode);
@@ -2288,7 +2288,7 @@ export class CallNode extends MathNode {
       yield* this.args;
   }
 
-  async internal_evaluate(context) {
+  internal_evaluate(context) {
     // 1. Сначала вычисляем все аргументы, превращая их в чистые объекты MathType
     try {
       const sym = context.scope_context.getSymbolById(this.id_name);
@@ -2303,7 +2303,7 @@ export class CallNode extends MathNode {
           this.error(context, `Неверное кол. пораметров вызова функции "${this.name}[${p_c}]"`);
           return this.errorValue();
         }
-        return await sym.value.evaluate(context, evaluatedArgs);
+        return sym.value.evaluate(context, evaluatedArgs);
       } else if (sym.type !== SYM_BUILTIN) {
         this.error(context, `Идентификатор "${this.name}" не является функцией.`);
         return this.errorValue();
