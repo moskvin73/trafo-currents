@@ -1,8 +1,7 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
 export class Code {
-    constructor(loc = null, astNode = null) {
-        this.loc = loc;
+    constructor(astNode = null) {
         this.astNode = astNode;
     }
 
