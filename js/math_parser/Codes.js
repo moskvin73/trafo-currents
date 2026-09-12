@@ -1,5 +1,13 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
+class EvaluateError  extends Error {
+  constructor(message, loc) {
+    super(message);
+    this.name = "EvaluateError";
+    this.loc = loc;
+  }
+}
+
 export class Code {
     constructor(astNode = null) {
         this.astNode = astNode;
