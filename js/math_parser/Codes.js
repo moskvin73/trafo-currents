@@ -1,3 +1,5 @@
+import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
+
 export class Code {
     constructor(loc = null, astNode = null) {
         this.loc = loc;
@@ -24,4 +26,8 @@ export class Code {
     internal_evaluate(context) {
         throw new Error("[Code]: Метод evaluate() не реализован.");
     }    
+}
+
+function regCode(ClassRef) {
+  registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
