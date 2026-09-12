@@ -230,7 +230,7 @@ class ContextEvaluation
   async _run(signal = null) {
     try {
       this.#signal = signal;
-      await this.#internalRun();
+      this.#internalRun();
     }
     catch (error) {
       if (error instanceof ExecutionAbortedError) {
