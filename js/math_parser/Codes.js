@@ -48,7 +48,7 @@ function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
-export class ErrorCode extends ASTNode {
+export class ErrorCode extends Code {
     constructor(msg, loc, astNode = null) {
         super(loc, astNode);
         this.msg = msg;
