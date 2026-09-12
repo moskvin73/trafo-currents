@@ -66,6 +66,6 @@ export class ErrorCode extends ASTNode {
       restoreLocation(data.loc)
     );
   }
-
 }
+regAST(ErrorCode);
 
