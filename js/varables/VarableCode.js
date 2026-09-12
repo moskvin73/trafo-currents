@@ -1,6 +1,6 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 
-export class VarableCode {
+export default class VarableCode {
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
   constructor(statements, paramsCount, localsCount, lexicalParentFrame) {
     this.statements = statements;

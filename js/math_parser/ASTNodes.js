@@ -11,6 +11,7 @@ import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.j
 import { TYPE_UNIT } from './ConstantsDef.js';
 import { restoreLocation } from './CompilerErrors.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
+import VarableCode from '../varables/Matrix.js';
 
 Matrix.registerRealNumberClass(RealNumber);
 
@@ -232,7 +233,7 @@ export class StatementNode {
 }
 regAST(StatementNode);
 
-export class VarableCode {
+/*export class VarableCode {
   // На этапе парсинга передаем statements и число — сколько у функции аргументов
   constructor(statements, paramsCount, localsCount, lexicalParentFrame) {
     this.statements = statements;
@@ -275,7 +276,7 @@ export class VarableCode {
     return context.call_code(this.statements);
   }
 }
-regAST(VarableCode);
+regAST(VarableCode);*/
 
 export class ErrorNode extends ASTNode {
   constructor(msg, loc) {
