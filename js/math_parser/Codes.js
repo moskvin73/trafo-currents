@@ -9,8 +9,9 @@ class EvaluateError  extends Error {
 }
 
 export class Code {
-    constructor(astNode = null) {
+    constructor(astNode = null, loc = null) {
         this.astNode = astNode;
+        this.loc = loc;
     }
 
     error(context, msg, loc) {
