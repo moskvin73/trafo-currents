@@ -1,3 +1,7 @@
+import BoolValue from '../math/BoolValue.js';
+import RealNumber from '../math/RealNumber.js';
+import ComplexNumber from '../math/ComplexNumber.js';
+import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { restoreLocation } from './CompilerErrors.js';
 
