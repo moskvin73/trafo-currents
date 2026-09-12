@@ -227,9 +227,8 @@ class ContextEvaluation
     }
   }
 
-  async #_run(signal = null) {
+  async #internalRun(signal) {
     try {
-      if (!this.code) return;
       this.#iterationsSinceYield = 0;
       this.#signal = signal;
       await this.#internalRun();
@@ -239,9 +238,16 @@ class ContextEvaluation
         if (error.message !== null) this.error(error.message, error.loc);
       }
       else throw error;
+    } finally {
+      this.#iterationsSinceYield = 0;
+      this.#signal = null;
     }
   }
 
+  async _run(signal = null) {
+    if (!this.code) return;
+    #internalRun(signal);
+  }
 
   async run(signal = null) {
     if (!this.code) return;
