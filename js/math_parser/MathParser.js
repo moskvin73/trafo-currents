@@ -35,7 +35,6 @@ import ASTNode, {
   ProgramNode,
   MatrixNode,
   IndexNode,
-  VarableCode,
   DefineVarableCodeNode,
   StatementNode,
   ConstantNode } from './ASTNodes.js';
@@ -51,6 +50,7 @@ import { BuildVectorOperationDescription } from './VectorDeaign.js';
 import { foldASTToTable } from '../math/ASTToTableConverter.js'
 import { unfoldTableToAST } from '../math/unfoldTableToAST.js'
 import { IndexedMap } from '../math/util.js';
+import VarableCode from '../varables/VarableCode.js';
 
 
 export class TeXOutputFormatter {
