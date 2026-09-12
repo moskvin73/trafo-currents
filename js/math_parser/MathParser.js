@@ -188,11 +188,11 @@ class ContextEvaluation
     this.callStack = [];
   }
 
-  async call_code(code, index = 0) {
+  /*async call_code(code, index = 0) {
     this.callStack.push({code: this.code, index_code: this.index_code});
     this.code = code;
     this.index_code = index;
-  }
+  }*/
 
   async call_code(code, index = 0) {
     const old_code = this.code;
@@ -257,12 +257,12 @@ class ContextEvaluation
     }
   }
 
-  async _run(signal = null) {
+  async run(signal = null) {
     if (!this.code) return;
     #internalRun(signal);
   }
 
-  async run(signal = null) {
+  /*async run(signal = null) {
     if (!this.code) return;
     let iterationsSinceYield = 0;
     while(true) {
@@ -314,7 +314,7 @@ class ContextEvaluation
         return; 
       }
     }
-  }
+  }*/
 
   get count() { return this.errors.length; }
 
