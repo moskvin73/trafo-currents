@@ -25,8 +25,7 @@ export class Code {
         }
         catch(err)
         {
-            if (err instanceof EvaluateError) this.error(context, err.toString());
-            else throw err;
+            this.error(context, err.toString());
         }
     }
  
