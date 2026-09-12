@@ -195,9 +195,13 @@ class ContextEvaluation
   }
 
   async call_code(code, index = 0) {
+    const old_code = this.code;
     this.code = code;
+    const old_index_code = this.index_code;
     this.index_code = index;
     sync #internalRun();
+    this.code = old_code;
+    this.index_code = old_index_code;
   }
 
   #iterationsSinceYield;
