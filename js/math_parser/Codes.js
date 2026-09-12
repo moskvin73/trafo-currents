@@ -101,14 +101,14 @@ export class IF_Code extends Code {
         };
     }
 
-    static get dataTypeName() { return "IF_Node"; }
+    static get dataTypeName() { return "IF_Code"; }
 
     static fromJSON(data) {
-        return new IF_Node(
+        return new IF_Code(
             data.len_code_false,
             restoreLocation(data.loc),
             restoreDataType(data.astNode)
         );
-    }
-    
+    }  
 }
+regAST(IF_Code);
