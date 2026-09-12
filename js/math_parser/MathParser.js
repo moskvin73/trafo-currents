@@ -199,14 +199,14 @@ class ContextEvaluation
     this.code = code;
     const old_index_code = this.index_code;
     this.index_code = index;
-    await this.#internalRun();
+    await this.#evaluate();
     this.code = old_code;
     this.index_code = old_index_code;
   }
 
   #iterationsSinceYield;
   #signal;
-  async #internalRun() {
+  async #evaluate() {
     while (this.index_code < this.code.length) {
       const ast_op = this.code[this.index_code++];
         // Проверка прерывания
@@ -241,7 +241,7 @@ class ContextEvaluation
     try {
       this.#iterationsSinceYield = 0;
       this.#signal = signal;
-      await this.#internalRun();
+      await this.#evaluate();
     }
     catch (error) {
       if (error instanceof ExecutionAbortedError) {
