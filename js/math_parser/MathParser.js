@@ -254,6 +254,7 @@ class ContextEvaluation
     } finally {
       this.#iterationsSinceYield = 0;
       this.#signal = null;
+      // Обезательно сбрасываем все локальные области видемости
       this.scope_context.scopes = [];
     }
   }
