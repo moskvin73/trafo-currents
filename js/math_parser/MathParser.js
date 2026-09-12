@@ -236,7 +236,7 @@ class ContextEvaluation
           this.report.push(rn);
         }
       }
-      else ast_op.node.evaluate(this);
+      else await ast_op.node.evaluate(this);
     }
   }
 
