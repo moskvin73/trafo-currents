@@ -233,8 +233,7 @@ class ContextEvaluation
     }
     catch (error) {
       if (error instanceof ExecutionAbortedError) {
-        if (error.message !== null)
-          this.error(error.message, error.loc);
+        if (error.message !== null) this.error(error.message, error.loc);
       }
       else throw error;
     }
