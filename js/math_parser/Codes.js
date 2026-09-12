@@ -77,3 +77,17 @@ export class ErrorCode extends Code {
 }
 regAST(ErrorCode);
 
+export class IF_Code extends Code {
+    constructor(len_code_false, loc, astNode = null) {
+        super(loc, astNode);
+        this.len_code_false = len_code_false;
+    }
+
+    internal_evaluate(context) {
+        const if_result = context.evaluate_stack.pop();
+        const b_value = BoolValue.from(if_result).value;
+        if (!b_value) {
+            context.index_code += this.len_code_false;
+        }
+    }
+}
