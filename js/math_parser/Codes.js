@@ -1,4 +1,5 @@
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
+import { restoreLocation } from './CompilerErrors.js';
 
 class EvaluateError extends Error {
   constructor(message) {
@@ -48,5 +49,23 @@ export class ErrorCode extends ASTNode {
   internal_evaluate(context) {
     throw new EvaluateError(this.msg);
   }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      msg: this.msg
+    };
+  }
+
+
+  static get dataTypeName() { return "ErrorCode"; }
+
+  static fromJSON(data) {
+    return new ErrorCode(
+      data.msg,
+      restoreLocation(data.loc)
+    );
+  }
+
 }
 
