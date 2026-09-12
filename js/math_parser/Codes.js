@@ -65,7 +65,6 @@ export class ErrorCode extends ASTNode {
     };
   }
 
-
   static get dataTypeName() { return "ErrorCode"; }
 
   static fromJSON(data) {
