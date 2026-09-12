@@ -93,4 +93,22 @@ export class IF_Code extends Code {
             context.index_code += this.len_code_false;
         }
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            len_code_false: this.len_code_false
+        };
+    }
+
+    static get dataTypeName() { return "IF_Node"; }
+
+    static fromJSON(data) {
+        return new IF_Node(
+            data.len_code_false,
+            restoreLocation(data.loc),
+            restoreDataType(data.astNode)
+        );
+    }
+    
 }
