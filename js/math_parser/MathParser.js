@@ -259,7 +259,7 @@ class ContextEvaluation
 
   async run(signal = null) {
     if (!this.code) return;
-    #internalRun(signal);
+    this.#internalRun(signal);
   }
 
   /*async run(signal = null) {
