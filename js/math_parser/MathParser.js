@@ -135,10 +135,11 @@ class reportRecord {
 }
 
 // Специальный класс ошибки для контролируемого прерывания
-export class ExecutionAbortedError extends Error {
-  constructor(message = "Execution aborted by user") {
+class ExecutionAbortedError extends Error {
+  constructor(message, loc) {
     super(message);
     this.name = "ExecutionAbortedError";
+    this.loc = loc;
   }
 }
 
@@ -191,6 +192,18 @@ class ContextEvaluation
     this.callStack.push({code: this.code, index_code: this.index_code});
     this.code = code;
     this.index_code = index;
+  }
+
+  #iterationsSinceYield;
+  async #internalRun() {
+    while (this.index_code < this.code.length) {
+      const ast_op = this.code[this.index_code++];
+        // Проверка прерывания
+        if (signal?.aborted) {
+          throw new ExecutionAbortedError("Выполнение остановлено пользователем");
+        }
+
+    }
   }
 
   async run(signal = null) {
