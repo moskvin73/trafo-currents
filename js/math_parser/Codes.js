@@ -30,3 +30,15 @@ export class Code {
 function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
+
+export class ErrorCode extends ASTNode {
+    constructor(msg) {
+        super(null);
+        this.msg = msg;
+    }
+
+  internal_evaluate(context) {
+    throw this.msg;
+  }
+}
+
