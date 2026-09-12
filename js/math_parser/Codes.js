@@ -16,8 +16,7 @@ export class Code {
         }
         catch(err)
         {
-        this.error(context, err.toString());
-        return this.errorValue();
+            this.error(context, err.toString());
         }
     }
  
