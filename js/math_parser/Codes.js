@@ -112,3 +112,28 @@ export class IF_Code extends Code {
     }  
 }
 regAST(IF_Code);
+
+export class OpValue {
+    get value() { throw new Error("[Code]: Метод value() не реализован."); }
+}
+
+export class OpConst extends Code {
+    #value;
+    constructor(value) {
+        this.value = value;
+    }
+    get value() { return #value; }
+}
+
+export class AddCodeOpValue extends Code {
+    constructor(value, loc, astNode = null) {
+        this.value = value;
+    }
+
+    internal_evaluate(context) {
+        const stack = context.evaluate_stack; 
+        const l_op = stack.pop();
+        const { l, r } = dispatcher.promoteTypes(l_op, value);
+        stack.push(l.add(r));
+    }    
+}    
