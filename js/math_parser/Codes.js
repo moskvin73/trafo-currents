@@ -226,12 +226,24 @@ SubstitutionTableBin = new Map([
         ([l_o, r_o]) => { return new AddCodeOpValue(r_o); }
     ],
     [
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.VALUE),
+        ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+    ],
+    [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return new AddCodeValueOp(l_o); }
     ],
     [
+        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATES),
+        ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
+    ],
+    [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return new AddCodeOpOp(l_o. r_o); }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATES),
+        ([l_o, r_o]) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
     ],
 ]);
 
@@ -245,5 +257,5 @@ function getOperandType(op) {
 export function createBinCode(operator, l_op, r_o) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
-    return SubstitutionTableBin.get(getBinKey(operator, lop_type, rop_type));
+    return SubstitutionTableBin.get(getBinKey(operator, lop_type, rop_type))(l_op, r_o);
 }
