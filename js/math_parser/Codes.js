@@ -125,7 +125,7 @@ export class OpConst extends Code {
     getValue(context) { return value; }
 }
 
-export class OpVarable extends Code {
+export class OpVarableLocal extends Code {
     #value;
     constructor(id_name) {
         this.id_name = id_name;
