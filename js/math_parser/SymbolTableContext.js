@@ -82,6 +82,7 @@ export class SymbolTableContext {
         get description() { return description; },
         get context { return instance; },
         get name { return name; }
+        get id { return i; }
       };
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
