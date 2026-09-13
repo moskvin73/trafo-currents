@@ -119,16 +119,41 @@ export class OpValue {
 }
 
 export class OpConst extends Code {
-    constructor(value) {
+    constructor(value, loc, astNode = null) {
+        super(loc, astNode);
         this.value = value;
     }
     getValue(context) { return value; }
 }
 
 export class OpVarableLocal extends Code {
-    #value;
-    constructor(id_name) {
+    constructor(id_name, loc, astNode = null) {
+        super(loc, astNode);
         this.id_name = id_name;
+    }
+    getValue(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name); 
+        if (sym === null) {
+            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+        }
+        else if (sym.type === SYM_UNDEFINED) {
+            this.error(context, `Переменная "${this.name}" не инициализирована.`);
+            //return this.errorValue();
+        }
+        else if (sym.type !== SYM_VARIABLE) {
+            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+            //return this.errorValue();
+        }
+        else {
+            return sym.value;
+        }
+    }
+}
+
+export class OpVarableGlobal extends Code {
+    constructor(sym, loc, astNode = null) {
+        super(loc, astNode);
+        this.sym = sym;
     }
     getValue(context) {
         const sym = context.scope_context.getSymbolById(this.id_name); 
