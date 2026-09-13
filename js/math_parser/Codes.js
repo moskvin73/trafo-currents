@@ -286,7 +286,15 @@ SubstitutionTableBin = new Map([
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.CONST),
-        ([l_o, r_o, loc, astNode]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
+        ([l_o, r_o, loc, astNode]) => {return [new AddCodeValueValue(l_o, r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.VARABLE),
+        ([l_o, r_o, loc, astNode]) => {return [new AddCodeValueValue(l_o, r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
+        ([l_o, r_o, loc, astNode]) => {return [new AddCodeValueValue(l_o, r_o, loc, astNode)]; }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
