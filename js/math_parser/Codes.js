@@ -482,6 +482,39 @@ const SubstitutionTableBin = new Map([
         getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATE),
         ([l_o, r_o, loc, astNode]) => { return [...l_o, ...r_o, new AddCodeOpOp(loc, astNode)]; }
     ],
+
+    [
+        getBinKey(OperationCode.SUB, OperandsType.CONST, OperandsType.CONST),
+        ([l_o, r_o, loc, astNode]) => {
+            const { l, r } = dispatcher.promoteTypes(l_op.getValue(), r_o.getValue()); 
+            return new OpConst(l.subtract(r)); 
+        }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.VARABLE, OperandsType.CONST),
+        ([l_o, r_o, loc, astNode]) => { return [new SubCodeValueValue(l_o, r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.CONST, OperandsType.VARABLE),
+        ([l_o, r_o, loc, astNode]) => { return [new SubCodeValueValue(l_o, r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.VARABLE, OperandsType.VARABLE),
+        ([l_o, r_o, loc, astNode]) => { return [new SubCodeValueValue(l_o, r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.EVALUATE, OperandsType.VALUE),
+        ([l_o, r_o, loc, astNode]) => { return [...l_o, new SubCodeOpValue(r_o, loc, astNode)]; }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.VALUE, OperandsType.EVALUATE),
+        ([l_o, r_o, loc, astNode]) => { return [new SubCodeValueOp(l_o, loc, astNode), ...r_o]; }
+    ],
+    [
+        getBinKey(OperationCode.SUB, OperandsType.EVALUATES, OperandsType.EVALUATE),
+        ([l_o, r_o, loc, astNode]) => { return [...l_o, ...r_o, new SubCodeOpOp(loc, astNode)]; }
+    ],
+
 ]);
 
 function getOperandType(op) {
