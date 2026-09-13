@@ -153,10 +153,10 @@ export class OpVarableLocal extends Code {
 export class OpVarableGlobal extends Code {
     constructor(sym, loc, astNode = null) {
         super(loc, astNode);
-        this.sym = sym;
+        this.symbol = sym;
     }
     getValue(context) {
-        const sym = context.scope_context.getSymbolById(this.id_name); 
+        const sym = this.symbol;
         if (sym === null) {
             this.error(context, `Идентификатор "${this.name}" не опредилён.`);
         }
