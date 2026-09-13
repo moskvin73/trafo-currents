@@ -326,7 +326,7 @@ function getOperandType(op) {
     if (op instanceof OpConst) return OperandType.CONST;
     else if (op instanceof OpVarable) return OperandType.VARABLE;
     else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
-    throw new Error(`[Code]: Неизвестны тип опранда ${op}`);
+    throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
 }
 
 export function createBinCode(operator, l_op, r_o, loc, astNode = null) {
