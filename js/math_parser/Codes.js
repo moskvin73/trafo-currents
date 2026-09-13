@@ -152,7 +152,6 @@ export class OpVarable extends Code {
     }
 }
 
-
 export class OpVarableLocal extends OpVarable {
     constructor(id_name, loc, astNode = null) {
         super(loc, astNode);
