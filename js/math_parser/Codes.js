@@ -168,8 +168,8 @@ class BinCodeOpOp extends BaseBinCode {
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
-        const l_op = stack.pop(); 
         const r_op = stack.pop();
+        const l_op = stack.pop(); 
         const { l, r } = dispatcher.promoteTypes(l_op, r_op);
         stack.push(operator(l, r));
     }    
