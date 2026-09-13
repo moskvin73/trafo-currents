@@ -437,5 +437,4 @@ export class SymbolTableContext {
       this.varHash[name] = i;
     }
   }
-
 }
