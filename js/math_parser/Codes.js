@@ -79,7 +79,7 @@ export class ErrorCode extends Code {
     );
   }
 }
-regAST(ErrorCode);
+regCode(ErrorCode);
 
 export class IF_Code extends Code {
     constructor(len_code_false, loc, astNode = null) {
@@ -112,7 +112,7 @@ export class IF_Code extends Code {
         );
     }  
 }
-regAST(IF_Code);
+regCode(IF_Code);
 
 export class OpValue {
     getValue() { throw new Error("[Code]: Метод value() не реализован."); }
@@ -123,8 +123,27 @@ export class OpConst extends Code {
         super(loc, astNode);
         this.value = value;
     }
+
     getValue(context) { return value; }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      value: this.value
+    };
+  }
+
+  static get dataTypeName() { return "OpConst"; }
+
+  static fromJSON(data) {
+    return new OpConst(
+      restoreDataType(data.value),
+      restoreLocation(data.loc),
+      restoreDataType(data.astNode)
+    );
+  }
 }
+regCode(OpConst);
 
 class OpVarable extends Code {
     constructor(loc, astNode = null) {
