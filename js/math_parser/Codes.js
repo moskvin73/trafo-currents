@@ -261,10 +261,16 @@ class BinCodeOpValue extends BaseBinCode {
   toJSON() {
     return {
       ...super.toJSON(),
-      l_value: this.l_value,
-      r_value: this.r_value,
+      value: this.value,
     };
   }
+
+  static create(ClassRef, data) {
+     return new ClassRef(
+      restoreDataType(data.value),
+      restoreLocation(data.loc),
+      restoreDataType(data.astNode)
+    );   
 }
 
 class BinCodeValueOp extends BaseBinCode {
@@ -279,6 +285,20 @@ class BinCodeValueOp extends BaseBinCode {
         const { l, r } = dispatcher.promoteTypes(this.value.getValue(context), r_op);
         stack.push(operator(l, r));
     }    
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      value: this.value,
+    };
+  }
+
+  static create(ClassRef, data) {
+     return new ClassRef(
+      restoreDataType(data.value),
+      restoreLocation(data.loc),
+      restoreDataType(data.astNode)
+    );   
 }    
 
 class BinCodeOpOp extends BaseBinCode {
@@ -292,7 +312,19 @@ class BinCodeOpOp extends BaseBinCode {
         const l_op = stack.pop(); 
         const { l, r } = dispatcher.promoteTypes(l_op, r_op);
         stack.push(operator(l, r));
-    }    
+    }
+    
+  toJSON() {
+    return {
+      ...super.toJSON(),
+    };
+  }
+
+  static create(ClassRef, data) {
+     return new ClassRef(
+      restoreLocation(data.loc),
+      restoreDataType(data.astNode)
+    );       
 }    
 
 class AddCodeValueValue extends BinCodeValueValue {
