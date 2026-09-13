@@ -375,7 +375,56 @@ class AddCodeOpOp extends BinCodeOpOp {
     static fromJSON(data) { return BinCodeOpOp.create(AddCodeOpOp, data); }    
 }
 regCode(AddCodeOpOp);
-//#endregion ADD       
+//#endregion ADD
+
+//#region SUB
+class SubCodeValueValue extends BinCodeValueValue {
+    constructor(l_value, r_value, loc, astNode = null) {
+        super(l_value, r_value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.subtract(r) }
+
+    static get dataTypeName() { return "SubCodeValueValue"; }
+
+    static fromJSON(data) { return BinCodeValueValue.create(SubCodeValueValue, data); }
+}
+regCode(SubCodeValueValue);    
+
+class SubCodeOpValue extends BinCodeOpValue {
+    constructor(value, loc, astNode = null) {
+        super(value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.subtract(r) }
+  
+    static get dataTypeName() { return "SubCodeOpValue"; }
+
+    static fromJSON(data) { return BinCodeOpValue.create(SubCodeOpValue, data); }    
+}
+regCode(SubCodeOpValue);     
+
+class SubCodeValueOp extends BinCodeValueOp {
+    constructor(value, loc, astNode = null) {
+        super(value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.subtract(r) }
+}    
+
+class SubCodeOpOp extends BinCodeOpOp {
+    constructor(loc, astNode = null) {
+        super(loc, astNode);
+    }
+    
+    operator(l, r) { return l.subtract(r) }
+
+    static get dataTypeName() { return "SubCodeOpOp"; }
+
+    static fromJSON(data) { return BinCodeOpOp.create(SubCodeOpOp, data); }    
+}
+regCode(SubCodeOpOp);       
+//#endregion SUB
 
 export const OperatorBinType {
     ASSIGN:     0,
