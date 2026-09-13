@@ -333,7 +333,12 @@ class AddCodeValueValue extends BinCodeValueValue {
     }
     
     operator(l, r) { return l.add(r) }
-}    
+
+    static get dataTypeName() { return "AddCodeValueValue"; }
+
+    static fromJSON(data) { return BinCodeValueValue.create(AddCodeValueValue, data); }
+}
+regCode(AddCodeValueValue);    
 
 class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
@@ -341,7 +346,12 @@ class AddCodeOpValue extends BinCodeOpValue {
     }
     
     operator(l, r) { return l.add(r) }
-}    
+  
+    static get dataTypeName() { return "AddCodeOpValue"; }
+
+    static fromJSON(data) { return BinCodeOpValue.create(AddCodeOpValue, data); }    
+}
+regCode(AddCodeOpValue);     
 
 class AddCodeValueOp extends BinCodeValueOp {
     constructor(value, loc, astNode = null) {
@@ -357,7 +367,12 @@ class AddCodeOpOp extends BinCodeOpOp {
     }
     
     operator(l, r) { return l.add(r) }
-}    
+
+    static get dataTypeName() { return "AddCodeOpOp"; }
+
+    static fromJSON(data) { return BinCodeOpOp.create(AddCodeOpOp, data); }    
+}
+regCode(AddCodeOpOp);       
 
 export const OperatorBinType {
     ASSIGN:     0,
