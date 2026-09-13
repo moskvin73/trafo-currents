@@ -224,5 +224,12 @@ SubstitutionTableBin = [
         key:    getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
         code:   ([l_o, r_o]) => { return new AddCodeOpValue(l_o.add(r_o)); }
     },
-
+    {
+        key:    getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
+        code:   ([l_o, r_o]) => { return new AddCodeValueOp(l_o.add(r_o)); }
+    },
+    {
+        key:    getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
+        code:   ([l_o, r_o]) => { return new AddCodeOpOp(l_o.add(r_o)); }
+    },
 ];
