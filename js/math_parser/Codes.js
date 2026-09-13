@@ -216,32 +216,34 @@ function getBinKey(operator, l_operand, r_operand) {
     return (operator << 8) + (l_operand << 2) + r_operand,
 }
 
-SubstitutionTableBin = [
-    {
-        key:    getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
-        code:   ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, value); return new OpConst(l.add(r)); }
-    },
-    {
-        key:    getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
-        code:   ([l_o, r_o]) => { return new AddCodeOpValue(l_o.add(r_o)); }
-    },
-    {
-        key:    getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
-        code:   ([l_o, r_o]) => { return new AddCodeValueOp(l_o.add(r_o)); }
-    },
-    {
-        key:    getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        code:   ([l_o, r_o]) => { return new AddCodeOpOp(l_o.add(r_o)); }
-    },
-];
+SubstitutionTableBin = new Map([
+    [
+        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
+        ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, value); return new OpConst(l.add(r)); }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
+        ([l_o, r_o]) => { return new AddCodeOpValue(l_o.add(r_o)); }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
+        ([l_o, r_o]) => { return new AddCodeValueOp(l_o.add(r_o)); }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
+        ([l_o, r_o]) => { return new AddCodeOpOp(l_o.add(r_o)); }
+    ],
+]);
 
 function getOperandType(op) {
-    if (l_op instanceof OpValue) lop_type = OperandType.VALUE;
-    else if (l_op instanceof Code ) lop_type = OperandType.EVALUATE;
-    else if (Array.isArray(op) && op.every(item => item instanceof Code) 
+    if (l_op instanceof OpValue) return OperandType.VALUE;
+    else if (l_op instanceof Code ) return OperandType.EVALUATE;
+    else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
+    throw new Error(`[Code]: Неизвестны тип опранда ${op}`);
 }
+
 export function createBinCode(operator, l_op, r_o) {
-    let lop_type;
-    if (l_op instanceof OpValue) lop_type = OperandType.VALUE;
-    else if (l_op instanceof Code ) lop_type = OperandType.EVALUATE;
+    const lop_type = getOperandType(l_op);
+    const rop_type = getOperandType(r_op);
+    SubstitutionTableBin
 }
