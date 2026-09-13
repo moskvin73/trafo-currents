@@ -126,7 +126,7 @@ export class OpConst extends Code {
     getValue(context) { return value; }
 }
 
-export class OpVarable extends Code {
+class OpVarable extends Code {
     constructor(loc, astNode = null) {
         super(loc, astNode);
     }
@@ -278,7 +278,7 @@ export const OperatorBinType {
     POW:        10,
 };
 
-export const OperandType {
+const OperandType {
     CONST       0,
     VARABLE     1,
     EVALUATE    2,
@@ -323,7 +323,8 @@ SubstitutionTableBin = new Map([
 ]);
 
 function getOperandType(op) {
-    if (l_op instanceof OpValue) return OperandType.VALUE;
+    if (op instanceof OpConst) return OperandType.CONST;
+    else if (op instanceof OpVarable) return OperandType.VARABLE;
     else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
     throw new Error(`[Code]: Неизвестны тип опранда ${op}`);
 }
