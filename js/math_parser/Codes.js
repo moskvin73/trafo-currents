@@ -126,7 +126,34 @@ export class OpConst extends Code {
     getValue(context) { return value; }
 }
 
-export class OpVarableLocal extends Code {
+export class OpVarable extends Code {
+    constructor(loc, astNode = null) {
+        super(loc, astNode);
+    }
+
+    getSymbol() { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+
+    getValue(context) {
+        const sym = getSymbol(); 
+        if (sym === null) {
+            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+        }
+        else if (sym.type === SYM_UNDEFINED) {
+            this.error(context, `Переменная "${this.name}" не инициализирована.`);
+            //return this.errorValue();
+        }
+        else if (sym.type !== SYM_VARIABLE) {
+            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+            //return this.errorValue();
+        }
+        else {
+            return sym.value;
+        }
+    }
+}
+
+
+export class OpVarableLocal extends OpVarable {
     constructor(id_name, loc, astNode = null) {
         super(loc, astNode);
         this.id_name = id_name;
@@ -150,7 +177,7 @@ export class OpVarableLocal extends Code {
     }
 }
 
-export class OpVarableGlobal extends Code {
+export class OpVarableGlobal extends OpVarable {
     constructor(sym, loc, astNode = null) {
         super(loc, astNode);
         this.symbol = sym;
