@@ -248,7 +248,6 @@ export const OperatorBinType {
 export const OperandType {
     VALUE       0,
     EVALUATE    1,
-    EVALUATES   2
 };
 
 function getBinKey(operator, l_operand, r_operand) {
@@ -262,26 +261,14 @@ SubstitutionTableBin = new Map([
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
-        ([l_o, r_o, loc, astNode]) => { return new AddCodeOpValue(r_o, loc, astNode); }
-    ],
-    [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.VALUE),
         ([l_o, r_o, loc, astNode]) => { return [...l_o, new AddCodeOpValue(r_o, loc, astNode)]; }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
-        ([l_o, r_o, loc, astNode]) => { return new AddCodeValueOp(l_o, loc, astNode); }
-    ],
-    [
-        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATES),
         ([l_o, r_o, loc, astNode]) => { return [new AddCodeValueOp(l_o, loc, astNode), ...r_o]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        ([l_o, r_o, loc, astNode]) => { return new AddCodeOpOp(loc, astNode); }
-    ],
-    [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATES),
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATE),
         ([l_o, r_o, loc, astNode]) => { return [...l_o, ...r_o, new AddCodeOpOp(loc, astNode)]; }
     ],
 ]);
