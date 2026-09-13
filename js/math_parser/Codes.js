@@ -176,7 +176,7 @@ class BinCodeOpOp extends BaseBinCode {
     }    
 }    
 
-export class AddCodeOpValue extends BinCodeOpValue {
+class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
         super(value, loc, astNode);
     }
@@ -184,7 +184,7 @@ export class AddCodeOpValue extends BinCodeOpValue {
     operator(l, r) { return l.add(r) }
 }    
 
-export class SubCodeOpValue extends BinCodeOpValue {
+class SubCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
         super(value, loc, astNode);
     }
