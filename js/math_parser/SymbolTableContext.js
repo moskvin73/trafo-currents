@@ -71,9 +71,6 @@ export class SymbolTableContext {
 
       this.fixedSymbols[i] = {
         get type() { return SYM_BUILTIN; },
-        set type(t) {
-          throw new Error(`Идентификатор "${name}" является зарезервированным.`);
-        },
         get value() { 
           return overloads; 
         },
