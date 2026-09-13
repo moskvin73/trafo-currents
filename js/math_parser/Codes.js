@@ -189,4 +189,22 @@ export class SubCodeOpValue extends BinCodeOpValue {
     }
     
     operator(l, r) { return l.sub(r) }
-}    
+}
+
+export const OperationCode {
+    ASSIGN: 1,       // '='
+    OR: 2,
+    XOR: 3,
+    AND: 4,
+    RELATIONAL: 5,
+    IS: 6,  
+    ADD_SUB: 7,      // '+', '-'
+    MUL_DIV: 8,      // '*', '/'
+    UNARY: 9,        // унарные '+' и '-'
+    POW: 10,          // '^'
+};
+
+export const OperandsType {
+    VALUE 1,
+    EVALUATE 2
+};
