@@ -125,15 +125,34 @@ export class OpConst extends Code {
     get value() { return #value; }
 }
 
-export class AddCodeOpValue extends Code {
+class BinCodeOpValue extends Code {
     constructor(value, loc, astNode = null) {
         this.value = value;
     }
+
+    operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
         const l_op = stack.pop();
         const { l, r } = dispatcher.promoteTypes(l_op, value);
-        stack.push(l.add(r));
+        stack.push(operator(l, r));
     }    
+}    
+
+
+export class AddCodeOpValue extends BinCodeOpValue {
+    constructor(value, loc, astNode = null) {
+        this.value = value;
+    }
+    
+    operator(l, r) { return l.add(r) }
+}    
+
+export class SubCodeOpValue extends BinCodeOpValue {
+    constructor(value, loc, astNode = null) {
+        this.value = value;
+    }
+    
+    operator(l, r) { return l.sub(r) }
 }    
