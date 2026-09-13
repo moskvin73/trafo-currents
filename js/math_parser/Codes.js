@@ -115,15 +115,38 @@ export class IF_Code extends Code {
 regAST(IF_Code);
 
 export class OpValue {
-    get value() { throw new Error("[Code]: Метод value() не реализован."); }
+    getValue() { throw new Error("[Code]: Метод value() не реализован."); }
 }
 
 export class OpConst extends Code {
-    #value;
     constructor(value) {
         this.value = value;
     }
-    get value() { return #value; }
+    getValue(context) { return value; }
+}
+
+export class OpVarable extends Code {
+    #value;
+    constructor(id_name) {
+        this.id_name = id_name;
+    }
+    getValue(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name); 
+        if (sym === null) {
+        this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+        }
+        else if (sym.type === SYM_UNDEFINED) {
+        this.error(context, `Переменная "${this.name}" не инициализирована.`);
+        return this.errorValue();
+        }
+        else if (sym.type !== SYM_VARIABLE) {
+        this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+        return this.errorValue();
+        }
+        else {
+        return sym.value;
+        }
+    }
 }
 
 class BaseBinCode extends Code {
@@ -179,6 +202,22 @@ class BinCodeOpOp extends BaseBinCode {
 class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
         super(value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.add(r) }
+}    
+
+class AddCodeValueOp extends BinCodeValueOp {
+    constructor(value, loc, astNode = null) {
+        super(value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.add(r) }
+}    
+
+class AddCodeOpOp extends BinCodeOpOp {
+    constructor(loc, astNode = null) {
+        super(loc, astNode);
     }
     
     operator(l, r) { return l.add(r) }
