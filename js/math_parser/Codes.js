@@ -223,15 +223,15 @@ SubstitutionTableBin = new Map([
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
-        ([l_o, r_o]) => { return new AddCodeOpValue(l_o.add(r_o)); }
+        ([l_o, r_o]) => { return new AddCodeOpValue(r_o); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return new AddCodeValueOp(l_o.add(r_o)); }
+        ([l_o, r_o]) => { return new AddCodeValueOp(l_o); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return new AddCodeOpOp(l_o.add(r_o)); }
+        ([l_o, r_o]) => { return new AddCodeOpOp(l_o. r_o); }
     ],
 ]);
 
