@@ -339,8 +339,9 @@ class AddCodeValueValue extends BinCodeValueValue {
 
     static fromJSON(data) { return BinCodeValueValue.create(AddCodeValueValue, data); }
 }
-regCode(AddCodeValueValue);    
+regCode(AddCodeValueValue);
 
+//#region Add
 class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
         super(value, loc, astNode);
@@ -373,7 +374,8 @@ class AddCodeOpOp extends BinCodeOpOp {
 
     static fromJSON(data) { return BinCodeOpOp.create(AddCodeOpOp, data); }    
 }
-regCode(AddCodeOpOp);       
+regCode(AddCodeOpOp);
+//#endregion ADD       
 
 export const OperatorBinType {
     ASSIGN:     0,
