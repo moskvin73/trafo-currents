@@ -131,10 +131,10 @@ export class OpVarable extends Code {
         super(loc, astNode);
     }
 
-    getSymbol() { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    getSymbol(context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
 
     getValue(context) {
-        const sym = getSymbol(); 
+        const sym = getSymbol(context); 
         if (sym === null) {
             this.error(context, `Идентификатор "${this.name}" не опредилён.`);
         }
@@ -158,23 +158,8 @@ export class OpVarableLocal extends OpVarable {
         super(loc, astNode);
         this.id_name = id_name;
     }
-    getValue(context) {
-        const sym = context.scope_context.getSymbolById(this.id_name); 
-        if (sym === null) {
-            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
-        }
-        else if (sym.type === SYM_UNDEFINED) {
-            this.error(context, `Переменная "${this.name}" не инициализирована.`);
-            //return this.errorValue();
-        }
-        else if (sym.type !== SYM_VARIABLE) {
-            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-            //return this.errorValue();
-        }
-        else {
-            return sym.value;
-        }
-    }
+
+    getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
 }
 
 export class OpVarableGlobal extends OpVarable {
@@ -182,23 +167,7 @@ export class OpVarableGlobal extends OpVarable {
         super(loc, astNode);
         this.symbol = sym;
     }
-    getValue(context) {
-        const sym = this.symbol;
-        if (sym === null) {
-            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
-        }
-        else if (sym.type === SYM_UNDEFINED) {
-            this.error(context, `Переменная "${this.name}" не инициализирована.`);
-            //return this.errorValue();
-        }
-        else if (sym.type !== SYM_VARIABLE) {
-            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-            //return this.errorValue();
-        }
-        else {
-            return sym.value;
-        }
-    }
+    getSymbol(context) { return this.symbol; }
 }
 
 class BaseBinCode extends Code {
