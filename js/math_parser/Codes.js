@@ -219,7 +219,7 @@ function getBinKey(operator, l_operand, r_operand) {
 SubstitutionTableBin = new Map([
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
-        ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, value); return new OpConst(l.add(r)); }
+        ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
