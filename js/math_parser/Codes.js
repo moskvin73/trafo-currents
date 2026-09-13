@@ -178,6 +178,23 @@ export class OpVarableLocal extends OpVarable {
     }
 
     getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      id_name: this.id_name
+    };
+  }
+
+  static get dataTypeName() { return "OpVarableLocal"; }
+
+  static fromJSON(data) {
+    return new OpVarableLocal(
+      data.id_name,
+      restoreLocation(data.loc),
+      restoreDataType(data.astNode)
+    );
+  }
 }
 
 export class OpVarableGlobal extends OpVarable {
@@ -185,7 +202,7 @@ export class OpVarableGlobal extends OpVarable {
         super(loc, astNode);
         this.symbol = sym;
     }
-    
+
     getSymbol(context) { return this.symbol; }
 }
 
