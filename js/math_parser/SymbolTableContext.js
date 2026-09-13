@@ -63,6 +63,8 @@ export class SymbolTableContext {
     // Быстрый хэш без прототипов для парсера
     this.fixedHash = Object.create(null);
 
+    const instance = this;
+
     for (let i = 0; i < this.CD; i++) {
       const name = this.fixedNames[i];
       const data = getCommandInfo(name);
@@ -77,7 +79,8 @@ export class SymbolTableContext {
         set value(val) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
         },
-        get description() { return description; }
+        get description() { return description; },
+        get context { return instance; }
       };
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
