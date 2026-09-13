@@ -125,12 +125,19 @@ export class OpConst extends Code {
     get value() { return #value; }
 }
 
-class BinCodeOpValue extends Code {
-    constructor(value, loc, astNode = null) {
-        this.value = value;
+class BaseBinCode extends Code {
+    constructor(loc, astNode = null) {
+        super(loc, astNode);
     }
 
     operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
+}
+
+class BinCodeOpValue extends BaseBinCode {
+    constructor(value, loc, astNode = null) {
+        super(loc, astNode);
+        this.value = value;
+    }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
@@ -138,8 +145,35 @@ class BinCodeOpValue extends Code {
         const { l, r } = dispatcher.promoteTypes(l_op, value);
         stack.push(operator(l, r));
     }    
+}
+
+class BinCodeValueOp extends BaseBinCode {
+    constructor(value, loc, astNode = null) {
+        super(loc, astNode);
+        this.value = value;
+    }
+
+    internal_evaluate(context) {
+        const stack = context.evaluate_stack; 
+        const r_op = stack.pop();
+        const { l, r } = dispatcher.promoteTypes(value, r_op);
+        stack.push(operator(l, r));
+    }    
 }    
 
+class BinCodeOpOp extends BaseBinCode {
+    constructor(loc, astNode = null) {
+        super(loc, astNode);
+    }
+
+    internal_evaluate(context) {
+        const stack = context.evaluate_stack;
+        const l_op = stack.pop(); 
+        const r_op = stack.pop();
+        const { l, r } = dispatcher.promoteTypes(l_op, r_op);
+        stack.push(operator(l, r));
+    }    
+}    
 
 export class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
