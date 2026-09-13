@@ -115,10 +115,11 @@ export class IF_Code extends Code {
 }
 regCode(IF_Code);
 
+//#region CONST_VAR 
 export class OpValue {
     getValue() { throw new Error("[Code]: Метод value() не реализован."); }
 }
-
+ 
 export class OpConst extends Code {
     constructor(value, loc, astNode = null) {
         super(loc, astNode);
@@ -207,7 +208,9 @@ export class OpVarableGlobal extends OpVarable {
 
     getSymbol(context) { return this.symbol; }
 }
+//#endregion CONST_VAR 
 
+//#region BaseBinCode
 class BaseBinCode extends Code {
     constructor(loc, astNode = null) {
         super(loc, astNode);
@@ -327,7 +330,9 @@ class BinCodeOpOp extends BaseBinCode {
       restoreDataType(data.astNode)
     );       
 }    
+//#endregion BaseBinCode
 
+//#region ADD
 class AddCodeValueValue extends BinCodeValueValue {
     constructor(l_value, r_value, loc, astNode = null) {
         super(l_value, r_value, loc, astNode);
@@ -341,7 +346,6 @@ class AddCodeValueValue extends BinCodeValueValue {
 }
 regCode(AddCodeValueValue);
 
-//#region Add
 class AddCodeOpValue extends BinCodeOpValue {
     constructor(value, loc, astNode = null) {
         super(value, loc, astNode);
