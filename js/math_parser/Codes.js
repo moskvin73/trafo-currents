@@ -219,31 +219,31 @@ function getBinKey(operator, l_operand, r_operand) {
 SubstitutionTableBin = new Map([
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
-        ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
+        ([l_o, r_o, loc, astNode]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
-        ([l_o, r_o]) => { return new AddCodeOpValue(r_o); }
+        ([l_o, r_o, loc, astNode]) => { return new AddCodeOpValue(r_o, loc, astNode); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.VALUE),
-        ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+        ([l_o, r_o, loc, astNode]) => { return [...l_o, new AddCodeOpValue(r_o, loc, astNode)]; }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return new AddCodeValueOp(l_o); }
+        ([l_o, r_o, loc, astNode]) => { return new AddCodeValueOp(l_o, loc, astNode); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATES),
-        ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
+        ([l_o, r_o, loc, astNode]) => { return [new AddCodeValueOp(l_o, loc, astNode), ...r_o]; }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return new AddCodeOpOp(l_o. r_o); }
+        ([l_o, r_o, loc, astNode]) => { return new AddCodeOpOp(loc, astNode); }
     ],
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATES),
-        ([l_o, r_o]) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
+        ([l_o, r_o, loc, astNode]) => { return [...l_o, ...r_o, new AddCodeOpOp(loc, astNode)]; }
     ],
 ]);
 
@@ -254,7 +254,7 @@ function getOperandType(op) {
     throw new Error(`[Code]: Неизвестны тип опранда ${op}`);
 }
 
-export function createBinCode(operator, l_op, r_o) {
+export function createBinCode(operator, l_op, r_o, loc, astNode = null) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
     return SubstitutionTableBin.get(getBinKey(operator, lop_type, rop_type))(l_op, r_o);
