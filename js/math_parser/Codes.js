@@ -207,8 +207,9 @@ export const OperatorBinType {
 };
 
 export const OperandType {
-    VALUE 0,
-    EVALUATE 1
+    VALUE       0,
+    EVALUATE    1,
+    EVALUATES   2
 };
 
 function getBinKey(operator, l_operand, r_operand) {
@@ -233,3 +234,14 @@ SubstitutionTableBin = [
         code:   ([l_o, r_o]) => { return new AddCodeOpOp(l_o.add(r_o)); }
     },
 ];
+
+function getOperandType(op) {
+    if (l_op instanceof OpValue) lop_type = OperandType.VALUE;
+    else if (l_op instanceof Code ) lop_type = OperandType.EVALUATE;
+    else if (Array.isArray(op) && op.every(item => item instanceof Code) 
+}
+export function createBinCode(operator, l_op, r_o) {
+    let lop_type;
+    if (l_op instanceof OpValue) lop_type = OperandType.VALUE;
+    else if (l_op instanceof Code ) lop_type = OperandType.EVALUATE;
+}
