@@ -4,6 +4,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { restoreLocation } from './CompilerErrors.js';
+import { dispatcher } from './SemanticDispatcher.js';
 
 class EvaluateError extends Error {
   constructor(message) {
@@ -191,20 +192,37 @@ export class SubCodeOpValue extends BinCodeOpValue {
     operator(l, r) { return l.sub(r) }
 }
 
-export const OperationCode {
-    ASSIGN: 1,       // '='
-    OR: 2,
-    XOR: 3,
-    AND: 4,
-    RELATIONAL: 5,
-    IS: 6,  
-    ADD_SUB: 7,      // '+', '-'
-    MUL_DIV: 8,      // '*', '/'
-    UNARY: 9,        // унарные '+' и '-'
-    POW: 10,          // '^'
+export const OperatorBinType {
+    ASSIGN:     0,
+    OR:         1,
+    XOR:        2,
+    AND:        3,
+    RELATIONAL: 4,
+    IS:         5,  
+    ADD:        6,
+    SUB:        7,    
+    MUL:        8,
+    DIV:        9,
+    POW:        10,
 };
 
-export const OperandsType {
-    VALUE 1,
-    EVALUATE 2
+export const OperandType {
+    VALUE 0,
+    EVALUATE 1
 };
+
+function getBinKey(operator, l_operand, r_operand) {
+    return (operator << 8) + (l_operand << 2) + r_operand,
+}
+
+SubstitutionTableBin = [
+    {
+        key:    getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
+        code:   ([l_o, r_o]) => { const { l, r } = dispatcher.promoteTypes(l_op, value); return new OpConst(l.add(r)); }
+    },
+    {
+        key:    getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
+        code:   ([l_o, r_o]) => { return new AddCodeOpValue(l_o.add(r_o)); }
+    },
+
+];
