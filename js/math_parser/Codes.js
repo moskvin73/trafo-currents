@@ -157,6 +157,20 @@ class BaseBinCode extends Code {
     operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
 }
 
+class BinCodeValueValue extends BaseBinCode {
+    constructor(l_value, r_value, loc, astNode = null) {
+        super(loc, astNode);
+        this.l_value = l_value;
+        this.r_value = r_value;
+    }
+
+    internal_evaluate(context) {
+        const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
+        stack.push(operator(l, r));
+    }    
+}
+
+
 class BinCodeOpValue extends BaseBinCode {
     constructor(value, loc, astNode = null) {
         super(loc, astNode);
@@ -166,7 +180,7 @@ class BinCodeOpValue extends BaseBinCode {
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
         const l_op = stack.pop();
-        const { l, r } = dispatcher.promoteTypes(l_op, value);
+        const { l, r } = dispatcher.promoteTypes(l_op, this.value.getValue(context));
         stack.push(operator(l, r));
     }    
 }
@@ -180,7 +194,7 @@ class BinCodeValueOp extends BaseBinCode {
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
         const r_op = stack.pop();
-        const { l, r } = dispatcher.promoteTypes(value, r_op);
+        const { l, r } = dispatcher.promoteTypes(this.value.getValue(context), r_op);
         stack.push(operator(l, r));
     }    
 }    
@@ -246,8 +260,9 @@ export const OperatorBinType {
 };
 
 export const OperandType {
-    VALUE       0,
-    EVALUATE    1,
+    CONST       0,
+    VARABLE     1,
+    EVALUATE    2,
 };
 
 function getBinKey(operator, l_operand, r_operand) {
@@ -256,7 +271,11 @@ function getBinKey(operator, l_operand, r_operand) {
 
 SubstitutionTableBin = new Map([
     [
-        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.VALUE),
+        getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.CONST),
+        ([l_o, r_o, loc, astNode]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
+    ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.CONST),
         ([l_o, r_o, loc, astNode]) => { const { l, r } = dispatcher.promoteTypes(l_op, r_o); return new OpConst(l.add(r)); }
     ],
     [
