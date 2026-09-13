@@ -245,5 +245,5 @@ function getOperandType(op) {
 export function createBinCode(operator, l_op, r_o) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
-    SubstitutionTableBin
+    return SubstitutionTableBin.get(getBinKey(operator, lop_type, rop_type));
 }
