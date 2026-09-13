@@ -252,7 +252,7 @@ export const OperandType {
 };
 
 function getBinKey(operator, l_operand, r_operand) {
-    return (operator << 8) + (l_operand << 2) + r_operand,
+    return (operator << 8) + (l_operand << 4) + r_operand,
 }
 
 SubstitutionTableBin = new Map([
