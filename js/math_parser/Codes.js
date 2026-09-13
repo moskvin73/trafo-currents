@@ -170,7 +170,6 @@ class BinCodeValueValue extends BaseBinCode {
     }    
 }
 
-
 class BinCodeOpValue extends BaseBinCode {
     constructor(value, loc, astNode = null) {
         super(loc, astNode);
@@ -211,6 +210,14 @@ class BinCodeOpOp extends BaseBinCode {
         const { l, r } = dispatcher.promoteTypes(l_op, r_op);
         stack.push(operator(l, r));
     }    
+}    
+
+class AddCodeValueValue extends BinCodeValueValue {
+    constructor(l_value, r_value, loc, astNode = null) {
+        super(l_value, r_value, loc, astNode);
+    }
+    
+    operator(l, r) { return l.add(r) }
 }    
 
 class AddCodeOpValue extends BinCodeOpValue {
