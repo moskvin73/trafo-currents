@@ -275,7 +275,6 @@ SubstitutionTableBin = new Map([
 
 function getOperandType(op) {
     if (l_op instanceof OpValue) return OperandType.VALUE;
-    else if (l_op instanceof Code ) return OperandType.EVALUATE;
     else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
     throw new Error(`[Code]: Неизвестны тип опранда ${op}`);
 }
