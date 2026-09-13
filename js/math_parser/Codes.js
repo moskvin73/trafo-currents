@@ -185,6 +185,7 @@ export class OpVarableGlobal extends OpVarable {
         super(loc, astNode);
         this.symbol = sym;
     }
+    
     getSymbol(context) { return this.symbol; }
 }
 
