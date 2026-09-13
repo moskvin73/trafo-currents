@@ -133,18 +133,18 @@ export class OpVarableLocal extends Code {
     getValue(context) {
         const sym = context.scope_context.getSymbolById(this.id_name); 
         if (sym === null) {
-        this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
         }
         else if (sym.type === SYM_UNDEFINED) {
-        this.error(context, `Переменная "${this.name}" не инициализирована.`);
-        return this.errorValue();
+            this.error(context, `Переменная "${this.name}" не инициализирована.`);
+            //return this.errorValue();
         }
         else if (sym.type !== SYM_VARIABLE) {
-        this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-        return this.errorValue();
+            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+            //return this.errorValue();
         }
         else {
-        return sym.value;
+            return sym.value;
         }
     }
 }

@@ -90,7 +90,7 @@ export default class ASTNode {
   createCode() {
     throw new Error("[ASTNode]: Метод createCode() не реализован.");
   }
-  
+
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX(context) {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
@@ -1610,6 +1610,7 @@ export class VariableNode extends IdentifierNode {
     const sym = context.scope_context.getSymbolById(this.id_name);
     if (sym === null) {
       this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+      return this.errorValue();
     }
     else if (sym.type === SYM_UNDEFINED) {
       this.error(context, `Переменная "${this.name}" не инициализирована.`);
