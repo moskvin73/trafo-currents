@@ -244,14 +244,6 @@ class AddCodeOpOp extends BinCodeOpOp {
     operator(l, r) { return l.add(r) }
 }    
 
-class SubCodeOpValue extends BinCodeOpValue {
-    constructor(value, loc, astNode = null) {
-        super(value, loc, astNode);
-    }
-    
-    operator(l, r) { return l.sub(r) }
-}
-
 export const OperatorBinType {
     ASSIGN:     0,
     OR:         1,
