@@ -568,5 +568,10 @@ function getOperandType(op) {
 export function createBinCode(operator, l_op, r_o) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
-    return SubstitutionTableBin.get(getBinKey(operator, lop_type, rop_type))(l_op, r_o, loc, astNode);
+    const key = getBinKey(operator, lop_type, rop_type);
+    if (!SubstitutionTableBin.has(key)) {
+        throw new Error(`Операция не поддерживается: не найден обработчик для ключа "${key}"`);
+    }
+    const processFn = SubstitutionTableBin.get(key);
+    return processFn(l_op, r_o);
 }
