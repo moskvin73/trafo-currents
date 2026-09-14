@@ -9,9 +9,10 @@ import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.j
 import VarableCode from '../varables/VarableCode.js';
 
 export class EvaluateError extends Error {
-  constructor(message) {
+  constructor(message, processed) {
     super(message);
     this.name = "EvaluateError";
+    this.processed = processed;
   }
 }
 
@@ -31,8 +32,9 @@ export class Code {
             cons loc = context.evaluate_loc;
             if (loc) {
                 context.error(msg, loc ?? this.loc, "Runtime");
+                throw new EvaluateError(msg, true);
             }
-            throw EvaluateError(msg);
+            else throw new EvaluateError(msg, false);
         }
     }
  
