@@ -565,15 +565,7 @@ export class MatrixNode extends MathNode {
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
         const op = node.createCode();
-        switch(Code.getOperandType(op)) {
-          case Code.OperandType.CONST:
-          case Code.OperandType.VARABLE:
-            ret_code = [...ret_code, node.createCodePush()];
-            break;
-          default:
-            ret_code = [...ret_code, ...node.createCode()];
-            break;
-        }
+        ret_code = [...ret_code, ...Code.operandImplementСode(node.createCode())];
       }
     }
     const rowCount = this.#length;
