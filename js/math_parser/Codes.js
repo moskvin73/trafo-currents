@@ -316,6 +316,18 @@ class BinCodeOpOp extends BaseBinCode {
 //#endregion BaseBinCode
 
 //#rigion ASSIGN
+class AssignCodeOpValue extends BinCodeOpValue {
+    constructor(value) {
+        super(value);
+    }
+    
+    operator(l, r) { return l.add(r) }
+  
+    static get dataTypeName() { return "AddCodeOpValue"; }
+
+    static fromJSON(data) { return BinCodeOpValue.create(AddCodeOpValue, data); }    
+}
+regCode(AddCodeOpValue);     
 
 //#endrigion ASSIGN
 
