@@ -548,7 +548,7 @@ export class MatrixNode extends MathNode {
         const { l } = dispatcher.promoteTypes(targetSample, cell);
         targetSample = l; // Запоминаем текущий самый сильный объект-эталон
       }
-    }
+    } 
 
     // 3. Теперь, когда targetSample гарантированно имеет самый высокий ранг в этой матрице,
     // приводим ВСЕ элементы к его типу через promoteTypes
