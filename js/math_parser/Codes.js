@@ -166,29 +166,27 @@ class OpVarable extends OpValue {
 }
 
 export class OpVarableLocal extends OpVarable {
-    constructor(id_name, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(id_name) {
+        super();
         this.id_name = id_name;
     }
 
     getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      id_name: this.id_name
-    };
-  }
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        id_name: this.id_name
+        };
+    }
 
-  static get dataTypeName() { return "OpVarableLocal"; }
+    static get dataTypeName() { return "OpVarableLocal"; }
 
-  static fromJSON(data) {
-    return new OpVarableLocal(
-      data.id_name,
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
-    );
-  }
+    static fromJSON(data) {
+        return new OpVarableLocal(
+        data.id_name,
+        );
+    }
 }
 regCode(OpVarableLocal);
 
