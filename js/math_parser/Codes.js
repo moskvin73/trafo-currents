@@ -651,6 +651,20 @@ export class IndexMatrix extends Code {
         context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
 }
+
+export class AssignIndexMatrix extends Code {
+    constructor() {
+        super();
+    }
+
+    evaluate_command(context, matrixObj, rowIndex, colIndex) {
+        const elm = matrixObj.get(0, 0);
+        const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
+        matrixObj.set(rowIndex, colIndex, l);
+        context.evaluate_stack.push(l);
+    }
+}
+
 //#endregion INDEXING
 
 //#region ADD
