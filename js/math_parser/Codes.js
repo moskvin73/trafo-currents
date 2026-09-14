@@ -191,8 +191,8 @@ export class OpVarableLocal extends OpVarable {
 regCode(OpVarableLocal);
 
 export class OpVarableGlobal extends OpVarable {
-    constructor(sym, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(sym) {
+        super();
         this.symbol = sym;
     }
 
