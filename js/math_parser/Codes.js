@@ -501,6 +501,7 @@ function getBinKey(operator, l_operand, r_operand) {
 }
 
 const SubstitutionTableBin = new Map([
+    // ASSIGN
     [
         getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
         ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
@@ -509,8 +510,12 @@ const SubstitutionTableBin = new Map([
         getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
     ],
+    [
+        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
+        ([l_o, r_o]) => { return [new AssignCodeValueOp(l_o), ...r_o]; }
+    ],
 
-
+    // ADD
     [
         getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.CONST),
         ([l_o, r_o]) => {
@@ -549,38 +554,6 @@ const SubstitutionTableBin = new Map([
     [
         getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
-    ],
-
-    [
-        getBinKey(OperationCode.SUB, OperandsType.CONST, OperandsType.CONST),
-        ([l_o, r_o]) => {
-            const { l, r } = dispatcher.promoteTypes(l_op.getValue(), r_o.getValue()); 
-            return new OpConst(l.subtract(r)); 
-        }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.VARABLE, OperandsType.CONST),
-        ([l_o, r_o]) => { return [new SubCodeValueValue(l_o, r_o)]; }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.CONST, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [new SubCodeValueValue(l_o, r_o)]; }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.VARABLE, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [new SubCodeValueValue(l_o, r_o)]; }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.EVALUATE, OperandsType.VALUE),
-        ([l_o, r_o]) => { return [...l_o, new SubCodeOpValue(r_o)]; }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.VALUE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [new SubCodeValueOp(l_o), ...r_o]; }
-    ],
-    [
-        getBinKey(OperationCode.SUB, OperandsType.EVALUATES, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [...l_o, ...r_o, new SubCodeOpOp()]; }
     ],
 
 ]);
