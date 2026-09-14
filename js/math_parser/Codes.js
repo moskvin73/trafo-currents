@@ -114,7 +114,7 @@ export class OpValue {
     getValue() { throw new Error("[Code]: Метод value() не реализован."); }
 }
  
-export class OpConst extends Code {
+export class OpConst extends OpValue {
     constructor(value) {
         super();
         this.value = value;
@@ -122,26 +122,26 @@ export class OpConst extends Code {
 
     getValue(context) { return value; }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      value: this.value
-    };
-  }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            value: this.value
+        };
+    }
 
-  static get dataTypeName() { return "OpConst"; }
+    static get dataTypeName() { return "OpConst"; }
 
-  static fromJSON(data) {
-    return new OpConst(
-      restoreDataType(data.value),
-    );
-  }
+    static fromJSON(data) {
+        return new OpConst(
+            restoreDataType(data.value),
+        );
+    }
 }
 regCode(OpConst);
 
-class OpVarable extends Code {
-    constructor(loc, astNode = null) {
-        super(loc, astNode);
+class OpVarable extends OpValue {
+    constructor() {
+        super();
     }
 
     getSymbol(context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
