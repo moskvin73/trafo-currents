@@ -38,11 +38,11 @@ export class Code {
         throw new Error("[Code]: Метод evaluate() не реализован.");
     }
 
-  toJSON() {
-    return {
-      dataType: this.constructor.dataTypeName,
-    };
-  }
+    toJSON() {
+        return {
+        dataType: this.constructor.dataTypeName,
+        };
+    }
 }
 
 function regCode(ClassRef) {
