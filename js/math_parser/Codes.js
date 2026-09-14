@@ -592,13 +592,17 @@ export class IndexRow extends Code {
         if (matrixObj.isVector) {
             // Если это вектор-строка, то индекс означает столбец, если столбец — то строку
             if (matrixObj.rowCount === 1) {
-                context.evaluate_stack.push(matrixObj.get(0, rowIndex));
+                evaluate_command(context, matrixObj, 0, rowIndex);
             } else {
-                context.evaluate_stack.push(matrixObj.get(rowIndex, 0));
+                evaluate_command(context, matrixObj, rowIndex, 0);
             }
         } else {
             throw new RangeError("Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
         }
+    }
+
+    evaluate_command(context, matrixObj, rowIndex, colIndex) {
+        context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
 }
 
@@ -627,6 +631,10 @@ export class IndexMatrix extends Code {
         const rowIndex = Math.floor(rNum.value ?? Number(rNum)) - 1;
         const colIndex = Math.floor(cNum.value ?? Number(cNum)) - 1;
 
+        evaluate_command(context, matrixObj, rowIndex, colIndex)
+    }
+
+    evaluate_command(context, matrixObj, rowIndex, colIndex) {
         context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
 }
