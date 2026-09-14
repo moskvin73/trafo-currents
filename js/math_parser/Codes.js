@@ -606,6 +606,19 @@ export class IndexRow extends Code {
     }
 }
 
+export class AssignIndexRow extends Code {
+    constructor() {
+        super();
+    }
+
+    evaluate_command(context, matrixObj, rowIndex, colIndex) {
+        const elm = matrixObj.get(0, 0);
+        const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
+        matrixObj.set(rowIndex, colIndex, l);
+        context.evaluate_stack.push(l);
+    }
+}
+
 export class IndexMatrix extends Code {
     constructor() {
         super();
