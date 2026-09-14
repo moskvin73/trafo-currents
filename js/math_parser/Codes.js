@@ -38,7 +38,6 @@ export class Code {
         }
     }
  
-    /** Внутренний метод вычисляет значение узла, возвращая экземпляр MathType (ComplexNumber/Matrix) */
     internal_evaluate(context) {
         throw new Error("[Code]: Метод evaluate() не реализован.");
     }
@@ -241,7 +240,7 @@ export class OpConst extends OpValue {
 
     getValue(context) { return value; }
 
-    createCodePush() { new PushCodeConst(this.value); }
+    createCodePush() { return new PushCodeConst(this.value); }
 
     toJSON() {
         return {
@@ -294,7 +293,7 @@ export class OpVarableLocal extends OpVarable {
 
     getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
 
-    createCodePush() { new PushCodeVarbleLocal(this.id_name); }
+    createCodePush() { return new PushCodeVarbleLocal(this.id_name); }
 
     toJSON() {
         return {
@@ -321,7 +320,7 @@ export class OpVarableGlobal extends OpVarable {
 
     getSymbol(context) { return this.symbol; }
 
-    createCodePush() { new PushCodeVarbleGlobal(this.symbol); }
+    createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 }
 //#endregion CONST_VAR 
 
@@ -766,9 +765,9 @@ class SubCodeOpOp extends BinCodeOpOp {
     static fromJSON(data) { return BinCodeOpOp.create(SubCodeOpOp, data); }    
 }
 regCode(SubCodeOpOp);       
-//#endregion SUB
+//#endregion SUB 
 
-export const OperatorBinType {
+export const OperatorBinType = {
     ASSIGN:     0,
     OR:         1,
     XOR:        2,
@@ -782,7 +781,7 @@ export const OperatorBinType {
     POW:        10,
 };
 
-const OperandType {
+const OperandType = {
     CONST       0,
     VARABLE     1,
     EVALUATE    2,
