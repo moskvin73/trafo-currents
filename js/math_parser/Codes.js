@@ -151,8 +151,12 @@ export class Goto_Code extends Code {
 }
 
 export class DefineVarableCodeNode extends Code {
-    constructor(funcId, statements, paramsCount, localsCount, loc) {
+    constructor(funcId, statements, paramsCount, localsCount) {
         super();
+        this.funcId = funcId;
+        this.statements = statements;
+        this.paramsCount = paramsCount;
+        this.localsCount = localsCount;
     }
 
     internal_evaluate(context) {
