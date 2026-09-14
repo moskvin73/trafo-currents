@@ -567,12 +567,13 @@ export class MatrixNode extends MathNode {
         const op = node.createCode();
         switch(Code.getOperandType(op)) {
           case Code.OperandType.CONST:
-            
-            break;
           case Code.OperandType.VARABLE:
-
+            ret_code = [...ret_code, node.createCodePush()];
+            break;
+          default:
+            ret_code = [...ret_code, ...node.createCode()];
+            break;
         }
-        ret_code = [...ret_code, ...node.createCode()];
       }
     }
     return ret_code;
