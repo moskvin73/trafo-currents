@@ -157,21 +157,17 @@ export class DefineVarableCodeNode extends {
     }
 
     internal_evaluate(context) {
-        try {
-            const scopeCtrl = context.scope_context;
+        const scopeCtrl = context.scope_context;
 
-            // Находим живой кадр, в котором мы СЕЙЧАС находимся (кадр родителя)
-            const currentLiveFrame = scopeCtrl.currentScope;
+        // Находим живой кадр, в котором мы СЕЙЧАС находимся (кадр родителя)
+        const currentLiveFrame = scopeCtrl.currentScope;
 
-            // Создаем замыкание, передавая ему жесткий указатель на этот кадр
-            const closure = new VarableCode(this.statements, this.paramsCount, this.localsCount, currentLiveFrame);
+        // Создаем замыкание, передавая ему жесткий указатель на этот кадр
+        const closure = new VarableCode(this.statements, this.paramsCount, this.localsCount, currentLiveFrame);
 
-            // Записываем это замыкание в символ функции
-            const funcSymbol = scopeCtrl.getSymbolById(this.funcId);
-            funcSymbol.value = closure;
-        } catch(err) {
-            this.error(context, err);
-        }
+        // Записываем это замыкание в символ функции
+        const funcSymbol = scopeCtrl.getSymbolById(this.funcId);
+        funcSymbol.value = closure;
     }
 }
 
