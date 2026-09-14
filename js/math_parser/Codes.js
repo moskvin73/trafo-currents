@@ -60,6 +60,17 @@ export class LocationCode extends Code {
     }
 }
 
+export class ReportCode extends Code {
+    constructor(astNode) {
+        this.astNode = astNode;
+    }
+
+    internal_evaluate(context) {
+        const report = context.report;
+        
+    }
+}
+
 export class ErrorCode extends Code {
     constructor(msg, loc, astNode = null) {
         super(loc, astNode);

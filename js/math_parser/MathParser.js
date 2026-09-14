@@ -186,6 +186,8 @@ class ContextEvaluation
     this.index_code = 0;
     this.report = [];
     this.callStack = [];
+    this.evaluate_stack = [];
+    this.evaluate_loc = null;
   }
 
   /*async call_code(code, index = 0) {
