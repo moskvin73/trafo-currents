@@ -564,6 +564,14 @@ export class MatrixNode extends MathNode {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
+        const op = node.createCode();
+        switch(Code.getOperandType(op)) {
+          case Code.OperandType.CONST:
+            
+            break;
+          case Code.OperandType.VARABLE:
+
+        }
         ret_code = [...ret_code, ...node.createCode()];
       }
     }

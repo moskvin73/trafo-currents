@@ -109,6 +109,16 @@ export class IF_Code extends Code {
 }
 regCode(IF_Code);
 
+export class PushCodeConst extends Code {
+    constructor(value) {
+        this.value = value;
+    }
+
+    internal_evaluate(context) {
+        context.evaluate_stack.push(value);
+    }
+}
+
 class MatrixCode extends Code {
     constructor(cont_row, count_col) {
         super();
@@ -121,7 +131,7 @@ class MatrixCode extends Code {
         for (let i = 0; i < this.cont_row; i++) {
             const row = []; 
             for (let j = 0; j < this.count_col; j++) {
-                const value = stack.pop();
+                const value = context.evaluate_stack.pop();
                 row.push(value);
             }
             evaluatedElements.push(row); 
@@ -346,7 +356,7 @@ class AssignCodeValueValue extends Code {
     internal_evaluate(context) {
         const sym = this.let_value.getSymbol(context);
         const value = this.value.getValue(context);
-        stack.push(sym.value = value);
+        context.evaluate_stack.push(sym.value = value);
     }
   
      toJSON() {
@@ -377,7 +387,7 @@ class AssignCodeValueOp extends Code {
     internal_evaluate(context) {
         const sym = this.let_value.getSymbol(context);
         const value = stack.pop();
-        stack.push(sym.value = value);
+        context.evaluate_stack.push(sym.value = value);
     }
 
      toJSON() {
@@ -510,7 +520,7 @@ export const OperatorBinType {
     POW:        10,
 };
 
-const OperandType {
+export const OperandType {
     CONST       0,
     VARABLE     1,
     EVALUATE    2,
@@ -578,7 +588,7 @@ const SubstitutionTableBin = new Map([
 
 ]);
 
-function getOperandType(op) {
+export function getOperandType(op) {
     if (op instanceof OpConst) return OperandType.CONST;
     else if (op instanceof OpVarable) return OperandType.VARABLE;
     else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
