@@ -360,6 +360,20 @@ class AssignCodeValueOp extends Code {
         stack.push(sym.value = value);
     }
 
+     toJSON() {
+        return {
+        ...super.toJSON(),
+        let_value: this.let_value
+        };
+    }
+   
+    static get dataTypeName() { return "AssignCodeValueValue"; }
+
+    static fromJSON(data) {
+        return new AssignCodeValueValue(
+            restoreDataType(data.let_value),
+        );
+     }    
 }
 
 //#endrigion ASSIGN
