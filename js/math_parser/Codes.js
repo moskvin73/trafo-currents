@@ -785,7 +785,7 @@ export const OperatorBinType = {
     POW:        10,
 };
 
-const OperandType = {
+const OperandsType = {
     CONST:       0,
     VARABLE:     1,
     EVALUATE:    2,
@@ -798,65 +798,65 @@ function getBinKey(operator, l_operand, r_operand) {
 const SubstitutionTableBin = new Map([
     // ASSIGN
     [
-        getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
+        getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
         ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
+        getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
+        getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [new AssignCodeValueOp(l_o), ...r_o]; }
     ],
 
     // ADD
     [
-        getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.CONST),
+        getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.CONST),
         ([l_o, r_o]) => {
             const { l, r } = dispatcher.promoteTypes(l_op.getValue(), r_o.getValue()); 
             return new OpConst(l.add(r)); 
         }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.CONST),
+        getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
         ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.VARABLE),
+        getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
+        getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.CONST),
+        getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.CONST),
         ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.EVALUATE),
+        getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
+        getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
+        getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATES, OperandsType.EVALUATE),
+        getBinKey(OperatorBinType.ADD, OperandsType.EVALUATES, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
     ],
 
 ]);
 
 function getOperandType(op) {
-    if (op instanceof OpConst) return OperandType.CONST;
-    else if (op instanceof OpVarable) return OperandType.VARABLE;
-    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return OperandType.EVALUATES;
+    if (op instanceof OpConst) return OperandsType.CONST;
+    else if (op instanceof OpVarable) return OperandsType.VARABLE;
+    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return OperandsType.EVALUATES;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
 }
 
