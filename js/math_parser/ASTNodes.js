@@ -576,6 +576,9 @@ export class MatrixNode extends MathNode {
         }
       }
     }
+    const rowCount = this.#length;
+    const colCount = rows.length > 0 ? rows[0].length : 0;
+    ret_code = [...ret_code, new MatrixCode(rowCount, colCount)];
     return ret_code;
   }
   /**
