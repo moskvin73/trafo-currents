@@ -2174,6 +2174,14 @@ export class ConstantNode extends MathNode {
     return config.instance;    
   }
 
+  createCode() {
+    const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
+    if (!config) {
+      this.error(context, 'Неизвестный тип константы (Token ID: ${this.#tokenType})');
+      return this.errorValue();
+    }
+    else return Code.OpConst(config.instance);    
+  }
   toTeX(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     return config ? config.tex : `\\text{unknown}`;
