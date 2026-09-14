@@ -148,15 +148,15 @@ export class PushCodeVarbleGlobal extends Code {
         if (sym === null) {
             this.error(context, `Идентификатор "${this.name}" не опредилён.`);
         }
-        this.sym = sym;
+        this.symbol = sym;
     }
 
     internal_evaluate(context) {
-        if (sym.type === SYM_UNDEFINED) {
+        if (this.symbol === SYM_UNDEFINED) {
             this.error(context, `Переменная "${this.name}" не инициализирована.`);
             //return this.errorValue();
         }
-        else if (sym.type !== SYM_VARIABLE) {
+        else if (this.symbol !== SYM_VARIABLE) {
             this.error(context, `Идентификатор "${this.name}" не является переменной.`);
             //return this.errorValue();
         }
@@ -200,6 +200,8 @@ export class OpConst extends OpValue {
     }
 
     getValue(context) { return value; }
+
+    createCodePush() { new PushCodeConst(this.value); }
 
     toJSON() {
         return {
@@ -252,6 +254,8 @@ export class OpVarableLocal extends OpVarable {
 
     getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
 
+    createCodePush() { new PushCodeVarbleLocal(this.id_name); }
+
     toJSON() {
         return {
         ...super.toJSON(),
@@ -276,6 +280,8 @@ export class OpVarableGlobal extends OpVarable {
     }
 
     getSymbol(context) { return this.symbol; }
+
+    createCodePush() { new PushCodeVarbleGlobal(this.symbol); }
 }
 //#endregion CONST_VAR 
 
