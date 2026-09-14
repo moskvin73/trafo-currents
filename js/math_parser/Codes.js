@@ -664,7 +664,6 @@ export class AssignIndexMatrix extends Code {
         context.evaluate_stack.push(l);
     }
 }
-
 //#endregion INDEXING
 
 //#region ADD
