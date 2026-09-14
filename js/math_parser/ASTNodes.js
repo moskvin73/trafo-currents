@@ -1832,9 +1832,11 @@ export class IndexNode extends RefNode {
   createCode() {
     const target_code = Code.operandImplementСode(this.#target.createCode());
     const rowExpr_code = Code.operandImplementСode(this.#rowExpr.createCode());
-    let colExpr_code = null;
     if (this.#colExpr) {
-      colExpr_code = Code.operandImplementСode(this.#colExpr.createCode());
+      const colExpr_code = Code.operandImplementСode(this.#colExpr.createCode());
+      return [...rowExpr_code, ...colExpr_code, ...target_code, new Code.IndexRow()];
+    } else {
+      return [...rowExpr_code, ...target_code, new Code.IndexRow()];
     }
   }
 
