@@ -12,6 +12,7 @@ import { TYPE_UNIT } from './ConstantsDef.js';
 import { restoreLocation } from './CompilerErrors.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import VarableCode from '../varables/VarableCode.js';
+import * as Code from './Codes.js';
 
 Matrix.registerRealNumberClass(RealNumber);
 
