@@ -502,6 +502,16 @@ function getBinKey(operator, l_operand, r_operand) {
 
 const SubstitutionTableBin = new Map([
     [
+        getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
+        ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
+    ],
+    [
+        getBinKey(OperationCode.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
+        ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
+    ],
+
+    
+    [
         getBinKey(OperationCode.ADD, OperandsType.CONST, OperandsType.CONST),
         ([l_o, r_o]) => {
             const { l, r } = dispatcher.promoteTypes(l_op.getValue(), r_o.getValue()); 
