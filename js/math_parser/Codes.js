@@ -371,7 +371,7 @@ class AssignCodeValueOp extends Code {
 
     static fromJSON(data) {
         return new AssignCodeValueOp(
-            restoreDataType(data.let_value),
+            restoreDataType(data.let_value)
         );
      }    
 }
