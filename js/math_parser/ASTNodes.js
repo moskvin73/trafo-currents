@@ -558,6 +558,9 @@ export class MatrixNode extends MathNode {
     return new Matrix(finalElements);
   }
 
+  createCode() {
+    
+  }
   /**
    * Сбор математических выражений (интеграция в вашу систему обхода)
    */
