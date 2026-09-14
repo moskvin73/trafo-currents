@@ -317,8 +317,8 @@ class BinCodeOpOp extends BaseBinCode {
 
 //#region ADD
 class AddCodeValueValue extends BinCodeValueValue {
-    constructor(l_value, r_value, loc, astNode = null) {
-        super(l_value, r_value, loc, astNode);
+    constructor(l_value, r_value) {
+        super(l_value, r_value);
     }
     
     operator(l, r) { return l.add(r) }
@@ -330,8 +330,8 @@ class AddCodeValueValue extends BinCodeValueValue {
 regCode(AddCodeValueValue);
 
 class AddCodeOpValue extends BinCodeOpValue {
-    constructor(value, loc, astNode = null) {
-        super(value, loc, astNode);
+    constructor(value) {
+        super(value);
     }
     
     operator(l, r) { return l.add(r) }
@@ -343,16 +343,16 @@ class AddCodeOpValue extends BinCodeOpValue {
 regCode(AddCodeOpValue);     
 
 class AddCodeValueOp extends BinCodeValueOp {
-    constructor(value, loc, astNode = null) {
-        super(value, loc, astNode);
+    constructor(value) {
+        super(value);
     }
     
     operator(l, r) { return l.add(r) }
 }    
 
 class AddCodeOpOp extends BinCodeOpOp {
-    constructor(loc, astNode = null) {
-        super(loc, astNode);
+    constructor() {
+        super();
     }
     
     operator(l, r) { return l.add(r) }
@@ -366,8 +366,8 @@ regCode(AddCodeOpOp);
 
 //#region SUB
 class SubCodeValueValue extends BinCodeValueValue {
-    constructor(l_value, r_value, loc, astNode = null) {
-        super(l_value, r_value, loc, astNode);
+    constructor(l_value, r_value) {
+        super(l_value, r_value);
     }
     
     operator(l, r) { return l.subtract(r) }
@@ -379,8 +379,8 @@ class SubCodeValueValue extends BinCodeValueValue {
 regCode(SubCodeValueValue);    
 
 class SubCodeOpValue extends BinCodeOpValue {
-    constructor(value, loc, astNode = null) {
-        super(value, loc, astNode);
+    constructor(value) {
+        super(value);
     }
     
     operator(l, r) { return l.subtract(r) }
@@ -392,16 +392,16 @@ class SubCodeOpValue extends BinCodeOpValue {
 regCode(SubCodeOpValue);     
 
 class SubCodeValueOp extends BinCodeValueOp {
-    constructor(value, loc, astNode = null) {
-        super(value, loc, astNode);
+    constructor(value) {
+        super(value);
     }
     
     operator(l, r) { return l.subtract(r) }
 }    
 
 class SubCodeOpOp extends BinCodeOpOp {
-    constructor(loc, astNode = null) {
-        super(loc, astNode);
+    constructor() {
+        super();
     }
     
     operator(l, r) { return l.subtract(r) }
