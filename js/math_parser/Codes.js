@@ -79,8 +79,8 @@ export class ErrorCode extends Code {
 regCode(ErrorCode);
 
 export class IF_Code extends Code {
-    constructor(len_code_false, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(len_code_false) {
+        super();
         this.len_code_false = len_code_false;
     }
 
@@ -104,8 +104,6 @@ export class IF_Code extends Code {
     static fromJSON(data) {
         return new IF_Code(
             data.len_code_false,
-            restoreLocation(data.loc),
-            restoreDataType(data.astNode)
         );
     }  
 }
