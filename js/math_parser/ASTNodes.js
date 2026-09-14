@@ -1717,23 +1717,19 @@ export class AssignNode extends IdentifierNode {
 regAST(AssignNode);
 
 export class IndexNode extends RefNode {
-  #target;
-  #rowExpr;
-  #colExpr;
-
   constructor(target, rowExpr, colExpr, loc) {
     super(loc);
-    this.#target = target;
-    this.#rowExpr = rowExpr;
-    this.#colExpr = colExpr; // Может быть null
+    this.target = target;
+    this.rowExpr = rowExpr;
+    this.colExpr = colExpr; // Может быть null
   }
 
   toJSON() {
     return {
       ...super.toJSON(),
-      target: this.#target,
-      rowExpr: this.#rowExpr,
-      colExpr: this.#colExpr
+      target: this.target,
+      rowExpr: this.rowExpr,
+      colExpr: this.colExpr
     };
   }
 
@@ -1749,7 +1745,7 @@ export class IndexNode extends RefNode {
   }
 
   createAssign(expression, loc = this.loc) {
-    return new AssignIndexNode(this.#target, this.#rowExpr, this.#colExpr, expression, loc);
+    return new AssignIndexNode(this.target, this.rowExpr, this.colExpr, expression, loc);
   }    
 
   getPriority() {
@@ -1757,16 +1753,16 @@ export class IndexNode extends RefNode {
   }
 
   toString(context) {
-    const targetStr = this.#target.toString(context);
-    const rowStr = this.#rowExpr.toString(context);
-    const colStr = this.#colExpr ? `, ${this.#colExpr.toString(context)}` : '';
+    const targetStr = this.target.toString(context);
+    const rowStr = this.rowExpr.toString(context);
+    const colStr = this.colExpr ? `, ${this.colExpr.toString(context)}` : '';
     return `${targetStr}[${rowStr}${colStr}]`;
   }
 
   toTeX(context) {
-    let targetTeX = this.#target.toTeX(context);
-    const rowTeX = this.#rowExpr.toTeX(context);
-    const colTeX = this.#colExpr ? `, ${this.#colExpr.toTeX(context)}` : '';
+    let targetTeX = this.target.toTeX(context);
+    const rowTeX = this.rowExpr.toTeX(context);
+    const colTeX = this.colExpr ? `, ${this.colExpr.toTeX(context)}` : '';
     const matrixIndex = `${rowTeX}${colTeX}`;
 
     // Проверяем, заканчивается ли имя на } (признак того, что там уже есть индекс)
@@ -1780,14 +1776,14 @@ export class IndexNode extends RefNode {
   }
 
   *getChildren() {
-    yield this.#target;
-    yield this.#rowExpr;
-    yield this.#colExpr;
+    yield this.target;
+    yield this.rowExpr;
+    yield this.colExpr;
   }
 
   internal_evaluate(context) {
     // 1. Вычисляем то, к чему применяется индексация (получаем объект Matrix)
-    const matrixObj = this.#target.internal_evaluate(context);
+    const matrixObj = this.target.internal_evaluate(context);
     
     const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
     if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
@@ -1795,8 +1791,8 @@ export class IndexNode extends RefNode {
     }
 
     // 2. Вычисляем индексы строки и столбца
-    const rNum = this.#rowExpr.internal_evaluate(context);
-    const cNum = this.#colExpr ? this.#colExpr.internal_evaluate(context) : null;
+    const rNum = this.rowExpr.internal_evaluate(context);
+    const cNum = this.colExpr ? this.colExpr.internal_evaluate(context) : null;
 
     // Извлекаем примитивные целые числа. 
     // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
@@ -1830,10 +1826,10 @@ export class IndexNode extends RefNode {
   }
 
   createCode() {
-    const target_code = Code.operandImplementСode(this.#target.createCode());
-    const rowExpr_code = Code.operandImplementСode(this.#rowExpr.createCode());
-    if (this.#colExpr) {
-      const colExpr_code = Code.operandImplementСode(this.#colExpr.createCode());
+    const target_code = Code.operandImplementСode(this.target.createCode());
+    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode());
+    if (this.colExpr) {
+      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
       return [...colExpr_code, ...rowExpr_code, ...target_code, new Code.IndexMatrixCode()];
     } else {
       return [...rowExpr_code, ...target_code, new Code.IndexRowCode()];
@@ -1842,9 +1838,9 @@ export class IndexNode extends RefNode {
 
   collectMathExpressions(list) {
     list.push(this);
-    this.#target.collectMathExpressions(list);
-    this.#rowExpr.collectMathExpressions(list);
-    if (this.#colExpr) this.#colExpr.collectMathExpressions(list);
+    this.target.collectMathExpressions(list);
+    this.rowExpr.collectMathExpressions(list);
+    if (this.colExpr) this.colExpr.collectMathExpressions(list);
   }
 }
 regAST(IndexNode);
@@ -1881,6 +1877,20 @@ export class AssignIndexNode extends IndexNode {
     const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
     return matrixObj.set(rowIndex, colIndex, l);
   }
+
+  createCode() {
+    const target_code = Code.operandImplementСode(this.target.createCode());
+    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode());
+    const let_value_code = Code.operandImplementСode(this.expression.createCode());
+    if (this.colExpr) {
+      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
+      return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, new Code.AssignIndexMatrixCode()];
+    } else {
+      return [...let_value_code, ...rowExpr_code, ...target_code, new Code.AssignIndexRowCode()];
+    }
+  }
+
+
 }
 regAST(AssignIndexNode);
 
