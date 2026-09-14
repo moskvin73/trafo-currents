@@ -592,9 +592,9 @@ export class IndexRow extends Code {
         if (matrixObj.isVector) {
             // Если это вектор-строка, то индекс означает столбец, если столбец — то строку
             if (matrixObj.rowCount === 1) {
-                return matrixObj.get(0, rowIndex);
+                context.evaluate_stack.push(matrixObj.get(0, rowIndex));
             } else {
-                return matrixObj.get(rowIndex, 0);
+                context.evaluate_stack.push(matrixObj.get(rowIndex, 0));
             }
         } else {
             throw new RangeError("Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
