@@ -576,7 +576,7 @@ export class IndexRow extends Code {
 
         const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
         if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
-        throw new TypeError("[Runtime Error]: Операция индексации [,] применима только к матрицам и векторам.");
+        throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
         }
 
         if (!isNumberType(rNum)) {
@@ -597,7 +597,7 @@ export class IndexRow extends Code {
                 return matrixObj.get(rowIndex, 0);
             }
         } else {
-            throw new RangeError("[Runtime Error]: Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
+            throw new RangeError("Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
         }
     }
 }
