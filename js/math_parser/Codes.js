@@ -52,6 +52,7 @@ function regCode(ClassRef) {
 
 export class LocationCode extends Code {
     constructor(loc) {
+        super();
         this.loc = loc;
     }
 
@@ -62,6 +63,7 @@ export class LocationCode extends Code {
 
 export class ReportCode extends Code {
     constructor(astNode) {
+        super();
         this.astNode = astNode;
     }
 
@@ -75,8 +77,8 @@ export class ReportCode extends Code {
 }
 
 export class ErrorCode extends Code {
-    constructor(msg, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(msg) {
+        super();
         this.msg = msg;
     }
 
@@ -133,6 +135,17 @@ export class IF_Code extends Code {
     }  
 }
 regCode(IF_Code);
+
+export class Goto_Code extends Code {
+    constructor(len_code) {
+        super();
+        this.len_code = len_code;
+    }
+
+    internal_evaluate(context) {
+        context.index_code += this.len_code;
+    }
+}
 
 export class PushCodeConst extends Code {
     constructor(value) {
