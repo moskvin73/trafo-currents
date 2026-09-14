@@ -1645,6 +1645,8 @@ export class VariableNode extends IdentifierNode {
     }
   }
 
+  createCode() { return new Code.OpVarableLocal(this.id_name); }
+
   toTeX(context) { return this.getTexName(); }
 }
 regAST(VariableNode);
