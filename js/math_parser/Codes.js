@@ -327,7 +327,7 @@ class AssignCodeOpValue extends BinCodeOpValue {
 
     static fromJSON(data) { return BinCodeOpValue.create(AssignCodeOpValue, data); }    
 }
-regCode(AddCodeOpValue);     
+regCode(AssignCodeOpValue);     
 
 //#endrigion ASSIGN
 
