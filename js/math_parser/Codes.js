@@ -18,7 +18,8 @@ export class Code {
     constructor() {
     }
 
-    error(context, msg, loc) {
+    error(context, msg) {
+        cons loc = context.evaluate_loc;
         context.error(msg, loc ?? this.loc, "Runtime");
     }
 
@@ -47,6 +48,16 @@ export class Code {
 
 function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
+}
+
+export class LocationCode extends Code {
+    constructor(loc) {
+        this.loc = loc;
+    }
+
+    internal_evaluate(context) {
+        context.evaluate_loc = loc;
+    }
 }
 
 export class ErrorCode extends Code {
