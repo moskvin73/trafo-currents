@@ -559,7 +559,15 @@ export class MatrixNode extends MathNode {
   }
 
   createCode() {
-    
+    let ret_code = []; 
+    for (let i = this.#rows.length - 1; i >= 0; i--) {
+      const row = this.#rows[i];
+      for (let j = row.length - 1; j >= 0; j--) {
+        const node = row[j];
+        ret_code = [...ret_code, ...node.createCode()];
+      }
+    }
+    return ret_code;
   }
   /**
    * Сбор математических выражений (интеграция в вашу систему обхода)
