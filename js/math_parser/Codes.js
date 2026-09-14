@@ -570,7 +570,7 @@ function isNumberType(obj) {
 }
 
 //#region INDEXING
-export class IndexRow extends Code {
+export class IndexRowCode extends Code {
     constructor() {
         super();
     }
@@ -611,7 +611,7 @@ export class IndexRow extends Code {
     }
 }
 
-export class AssignIndexRow extends Code {
+export class AssignIndexRowCode extends Code {
     constructor() {
         super();
     }
@@ -625,7 +625,7 @@ export class AssignIndexRow extends Code {
     }
 }
 
-export class IndexMatrix extends Code {
+export class IndexMatrixCode extends Code {
     constructor() {
         super();
     }
@@ -658,7 +658,7 @@ export class IndexMatrix extends Code {
     }
 }
 
-export class AssignIndexMatrix extends Code {
+export class AssignIndexMatrixCode extends Code {
     constructor() {
         super();
     }

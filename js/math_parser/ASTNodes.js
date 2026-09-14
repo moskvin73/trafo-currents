@@ -1834,9 +1834,9 @@ export class IndexNode extends RefNode {
     const rowExpr_code = Code.operandImplementСode(this.#rowExpr.createCode());
     if (this.#colExpr) {
       const colExpr_code = Code.operandImplementСode(this.#colExpr.createCode());
-      return [...colExpr_code, ...rowExpr_code, ...target_code, new Code.IndexRow()];
+      return [...colExpr_code, ...rowExpr_code, ...target_code, new Code.IndexMatrixCode()];
     } else {
-      return [...rowExpr_code, ...target_code, new Code.IndexRow()];
+      return [...rowExpr_code, ...target_code, new Code.IndexRowCode()];
     }
   }
 
