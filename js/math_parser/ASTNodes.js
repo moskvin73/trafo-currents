@@ -573,7 +573,7 @@ export class MatrixNode extends MathNode {
         ret_code = [...ret_code, node.createLocationCode(), ...Code.operandImplementСode(node.createCode())];
       }
     }
-    const rowCount = this.#length;
+    const rowCount = this.#rows.length;
     const colCount = rows.length > 0 ? rows[0].length : 0;
     ret_code = [...ret_code, new Code.MatrixCode(rowCount, colCount)];
     return ret_code;
