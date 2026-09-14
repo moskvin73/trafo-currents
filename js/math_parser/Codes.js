@@ -346,7 +346,7 @@ class AssignCodeValueValue extends Code {
         );
      }    
 }
-regCode(AssignCodeOpValue);
+regCode(AssignCodeValueValue);
 
 class AssignCodeValueOp extends Code {
     constructor(let_value) {
@@ -367,15 +367,15 @@ class AssignCodeValueOp extends Code {
         };
     }
    
-    static get dataTypeName() { return "AssignCodeValueValue"; }
+    static get dataTypeName() { return "AssignCodeValueOp"; }
 
     static fromJSON(data) {
-        return new AssignCodeValueValue(
+        return new AssignCodeValueOp(
             restoreDataType(data.let_value),
         );
      }    
 }
-
+regCode(AssignCodeValueOp);
 //#endrigion ASSIGN
 
 //#region ADD
