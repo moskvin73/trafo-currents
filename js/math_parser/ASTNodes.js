@@ -449,6 +449,8 @@ export class NumberNode extends MathNode {
 
   internal_evaluate(context) { return this.value; }
 
+  createCode() { return new Code.OpConst(this.value); }
+
   toTeX(context) { return this.value.toRawTeX(context); }
 }
 regAST(NumberNode);
