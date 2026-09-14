@@ -323,9 +323,9 @@ class AssignCodeOpValue extends BinCodeOpValue {
     
     operator(l, r) { return l.add(r) }
   
-    static get dataTypeName() { return "AddCodeOpValue"; }
+    static get dataTypeName() { return "AssignCodeOpValue"; }
 
-    static fromJSON(data) { return BinCodeOpValue.create(AddCodeOpValue, data); }    
+    static fromJSON(data) { return BinCodeOpValue.create(AssignCodeOpValue, data); }    
 }
 regCode(AddCodeOpValue);     
 
