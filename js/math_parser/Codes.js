@@ -614,7 +614,7 @@ export class IndexMatrix extends Code {
 
         const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
         if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
-        throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
+            throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
         }
         
         if (!isNumberType(rNum) || !isNumberType(cNum)) {
