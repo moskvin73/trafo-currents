@@ -111,7 +111,7 @@ regCode(IF_Code);
 
 //#region CONST_VAR 
 export class OpValue {
-    getValue() { throw new Error("[Code]: Метод value() не реализован."); }
+    getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 }
  
 export class OpConst extends OpValue {
@@ -318,14 +318,33 @@ class BinCodeOpOp extends BaseBinCode {
 //#rigion ASSIGN
 class AssignCodeValueValue extends Code {
     constructor(let_value, value) {
-        super(value);
+        super();
+        this.let_value = let_value;
+        this.value = value;
     }
     
-    operator(l, r) { return l.add(r) }
+    internal_evaluate(context) {
+        const sym = this.let_value.getSymbol(context);
+        const value = this.value.getValue(context);
+        stack.push(sym.value = value);
+    }
   
-    static get dataTypeName() { return "AssignCodeOpValue"; }
+     toJSON() {
+        return {
+        ...super.toJSON(),
+        let_value: this.let_value,
+        value: this.value
+        };
+    }
+   
+    static get dataTypeName() { return "AssignCodeValueValue"; }
 
-    static fromJSON(data) { return BinCodeOpValue.create(AssignCodeOpValue, data); }    
+    static fromJSON(data) {
+        return new AssignCodeValueValue(
+            restoreDataType(data.let_value),
+            restoreDataType(data.value)
+        );
+     }    
 }
 regCode(AssignCodeOpValue);     
 
