@@ -8,7 +8,7 @@ import { dispatcher } from './SemanticDispatcher.js';
 import { SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 
-class EvaluateError extends Error {
+export class EvaluateError extends Error {
   constructor(message) {
     super(message);
     this.name = "EvaluateError";
@@ -27,9 +27,12 @@ export class Code {
         }
         catch(err)
         {
-            cons loc = context.evaluate_loc;
             const msg = err.toString();
-            context.error(msg, loc ?? this.loc, "Runtime");
+            cons loc = context.evaluate_loc;
+            if (loc) {
+                context.error(msg, loc ?? this.loc, "Runtime");
+            }
+            throw EvaluateError(msg);
         }
     }
  
