@@ -15,9 +15,7 @@ class EvaluateError extends Error {
 }
 
 export class Code {
-    constructor(loc, astNode = null) {
-        this.astNode = astNode;
-        this.loc = loc;
+    constructor() {
     }
 
     error(context, msg, loc) {
@@ -43,8 +41,6 @@ export class Code {
   toJSON() {
     return {
       dataType: this.constructor.dataTypeName,
-      loc: this.loc, 
-      astNode: this.astNode
     };
   }
 }
