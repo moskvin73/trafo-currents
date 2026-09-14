@@ -119,6 +119,53 @@ export class PushCodeConst extends Code {
     }
 }
 
+export class PushCodeVarbleLocal extends Code {
+    constructor(id_name) {
+        this.id_name = id_name;
+    }
+
+    internal_evaluate(context) {
+        sym = context.scope_context.getSymbolById(this.id_name);
+        if (sym === null) {
+            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+        }
+        else if (sym.type === SYM_UNDEFINED) {
+            this.error(context, `Переменная "${this.name}" не инициализирована.`);
+            //return this.errorValue();
+        }
+        else if (sym.type !== SYM_VARIABLE) {
+            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+            //return this.errorValue();
+        }
+        else {
+            context.evaluate_stack.push(sym.value);
+        }
+    }
+}
+
+export class PushCodeVarbleGlobal extends Code {
+    constructor(sym) {
+        if (sym === null) {
+            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
+        }
+        this.sym = sym;
+    }
+
+    internal_evaluate(context) {
+        if (sym.type === SYM_UNDEFINED) {
+            this.error(context, `Переменная "${this.name}" не инициализирована.`);
+            //return this.errorValue();
+        }
+        else if (sym.type !== SYM_VARIABLE) {
+            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
+            //return this.errorValue();
+        }
+        else {
+            context.evaluate_stack.push(sym.value);
+        }
+    }
+}
+
 class MatrixCode extends Code {
     constructor(cont_row, count_col) {
         super();
