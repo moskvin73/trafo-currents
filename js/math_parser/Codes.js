@@ -66,8 +66,12 @@ export class ReportCode extends Code {
     }
 
     internal_evaluate(context) {
-        const report = context.report;
-        
+        const stack = context.evaluate_stack;
+        const len = stack.length;
+        if (len > 0) {
+            const report = context.report;
+            const rn = new reportRecord(ast_op.node, value);
+        }
     }
 }
 

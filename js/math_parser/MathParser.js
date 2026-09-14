@@ -196,6 +196,13 @@ class ContextEvaluation
     this.index_code = index;
   }*/
 
+  createReportRecord(node, value) {
+    if (value) {
+      const rn = new reportRecord(node, value);
+      this.report.push(rn);
+    }
+  }
+
   async call_code(code, index = 0) {
     const old_code = this.code;
     this.code = code;
