@@ -660,9 +660,9 @@ export class AssignIndexMatrix extends Code {
     }
 
     evaluate_command(context, matrixObj, rowIndex, colIndex) {
-        const op = context.evaluate_stack.pop();
+        const let_value = context.evaluate_stack.pop();
         const elm = matrixObj.get(0, 0);
-        const { l } = dispatcher.promoteTypes(op, elm);
+        const { l } = dispatcher.promoteTypes(let_value, elm);
         matrixObj.set(rowIndex, colIndex, l);
         context.evaluate_stack.push(l);
     }
