@@ -315,6 +315,10 @@ class BinCodeOpOp extends BaseBinCode {
 }    
 //#endregion BaseBinCode
 
+//#rigion ASSIGN
+
+//#endrigion ASSIGN
+
 //#region ADD
 class AddCodeValueValue extends BinCodeValueValue {
     constructor(l_value, r_value) {
