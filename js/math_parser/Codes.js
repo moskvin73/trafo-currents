@@ -317,7 +317,7 @@ class BinCodeOpOp extends BaseBinCode {
 
 //#rigion ASSIGN
 class AssignCodeOpValue extends BinCodeOpValue {
-    constructor(value) {
+    constructor(id_name, value) {
         super(value);
     }
     
