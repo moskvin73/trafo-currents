@@ -548,6 +548,22 @@ class AssignCodeValueOp extends Code {
 regCode(AssignCodeValueOp);
 //#endrigion ASSIGN
 
+function isNumberType(obj) {
+    if (!obj) return false;
+    
+    // Проверяем примитив number
+    if (typeof obj === 'number') {
+        return Number.isFinite(obj); // Проверит и на NaN, и на Infinity
+    }
+    
+    // Проверяем кастомный класс RealNumber
+    if (obj instanceof RealNumber) {
+        return Number.isFinite(obj.value);
+    }
+    
+    return false;
+}
+
 //#region INDEXING
 export class IndexRow extends Code {
     constructor() {
@@ -572,9 +588,9 @@ export class IndexRow extends Code {
         if (matrixObj.isVector) {
             // Если это вектор-строка, то индекс означает столбец, если столбец — то строку
             if (matrixObj.rowCount === 1) {
-            return matrixObj.get(0, rowIndex);
+                return matrixObj.get(0, rowIndex);
             } else {
-            return matrixObj.get(rowIndex, 0);
+                return matrixObj.get(rowIndex, 0);
             }
         } else {
             throw new RangeError("[Runtime Error]: Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
@@ -594,14 +610,18 @@ export class IndexMatrix extends Code {
 
         const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
         if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
-        throw new TypeError("[Runtime Error]: Операция индексации [,] применима только к матрицам и векторам.");
+        throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
+        }
+        
+        if (!isNumberType(rNum) || !isNumberType(cNum)) {
+            throw new TypeError("ндексы матрицы должны иметь тип Number или RealNumber.");
         }
 
         // Извлекаем примитивные целые числа. 
         // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
         // а внутри JS массивы с 0 (0-indexed). Вычитаем 1 для удобства человека!
         const rowIndex = Math.floor(rNum.value ?? Number(rNum)) - 1;
-        colIndex = Math.floor(cNum.value ?? Number(cNum)) - 1;
+        const colIndex = Math.floor(cNum.value ?? Number(cNum)) - 1;
 
         context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
