@@ -109,6 +109,26 @@ export class IF_Code extends Code {
 }
 regCode(IF_Code);
 
+class MatrixCode extends Code {
+    constructor(cont_row, count_col) {
+        super();
+        this.cont_row = cont_row;
+        this.count_col = count_col;
+    }
+
+    internal_evaluate(context) {
+        const evaluatedElements = []; 
+        for (let i = 0; i < this.cont_row; i++) {
+            const row = []; 
+            for (let j = 0; j < this.count_col; j++) {
+                const value = stack.pop();
+                row.push(value);
+            }
+            evaluatedElements.push(row); 
+        }
+    }
+}
+
 //#region CONST_VAR 
 export class OpValue {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
