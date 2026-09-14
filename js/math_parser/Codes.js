@@ -147,6 +147,30 @@ export class Goto_Code extends Code {
     }
 }
 
+export class DefineVarableCodeNode extends {
+    constructor(funcId, statements, paramsCount, localsCount, loc) {
+        super();
+    }
+
+    internal_evaluate(context) {
+        try {
+            const scopeCtrl = context.scope_context;
+
+            // Находим живой кадр, в котором мы СЕЙЧАС находимся (кадр родителя)
+            const currentLiveFrame = scopeCtrl.currentScope;
+
+            // Создаем замыкание, передавая ему жесткий указатель на этот кадр
+            const closure = new VarableCode(this.statements, this.paramsCount, this.localsCount, currentLiveFrame);
+
+            // Записываем это замыкание в символ функции
+            const funcSymbol = scopeCtrl.getSymbolById(this.funcId);
+            funcSymbol.value = closure;
+        } catch(err) {
+            this.error(context, err);
+        }
+    }
+}
+
 export class PushCodeConst extends Code {
     constructor(value) {
         this.value = value;
