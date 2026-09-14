@@ -69,8 +69,7 @@ export class ReportCode extends Code {
         const stack = context.evaluate_stack;
         const len = stack.length;
         if (len > 0) {
-            const report = context.report;
-            const rn = new reportRecord(ast_op.node, value);
+            context.createReportRecord(this.astNode, stack[len - 1]);
         }
     }
 }
