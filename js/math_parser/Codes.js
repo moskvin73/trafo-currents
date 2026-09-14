@@ -40,7 +40,7 @@ export class Code {
 
     toJSON() {
         return {
-        dataType: this.constructor.dataTypeName,
+            dataType: this.constructor.dataTypeName,
         };
     }
 }
