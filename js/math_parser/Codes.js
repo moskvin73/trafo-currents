@@ -154,11 +154,9 @@ export class PushCodeVarbleGlobal extends Code {
     internal_evaluate(context) {
         if (this.symbol === SYM_UNDEFINED) {
             this.error(context, `Переменная "${this.name}" не инициализирована.`);
-            //return this.errorValue();
         }
         else if (this.symbol !== SYM_VARIABLE) {
             this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-            //return this.errorValue();
         }
         else {
             context.evaluate_stack.push(sym.value);
