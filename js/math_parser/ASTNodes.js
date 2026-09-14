@@ -2182,6 +2182,7 @@ export class ConstantNode extends MathNode {
     }
     else return Code.OpConst(config.instance);    
   }
+  
   toTeX(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     return config ? config.tex : `\\text{unknown}`;
