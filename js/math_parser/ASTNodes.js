@@ -1700,6 +1700,12 @@ export class AssignNode extends IdentifierNode {
     }
   }
 
+  createCode() {
+    const l_op = new Code.OpVarableLocal(this.id_name);
+    const r_op = this.expression.createCode();
+    return [this.createLocationCode(), ...Code.createBinCode(Code.OperatorBinType.ASSIGN, l_op, r_op)];
+   }
+
   *getChildren() {
     yield this.expression;
   }
