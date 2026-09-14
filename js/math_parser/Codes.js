@@ -29,7 +29,7 @@ export class Code {
         catch(err)
         {
             const msg = err.toString();
-            cons loc = context.evaluate_loc;
+            const loc = context.evaluate_loc;
             if (loc) {
                 context.error(msg, loc ?? this.loc, "Runtime");
                 throw new EvaluateError(msg, true);
@@ -151,7 +151,7 @@ export class Goto_Code extends Code {
     }
 }
 
-export class DefineVarableCodeNode extends {
+export class DefineVarableCodeNode extends Code {
     constructor(funcId, statements, paramsCount, localsCount, loc) {
         super();
     }
@@ -431,6 +431,7 @@ class BinCodeOpValue extends BaseBinCode {
      return new ClassRef(
       restoreDataType(data.value)
     );   
+    }
 }
 
 class BinCodeValueOp extends BaseBinCode {
@@ -446,17 +447,18 @@ class BinCodeValueOp extends BaseBinCode {
         stack.push(operator(l, r));
     }    
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      value: this.value,
-    };
-  }
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        value: this.value,
+        };
+    }
 
-  static create(ClassRef, data) {
-     return new ClassRef(
-      restoreDataType(data.value)
-    );   
+    static create(ClassRef, data) {
+        return new ClassRef(
+        restoreDataType(data.value)
+        );   
+    }
 }    
 
 class BinCodeOpOp extends BaseBinCode {
