@@ -597,7 +597,7 @@ export const OperatorBinType {
     POW:        10,
 };
 
-export const OperandType {
+const OperandType {
     CONST       0,
     VARABLE     1,
     EVALUATE    2,
@@ -665,12 +665,18 @@ const SubstitutionTableBin = new Map([
 
 ]);
 
-export function getOperandType(op) {
+function getOperandType(op) {
     if (op instanceof OpConst) return OperandType.CONST;
     else if (op instanceof OpVarable) return OperandType.VARABLE;
     else if (Array.isArray(op) && op.every(item => item instanceof Code) return OperandType.EVALUATES;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
 }
+
+export operandImplementСode(op) {
+    if (op instanceof OpConst || op instanceof OpVarable) return [return op.createCodePush()];
+    else if (Array.isArray(op) && op.every(item => item instanceof Code) return op;
+    throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
+} 
 
 export function createBinCode(operator, l_op, r_o) {
     const lop_type = getOperandType(l_op);
