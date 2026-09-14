@@ -579,7 +579,7 @@ export class IndexRow extends Code {
         throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
         }
 
-        if (!isNumberType(rNum)) 
+        if (!isNumberType(rNum)) {
             throw new TypeError("Идексы матрицы должны иметь тип real.");      
         }
 
