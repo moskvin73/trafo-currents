@@ -1830,9 +1830,9 @@ export class IndexNode extends RefNode {
     const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode());
     if (this.colExpr) {
       const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
-      return [...colExpr_code, ...rowExpr_code, ...target_code, new Code.IndexMatrixCode()];
+      return [...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexMatrixCode()];
     } else {
-      return [...rowExpr_code, ...target_code, new Code.IndexRowCode()];
+      return [...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexRowCode()];
     }
   }
 
@@ -1884,9 +1884,9 @@ export class AssignIndexNode extends IndexNode {
     const let_value_code = Code.operandImplementСode(this.expression.createCode());
     if (this.colExpr) {
       const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
-      return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, new Code.AssignIndexMatrixCode()];
+      return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexMatrixCode()];
     } else {
-      return [...let_value_code, ...rowExpr_code, ...target_code, new Code.AssignIndexRowCode()];
+      return [...let_value_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexRowCode()];
     }
   }
 
@@ -2182,7 +2182,7 @@ export class ConstantNode extends MathNode {
     }
     else return Code.OpConst(config.instance);    
   }
-  
+
   toTeX(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     return config ? config.tex : `\\text{unknown}`;
