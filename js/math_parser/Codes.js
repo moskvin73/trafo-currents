@@ -614,7 +614,7 @@ export class IndexMatrix extends Code {
         }
         
         if (!isNumberType(rNum) || !isNumberType(cNum)) {
-            throw new TypeError("ндексы матрицы должны иметь тип Number или RealNumber.");
+            throw new TypeError("ндексы матрицы должны иметь тип real.");
         }
 
         // Извлекаем примитивные целые числа. 
