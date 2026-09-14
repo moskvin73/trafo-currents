@@ -92,6 +92,8 @@ export default class ASTNode {
     throw new Error("[ASTNode]: Метод createCode() не реализован.");
   }
 
+  createLocationCode() { return Code.LocationCode(this.loc); }
+
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX(context) {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
@@ -560,13 +562,13 @@ export class MatrixNode extends MathNode {
   }
 
   createCode() {
-    let ret_code = []; 
+    let ret_code = [this.createLocationCode()]; 
     for (let i = this.#rows.length - 1; i >= 0; i--) {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
         const op = node.createCode();
-        ret_code = [...ret_code, ...Code.operandImplementСode(node.createCode())];
+        ret_code = [...ret_code, node.createLocationCode(), ...Code.operandImplementСode(node.createCode())];
       }
     }
     const rowCount = this.#length;
