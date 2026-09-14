@@ -18,10 +18,7 @@ class EvaluateError extends Error {
 export class Code {
     constructor() {}
 
-    error(context, msg) {
-        cons loc = context.evaluate_loc;
-        context.error(msg, loc ?? this.loc, "Runtime");
-    }
+    error(context, msg) { throw new Error(msg); }
 
     evaluate(context) {
         try
@@ -30,7 +27,9 @@ export class Code {
         }
         catch(err)
         {
-            this.error(context, err.toString());
+            cons loc = context.evaluate_loc;
+            const msg = err.toString();
+            context.error(msg, loc ?? this.loc, "Runtime");
         }
     }
  
