@@ -164,7 +164,7 @@ export class PushCodeVarbleGlobal extends Code {
     }
 }
 
-class MatrixCode extends Code {
+export class MatrixCode extends Code {
     constructor(cont_row, count_col) {
         super();
         this.cont_row = cont_row;
