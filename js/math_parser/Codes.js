@@ -16,8 +16,7 @@ class EvaluateError extends Error {
 }
 
 export class Code {
-    constructor() {
-    }
+    constructor() {}
 
     error(context, msg) {
         cons loc = context.evaluate_loc;
