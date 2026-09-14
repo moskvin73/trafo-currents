@@ -1829,6 +1829,15 @@ export class IndexNode extends RefNode {
     return matrixObj.get(rowIndex, colIndex);
   }
 
+  createCode() {
+    const target_code = Code.operandImplementСode(this.#target.createCode());
+    const rowExpr_code = Code.operandImplementСode(this.#rowExpr.createCode());
+    let colExpr_code = null;
+    if (this.#colExpr) {
+      colExpr_code = Code.operandImplementСode(this.#colExpr.createCode());
+    }
+  }
+
   collectMathExpressions(list) {
     list.push(this);
     this.#target.collectMathExpressions(list);
