@@ -544,11 +544,11 @@ const SubstitutionTableBin = new Map([
         ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VALUE),
+        getBinKey(OperationCode.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
         ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
     ],
     [
-        getBinKey(OperationCode.ADD, OperandsType.VALUE, OperandsType.EVALUATE),
+        getBinKey(OperationCode.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
         ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
