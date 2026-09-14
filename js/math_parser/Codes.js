@@ -579,8 +579,8 @@ export class IndexRow extends Code {
         throw new TypeError("Операция индексации [,] применима только к матрицам и векторам.");
         }
 
-        if (!isNumberType(rNum)) {
-            throw new TypeError("ндексы матрицы должны иметь тип real.");      
+        if (!isNumberType(rNum)) 
+            throw new TypeError("Идексы матрицы должны иметь тип real.");      
         }
 
         // Извлекаем примитивные целые числа. 
@@ -618,7 +618,7 @@ export class IndexMatrix extends Code {
         }
         
         if (!isNumberType(rNum) || !isNumberType(cNum)) {
-            throw new TypeError("ндексы матрицы должны иметь тип real.");
+            throw new TypeError("Идексы матрицы должны иметь тип real.");
         }
 
         // Извлекаем примитивные целые числа. 
