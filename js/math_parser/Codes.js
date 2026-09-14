@@ -346,7 +346,21 @@ class AssignCodeValueValue extends Code {
         );
      }    
 }
-regCode(AssignCodeOpValue);     
+regCode(AssignCodeOpValue);
+
+class AssignCodeValueOp extends Code {
+    constructor(let_value) {
+        super();
+        this.let_value = let_value;
+    }
+    
+    internal_evaluate(context) {
+        const sym = this.let_value.getSymbol(context);
+        const value = this.value.getValue(context);
+        stack.push(sym.value = value);
+    }
+
+}
 
 //#endrigion ASSIGN
 
