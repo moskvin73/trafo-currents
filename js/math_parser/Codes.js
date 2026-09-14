@@ -164,50 +164,6 @@ export class PushCodeVarbleGlobal extends Code {
     }
 }
 
-export class MatrixCode extends Code {
-    constructor(cont_row, count_col) {
-        super();
-        this.cont_row = cont_row;
-        this.count_col = count_col;
-    }
-
-    internal_evaluate(context) {
-        const evaluatedElements = []; 
-        for (let i = 0; i < this.cont_row; i++) {
-            const row = []; 
-            for (let j = 0; j < this.count_col; j++) {
-                const value = context.evaluate_stack.pop();
-                row.push(value);
-            }
-            evaluatedElements.push(row); 
-        }
-
-        // Сначала найдём базовый "эталонный" тип, к которому нужно привести всю матрицу.
-        // Мы просто пройдёмся по всем элементам и будем последовательно вызывать promoteTypes.
-        // За стартовую точку возьмём самый первый элемент матрицы [0][0].
-        let targetSample = evaluatedElements[0][0];
-
-        for (const row of evaluatedElements) {
-            for (const cell of row) {
-                // Вызываем ваш диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
-                // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
-                const { l } = dispatcher.promoteTypes(targetSample, cell);
-                targetSample = l; // Запоминаем текущий самый сильный объект-эталон
-            }
-        }
-
-        // Теперь, когда targetSample гарантированно имеет самый высокий ранг в этой матрице,
-        // приводим ВСЕ элементы к его типу через promoteTypes
-        const finalElements = evaluatedElements.map(row =>
-            row.map(cell => {
-                const { r } = dispatcher.promoteTypes(targetSample, cell);
-                return r; // r — это наш cell, подтянутый диспетчером до уровня targetSample!
-            })
-        );
-        context.evaluate_stack.push(new Matrix(finalElements));
-    }
-}
-
 //#region CONST_VAR 
 export class OpValue {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
@@ -306,6 +262,51 @@ export class OpVarableGlobal extends OpVarable {
     createCodePush() { new PushCodeVarbleGlobal(this.symbol); }
 }
 //#endregion CONST_VAR 
+
+export class MatrixCode extends Code {
+    constructor(cont_row, count_col) {
+        super();
+        this.cont_row = cont_row;
+        this.count_col = count_col;
+    }
+
+    internal_evaluate(context) {
+        const evaluatedElements = []; 
+        for (let i = 0; i < this.cont_row; i++) {
+            const row = []; 
+            for (let j = 0; j < this.count_col; j++) {
+                const value = context.evaluate_stack.pop();
+                row.push(value);
+            }
+            evaluatedElements.push(row); 
+        }
+
+        // Сначала найдём базовый "эталонный" тип, к которому нужно привести всю матрицу.
+        // Мы просто пройдёмся по всем элементам и будем последовательно вызывать promoteTypes.
+        // За стартовую точку возьмём самый первый элемент матрицы [0][0].
+        let targetSample = evaluatedElements[0][0];
+
+        for (const row of evaluatedElements) {
+            for (const cell of row) {
+                // Вызываем ваш диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
+                // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
+                const { l } = dispatcher.promoteTypes(targetSample, cell);
+                targetSample = l; // Запоминаем текущий самый сильный объект-эталон
+            }
+        }
+
+        // Теперь, когда targetSample гарантированно имеет самый высокий ранг в этой матрице,
+        // приводим ВСЕ элементы к его типу через promoteTypes
+        const finalElements = evaluatedElements.map(row =>
+            row.map(cell => {
+                const { r } = dispatcher.promoteTypes(targetSample, cell);
+                return r; // r — это наш cell, подтянутый диспетчером до уровня targetSample!
+            })
+        );
+        context.evaluate_stack.push(new Matrix(finalElements));
+    }
+}
+
 
 //#region BaseBinCode
 class BaseBinCode extends Code {
