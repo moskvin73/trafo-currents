@@ -548,6 +548,41 @@ class AssignCodeValueOp extends Code {
 regCode(AssignCodeValueOp);
 //#endrigion ASSIGN
 
+//#region INDEXING
+export class IndexRow extends Code {
+    constructor() {
+        super();
+    }
+
+    internal_evaluate(context) {
+        const matrixObj = context.evaluate_stack.pop();
+        const rNum = context.evaluate_stack.pop();
+
+        const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+        if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
+        throw new TypeError("[Runtime Error]: Операция индексации [,] применима только к матрицам и векторам.");
+        }
+
+        // Извлекаем примитивные целые числа. 
+        // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
+        // а внутри JS массивы с 0 (0-indexed). Вычитаем 1 для удобства человека!
+        const rowIndex = Math.floor(rNum.value ?? Number(rNum)) - 1;
+        
+        // проверяем, что это вектор
+        if (matrixObj.isVector) {
+            // Если это вектор-строка, то индекс означает столбец, если столбец — то строку
+            if (matrixObj.rowCount === 1) {
+            return matrixObj.get(0, rowIndex);
+            } else {
+            return matrixObj.get(rowIndex, 0);
+            }
+        } else {
+            throw new RangeError("[Runtime Error]: Для двумерной матрицы необходимо указать два индекса [строка, столбец].");
+        }
+    }
+}
+//#endregion INDEXING
+
 //#region ADD
 class AddCodeValueValue extends BinCodeValueValue {
     constructor(l_value, r_value) {
