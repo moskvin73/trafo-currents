@@ -353,10 +353,10 @@ class AssignCodeValueOp extends Code {
         super();
         this.let_value = let_value;
     }
-    
+
     internal_evaluate(context) {
         const sym = this.let_value.getSymbol(context);
-        const value = this.value.getValue(context);
+        const value = stack.pop();
         stack.push(sym.value = value);
     }
 
