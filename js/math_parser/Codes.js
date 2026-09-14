@@ -115,8 +115,8 @@ export class OpValue {
 }
  
 export class OpConst extends Code {
-    constructor(value, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(value) {
+        super();
         this.value = value;
     }
 
@@ -134,8 +134,6 @@ export class OpConst extends Code {
   static fromJSON(data) {
     return new OpConst(
       restoreDataType(data.value),
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
     );
   }
 }
