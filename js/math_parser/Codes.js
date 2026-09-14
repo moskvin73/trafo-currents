@@ -189,6 +189,8 @@ class MatrixCode extends Code {
 //#region CONST_VAR 
 export class OpValue {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
+
+    createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
 }
  
 export class OpConst extends OpValue {
