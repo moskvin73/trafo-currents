@@ -80,8 +80,8 @@ export class SymbolTableContext {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
         },
         get description() { return description; },
-        get context { return instance; },
-        get name { return name; },
+        get context() { return instance; },
+        get name() { return name; }
       };
 
       this.fixedHash[name] = i; // Связываем имя с числовым ID
