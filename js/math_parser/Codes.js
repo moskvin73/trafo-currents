@@ -612,8 +612,9 @@ export class AssignIndexRow extends Code {
     }
 
     evaluate_command(context, matrixObj, rowIndex, colIndex) {
+        const op = context.evaluate_stack.pop();
         const elm = matrixObj.get(0, 0);
-        const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
+        const { l } = dispatcher.promoteTypes(op, elm);
         matrixObj.set(rowIndex, colIndex, l);
         context.evaluate_stack.push(l);
     }
@@ -658,8 +659,9 @@ export class AssignIndexMatrix extends Code {
     }
 
     evaluate_command(context, matrixObj, rowIndex, colIndex) {
+        const op = context.evaluate_stack.pop();
         const elm = matrixObj.get(0, 0);
-        const { l } = dispatcher.promoteTypes(this.expression.internal_evaluate(context), elm);
+        const { l } = dispatcher.promoteTypes(op, elm);
         matrixObj.set(rowIndex, colIndex, l);
         context.evaluate_stack.push(l);
     }
