@@ -581,6 +581,31 @@ export class IndexRow extends Code {
         }
     }
 }
+
+export class IndexMatrix extends Code {
+    constructor() {
+        super();
+    }
+
+    internal_evaluate(context) {
+        const matrixObj = context.evaluate_stack.pop();
+        const rNum = context.evaluate_stack.pop();
+        const cNum = context.evaluate_stack.pop();
+
+        const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+        if (!matrixObj || matrixObj.constructor.typeId !== MATRIX_SYMBOL) {
+        throw new TypeError("[Runtime Error]: Операция индексации [,] применима только к матрицам и векторам.");
+        }
+
+        // Извлекаем примитивные целые числа. 
+        // ВНИМАНИЕ: Пользователи калькулятора обычно считают с 1 (1-indexed), 
+        // а внутри JS массивы с 0 (0-indexed). Вычитаем 1 для удобства человека!
+        const rowIndex = Math.floor(rNum.value ?? Number(rNum)) - 1;
+        colIndex = Math.floor(cNum.value ?? Number(cNum)) - 1;
+
+        context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
+    }
+}
 //#endregion INDEXING
 
 //#region ADD
