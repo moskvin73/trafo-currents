@@ -202,16 +202,16 @@ export class OpVarableGlobal extends OpVarable {
 
 //#region BaseBinCode
 class BaseBinCode extends Code {
-    constructor(loc, astNode = null) {
-        super(loc, astNode);
+    constructor() {
+        super();
     }
 
     operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
 }
 
 class BinCodeValueValue extends BaseBinCode {
-    constructor(l_value, r_value, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(l_value, r_value) {
+        super();
         this.l_value = l_value;
         this.r_value = r_value;
     }
@@ -232,16 +232,14 @@ class BinCodeValueValue extends BaseBinCode {
   static create(ClassRef, data) {
      return new ClassRef(
       restoreDataType(data.l_value),
-      restoreDataType(data.r_value),
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
+      restoreDataType(data.r_value)
     );   
   }
 }
 
 class BinCodeOpValue extends BaseBinCode {
-    constructor(value, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(value) {
+        super();
         this.value = value;
     }
 
@@ -261,15 +259,13 @@ class BinCodeOpValue extends BaseBinCode {
 
   static create(ClassRef, data) {
      return new ClassRef(
-      restoreDataType(data.value),
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
+      restoreDataType(data.value)
     );   
 }
 
 class BinCodeValueOp extends BaseBinCode {
-    constructor(value, loc, astNode = null) {
-        super(loc, astNode);
+    constructor(value) {
+        super();
         this.value = value;
     }
 
@@ -289,14 +285,12 @@ class BinCodeValueOp extends BaseBinCode {
 
   static create(ClassRef, data) {
      return new ClassRef(
-      restoreDataType(data.value),
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
+      restoreDataType(data.value)
     );   
 }    
 
 class BinCodeOpOp extends BaseBinCode {
-    constructor(loc, astNode = null) {
+    constructor() {
         super(loc, astNode);
     }
 
@@ -308,17 +302,16 @@ class BinCodeOpOp extends BaseBinCode {
         stack.push(operator(l, r));
     }
     
-  toJSON() {
-    return {
-      ...super.toJSON(),
-    };
-  }
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        };
+    }
 
-  static create(ClassRef, data) {
-     return new ClassRef(
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
-    );       
+    static create(ClassRef, data) {
+        return new ClassRef(
+        );       
+    }
 }    
 //#endregion BaseBinCode
 
