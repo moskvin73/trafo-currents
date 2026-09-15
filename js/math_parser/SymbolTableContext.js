@@ -409,6 +409,7 @@ export class SymbolTableContext {
     if (!jsonString) return;
 
     const data = JSON.parse(jsonString);
+    data.context = this;
     
     // 1. Сбрасываем текущее глобальное состояние
     this.varNames = data.varNames;
