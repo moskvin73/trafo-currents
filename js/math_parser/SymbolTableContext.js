@@ -159,7 +159,7 @@ export class SymbolTableContext {
 
 
   #initVarable(name = null) {
-      return this.#create_sybol(this.#defaultState(), this, name);
+      return SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), this, name);
       /*const state = { type: SYM_UNDEFINED, value: 0 };
       const instance = this;
       const listenersUpdateVarable = new Set();
@@ -478,7 +478,8 @@ export class SymbolTableContext {
         value: restoredValue 
       };
 
-      const listenersUpdateVarable = new Set();
+      SymbolTableContext.#create_sybol(state, context, savedSymbol.name);
+      /*const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       const reactiveSymbol = {
         get type() { return state.type; },
@@ -503,7 +504,7 @@ export class SymbolTableContext {
             name: this.name
           };
         }        
-      };
+      };*/
 
       // 3. Заполняем таблицы контекста
       this.varSymbols.push(reactiveSymbol);
@@ -552,7 +553,7 @@ export class SymbolTableContext {
   }
 
   dataFromJSON(data) {
-    const listenersUpdateVarable = new Set();
+    /*const listenersUpdateVarable = new Set();
     const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
     const create_sybol = (state, insance, name) => {
       return {
@@ -579,11 +580,14 @@ export class SymbolTableContext {
           };
         }        
       };
-    };
+    };*/
     if (data.present_in_contex) {
       if (!this.loading) {
-          const state = { type: SYM_UNDEFINED, value: 0 };
-          const ref_data = { proxyPlaceholder: create_sybol(state, null, null),  id: data.id_name, callback: null }; 
+          //const state = { type: SYM_UNDEFINED, value: 0 };
+          const ref_data = { 
+            proxyPlaceholder: SymbolTableContext.create_sybol(SymbolTableContext.#defaultState(), null, null),  
+            id: data.id_name, 
+            callback: null }; 
           this.#resolveReferencesLlist.push(ref_data);
           return ref_data;
       } else        
@@ -593,7 +597,7 @@ export class SymbolTableContext {
         type: data.type, 
         value: restoreDataType(data.value)
       };
-      return create_sybol(state, null, data.name);
+      return SymbolTableContext.create_sybol(state, null, data.name);
     }
   }
 }
