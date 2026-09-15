@@ -412,7 +412,7 @@ export class SymbolTableContext {
   deserializeGlobalContext(jsonString) {
     if (!jsonString) return;
 
-    #loading = false;
+    this.#loading = false;
     const data = JSON.parse(jsonString);
     data.context = this;
     
@@ -460,7 +460,7 @@ export class SymbolTableContext {
       this.varSymbols.push(reactiveSymbol);
       this.varHash[name] = i;
     }
-    #loading = true;
+    this.#loading = true;
   }
 
   static dataToJSON(sym) {
