@@ -464,13 +464,12 @@ export class SymbolTableContext {
       this.varHash[name] = i;
     }
     this.#loading = true;
-    if (this.#resolveReferencesLlist.length > 0) {
-      for (let i = 0; i < this.#resolveReferencesLlist.length; i++) {
-        const ref_data = this.#resolveReferencesLlist[i];
-        const sym = getParseSymbolById(ref_data.id);
-        ref_data.state.value = sym.value;
-        ref_data.name = sym.name;
+    for (const action of this.#resolveReferencesLlist) {
+      const realObject = getParseSymbolById(action.id);
+      if (realObject) {
+        if (action.callback) action.callback(realObject);
       }
+      else console.error(`Не удалось найти объект с ID: ${action.id}`);
     }
   }
 
