@@ -494,8 +494,11 @@ export class SymbolTableContext {
     else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
   }
 
-  static dataFromJSON(context, data) {
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  static async dataFromJSON(context, data) {
     if (data.present_in_contex) {
+      while (!context.loading) await delay(50);
       return context.getParseSymbolById(data.id);
     } else {
       const state = { 

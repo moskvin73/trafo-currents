@@ -325,7 +325,7 @@ export class OpVarableGlobal extends OpVarable {
     static get dataTypeName() { return "OpVarableGlobal"; }
 
     static fromJSON(data) {
-        return new OpVarableGlobal(dataFromJSON(data.context, data.sym_data));
+        return new OpVarableGlobal(SymbolTableContext.dataFromJSON(data.context, data.sym_data));
     }
 }
 //#endregion CONST_VAR 
