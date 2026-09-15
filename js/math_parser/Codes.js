@@ -320,11 +320,33 @@ export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
         this.symbol = sym;
+        if (sym.name === null) throw new Error("Локальная преременная в OpVarableGlobal");
     }
 
     getSymbol(context) { return this.symbol; }
 
     createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
+
+    toJSON() {
+        // Пока просто проеряем
+        const context = this.symbol.context;
+        if (context) {
+            // Переменная сществует
+
+        }
+        return {
+        ...super.toJSON(),
+        id_name: this.id_name
+        };
+    }
+
+    static get dataTypeName() { return "OpVarableLocal"; }
+
+    static fromJSON(data) {
+        return new OpVarableLocal(
+        data.id_name,
+        );
+    }
 }
 //#endregion CONST_VAR 
 
