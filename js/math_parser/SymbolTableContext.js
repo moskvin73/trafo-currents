@@ -554,7 +554,7 @@ export class SymbolTableContext {
           this.#resolveReferencesLlist.push(ref_data);
           return ref_data;
       } else        
-        return context.getParseSymbolById(data.id);
+        return context.getParseSymbolById(data.id_name);
     } else {
       const state = { 
         type: data.type, 
