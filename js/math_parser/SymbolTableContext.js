@@ -587,7 +587,7 @@ export class SymbolTableContext {
       if (!this.loading) {
           //const state = { type: SYM_UNDEFINED, value: 0 };
           const ref_data = { 
-            proxyPlaceholder: SymbolTableContext.create_sybol(SymbolTableContext.#defaultState(), null, null),  
+            proxyPlaceholder: SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), null, null),  
             id: data.id_name, 
             callback: null }; 
           this.#resolveReferencesLlist.push(ref_data);
@@ -599,7 +599,7 @@ export class SymbolTableContext {
         type: data.type, 
         value: restoreDataType(data.value)
       };
-      return SymbolTableContext.create_sybol(state, null, data.name);
+      return SymbolTableContext.#create_sybol(state, null, data.name);
     }
   }
 }
