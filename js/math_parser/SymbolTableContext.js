@@ -420,6 +420,7 @@ export class SymbolTableContext {
     for (let i = 0; i < data.varNames.length; i++) {
       const name = data.varNames[i];
       const savedSymbol = data.varSymbols[i];
+      savedSymbol.value.context = this;
 
       // Восстанавливаем значение переменной (число 0 или сложный MathType)
       const restoredValue = restoreDataType(savedSymbol.value);
