@@ -184,9 +184,10 @@ export class PushCodeConst extends Code {
     }
 }
 
+function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
 function checkSymbol(sym) {
-    if (sym === null) throw new Error(`Символ не опредилён.`);
+    checkSymbolNull(sym);
     const name = sym.name;
     if (sym.type === SYM_UNDEFINED) {
         throw new Error(`Переменная "${name}" не инициализирована.`);
@@ -215,7 +216,7 @@ export class PushCodeVarbleLocal extends Code {
 
 export class PushCodeVarbleGlobal extends Code {
     constructor(sym) {
-        if (sym === null) throw new Error(`Символ не опредилён.`);
+        checkSymbolNull(sym);
         this.symbol = sym;
     }
 
@@ -303,7 +304,7 @@ regCode(OpVarableLocal);
 export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
-        if (sym === null) throw new Error(`Символ не опредилён.`);
+        checkSymbolNull(sym);
         this.symbol = sym;
     }
 
