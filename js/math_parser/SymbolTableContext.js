@@ -464,6 +464,9 @@ export class SymbolTableContext {
       this.varHash[name] = i;
     }
     this.#loading = true;
+    if (this.#resolveReferencesLlist.length > 0) {
+      
+    }
   }
 
   static dataToJSON(sym) {
