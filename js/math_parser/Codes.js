@@ -325,13 +325,7 @@ export class OpVarableGlobal extends OpVarable {
     static get dataTypeName() { return "OpVarableGlobal"; }
 
     static fromJSON(data) {
-        if (data.present_in_contex) {
-            const context = data.context;
-            const id = data.id;
-            const sym = context.getParseSymbolById(id);
-            return new OpVarableGlobal(sym);
-        }
-        else throw new Error("OpVarableGlobal ata.present_in_contex = false fromJSON(data)");
+        return new OpVarableGlobal(dataFromJSON(data.context, data.sym_data));
     }
 }
 //#endregion CONST_VAR 
