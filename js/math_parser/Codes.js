@@ -316,18 +316,10 @@ export class OpVarableGlobal extends OpVarable {
     createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 
     toJSON() {
-        // Пока просто проеряем
-        const context = this.symbol.context;
-        if (context) {
-            // Переменная присутсвует в контексте
-            const id = context.getIdByName(sym.name);
-            if (id === null) throw new Error("OpVarableGlobal id = null toJSON()");
-            return {
-                ...super.toJSON(),
-                present_in_contex: true,
-                id_name: id
-            };
-        } else throw new Error("OpVarableGlobal ontext = null toJSON()");
+        return {
+            ...super.toJSON(),
+            sym_data: SymbolTableContext.dataToJSON(this.symbol)
+        };
     }
 
     static get dataTypeName() { return "OpVarableGlobal"; }
