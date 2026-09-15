@@ -465,7 +465,12 @@ export class SymbolTableContext {
     }
     this.#loading = true;
     if (this.#resolveReferencesLlist.length > 0) {
-
+      for (let i = 0; i < this.#resolveReferencesLlist.length; i++) {
+        const ref_data = this.#resolveReferencesLlist[i];
+        const sym = getParseSymbolById(ref_data.id);
+        ref_data.state.value = sym.value;
+        ref_data.name = sm.name;
+      }
     }
   }
 
