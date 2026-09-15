@@ -185,6 +185,10 @@ export class SymbolTableContext {
     return id >= 0 && id < this.CD;
   }
 
+  is_global(id) {
+    return id >= this.CD && id < this.LOCAL_MARKER;
+  }
+
   /**
    * ВЫЗЫВАЕТСЯ НА ЭТАПЕ ПАРСИНГА.
    * Находит существующий ID или регистрирует новый.
