@@ -184,6 +184,7 @@ export class PushCodeConst extends Code {
     }
 }
 
+
 function checkSymbol(sym) {
     if (sym === null) throw new Error(`Символ не опредилён.`);
     const name = sym.name;
@@ -195,6 +196,11 @@ function checkSymbol(sym) {
     }
 }
 
+function checkSymbolAll(sym) {
+    if (sym === null) throw new Error(`Символ не опредилён.`);
+    checkSymbol(sym);
+}
+
 export class PushCodeVarbleLocal extends Code {
     constructor(id_name) {
         this.id_name = id_name;
@@ -202,7 +208,7 @@ export class PushCodeVarbleLocal extends Code {
 
     internal_evaluate(context) {
         sym = context.scope_context.getSymbolById(this.id_name);
-        checkSymbol(sym);
+        checkSymbolAll(sym);
         context.evaluate_stack.push(sym.value);
     }
 }
@@ -216,15 +222,8 @@ export class PushCodeVarbleGlobal extends Code {
     }
 
     internal_evaluate(context) {
-        if (this.symbol === SYM_UNDEFINED) {
-            this.error(context, `Переменная "${this.name}" не инициализирована.`);
-        }
-        else if (this.symbol !== SYM_VARIABLE) {
-            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-        }
-        else {
-            context.evaluate_stack.push(sym.value);
-        }
+        checkSymbol(his.symbo);
+        context.evaluate_stack.push(sym.value);
     }
 }
 
