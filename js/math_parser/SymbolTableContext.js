@@ -499,14 +499,13 @@ export class SymbolTableContext {
       const context = sym.context;
       if (context instanceof SymbolTableContext) {
         const id = context.getIdByName(sym.name);
-        if (id === null) {
+        if (id !== null) {
           return {
             present_in_contex: true,
             id_name: id
           };
         }
-      }
-      else if (context === null) {
+      } else if (context === null) {
         return {
            present_in_contex: false,
            type: sym.type,
