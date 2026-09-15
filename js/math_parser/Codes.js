@@ -362,9 +362,10 @@ export class OpVarableGlobal extends OpVarable {
 
     static fromJSON(data) {
         const data_restore = data.context.dataFromJSON(data.sym_data);
-        if (data_restore.defer) {
-            
-        }
+        if ('callback' in data_restore) { {
+            const instance = new OpVarableGlobal(proxyPlaceholder);
+            data_restore.callback = (realSymbol) => {
+                instance.symbol = realSymbol; };
         else return new OpVarableGlobal(data_restore);
     }
 }

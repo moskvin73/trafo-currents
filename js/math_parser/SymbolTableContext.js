@@ -530,7 +530,7 @@ export class SymbolTableContext {
     if (data.present_in_contex) {
       if (!loading) {
           const state = { type: SYM_UNDEFINED, value: 0 };
-          const ref_data = { symbol: create_sybol(state, null, null),  id: data.id, callback: null }; 
+          const ref_data = { proxyPlaceholder: create_sybol(state, null, null),  id: data.id, callback: null }; 
           #resolveReferencesLlist.push(ref_data);
           return ref_data;
       } else        
