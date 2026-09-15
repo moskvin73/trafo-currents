@@ -537,7 +537,7 @@ export class SymbolTableContext {
     } else {
       const state = { 
         type: data.type, 
-        value: restoreDataType(data.value);
+        value: restoreDataType(data.value)
       };
       return create_sybol(state, null, data.name);
     }
