@@ -479,7 +479,7 @@ export class SymbolTableContext {
     }
     this.#loading = true;
     for (const action of this.#resolveReferencesLlist) {
-      const realObject = getParseSymbolById(action.id);
+      const realObject = this.getParseSymbolById(action.id);
       if (realObject) {
         if (action.callback) action.callback(realObject);
       }
