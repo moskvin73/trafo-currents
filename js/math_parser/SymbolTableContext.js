@@ -437,13 +437,12 @@ export class SymbolTableContext {
         value: restoredValue 
       };
 
-      const instance = this;
       const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       const reactiveSymbol = {
         get type() { return state.type; },
         get value() { return state.value; },
-        get context() { return instance; },
+        get context() { return context; },
         get name() { return savedSymbol.name; },
         subscribeUpdateVarable(callback) {
           if (typeof callback === 'function') {
