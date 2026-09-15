@@ -185,11 +185,12 @@ export class PushCodeConst extends Code {
 }
 
 function checkSymbol(sym) {
+    const name = sym.name;
     if (sym.type === SYM_UNDEFINED) {
-        throw new Error(`Переменная "${this.name}" не инициализирована.`);
+        throw new Error(`Переменная "${name}" не инициализирована.`);
     }
     else if (sym.type !== SYM_VARIABLE) {
-       throw new Error(context, `Идентификатор "${this.name}" не является переменной.`);
+       throw new Error(context, `Идентификатор "${name}" не является переменной.`);
     }
 }
 
