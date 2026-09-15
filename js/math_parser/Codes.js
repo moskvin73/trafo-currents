@@ -331,7 +331,7 @@ export class OpVarableGlobal extends OpVarable {
         // Пока просто проеряем
         const context = this.symbol.context;
         if (context) {
-            // Переменная сществует
+            // Переменная присутсвует в контексте
             const id = context.getIdByName(sym.name);
             if (id === null) throw new Error("OpVarableGlobal id = null toJSON()");
             return {
