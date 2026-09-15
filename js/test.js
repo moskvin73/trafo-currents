@@ -6,6 +6,8 @@ import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
 import { IndependentSourceLocation } from './math_parser/CompilerErrors.js';
 import * as AST from './math_parser/ASTNodes.js';
+import VarableCode from './varables/VarableCode.js';
+import * as Code from './math_parser/Codes.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
