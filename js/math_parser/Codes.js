@@ -332,11 +332,14 @@ export class OpVarableGlobal extends OpVarable {
         const context = this.symbol.context;
         if (context) {
             // Переменная сществует
-
-        }
-        return {
-        ...super.toJSON(),
-        id_name: this.id_name
+            const id = context.getIdByName(sym.name);
+            if (id === null) throw new Error("OpVarableGlobal id = null toJSON()");
+            return {
+                ...super.toJSON(),
+                present_in_contex: true,
+                id_name: id
+            };
+        } else throw new Error("OpVarableGlobal ontext = null toJSON()");
         };
     }
 
