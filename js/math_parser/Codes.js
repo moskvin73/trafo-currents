@@ -268,23 +268,7 @@ class OpVarable extends OpValue {
 
     getSymbol(context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
 
-    getValue(context) {
-        const sym = getSymbol(context); 
-        if (sym === null) {
-            this.error(context, `Идентификатор "${this.name}" не опредилён.`);
-        }
-        else if (sym.type === SYM_UNDEFINED) {
-            this.error(context, `Переменная "${this.name}" не инициализирована.`);
-            //return this.errorValue();
-        }
-        else if (sym.type !== SYM_VARIABLE) {
-            this.error(context, `Идентификатор "${this.name}" не является переменной.`);
-            //return this.errorValue();
-        }
-        else {
-            return sym.value;
-        }
-    }
+    getValue(context) { return getSymbol(context).value; }
 }
 
 export class OpVarableLocal extends OpVarable {
@@ -293,7 +277,11 @@ export class OpVarableLocal extends OpVarable {
         this.id_name = id_name;
     }
 
-    getSymbol(context) { return context.scope_context.getSymbolById(this.id_name); }
+    getSymbol(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name);
+        checkSymbolAll(sym); 
+        return sym; 
+    }
 
     createCodePush() { return new PushCodeVarbleLocal(this.id_name); }
 
