@@ -116,6 +116,7 @@ export function test2() {
     const codeInstance = newContext.varSymbols[variableIndex].value;
     //console.log("Это экземпляр Matrix?", matrixInstance instanceof Matrix); // true
     //console.log("ТеХ матрицы работает?", matrixInstance.toTeX()); // Выведет TeX вашей матрицы
+    context.varSymbols[id_var - context.CD].value = new ComplexNumber(1, 1);
 
     // ПРОВЕРКА №3: Проверяем, что реактивность (сеттер) не сломалась
     newContext.varSymbols[variableIndex].value = 42; // пишем примитив
