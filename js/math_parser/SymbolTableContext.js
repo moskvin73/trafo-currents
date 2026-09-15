@@ -487,8 +487,8 @@ export class SymbolTableContext {
       return {
         get type() { return state.type; },
         get value() { return state.value; },
-        get context() { return instance; },
-        get name() { return savedSymbol.name; },
+        get context() { return null; },
+        get name() { return data.name; },
         set value(v) { state.value = v; state.type = SYM_VARIABLE; }
       };
     }
