@@ -340,15 +340,18 @@ export class OpVarableGlobal extends OpVarable {
                 id_name: id
             };
         } else throw new Error("OpVarableGlobal ontext = null toJSON()");
-        };
     }
 
-    static get dataTypeName() { return "OpVarableLocal"; }
+    static get dataTypeName() { return "OpVarableGlobal"; }
 
     static fromJSON(data) {
-        return new OpVarableLocal(
-        data.id_name,
-        );
+        if (data.present_in_contex) {
+            const context = data.context;
+            const id = data.id;
+            const sym = context.getParseSymbolById(id);
+            return new OpVarableGlobal(sym);
+        }
+        else throw new Error("OpVarableGlobal ata.present_in_contex = false fromJSON(data)");
     }
 }
 //#endregion CONST_VAR 
