@@ -480,7 +480,7 @@ export class SymbolTableContext {
         value: restoredValue 
       };
 
-      SymbolTableContext.#create_sybol(state, context, savedSymbol.name);
+      const reactiveSymbol = SymbolTableContext.#create_sybol(state, context, savedSymbol.name);
       /*const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       const reactiveSymbol = {
