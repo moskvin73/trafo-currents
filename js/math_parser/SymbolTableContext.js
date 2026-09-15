@@ -500,7 +500,7 @@ export class SymbolTableContext {
       if (context instanceof SymbolTableContext) {
         const id = context.getIdByName(sym.name);
         if (id !== null) {
-          if (!this.is_global(id)) throw new Error(`Попытка сериализовать глобальную или преопределенную переменную ${sym.name}`);
+          if (!context.is_global(id)) throw new Error(`Попытка сериализовать глобальную или преопределенную переменную ${sym.name}`);
           return {
             present_in_contex: true,
             id_name: id
