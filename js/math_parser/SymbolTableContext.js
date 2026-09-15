@@ -148,6 +148,13 @@ export class SymbolTableContext {
           state.type = SYM_VARIABLE;
           invoke(this);
         },
+        toJSON() {
+          return {
+            type: this.type,
+            value: this.value,
+            name: this.name
+          };
+        }        
       };   
   }
 
@@ -457,6 +464,13 @@ export class SymbolTableContext {
           state.type = SYM_VARIABLE;
           invoke(this);
         },
+        toJSON() {
+          return {
+            type: this.type,
+            value: this.value,
+            name: this.name
+          };
+        }        
       };
 
       // 3. Заполняем таблицы контекста
@@ -524,6 +538,13 @@ export class SymbolTableContext {
           state.type = SYM_VARIABLE;
           invoke(this);
         },
+        toJSON() {
+          return {
+            type: this.type,
+            value: this.value,
+            name: this.name
+          };
+        }        
       };
     };
     if (data.present_in_contex) {
