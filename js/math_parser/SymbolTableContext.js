@@ -485,6 +485,7 @@ export class SymbolTableContext {
       }
       else console.error(`Не удалось найти объект с ID: ${action.id}`);
     }
+    this.#resolveReferencesLlist = [];
   }
 
   static dataToJSON(sym) {
