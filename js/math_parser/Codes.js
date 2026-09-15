@@ -263,7 +263,7 @@ export class PushCodeVarbleGlobal extends Code {
 }
 
 //#region CONST_VAR 
-export class OpValue {
+export class OpValue extends Code {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
     createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
