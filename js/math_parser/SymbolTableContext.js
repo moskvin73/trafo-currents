@@ -11,6 +11,7 @@ export class SymbolTableContext {
   #listenersAddVarable;
   #listenersDeleteVarable;
   #listenersUpdateSettings;
+  #loading;
 
   constructor() {
     const state_settings = {
@@ -96,8 +97,11 @@ export class SymbolTableContext {
     this.scopes = []; 
     // Смещение для локальных ID, чтобы они никогда не пересекались с глобальными.
     // Локальный ID = LOCAL_MARKER + (инндекс_слоя << 16) + индекс_переменной_в_слое
-    this.LOCAL_MARKER = 1000000;     
+    this.LOCAL_MARKER = 1000000;
+    this.#loading = true;     
   }
+
+  get loading() { return this.#loading; }
 
   #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
   subscribeAddVarable(callback) {
@@ -408,6 +412,7 @@ export class SymbolTableContext {
   deserializeGlobalContext(jsonString) {
     if (!jsonString) return;
 
+    #loading = false;
     const data = JSON.parse(jsonString);
     data.context = this;
     
@@ -455,6 +460,7 @@ export class SymbolTableContext {
       this.varSymbols.push(reactiveSymbol);
       this.varHash[name] = i;
     }
+    #loading = true;
   }
 
   static dataToJSON(sym) {
