@@ -469,7 +469,7 @@ export class SymbolTableContext {
         const ref_data = this.#resolveReferencesLlist[i];
         const sym = getParseSymbolById(ref_data.id);
         ref_data.state.value = sym.value;
-        ref_data.name = sm.name;
+        ref_data.name = sym.name;
       }
     }
   }
@@ -508,7 +508,7 @@ export class SymbolTableContext {
   dataFromJSON(data) {
     const listenersUpdateVarable = new Set();
     const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
-    const create_sybol = (stste, insance, data) => {
+    const create_sybol = (state, insance, data) => {
       return {
         get type() { return state.type; },
         get value() { return state.value; },
@@ -531,7 +531,7 @@ export class SymbolTableContext {
       if (!loading) {
           const state = { type: SYM_UNDEFINED, value: 0 };
           const ref_data = { state: state, name: null, id: data.id};
-          #resolveReferencesLlist.push(ret);
+          #resolveReferencesLlist.push(ref_data);
           return create_sybol(state, this, ref_data);
       } else        
         return context.getParseSymbolById(data.id);
