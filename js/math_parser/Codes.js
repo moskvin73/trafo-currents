@@ -215,9 +215,7 @@ export class PushCodeVarbleLocal extends Code {
 
 export class PushCodeVarbleGlobal extends Code {
     constructor(sym) {
-        if (sym === null) {
-            throw new Error(`Символ не опредилён.`);
-        }
+        if (sym === null) throw new Error(`Символ не опредилён.`);
         this.symbol = sym;
     }
 
