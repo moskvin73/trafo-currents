@@ -257,7 +257,7 @@ export class PushCodeVarbleGlobal extends Code {
     }
 
     internal_evaluate(context) {
-        checkSymbol(his.symbo);
+        checkSymbol(his.symbol);
         context.evaluate_stack.push(sym.value);
     }
 }
