@@ -500,27 +500,15 @@ export class SymbolTableContext {
     else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
   }
 
-  static dataFromJSON(context, data) {
-    if (data.present_in_contex) {
-      if (!context.loading) {
-        // Возвращаем ссылку на неинецелзировнный элимент
-        const ret = context.#initVarable();
-        context.#resolveReferencesLlist.push(ret);
-        return ret;
-      } else        
-        return context.getParseSymbolById(data.id);
-    } else {
-      const state = { 
-        type: data.type, 
-        value: restoreDataType(data.value);
-      };
-      const listenersUpdateVarable = new Set();
-      const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
+  dataFromJSON(data) {
+    const listenersUpdateVarable = new Set();
+    const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
+    const create_sybol = (stste, insance, name) => {
       return {
         get type() { return state.type; },
         get value() { return state.value; },
-        get context() { return null; },
-        get name() { return data.name; },
+        get context() { return insance; },
+        get name() { return name; },
         subscribeUpdateVarable(callback) {
           if (typeof callback === 'function') {
               listenersUpdateVarable.add(callback);
@@ -533,6 +521,21 @@ export class SymbolTableContext {
           invoke(this);
         },
       };
+    };
+    if (data.present_in_contex) {
+      if (!loading) {
+        // Возвращаем ссылку на неинецелзировнный элимент
+        const ret = context.#initVarable();
+        context.#resolveReferencesLlist.push(ret);
+        return ret;
+      } else        
+        return context.getParseSymbolById(data.id);
+    } else {
+      const state = { 
+        type: data.type, 
+        value: restoreDataType(data.value);
+      };
+      return create_sybol(state, null, data.name);
     }
   }
 }
