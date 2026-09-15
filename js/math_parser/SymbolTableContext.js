@@ -15,7 +15,7 @@ export class SymbolTableContext {
   #resolveReferencesLlist;
 
   constructor() {
-    #resolveReferencesLlist = [];
+    this.#resolveReferencesLlist = [];
     const state_settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
       angleMode:     ANGLE_MODE.RADIANS,
