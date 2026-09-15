@@ -469,7 +469,48 @@ export class SymbolTableContext {
   }
 
   static dataToJSON(sym) {
-    const descContext = sym ? Object.getOwnPropertyDescriptor(sym, 'context') : null;
+    //  Проверяем базовое наличие объекта и нужных свойств (включая прототип)
+    const isValidSymbol = sym && 
+      'context' in sym && 
+      'name' in sym && 
+      'value' in sym && 
+      'type' in sym;
+
+    if (!isValidSymbol) {
+      throw new Error("Неверный тип элемента символа в static dataToJSON(sym)");
+    }
+
+    const { context, name, type, value } = sym;
+
+    // Обработка символа с контекстом таблицы
+    if (context instanceof SymbolTableContext) {
+      const id = context.getIdByName(name);
+      
+      if (id !== null) {
+        if (!context.is_global(id)) {
+          throw new Error(`Попытка сериализовать локальную или предопределенную переменную: ${name}`);
+        }
+        
+        return {
+          present_in_context: true,
+          id_name: id
+        };
+      }
+    } 
+    
+    // бработка символа без контекста
+    if (context === null) {
+      return {
+        present_in_context: false,
+        type,
+        value,
+        name,
+      };
+    }
+
+    // Если context не null и не относится к SymbolTableContext, либо id === null
+    throw new Error("Неверный тип элемента символа в static dataToJSON(sym)");   
+    /*const descContext = sym ? Object.getOwnPropertyDescriptor(sym, 'context') : null;
     const descName = sym ? Object.getOwnPropertyDescriptor(sym, 'name') : null;
     const descValue = sym ? Object.getOwnPropertyDescriptor(sym, 'value') : null;
     const descType = sym ? Object.getOwnPropertyDescriptor(sym, 'type') : null;
@@ -496,7 +537,7 @@ export class SymbolTableContext {
         };
       }
     }
-    throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
+    throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");*/
   }
 
   dataFromJSON(data) {
