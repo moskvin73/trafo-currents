@@ -449,10 +449,11 @@ export class SymbolTableContext {
     const descContext = sym ? Object.getOwnPropertyDescriptor(sym, 'context') : null;
     const descName = sym ? Object.getOwnPropertyDescriptor(sym, 'name') : null;
     const descValue = sym ? Object.getOwnPropertyDescriptor(sym, 'value') : null;
+    const descType = sym ? Object.getOwnPropertyDescriptor(sym, 'type') : null;
     if (descContext && typeof descContext.get === 'function' && 
-      descName && typeof descName.get === 'function' &&
-      descValue && typeof descValue.get === 'function'
-    ) {
+        descName && typeof descName.get === 'function' &&
+        descValue && typeof descValue.get === 'function' &&
+        descType && typeof descType.get === 'function') {
       const context = sym.context;
       if (context instanceof SymbolTableContext) {
         const id = context.getIdByName(sym.name);
@@ -464,7 +465,12 @@ export class SymbolTableContext {
         }
       }
       else if (context === null) {
-
+        return {
+           present_in_contex: false,
+           type: sym.type,
+           value: sym.value,
+           name: sym.name,
+        };
       }
     }
     else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
