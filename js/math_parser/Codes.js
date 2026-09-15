@@ -50,14 +50,14 @@ export class Code {
 }
 
 export class Codes {
-    constructor(list_code) {
-        this.list_code = Array.isArray(listCode) ? listCode : [];
+    constructor(listCode = []) {
+        this.listCode = Array.isArray(listCode) ? listCode : [];
     }
 
     toJSON() {
         return {
             dataType: this.constructor.dataTypeName,
-            list_code: this.list_code
+            list_code: this.listCode
         };
     }
 
@@ -74,7 +74,7 @@ export class Codes {
             const codeWithContext = { ...savedCode, context };             
             // Предполагается, что функция restoreDataType объявлена глобально или импортирована
             return restoreDataType(codeWithContext);
-        }).filter(Boolean); // Исключаем null, если в массиве были пустые элементы
+        });
         return new Codes(listCode);
     }
 }
