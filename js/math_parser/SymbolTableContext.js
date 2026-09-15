@@ -243,7 +243,7 @@ export class SymbolTableContext {
       return varIdx + this.CD; // Возвращаем существующий глобальный ID со смещением
     }
     
-    const userSymbol = this.#initVarable();
+    const userSymbol = this.#initVarable(name);
 
     const newVarIdx = this.varSymbols.length;
     this.varNames.push(name);
