@@ -444,4 +444,12 @@ export class SymbolTableContext {
       this.varHash[name] = i;
     }
   }
+
+  static dataToJSON(sym) {
+
+  }
+
+  static dataFromJSON() {
+    
+  }
 }
