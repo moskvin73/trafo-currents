@@ -366,7 +366,7 @@ export class OpVarableGlobal extends OpVarable {
         if ('callback' in data_restore) {
             const instance = new OpVarableGlobal(data_restore.proxyPlaceholder);
             data_restore.callback = (realSymbol) => { instance.symbol = realSymbol; };
-            return new OpVarableGlobal(data_restore.proxyPlaceholder);
+            return instance;
         }
         else return new OpVarableGlobal(data_restore);
     }
