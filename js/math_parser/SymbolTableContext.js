@@ -414,7 +414,7 @@ export class SymbolTableContext {
 
     this.#loading = false;
     const data = JSON.parse(jsonString);
-    data.context = this;
+    
     
     // 1. Сбрасываем текущее глобальное состояние
     this.varNames = data.varNames;
@@ -425,10 +425,11 @@ export class SymbolTableContext {
     for (let i = 0; i < data.varNames.length; i++) {
       const name = data.varNames[i];
       const savedSymbol = data.varSymbols[i];
-      savedSymbol.value.context = this;
+      const context = this;
+      const codeWithContext = { ...savedSymbol.value, context };
 
       // Восстанавливаем значение переменной (число 0 или сложный MathType)
-      const restoredValue = restoreDataType(savedSymbol.value);
+      const restoredValue = restoreDataType(codeWithContext);
 
       // Воссоздаем реактивное замыкание (state) с геттерами и сеттерами
       const state = { 
