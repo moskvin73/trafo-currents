@@ -22,7 +22,12 @@ export default class VarableCode {
   static get dataTypeName() { return "VarableCode"; }
 
   static fromJSON(data) {
-    const restoredstatements = data.statements.map(stm => restoreDataType(stm));
+    const context = data.context;
+    const restoredstatements = data.statements.map(stm => {
+      const codeWithContext = { stm, context };
+      return restoreDataType(codeWithContext); 
+      //restoreDataType(stm) 
+    });
     return new VarableCode(
       restoredstatements,
       data.paramsCount,
