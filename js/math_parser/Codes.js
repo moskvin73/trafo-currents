@@ -49,6 +49,39 @@ export class Code {
     }
 }
 
+export class Codes {
+    constructor(list_code) {
+        this.list_code = list_code;
+    }
+
+    toJSON() {
+        return {
+            dataType: this.constructor.dataTypeName,
+            list_code: this.list_code
+        };
+    }
+
+    static get dataTypeName() { return "Codes"; }
+
+    static fromJSON(data) {
+            const list_code = [];
+            const context = data.context;
+            for (let i = 0; i < data.list_code.length; i++) {
+                const savedCode = data.list_code[i];
+                savedCode.context = context;
+                const restoredCode = restoreDataType(savedCode);
+                list_code.push(restoredCode);
+            }
+            return new ErrorCode(
+            data.msg,
+            restoreLocation(data.loc),
+            restoreDataType(data.astNode)
+        );
+    }
+}
+registerDataType(Codes.dataTypeName, Codes.fromJSON);
+
+
 function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
