@@ -25,7 +25,7 @@ export default class VarableCode {
   static fromJSON(data) {
     const context = data.context;
     const restoredstatements = data.statements.map(stm => {
-      const codeWithContext = { stm, context };
+      const codeWithContext = { ...stm, context };
       return restoreDataType(codeWithContext); 
       //restoreDataType(stm) 
     });
