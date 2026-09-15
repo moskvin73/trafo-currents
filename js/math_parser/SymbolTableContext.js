@@ -127,8 +127,40 @@ export class SymbolTableContext {
   unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
+  static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; }
+
+  static #create_sybol(state, insance, name) {
+    const listenersUpdateVarable = new Set();
+    const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
+    return {
+      get type() { return state.type; },
+      get value() { return state.value; },
+      get context() { return insance; },
+      get name() { return name; },
+      subscribeUpdateVarable(callback) {
+        if (typeof callback === 'function') {
+            listenersUpdateVarable.add(callback);
+        }    
+      },      
+      unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
+      set value(v) { 
+        state.value = v; 
+        state.type = SYM_VARIABLE;
+        invoke(this);
+      },
+      toJSON() {
+        return {
+          type: this.type,
+          value: this.value,
+          name: this.name
+        };
+      }        
+  }
+
+
   #initVarable(name = null) {
-      const state = { type: SYM_UNDEFINED, value: 0 };
+      return this.#create_sybol(this.#defaultState(), this, name);
+      /*const state = { type: SYM_UNDEFINED, value: 0 };
       const instance = this;
       const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
@@ -155,7 +187,7 @@ export class SymbolTableContext {
             name: this.name
           };
         }        
-      };   
+      };*/   
   }
 
   /** Создает новый локальный кадр (Scope) при вызове функции */
