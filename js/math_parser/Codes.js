@@ -184,6 +184,15 @@ export class PushCodeConst extends Code {
     }
 }
 
+function checkSymbol(sym) {
+    if (sym.type === SYM_UNDEFINED) {
+        throw new Error(`Переменная "${this.name}" не инициализирована.`);
+    }
+    else if (sym.type !== SYM_VARIABLE) {
+       throw new Error(context, `Идентификатор "${this.name}" не является переменной.`);
+    }
+}
+
 export class PushCodeVarbleLocal extends Code {
     constructor(id_name) {
         this.id_name = id_name;
