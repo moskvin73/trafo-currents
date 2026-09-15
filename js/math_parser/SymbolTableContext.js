@@ -121,13 +121,16 @@ export class SymbolTableContext {
   unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
-  #initVarable() {
+  #initVarable(name = null) {
       const state = { type: SYM_UNDEFINED, value: 0 };
+      const instance = this;
       const listenersUpdateVarable = new Set();
       const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       return {
         get type() { return state.type; },
         get value() { return state.value; },
+        get context() { return instance; },
+        get name() { return name; },
         subscribeUpdateVarable(callback) {
           if (typeof callback === 'function') {
               listenersUpdateVarable.add(callback);
