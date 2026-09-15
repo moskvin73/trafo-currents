@@ -508,12 +508,12 @@ export class SymbolTableContext {
   dataFromJSON(data) {
     const listenersUpdateVarable = new Set();
     const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
-    const create_sybol = (state, insance, data) => {
+    const create_sybol = (state, insance, name) => {
       return {
         get type() { return state.type; },
         get value() { return state.value; },
         get context() { return insance; },
-        get name() { return data.name; },
+        get name() { return name; },
         subscribeUpdateVarable(callback) {
           if (typeof callback === 'function') {
               listenersUpdateVarable.add(callback);
@@ -530,7 +530,7 @@ export class SymbolTableContext {
     if (data.present_in_contex) {
       if (!loading) {
           const state = { type: SYM_UNDEFINED, value: 0 };
-          const ref_data = { state: state, name: null, id: data.id};
+          const ref_data = { symbol: create_sybol(state, null, null),  id: data.id, callback: null }; 
           #resolveReferencesLlist.push(ref_data);
           return create_sybol(state, this, ref_data);
       } else        
@@ -540,7 +540,7 @@ export class SymbolTableContext {
         type: data.type, 
         value: restoreDataType(data.value);
       };
-      return create_sybol(state, null, data);
+      return create_sybol(state, null, data.name);
     }
   }
 }

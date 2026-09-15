@@ -362,7 +362,7 @@ export class OpVarableGlobal extends OpVarable {
 
     static fromJSON(data) {
         const data_restore = data.context.dataFromJSON(data.sym_data);
-        if (data_restore.isReference) {
+        if (data_restore.defer) {
             
         }
         else return new OpVarableGlobal(data_restore);
