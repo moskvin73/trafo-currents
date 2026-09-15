@@ -162,35 +162,6 @@ export class SymbolTableContext {
   #initVarable(name = null) {
       return SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), this, name);
   }    
-      /*const state = { type: SYM_UNDEFINED, value: 0 };
-      const instance = this;
-      const listenersUpdateVarable = new Set();
-      const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
-      return {
-        get type() { return state.type; },
-        get value() { return state.value; },
-        get context() { return instance; },
-        get name() { return name; },
-        subscribeUpdateVarable(callback) {
-          if (typeof callback === 'function') {
-              listenersUpdateVarable.add(callback);
-          }    
-        },      
-        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
-        set value(v) { 
-          state.value = v; 
-          state.type = SYM_VARIABLE;
-          invoke(this);
-        },
-        toJSON() {
-          return {
-            type: this.type,
-            value: this.value,
-            name: this.name
-          };
-        }        
-      };*/   
-  //}
 
   /** Создает новый локальный кадр (Scope) при вызове функции */
   createFrame(count_vars, outerFrame = null) {
@@ -481,32 +452,6 @@ export class SymbolTableContext {
       };
 
       const reactiveSymbol = SymbolTableContext.#create_sybol(state, context, savedSymbol.name);
-      /*const listenersUpdateVarable = new Set();
-      const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
-      const reactiveSymbol = {
-        get type() { return state.type; },
-        get value() { return state.value; },
-        get context() { return context; },
-        get name() { return savedSymbol.name; },
-        subscribeUpdateVarable(callback) {
-          if (typeof callback === 'function') {
-              listenersUpdateVarable.add(callback);
-          }    
-        },      
-        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
-        set value(v) { 
-          state.value = v; 
-          state.type = SYM_VARIABLE;
-          invoke(this);
-        },
-        toJSON() {
-          return {
-            type: this.type,
-            value: this.value,
-            name: this.name
-          };
-        }        
-      };*/
 
       // 3. Заполняем таблицы контекста
       this.varSymbols.push(reactiveSymbol);
@@ -555,37 +500,8 @@ export class SymbolTableContext {
   }
 
   dataFromJSON(data) {
-    /*const listenersUpdateVarable = new Set();
-    const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
-    const create_sybol = (state, insance, name) => {
-      return {
-        get type() { return state.type; },
-        get value() { return state.value; },
-        get context() { return insance; },
-        get name() { return name; },
-        subscribeUpdateVarable(callback) {
-          if (typeof callback === 'function') {
-              listenersUpdateVarable.add(callback);
-          }    
-        },      
-        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
-        set value(v) { 
-          state.value = v; 
-          state.type = SYM_VARIABLE;
-          invoke(this);
-        },
-        toJSON() {
-          return {
-            type: this.type,
-            value: this.value,
-            name: this.name
-          };
-        }        
-      };
-    };*/
     if (data.present_in_contex) {
       if (!this.loading) {
-          //const state = { type: SYM_UNDEFINED, value: 0 };
           const ref_data = { 
             proxyPlaceholder: SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), null, null),  
             id: data.id_name, 
