@@ -344,12 +344,12 @@ export class OpVarableGlobal extends OpVarable {
         this.symbol = sym;
     }
 
+    createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
+
     getSymbol(context) { 
         checkSymbol(sym); 
         return this.symbol; 
     }
-
-    createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 
     toJSON() {
         return {
@@ -369,6 +369,7 @@ export class OpVarableGlobal extends OpVarable {
         else return new OpVarableGlobal(data_restore);
     }
 }
+regCode(OpVarableGlobal);
 //#endregion CONST_VAR 
 
 export class MatrixCode extends Code {
