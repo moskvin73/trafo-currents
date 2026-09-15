@@ -79,7 +79,7 @@ export function test(data) {
   }    
 }
 
-export function test2(data) {
+export function test2() {
     console.log("=== Старт тестирования сериализации ===");
 
     console.log("Зарегистрированные типы:", debugRegistry());
