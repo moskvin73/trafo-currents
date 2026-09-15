@@ -51,7 +51,11 @@ export class Code {
 
 export class Codes {
     constructor(listCode = []) {
-        this.listCode = Array.isArray(listCode) ? listCode : [];
+        if (Array.isArray(listCode) && 
+                (listCode.length === 0 || listCode.every(item => item instanceof Code))) {
+            this.listCode = listCode;
+        }
+        else throw new Error(`Недопустимые входные данные в конструкторе класа Codes ${listCode}`);
     }
 
     toJSON() {
