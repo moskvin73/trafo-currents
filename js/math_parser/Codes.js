@@ -352,9 +352,10 @@ export class OpVarableGlobal extends OpVarable {
     }
 
     toJSON() {
+        const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
         return {
             ...super.toJSON(),
-            sym_data: SymbolTableContext.dataToJSON(this.symbol)
+            sym_data: sym_data
         };
     }
 
