@@ -55,7 +55,7 @@ export class Codes {
                 (listCode.length === 0 || listCode.every(item => item instanceof Code))) {
             this.listCode = listCode;
         }
-        else throw new Error(`Недопустимые входные данные в конструкторе класа Codes ${listCode}`);
+        else throw new Error(`Недопустимые входные данные в конструкторе класса Codes ${listCode}`);
     }
 
     toJSON() {
@@ -68,10 +68,11 @@ export class Codes {
     static get dataTypeName() { return "Codes"; }
 
     static fromJSON(data) {
-        // 1. Проверка на валидность входящих данных
+        // Проверка на валидность входящих данных
         if (!data || !Array.isArray(data.list_code)) {
             return new Codes([]);
-        }        
+        }
+        const context = data.context;   
         const listCode = data.list_code.map(savedCode => {
             if (!savedCode) return null;
             // 3. Безопасно передаем context, создавая новый объект (без мутации data)
