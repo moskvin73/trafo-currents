@@ -13,6 +13,7 @@ export default class VarableCode {
     if (this.lexicalParentFrame != null)
       throw new Error(`Попытка сохранить не корнивойю процедуру.`);
     return {
+      dataType: this.constructor.dataTypeName,
       statements: this.statements,
       paramsCount: this.paramsCount,
       localsCount: this.localsCount,
