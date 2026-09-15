@@ -88,8 +88,8 @@ export default class ASTNode {
     throw new Error("[ASTNode]: Метод evaluate() не реализован.");
   }
 
-  createCode() {
-    throw new Error("[ASTNode]: Метод createCode() не реализован.");
+  createCode(context) {
+    throw new Error("[ASTNode]: Метод createCode(context) не реализован.");
   }
 
   createLocationCode() { return Code.LocationCode(this.loc); }
@@ -449,7 +449,7 @@ export class NumberNode extends MathNode {
 
   internal_evaluate(context) { return this.value; }
 
-  createCode() { return new Code.OpConst(this.value); }
+  createCode(context) { return new Code.OpConst(this.value); }
 
   toTeX(context) { return this.value.toRawTeX(context); }
 }
@@ -563,14 +563,14 @@ export class MatrixNode extends MathNode {
     return new Matrix(finalElements);
   }
 
-  createCode() {
+  createCode(context) {
     let ret_code = [this.createLocationCode()]; 
     for (let i = this.#rows.length - 1; i >= 0; i--) {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
-        const op = node.createCode();
-        ret_code = [...ret_code, node.createLocationCode(), ...Code.operandImplementСode(node.createCode())];
+        const op = node.createCode(context);
+        ret_code = [...ret_code, node.createLocationCode(), ...Code.operandImplementСode(node.createCode(context))];
       }
     }
     const rowCount = this.#rows.length;
@@ -1645,7 +1645,7 @@ export class VariableNode extends IdentifierNode {
     }
   }
 
-  createCode() { return new Code.OpVarableLocal(this.id_name); }
+  createCode(context) { return new Code.OpVarableLocal(this.id_name); }
 
   toTeX(context) { return this.getTexName(); }
 }
@@ -1700,9 +1700,9 @@ export class AssignNode extends IdentifierNode {
     }
   }
 
-  createCode() {
+  createCode(context) {
     const l_op = new Code.OpVarableLocal(this.id_name);
-    const r_op = this.expression.createCode();
+    const r_op = this.expression.createCode(context);
     return [this.createLocationCode(), ...Code.createBinCode(Code.OperatorBinType.ASSIGN, l_op, r_op)];
    }
 
@@ -1825,11 +1825,11 @@ export class IndexNode extends RefNode {
     return matrixObj.get(rowIndex, colIndex);
   }
 
-  createCode() {
-    const target_code = Code.operandImplementСode(this.target.createCode());
-    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode());
+  createCode(context) {
+    const target_code = Code.operandImplementСode(this.target.createCode(context));
+    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode(context));
     if (this.colExpr) {
-      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
+      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode(context));
       return [...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexMatrixCode()];
     } else {
       return [...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexRowCode()];
@@ -1878,12 +1878,12 @@ export class AssignIndexNode extends IndexNode {
     return matrixObj.set(rowIndex, colIndex, l);
   }
 
-  createCode() {
-    const target_code = Code.operandImplementСode(this.target.createCode());
-    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode());
-    const let_value_code = Code.operandImplementСode(this.expression.createCode());
+  createCode(context) {
+    const target_code = Code.operandImplementСode(this.target.createCode(context));
+    const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode(context));
+    const let_value_code = Code.operandImplementСode(this.expression.createCode(context));
     if (this.colExpr) {
-      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode());
+      const colExpr_code = Code.operandImplementСode(this.colExpr.createCode(context));
       return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexMatrixCode()];
     } else {
       return [...let_value_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexRowCode()];
@@ -2174,7 +2174,7 @@ export class ConstantNode extends MathNode {
     return config.instance;    
   }
 
-  createCode() {
+  createCode(context) {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
       this.error(context, 'Неизвестный тип константы (Token ID: ${this.#tokenType})');
