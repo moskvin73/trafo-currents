@@ -361,7 +361,11 @@ export class OpVarableGlobal extends OpVarable {
     static get dataTypeName() { return "OpVarableGlobal"; }
 
     static fromJSON(data) {
-        return new OpVarableGlobal(data.context.dataFromJSON(data.sym_data));
+        const data_restore = data.context.dataFromJSON(data.sym_data);
+        if (data_restore.isReference) {
+            
+        }
+        else return new OpVarableGlobal(data_restore);
     }
 }
 //#endregion CONST_VAR 
