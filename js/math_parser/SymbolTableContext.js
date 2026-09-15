@@ -446,10 +446,31 @@ export class SymbolTableContext {
   }
 
   static dataToJSON(sym) {
+    const descContext = sym ? Object.getOwnPropertyDescriptor(sym, 'context') : null;
+    const descName = sym ? Object.getOwnPropertyDescriptor(sym, 'name') : null;
+    const descValue = sym ? Object.getOwnPropertyDescriptor(sym, 'value') : null;
+    if (descContext && typeof descContext.get === 'function' && 
+      descName && typeof descName.get === 'function' &&
+      descValue && typeof descValue.get === 'function'
+    ) {
+      const context = sym.context;
+      if (context instanceof SymbolTableContext) {
+        const id = context.getIdByName(sym.name);
+        if (id === null) {
+          return {
+            present_in_contex: true,
+            id_name: id
+          };
+        }
+      }
+      else if (context === null) {
 
+      }
+    }
+    else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
   }
 
   static dataFromJSON() {
-    
+
   }
 }
