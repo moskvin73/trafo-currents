@@ -88,10 +88,12 @@ export function test2(data) {
 
     // Имитируем работу сессии №1: Пользователь создал глобальную переменную и записал туда матрицу
     const context = new SymbolTableContext();
+    const id_var = context.acquireId("Varable");
+    context.varSymbols[id_var - context.CD].value = new RealNumber(3.14);
     const id = context.acquireId("myCode");
 
     // Допустим, интерпретатор записал в эту переменную вашу новую рабочую матрицу
-    const codes = [];
+    const codes = [ new Code.OpVarableGlobal(context.varSymbols[id_var - context.CD]) ];
     context.varSymbols[id - context.CD].value = new VarableCode(codes, 0, 0, null);
 
     const savedState = context.serializeGlobalContext();
