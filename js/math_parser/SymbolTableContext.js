@@ -476,7 +476,21 @@ export class SymbolTableContext {
     else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
   }
 
-  static dataFromJSON() {
-
+  static dataFromJSON(context, data) {
+    if (data.present_in_contex) {
+      return context.getParseSymbolById(data.id);
+    } else {
+      const state = { 
+        type: data.type, 
+        value: restoreDataType(data.value);
+      };
+      return {
+        get type() { return state.type; },
+        get value() { return state.value; },
+        get context() { return instance; },
+        get name() { return savedSymbol.name; },
+        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
+      };
+    }
   }
 }
