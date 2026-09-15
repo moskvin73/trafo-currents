@@ -425,10 +425,12 @@ export class SymbolTableContext {
         value: restoredValue 
       };
 
+      const instance = this;
       const reactiveSymbol = {
         get type() { return state.type; },
-        set type(t) { state.type = t; },
         get value() { return state.value; },
+        get context() { return instance; },
+        get name() { return savedSymbol.name; },
         set value(v) { state.value = v; state.type = SYM_VARIABLE; } // сохраняем вашу логику
       };
 
