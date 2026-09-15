@@ -532,7 +532,7 @@ export class SymbolTableContext {
           const state = { type: SYM_UNDEFINED, value: 0 };
           const ref_data = { symbol: create_sybol(state, null, null),  id: data.id, callback: null }; 
           #resolveReferencesLlist.push(ref_data);
-          return create_sybol(state, this, ref_data);
+          return ref_data;
       } else        
         return context.getParseSymbolById(data.id);
     } else {
