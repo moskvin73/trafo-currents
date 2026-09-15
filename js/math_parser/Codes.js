@@ -78,7 +78,7 @@ export class Codes {
             const codeWithContext = { ...savedCode, context };             
             // Предполагается, что функция restoreDataType объявлена глобально или импортирована
             return restoreDataType(codeWithContext);
-        });
+        }).filter(Boolean);
         return new Codes(listCode);
     }
 }
