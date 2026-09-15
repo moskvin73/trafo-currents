@@ -431,12 +431,24 @@ export class SymbolTableContext {
       };
 
       const instance = this;
+      const listenersUpdateVarable = new Set();
+      const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       const reactiveSymbol = {
         get type() { return state.type; },
         get value() { return state.value; },
         get context() { return instance; },
         get name() { return savedSymbol.name; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; } // сохраняем вашу логику
+        subscribeUpdateVarable(callback) {
+          if (typeof callback === 'function') {
+              listenersUpdateVarable.add(callback);
+          }    
+        },      
+        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
+        set value(v) { 
+          state.value = v; 
+          state.type = SYM_VARIABLE;
+          invoke(this);
+        },
       };
 
       // 3. Заполняем таблицы контекста
@@ -484,12 +496,24 @@ export class SymbolTableContext {
         type: data.type, 
         value: restoreDataType(data.value);
       };
+      const listenersUpdateVarable = new Set();
+      const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
       return {
         get type() { return state.type; },
         get value() { return state.value; },
         get context() { return null; },
         get name() { return data.name; },
-        set value(v) { state.value = v; state.type = SYM_VARIABLE; }
+        subscribeUpdateVarable(callback) {
+          if (typeof callback === 'function') {
+              listenersUpdateVarable.add(callback);
+          }    
+        },      
+        unsubscribeUpdateVarable(callback) { listenersUpdateVarable.delete(callback); },
+        set value(v) { 
+          state.value = v; 
+          state.type = SYM_VARIABLE;
+          invoke(this);
+        },
       };
     }
   }
