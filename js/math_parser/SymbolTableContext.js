@@ -155,11 +155,13 @@ export class SymbolTableContext {
           name: this.name
         };
       }        
+    }
   }
 
 
   #initVarable(name = null) {
       return SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), this, name);
+  }    
       /*const state = { type: SYM_UNDEFINED, value: 0 };
       const instance = this;
       const listenersUpdateVarable = new Set();
@@ -188,7 +190,7 @@ export class SymbolTableContext {
           };
         }        
       };*/   
-  }
+  //}
 
   /** Создает новый локальный кадр (Scope) при вызове функции */
   createFrame(count_vars, outerFrame = null) {
