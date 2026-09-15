@@ -12,8 +12,10 @@ export class SymbolTableContext {
   #listenersDeleteVarable;
   #listenersUpdateSettings;
   #loading;
+  #resolveReferencesLlist;
 
   constructor() {
+    #resolveReferencesLlist = [];
     const state_settings = {
       complexFormat: COMPLEX_FORMAT.ALGEBRAIC,
       angleMode:     ANGLE_MODE.RADIANS,
@@ -495,11 +497,12 @@ export class SymbolTableContext {
     else throw new Error("Неверный тип элимента смвола static dataToJSON(sym)");
   }
 
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-  static async dataFromJSON(context, data) {
+  static dataFromJSON(context, data) {
     if (data.present_in_contex) {
-      while (!context.loading) await delay(50);
+      if (!context.loading) {
+        // Возвращаем ссылку на неинецелзировнный элимент
+        context.
+      } else        
       return context.getParseSymbolById(data.id);
     } else {
       const state = { 
