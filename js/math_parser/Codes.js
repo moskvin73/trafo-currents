@@ -305,11 +305,14 @@ regCode(OpVarableLocal);
 export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
+        if (sym === null) throw new Error(`Символ не опредилён.`);
         this.symbol = sym;
-        if (sym.name === null) throw new Error("Локальная преременная в OpVarableGlobal");
     }
 
-    getSymbol(context) { return this.symbol; }
+    getSymbol(context) { 
+        checkSymbol(sym); 
+        return this.symbol; 
+    }
 
     createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 
