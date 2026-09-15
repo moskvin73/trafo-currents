@@ -64,15 +64,18 @@ export class Codes {
     static get dataTypeName() { return "Codes"; }
 
     static fromJSON(data) {
-            const list_code = [];
-            const context = data.context;
-            for (let i = 0; i < data.list_code.length; i++) {
-                const savedCode = data.list_code[i];
-                savedCode.context = context;
-                const restoredCode = restoreDataType(savedCode);
-                list_code.push(restoredCode);
-            }
-            return new Codes(list_code);
+        // 1. Проверка на валидность входящих данных
+        if (!data || !Array.isArray(data.list_code)) {
+            return new Codes([]);
+        }        
+        const listCode = data.list_code.map(savedCode => {
+            if (!savedCode) return null;
+            // 3. Безопасно передаем context, создавая новый объект (без мутации data)
+            const codeWithContext = { ...savedCode, context };             
+            // Предполагается, что функция restoreDataType объявлена глобально или импортирована
+            return restoreDataType(codeWithContext);
+        }).filter(Boolean); // Исключаем null, если в массиве были пустые элементы
+        return new Codes(listCode);
     }
 }
 registerDataType(Codes.dataTypeName, Codes.fromJSON);
