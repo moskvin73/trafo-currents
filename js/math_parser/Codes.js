@@ -51,7 +51,7 @@ export class Code {
 
 export class Codes {
     constructor(list_code) {
-        this.list_code = list_code;
+        this.list_code = Array.isArray(listCode) ? listCode : [];
     }
 
     toJSON() {
@@ -72,11 +72,7 @@ export class Codes {
                 const restoredCode = restoreDataType(savedCode);
                 list_code.push(restoredCode);
             }
-            return new ErrorCode(
-            data.msg,
-            restoreLocation(data.loc),
-            restoreDataType(data.astNode)
-        );
+            return new Codes(list_code);
     }
 }
 registerDataType(Codes.dataTypeName, Codes.fromJSON);
