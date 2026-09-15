@@ -508,7 +508,7 @@ export class SymbolTableContext {
         context.#resolveReferencesLlist.push(ret);
         return ret;
       } else        
-      return context.getParseSymbolById(data.id);
+        return context.getParseSymbolById(data.id);
     } else {
       const state = { 
         type: data.type, 
