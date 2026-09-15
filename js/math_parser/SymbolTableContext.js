@@ -500,7 +500,7 @@ export class SymbolTableContext {
       if (context instanceof SymbolTableContext) {
         const id = context.getIdByName(sym.name);
         if (id !== null) {
-          if (!is_global(id)) throw new Error(`Попытка сераилизоват глобальую или преопредилённую перменную ${sym.name}`);
+          if (!this.is_global(id)) throw new Error(`Попытка сераилизоват глобальую или преопредилённую перменную ${sym.name}`);
           return {
             present_in_contex: true,
             id_name: id
