@@ -465,7 +465,7 @@ export class SymbolTableContext {
     }
     this.#loading = true;
     if (this.#resolveReferencesLlist.length > 0) {
-      
+
     }
   }
 
@@ -504,7 +504,9 @@ export class SymbolTableContext {
     if (data.present_in_contex) {
       if (!context.loading) {
         // Возвращаем ссылку на неинецелзировнный элимент
-        context.
+        const ret = context.#initVarable();
+        context.#resolveReferencesLlist.push(ret);
+        return ret;
       } else        
       return context.getParseSymbolById(data.id);
     } else {
