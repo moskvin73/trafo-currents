@@ -107,6 +107,7 @@ export class SymbolTableContext {
 
   get loading() { return this.#loading; }
 
+  // Происходит после добавления тип пременой SYM_UNDEFINED
   #invokeAddVarable(source, newIndex) { this.#listenersAddVarable.forEach(callback => callback(source, newIndex)); }
   subscribeAddVarable(callback) {
    if (typeof callback === 'function') {
@@ -115,7 +116,8 @@ export class SymbolTableContext {
   }
   unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
 
-  #invokeIndexRenumbering(...args) { this.#listenersIndexRenumbering.forEach(callback => callback(...args)); }
+  // Происходит перед еренумерацией
+  #invokeIndexRenumbering(source, lastIdx, newIndex) { this.#listenersIndexRenumbering.forEach(callback => callback(source, lastIdx, newIndex)); }
   subscribeIndexRenumbering(callback) {
    if (typeof callback === 'function') {
       this.#listenersIndexRenumbering.add(callback);
@@ -123,7 +125,8 @@ export class SymbolTableContext {
   }
   unsubscribeIndexRenumbering(callback) { this.#listenersIndexRenumbering.delete(callback); }
 
-  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
+  // Происходит передудалеием
+  #invokeDeleteVarable(source, delIndex) { this.#listenersDeleteVarable.forEach(callback => callback(source, delIndex)); }
   subscribeDeleteVarable(callback) {
    if (typeof callback === 'function') {
       this.#listenersDeleteVarable.add(callback);
