@@ -124,7 +124,7 @@ export class SymbolTableContext {
       this.#listenersUpdateSettings.add(callback);
     }    
   }
-  unsubscribeDeleteVarable(callback) { this.#listenersUpdateSettings.delete(callback); }
+  unsubscribeUpdateSettings(callback) { this.#listenersUpdateSettings.delete(callback); }
   #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
   static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; }
