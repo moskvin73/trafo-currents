@@ -566,7 +566,7 @@ class BinCodeValueValue extends BaseBinCode {
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
-        stack.push(operator(l, r));
+        context.evaluate_stack.push(operator(l, r));
     }
    
   toJSON() {
@@ -705,9 +705,10 @@ class AssignCodeValueOp extends Code {
     }
 
     internal_evaluate(context) {
+        const stack = context.evaluate_stack;
         const sym = this.let_value.getSymbolNoCheck(context);
-        const value = context.evaluate_stack.pop();
-        context.evaluate_stack.push(sym.value = value);
+        const value = stack.pop();
+        stack.push(sym.value = value);
     }
 
      toJSON() {
