@@ -166,7 +166,7 @@ export function test3() {
 
     const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), new Code.PopCode() ];
     const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
-    const c3 = Code.createBinCode(ASSIGN, operand_v(sym_pi), c1);
+    const c3 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), c1), new Code.PopCode()];
     const codes = [
       ...c0,
       ...c3,
