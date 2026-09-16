@@ -11,6 +11,7 @@ export class SymbolTableContext {
   #listenersAddVarable;
   #listenersDeleteVarable;
   #listenersUpdateSettings;
+  #listenersIndexRenumbering;
   #loading;
   #resolveReferencesLlist;
 
@@ -57,6 +58,7 @@ export class SymbolTableContext {
     this.#listenersAddVarable = new Set();
     this.#listenersDeleteVarable = new Set();
     this.#listenersUpdateSettings = new Set();
+    this.#listenersIndexRenumbering = new Set();
 
     // Статическая часть
     this.fixedNames = Array.from(COMPILER_REGISTRY.keys());
@@ -112,20 +114,30 @@ export class SymbolTableContext {
     }    
   }
   unsubscribeAddVarable(callback) { this.#listenersAddVarable.delete(callback); }
+
+  #invokeIndexRenumbering(...args) { this.#listenersIndexRenumbering.forEach(callback => callback(...args)); }
+  subscribeIndexRenumbering(callback) {
+   if (typeof callback === 'function') {
+      this.#listenersIndexRenumbering.add(callback);
+    }    
+  }
+  unsubscribeIndexRenumbering(callback) { this.#listenersIndexRenumbering.delete(callback); }
+
+  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
   subscribeDeleteVarable(callback) {
    if (typeof callback === 'function') {
       this.#listenersDeleteVarable.add(callback);
     }    
   }
   unsubscribeDeleteVarable(callback) { this.#listenersDeleteVarable.delete(callback); }
-  #invokeDeleteVarable(...args) { this.#listenersDeleteVarable.forEach(callback => callback(...args)); }
+
+  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
   subscribeUpdateSettings(callback) {
    if (typeof callback === 'function') {
       this.#listenersUpdateSettings.add(callback);
     }    
   }
   unsubscribeUpdateSettings(callback) { this.#listenersUpdateSettings.delete(callback); }
-  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
 
   static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; }
 
