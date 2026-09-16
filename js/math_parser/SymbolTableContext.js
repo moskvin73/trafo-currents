@@ -154,7 +154,7 @@ export class SymbolTableContext {
       set context(newContext) {
         if (insance.getIdByName(name) === null) 
           insance = newContext;
-        else throw new Error("Недопустимое изминеи контекста"); 
+        else throw new Error("Недопустимое изменение контекста символа таблицы идентификаторов"); 
       },
       get name() { return name; },
       subscribeUpdateVarable(callback) {
