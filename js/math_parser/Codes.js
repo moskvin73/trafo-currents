@@ -248,7 +248,23 @@ export class PushCodeVarbleLocal extends Code {
         checkSymbolAll(sym);
         context.evaluate_stack.push(sym.value);
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            id_name: this.id_name
+        };
+    }
+
+    static get dataTypeName() { return "PushCodeVarbleLocal"; }
+
+    static fromJSON(data) {
+        return new PushCodeVarbleLocal(
+            data.id_name,
+        );
+    }
 }
+regCode(PushCodeVarbleLocal);
 
 export class PushCodeVarbleGlobal extends Code {
     constructor(sym) {
