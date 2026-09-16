@@ -277,12 +277,32 @@ export class DefineVarableCode extends Code {
 regCode(DefineVarableCode);
 
 export class PopCode extends Code {
+    constructor(value) {
+        super();
+    }
 
+    internal_evaluate(context) {
+        context.evaluate_stack.pop();
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+        };
+    }
+
+    static get dataTypeName() { return "PopCode"; }
+
+    static fromJSON(data) {
+        return new PopCode();
+    }    
 }
+regCode(PopCode);
 
 //#region PUSH
 export class PushCodeConst extends Code {
     constructor(value) {
+        super();
         this.value = value;
     }
 

@@ -142,6 +142,7 @@ export function test3() {
   // Создаём выполнитель
     const executor = {
       report: [],
+      last_popped : null,
       scope_context: symbols,
       evaluate_stack: [],
       evaluate_loc: null,
