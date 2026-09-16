@@ -109,7 +109,7 @@ function regCode(ClassRef) {
 export class LocationComm extends Command {
     constructor(loc) {
         super();
-        if (!(loc instanceof BaseLocation)) throw new TypeError('Неверный тип пораметра класса LocationComm');
+        if (!(loc instanceof BaseLocation)) throw new TypeError(`Неверный тип пораметра класса LocationComm loc: ${loc}, пораметр loc должн экземпляром значения возвращающемого MathLexer.createLocation() лексера`);
         this.loc = loc;
     }
 
@@ -172,6 +172,9 @@ regCode(ReportComm);
 export class ErrorComm extends Command {
     constructor(msg) {
         super();
+        if (typeof msg !== 'string') {
+            throw new TypeError(`Неверный тип пораметра msg класса ErrorComm: ${mag}, параметр msg должен быть строкой`);
+        }
         this.msg = msg;
     }
 
