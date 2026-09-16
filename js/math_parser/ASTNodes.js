@@ -578,8 +578,9 @@ export class MatrixNode extends MathNode {
     ret_code = [...ret_code, new Code.MatrixCode(rowCount, colCount)];
     return ret_code;
   }
+
   /**
-   * Сбор математических выражений (интеграция в вашу систему обхода)
+   * Сбор математических выражений (интеграция в систему обхода)
    */
   collectMathExpressions(list) {
     list.push(this);
