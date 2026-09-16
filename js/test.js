@@ -142,6 +142,7 @@ export function test3() {
   // Создаём выполнитель
     const executor = {
       report: [],
+      // Хранит последнее значение, извлеченное из стека evaluate_stack методом pop
       last_popped : null,
       scope_context: symbols,
       evaluate_stack: [],
