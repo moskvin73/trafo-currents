@@ -126,7 +126,23 @@ export class ReportCode extends Code {
             context.createReportRecord(this.astNode, stack[len - 1]);
         }
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            astNode: this.astNode
+        };
+    }
+
+    static get dataTypeName() { return "ReportCode"; }
+
+    static fromJSON(data) {
+        return new ReportCode(
+            restoreDataType(data.astNode)
+        );
+    }  
 }
+regCode(ReportCode);
 
 export class ErrorCode extends Code {
     constructor(msg) {
