@@ -30,13 +30,13 @@ export class SymbolTableContext {
     this.settings = {
       get complexFormat() { return state_settings.complexFormat; },
       set complexFormat(v) {
-          state_settings.complexFormat =  v;
-          update_format('complexFormat', v);
+          [state_settings.complexFormat, v] = [v, state_settings.complexFormat];
+          update_format('complexFormat', v, state_settings.complexFormat);
       },
       get angleMode() { return state_settings.angleMode; },
       set angleMode(v) {
-        state_settings.angleMode = v;
-        update_format('angleMode', v);
+        [state_settings.angleMode, v] = [v, state_settings.angleMode];
+        update_format('angleMode', v, state_settings.angleMode);
       },
       get precision() { return state_settings.precision; },
       set precision(v) {
@@ -134,7 +134,7 @@ export class SymbolTableContext {
   }
   unsubscribeDeleteVarable(callback) { this.#listenersDeleteVarable.delete(callback); }
 
-  #invokeUpdateSettings(...args) { this.#listenersUpdateSettings.forEach(callback => callback(...args)); }
+  #invokeUpdateSettings(name, oldValue, newValue) { this.#listenersUpdateSettings.forEach(callback => callback(name, oldValue, newValue)); }
   subscribeUpdateSettings(callback) {
    if (typeof callback === 'function') {
       this.#listenersUpdateSettings.add(callback);
