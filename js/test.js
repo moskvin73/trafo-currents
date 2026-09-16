@@ -90,7 +90,7 @@ export function test2() {
     const context = new SymbolTableContext();
     const id_var = context.acquireId("Varable");
     context.varSymbols[id_var - context.CD].value = new RealNumber(3.14);
-    var_sym = context.varSymbols[id_var - context.CD];
+    const var_sym = context.varSymbols[id_var - context.CD];
     let id = context.acquireId("myCode");
 
     context.subscribeIndexRenumbering((source, lastIdx, newIndex) => {
