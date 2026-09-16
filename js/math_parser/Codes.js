@@ -169,34 +169,36 @@ export class ReportComm extends Command {
 }
 regCode(ReportComm);
 
-export class ErrorCode extends Command {
+export class ErrorComm extends Command {
     constructor(msg) {
         super();
         this.msg = msg;
     }
 
-  internal_evaluate(context) {
-    throw new EvaluateError(this.msg);
-  }
+    toString(context) { return `error "${this.msg}"`; }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      msg: this.msg
-    };
-  }
+    internal_evaluate(context) {
+        throw new EvaluateError(this.msg);
+    }
 
-  static get dataTypeName() { return "ErrorCode"; }
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        msg: this.msg
+        };
+    }
 
-  static fromJSON(data) {
-    return new ErrorCode(
-      data.msg,
-      restoreLocation(data.loc),
-      restoreDataType(data.astNode)
-    );
-  }
+    static get dataTypeName() { return "ErrorCode"; }
+
+    static fromJSON(data) {
+        return new ErrorComm(
+        data.msg,
+        restoreLocation(data.loc),
+        restoreDataType(data.astNode)
+        );
+    }
 }
-regCode(ErrorCode);
+regCode(ErrorComm);
 
 export class IF_Code extends Command {
     constructor(len_code_false) {
