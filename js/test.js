@@ -171,7 +171,6 @@ export function test3() {
       ...c0,
       ...c3,
     ];
-    console.log(sym_pi.value);
     executor.evaluate(codes);
-    console.log(sym_pi.value);
+    console.log(`Значение переменной: pi = ${sym_pi.value}`);
 }
