@@ -19,8 +19,6 @@ export class EvaluateError extends Error {
 export class Code {
     constructor() {}
 
-    error(context, msg) { throw new Error(msg); }
-
     evaluate(context) {
         try
         {
