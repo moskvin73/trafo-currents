@@ -299,7 +299,7 @@ export class SymbolTableContext {
   #internalDeleteGlobalForId(varIdx) {
     const globalId = varIdx + this.CD;
     this.#invokeDeleteVarable(this, globalId);
-    this.varSymbols[varIdx].context = null;
+    const sym_del = this.varSymbols[varIdx];
     const name = this.varNames[varIdx];
     const lastIdx = this.varSymbols.length - 1;
     // Если удаляемый элемент не последний, меняем его местами с последним
@@ -318,6 +318,7 @@ export class SymbolTableContext {
 
     // Удаляем имя из хэш-таблицы
     delete this.varHash[name];
+    sym_del.context = null;
   }
 
   deleteGlobalForId(varIdx) {
