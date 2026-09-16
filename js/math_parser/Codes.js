@@ -276,14 +276,29 @@ export class GotoComm extends Command {
 }
 regCode(GotoComm);
 
-export class DefineVarableCode extends Command {
-    constructor(funcId, statements, paramsCount, localsCount) {
+export class DefineVarableComm extends Command {
+    constructor(funcId, commands, paramsCount, localsCount) {
         super();
+        if (!Number.isInteger(funcId)) {
+            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm funcId: ${funcId}, пораметр должен быть целым числом.`);
+        }
+        if (!(Array.isArray(commands) && commands.every(item => item instanceof Command))) {
+            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm commands: ${commands}, пораметр должен быть массивом комммад типа Command.`);
+        }
+        if (!Number.isInteger(paramsCount)) {
+            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm paramsCount: ${paramsCount}, пораметр должен быть целым числом.`);
+        }
+        if (!Number.isInteger(localsCount)) {
+            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm localsCount: ${localsCount}, пораметр должен быть целым числом.`);
+        }
+
         this.funcId = funcId;
-        this.statements = statements;
+        this.statements = commands;
         this.paramsCount = paramsCount;
         this.localsCount = localsCount;
     }
+
+    toString(context) { return `def_var "${context.getNameById(this.funcId)}"`; }
 
     internal_evaluate(context) {
         const scopeCtrl = context.scope_context;
@@ -312,7 +327,7 @@ export class DefineVarableCode extends Command {
     static get dataTypeName() { return "DefineVarableCode"; }
 
     static fromJSON(data) {
-            return new DefineVarableCode(
+            return new DefineVarableComm(
             data.funcId,
             restoreDataType(data.statements),
             data.paramsCount,
@@ -320,7 +335,7 @@ export class DefineVarableCode extends Command {
         );
     }
 }
-regCode(DefineVarableCode);
+regCode(DefineVarableComm);
 
 export class PopComm extends Command {
     constructor(value) {
