@@ -136,11 +136,13 @@ export class LocationComm extends Command {
 }
 regCode(LocationComm);
 
-export class ReportCode extends Command {
+export class ReportComm extends Command {
     constructor(astNode) {
         super();
         this.astNode = astNode;
     }
+
+    toString(context) { return `report ${this.astNode}, st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
@@ -160,12 +162,12 @@ export class ReportCode extends Command {
     static get dataTypeName() { return "ReportCode"; }
 
     static fromJSON(data) {
-        return new ReportCode(
+        return new ReportComm(
             restoreDataType(data.astNode)
         );
     }  
 }
-regCode(ReportCode);
+regCode(ReportComm);
 
 export class ErrorCode extends Command {
     constructor(msg) {
