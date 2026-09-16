@@ -215,7 +215,7 @@ export class IFComm extends Command {
         this.len_code_false = len_code_false;
     }
 
-    toString(_context) { return `if_jmp st[op], "${this.en_code_false}"`; }
+    toString(_context) { return `if_jmp st[op], "${this.len_code_false}"`; }
 
     internal_evaluate(context) {
         const if_result = context.evaluate_stack.pop();
@@ -253,6 +253,8 @@ export class GotoComm extends Command {
 
         this.len_code = len_code;
     }
+
+    toString(_context) { return `goto "${this.len_code}"`; }
 
     internal_evaluate(context) {
         context.index_code += this.len_code;
