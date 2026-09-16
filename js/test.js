@@ -133,3 +133,7 @@ export function test2() {
     console.error("Критическая ошибка в тесте:", error);
   }    
 }
+
+function test3 {
+  
+}
