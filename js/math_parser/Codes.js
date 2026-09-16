@@ -299,9 +299,9 @@ export class PushCodeConst extends Code {
         return new PushCodeConst(
             restoreDataType(data.value)
         );
-    }
-    
+    }    
 }
+regCode(PushCodeConst);
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
