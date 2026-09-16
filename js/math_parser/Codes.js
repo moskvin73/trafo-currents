@@ -109,6 +109,7 @@ function regCode(ClassRef) {
 export class LocationComm extends Command {
     constructor(loc) {
         super();
+        if (!(loc instanceof BaseLocation)) throw new TypeError('Неверный тип пораметра класса LocationComm');
         this.loc = loc;
     }
 
