@@ -158,7 +158,7 @@ export function test3() {
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
-    const operand_c = (value) => { return new new Code.OpConst(value); };
+    const operand_c = (value) => { return new Code.OpConst(value); };
 
     const c0 = Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI));
     const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
