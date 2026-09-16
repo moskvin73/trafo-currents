@@ -706,7 +706,7 @@ class AssignCodeValueOp extends Code {
 
     internal_evaluate(context) {
         const sym = this.let_value.getSymbolNoCheck(context);
-        const value = stack.pop();
+        const value = context.evaluate_stack.pop();
         context.evaluate_stack.push(sym.value = value);
     }
 
