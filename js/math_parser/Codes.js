@@ -938,7 +938,7 @@ const SubstitutionTableBin = new Map([
 function getOperandType(op) {
     if (op instanceof OpConst) return OperandsType.CONST;
     else if (op instanceof OpVarable) return OperandsType.VARABLE;
-    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return OperandsType.EVALUATES;
+    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return OperandsType.EVALUATE;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
 }
 
