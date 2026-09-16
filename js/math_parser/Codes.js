@@ -969,52 +969,52 @@ const SubstitutionTableBin = new Map([
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [new AssignCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AssignCodeValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [new AssignCodeValueOp(l_o), ...r_o]; }
+        (l_o, r_o) => { return [new AssignCodeValueOp(l_o), ...r_o]; }
     ],
 
     // ADD
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.CONST),
-        ([l_o, r_o]) => {
+        (l_o, r_o) => {
             const { l, r } = dispatcher.promoteTypes(l_op.getValue(), r_o.getValue()); 
             return new OpConst(l.add(r)); 
         }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
-        ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.CONST),
-        ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+        (l_o, r_o) => { return [...l_o, new AddCodeOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
+        (l_o, r_o) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
-        ([l_o, r_o]) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+        (l_o, r_o) => { return [...l_o, new AddCodeOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [new AddCodeValueOp(l_o), ...r_o]; }
+        (l_o, r_o) => { return [new AddCodeValueOp(l_o), ...r_o]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        ([l_o, r_o]) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
+        (l_o, r_o) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
     ],
 
 ]);
