@@ -92,7 +92,7 @@ export default class ASTNode {
     throw new Error("[ASTNode]: Метод createCode(context) не реализован.");
   }
 
-  createLocationCode() { return Code.LocationCode(this.loc); }
+  createLocationCode() { return Code.LocationComm(this.loc); }
 
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX(context) {

@@ -106,11 +106,13 @@ function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
-export class LocationCode extends Command {
+export class LocationComm extends Command {
     constructor(loc) {
         super();
         this.loc = loc;
     }
+
+    toString(context) { return `location ${this.loc}`; }
 
     internal_evaluate(context) {
         context.evaluate_loc = loc;
@@ -126,12 +128,12 @@ export class LocationCode extends Command {
     static get dataTypeName() { return "LocationCode"; }
 
     static fromJSON(data) {
-        return new LocationCode(
+        return new LocationComm(
             restoreLocation(data.loc)
         );
     }  
 }
-regCode(LocationCode);
+regCode(LocationComm);
 
 export class ReportCode extends Command {
     constructor(astNode) {
