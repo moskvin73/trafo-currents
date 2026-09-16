@@ -93,7 +93,7 @@ export function test2() {
     const var_sym = context.varSymbols[id_var - context.CD];
     let id = context.acquireId("myCode");
 
-    context.subscribeIndexRenumbering((source, lastIdx, newIndex) => {
+    context.subscribeIndexRenumbering((_source, lastIdx, newIndex) => {
       if (lastIdx === id) id = newIndex;
     });
 
