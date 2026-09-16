@@ -213,9 +213,24 @@ export class Goto_Code extends Code {
     internal_evaluate(context) {
         context.index_code += this.len_code;
     }
-}
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            len_code: this.len_code
+        };
+    }
 
-export class DefineVarableCodeNode extends Code {
+    static get dataTypeName() { return "Goto_Code"; }
+
+    static fromJSON(data) {
+        return new Goto_Code(
+            data.len_code,
+        );
+    }  
+}
+regCode(Goto_Code);
+
+export class DefineVarableCode extends Code {
     constructor(funcId, statements, paramsCount, localsCount) {
         super();
         this.funcId = funcId;
@@ -237,7 +252,29 @@ export class DefineVarableCodeNode extends Code {
         const funcSymbol = scopeCtrl.getSymbolById(this.funcId);
         funcSymbol.value = closure;
     }
+
+    toJSON() {
+            return {
+            ...super.toJSON(),
+            funcId: this.funcId,
+            statements: this.statements,
+            paramsCount: this.paramsCount,
+            localsCount: this.localsCount,
+        };
+    }
+
+    static get dataTypeName() { return "DefineVarableCode"; }
+
+    static fromJSON(data) {
+            return new DefineVarableCode(
+            data.funcId,
+            restoreDataType(data.statements),
+            data.paramsCount,
+            data.localsCount,
+        );
+    }
 }
+regCode(DefineVarableCode);
 
 //#region PUSH
 export class PushCodeConst extends Code {
