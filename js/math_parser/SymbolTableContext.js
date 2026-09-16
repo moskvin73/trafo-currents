@@ -40,18 +40,18 @@ export class SymbolTableContext {
       },
       get precision() { return state_settings.precision; },
       set precision(v) {
-        state_settings.precision = v;
-        update_format('precision', v);
+        [state_settings.precision, v] = [v, state_settings.precision];
+        update_format('precision', v, state_settings.precision);
       },
       get matrixFormat() { return state_settings.matrixFormat; },
       set matrixFormat(v) {
-        state_settings.matrixFormat = v;
-        update_format('matrixFormat', v);
+        [state_settings.matrixFormat, v] = [v, state_settings.matrixFormat];
+        update_format('matrixFormat', v, state_settings.matrixFormat);
       },
       get max_count_report() { return state_settings.max_count_report; },
       set max_count_report(v) {
-        state_settings.max_count_report = v;
-        update_format('max_count_report', v);
+        [state_settings.max_count_report, v] = [v, state_settings.max_count_report];
+        update_format('max_count_report', v, state_settings.max_count_report);
       }
     };
 
