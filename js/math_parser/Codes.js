@@ -82,7 +82,6 @@ export class Codes {
 }
 registerDataType(Codes.dataTypeName, Codes.fromJSON);
 
-
 function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
