@@ -101,7 +101,7 @@ export function test2() {
     const codes = [ new Code.OpVarableGlobal(context.varSymbols[id_var - context.CD]) ];
     context.varSymbols[id - context.CD].value = new VarableCode(codes, 0, 0, null);
 
-    context.deleteGlobalForId(id_var);
+    context.deleteGlobalForName("Varable");
 
     const savedState = context.serializeGlobalContext();
     localStorage.setItem("global_symbol_table", savedState);
