@@ -31,7 +31,7 @@ export class Code {
             const msg = err.toString();
             const loc = context.evaluate_loc;
             if (loc) {
-                context.error(msg, loc ?? this.loc, "Runtime");
+                context.error(msg, loc, "Runtime");
                 throw new EvaluateError(msg, true);
             }
             else throw new EvaluateError(msg, false);
