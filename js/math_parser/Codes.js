@@ -17,7 +17,22 @@ export class EvaluateError extends Error {
 }
 
 export class Code {
-    constructor() {}
+    constructor() {
+        // Защита от создания экземпляра самого базового класса (опционально)
+        if (new.target === Code) {
+            throw new TypeError("Нельзя создавать экземпляры базового класса напрямую.");
+        }
+
+        // Проверяем, переопределен ли метод в дочернем классе
+        if (this.toString === Code.prototype.toString) {
+            throw new TypeError(`Класс "${new.target.name}" должен переопределить метод toString(context).`);
+        }
+
+        // Проверяем количество аргументов (сигнатуру)
+        if (this.toString.length !== 1) {
+            throw new TypeError(`Метод toString в классе "${new.target.name}" должен принимать ровно 1 аргумент (context).`);
+        }        
+    }
 
     evaluate(context) {
         try
