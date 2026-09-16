@@ -173,7 +173,7 @@ export class ErrorComm extends Command {
     constructor(msg) {
         super();
         if (typeof msg !== 'string') {
-            throw new TypeError(`Неверный тип пораметра msg класса ErrorComm: ${mag}, параметр msg должен быть строкой`);
+            throw new TypeError(`Неверный тип пораметра класса ErrorComm msg: ${mag}, параметр msg должен быть строкой`);
         }
         this.msg = msg;
     }
