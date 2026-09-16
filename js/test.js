@@ -162,7 +162,6 @@ export function test3() {
     const c3 = Code.createBinCode(ASSIGN, operand_v(sym_pi), c1);
     const codes = [
       ...c0,
-      ...c1,
       ...c3,
     ];
     console.log(sym_pi.value);
