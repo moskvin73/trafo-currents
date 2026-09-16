@@ -108,11 +108,11 @@ export class LocationCode extends Code {
 
     static fromJSON(data) {
         return new LocationCode(
-            restoreLocation(data.loc),
+            restoreLocation(data.loc)
         );
     }  
-
 }
+regCode(LocationCode);
 
 export class ReportCode extends Code {
     constructor(astNode) {
