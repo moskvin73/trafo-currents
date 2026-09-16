@@ -309,7 +309,7 @@ export class SymbolTableContext {
   deleteGlobalForName(name) {
     const varIdx = this.varHash[name];
     if (varIdx === undefined) return false;
-    return this.#internalDeleteGlobalForId(varIdx - this.CD);
+    return this.#internalDeleteGlobalForId(varIdx);
   }
   
   getNameById(id) {
