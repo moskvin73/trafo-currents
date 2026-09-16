@@ -16,15 +16,15 @@ export class EvaluateError extends Error {
   }
 }
 
-export class Code {
+export class Command {
     constructor() {
         // Защита от создания экземпляра самого базового класса (опционально)
-        if (new.target === Code) {
-            throw new TypeError('Нельзя создавать экземпляры базового класса "Code" напрямую.');
+        if (new.target === Command) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "Command" напрямую.');
         }
 
         // Проверяем, переопределен ли метод в дочернем классе
-        if (this.toString === Code.prototype.toString) {
+        if (this.toString === Command.prototype.toString) {
             throw new TypeError(`Класс "${new.target.name}" должен переопределить метод toString(context).`);
         }
 
@@ -67,9 +67,9 @@ export class Code {
     }
 }
 
-export class Codes {
+export class Commands {
     constructor(listCode = []) {
-        if (Array.isArray(listCode) && listCode.every(item => item instanceof Code)) {
+        if (Array.isArray(listCode) && listCode.every(item => item instanceof Command)) {
             this.listCode = listCode;
         }
         else throw new Error(`Недопустимые входные данные в конструкторе класса Codes ${listCode}`);
@@ -87,7 +87,7 @@ export class Codes {
     static fromJSON(data) {
         // Проверка на валидность входящих данных
         if (!data || !Array.isArray(data.list_code)) {
-            return new Codes([]);
+            return new Commands([]);
         }
         const context = data.context;   
         const listCode = data.list_code.map(savedCode => {
@@ -97,16 +97,16 @@ export class Codes {
             // Предполагается, что функция restoreDataType объявлена глобально или импортирована
             return restoreDataType(codeWithContext);
         }).filter(Boolean);
-        return new Codes(listCode);
+        return new Commands(listCode);
     }
 }
-registerDataType(Codes.dataTypeName, Codes.fromJSON);
+registerDataType(Commands.dataTypeName, Commands.fromJSON);
 
 function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
-export class LocationCode extends Code {
+export class LocationCode extends Command {
     constructor(loc) {
         super();
         this.loc = loc;
@@ -133,7 +133,7 @@ export class LocationCode extends Code {
 }
 regCode(LocationCode);
 
-export class ReportCode extends Code {
+export class ReportCode extends Command {
     constructor(astNode) {
         super();
         this.astNode = astNode;
@@ -164,7 +164,7 @@ export class ReportCode extends Code {
 }
 regCode(ReportCode);
 
-export class ErrorCode extends Code {
+export class ErrorCode extends Command {
     constructor(msg) {
         super();
         this.msg = msg;
@@ -193,7 +193,7 @@ export class ErrorCode extends Code {
 }
 regCode(ErrorCode);
 
-export class IF_Code extends Code {
+export class IF_Code extends Command {
     constructor(len_code_false) {
         super();
         this.len_code_false = len_code_false;
@@ -224,7 +224,7 @@ export class IF_Code extends Code {
 }
 regCode(IF_Code);
 
-export class Goto_Code extends Code {
+export class Goto_Code extends Command {
     constructor(len_code) {
         super();
         this.len_code = len_code;
@@ -250,7 +250,7 @@ export class Goto_Code extends Code {
 }
 regCode(Goto_Code);
 
-export class DefineVarableCode extends Code {
+export class DefineVarableCode extends Command {
     constructor(funcId, statements, paramsCount, localsCount) {
         super();
         this.funcId = funcId;
@@ -296,7 +296,7 @@ export class DefineVarableCode extends Code {
 }
 regCode(DefineVarableCode);
 
-export class PopCode extends Code {
+export class PopCode extends Command {
     constructor(value) {
         super();
     }
@@ -320,7 +320,7 @@ export class PopCode extends Code {
 regCode(PopCode);
 
 //#region PUSH
-export class PushCodeConst extends Code {
+export class PushCodeConst extends Command {
     constructor(value) {
         super();
         this.value = value;
@@ -364,7 +364,7 @@ function checkSymbolAll(sym) {
     checkSymbol(sym);
 }
 
-export class PushCodeVarbleLocal extends Code {
+export class PushCodeVarbleLocal extends Command {
     constructor(id_name) {
         this.id_name = id_name;
     }
@@ -392,7 +392,7 @@ export class PushCodeVarbleLocal extends Code {
 }
 regCode(PushCodeVarbleLocal);
 
-export class PushCodeVarbleGlobal extends Code {
+export class PushCodeVarbleGlobal extends Command {
     constructor(sym) {
         checkSymbolNull(sym);
         this.symbol = sym;
@@ -427,7 +427,7 @@ regCode(PushCodeVarbleGlobal);
 //#endregion PUSH
 
 //#region CONST_VAR 
-export class OpValue extends Code {
+export class OpValue extends Command {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
     createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
@@ -548,7 +548,7 @@ export class OpVarableGlobal extends OpVarable {
 regCode(OpVarableGlobal);
 //#endregion CONST_VAR 
 
-export class MatrixCode extends Code {
+export class MatrixCode extends Command {
     constructor(cont_row, count_col) {
         super();
         this.cont_row = cont_row;
@@ -593,7 +593,7 @@ export class MatrixCode extends Code {
 }
 
 //#region BaseBinCode
-class BaseBinCode extends Code {
+class BaseBinCode extends Command {
     constructor() {
         super();
     }
@@ -710,7 +710,7 @@ class BinCodeOpOp extends BaseBinCode {
 //#endregion BaseBinCode
 
 //#region ASSIGN
-class AssignCodeValueValue extends Code {
+class AssignCodeValueValue extends Command {
     constructor(let_value, value) {
         super();
         this.let_value = let_value;
@@ -742,7 +742,7 @@ class AssignCodeValueValue extends Code {
 }
 regCode(AssignCodeValueValue);
 
-class AssignCodeValueOp extends Code {
+class AssignCodeValueOp extends Command {
     constructor(let_value) {
         super();
         this.let_value = let_value;
@@ -790,7 +790,7 @@ function isNumberType(obj) {
     return false;
 }
 
-export class IndexRowCode extends Code {
+export class IndexRowCode extends Command {
     constructor() {
         super();
     }
@@ -831,7 +831,7 @@ export class IndexRowCode extends Code {
     }
 }
 
-export class AssignIndexRowCode extends Code {
+export class AssignIndexRowCode extends Command {
     constructor() {
         super();
     }
@@ -845,7 +845,7 @@ export class AssignIndexRowCode extends Code {
     }
 }
 
-export class IndexMatrixCode extends Code {
+export class IndexMatrixCode extends Command {
     constructor() {
         super();
     }
@@ -878,7 +878,7 @@ export class IndexMatrixCode extends Code {
     }
 }
 
-export class AssignIndexMatrixCode extends Code {
+export class AssignIndexMatrixCode extends Command {
     constructor() {
         super();
     }
@@ -1076,13 +1076,13 @@ const SubstitutionTableBin = new Map([
 function getOperandType(op) {
     if (op instanceof OpConst) return OperandsType.CONST;
     else if (op instanceof OpVarable) return OperandsType.VARABLE;
-    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return OperandsType.EVALUATE;
+    else if (Array.isArray(op) && op.every(item => item instanceof Command)) return OperandsType.EVALUATE;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
 }
 
 export function operandImplementСode(op) {
     if (op instanceof OpConst || op instanceof OpVarable) return [op.createCodePush()];
-    else if (Array.isArray(op) && op.every(item => item instanceof Code)) return op;
+    else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
 } 
 
