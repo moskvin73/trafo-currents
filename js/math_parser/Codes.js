@@ -285,6 +285,22 @@ export class PushCodeConst extends Code {
     internal_evaluate(context) {
         context.evaluate_stack.push(value);
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            value: this.value
+        };
+    }
+
+    static get dataTypeName() { return "PushCodeConst"; }
+
+    static fromJSON(data) {
+        return new PushCodeConst(
+            restoreDataType(data.value)
+        );
+    }
+    
 }
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
