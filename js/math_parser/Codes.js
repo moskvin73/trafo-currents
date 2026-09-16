@@ -421,7 +421,9 @@ class OpVarable extends OpValue {
         super();
     }
 
-    getSymbol(context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    getSymbol(_context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+
+    getSymbolNoCheck(_context) { throw new Error("[Code]: Метод getSymbolNoCheck() не реализован."); }
 
     getValue(context) { return getSymbol(context).value; }
 }
@@ -435,6 +437,12 @@ export class OpVarableLocal extends OpVarable {
     getSymbol(context) {
         const sym = context.scope_context.getSymbolById(this.id_name);
         checkSymbolAll(sym); 
+        return sym; 
+    }
+
+    getSymbolNoCheck(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name);
+        checkSymbolNull(sym);
         return sym; 
     }
 
@@ -466,10 +474,12 @@ export class OpVarableGlobal extends OpVarable {
 
     createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 
-    getSymbol(context) { 
+    getSymbol(_context) { 
         checkSymbol(this.symbol); 
         return this.symbol; 
     }
+
+    getSymbolNoCheck(_context) { return this.symbol; }
 
     toJSON() {
         const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
@@ -664,7 +674,7 @@ class AssignCodeValueValue extends Code {
     }
     
     internal_evaluate(context) {
-        const sym = this.let_value.getSymbol(context);
+        const sym = this.let_value.getSymbolNoCheck(context);
         const value = this.value.getValue(context);
         context.evaluate_stack.push(sym.value = value);
     }
@@ -695,7 +705,7 @@ class AssignCodeValueOp extends Code {
     }
 
     internal_evaluate(context) {
-        const sym = this.let_value.getSymbol(context);
+        const sym = this.let_value.getSymbolNoCheck(context);
         const value = stack.pop();
         context.evaluate_stack.push(sym.value = value);
     }
