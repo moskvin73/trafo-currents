@@ -1032,7 +1032,7 @@ export function operandImplementСode(op) {
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
 } 
 
-export function createBinCode(operator, l_op, r_o) {
+export function createBinCode(operator, l_op, r_op) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
     const key = getBinKey(operator, lop_type, rop_type);
