@@ -96,6 +96,22 @@ export class LocationCode extends Code {
     internal_evaluate(context) {
         context.evaluate_loc = loc;
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            loc: this.loc
+        };
+    }
+
+    static get dataTypeName() { return "LocationCode"; }
+
+    static fromJSON(data) {
+        return new LocationCode(
+            restoreLocation(data.loc),
+        );
+    }  
+
 }
 
 export class ReportCode extends Code {
@@ -208,6 +224,7 @@ export class DefineVarableCodeNode extends Code {
     }
 }
 
+//#region PUSH
 export class PushCodeConst extends Code {
     constructor(value) {
         this.value = value;
@@ -296,6 +313,7 @@ export class PushCodeVarbleGlobal extends Code {
     }
 }
 regCode(PushCodeVarbleGlobal);
+//#endregion PUSH
 
 //#region CONST_VAR 
 export class OpValue extends Code {
