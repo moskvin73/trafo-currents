@@ -1040,5 +1040,5 @@ export function createBinCode(operator, l_op, r_op) {
         throw new Error(`Операция не поддерживается: не найден обработчик для ключа "${key}"`);
     }
     const processFn = SubstitutionTableBin.get(key);
-    return processFn(l_op, r_o);
+    return processFn(l_op, r_op);
 }
