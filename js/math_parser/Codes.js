@@ -257,10 +257,31 @@ export class PushCodeVarbleGlobal extends Code {
     }
 
     internal_evaluate(context) {
-        checkSymbol(his.symbol);
-        context.evaluate_stack.push(sym.value);
+        checkSymbol(this.symbol);
+        context.evaluate_stack.push(this.symbol.value);
+    }
+
+    toJSON() {
+        const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
+        return {
+            ...super.toJSON(),
+            sym_data: sym_data
+        };
+    }
+
+    static get dataTypeName() { return "PushCodeVarbleGlobal"; }
+
+    static fromJSON(data) {
+        const data_restore = data.context.dataFromJSON(data.sym_data);
+        if ('callback' in data_restore) {
+            const instance = new PushCodeVarbleGlobal(data_restore.proxyPlaceholder);
+            data_restore.callback = (realSymbol) => { instance.symbol = realSymbol; };
+            return instance;
+        }
+        else return new PushCodeVarbleGlobal(data_restore);
     }
 }
+regCode(PushCodeVarbleGlobal);
 
 //#region CONST_VAR 
 export class OpValue extends Code {
@@ -347,7 +368,7 @@ export class OpVarableGlobal extends OpVarable {
     createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
 
     getSymbol(context) { 
-        checkSymbol(sym); 
+        checkSymbol(this.symbol); 
         return this.symbol; 
     }
 
