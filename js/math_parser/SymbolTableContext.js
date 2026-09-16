@@ -277,17 +277,16 @@ export class SymbolTableContext {
   }
 
   #internalDeleteGlobalForId(varIdx) {
-    #invokeDeleteVarable(this, varId + this.CD);
+    this.#invokeDeleteVarable(this, varId + this.CD);
     const name = this.varNames[varIdx];
     const lastIdx = this.varSymbols.length - 1;
     // Если удаляемый элемент не последний, меняем его местами с последним
     if (varIdx < lastIdx) {
-        const lastParamName = this.varNames[lastIdx];
-        
+        this.#invokeIndexRenumbering(this, lastIdx + this.CD, varId + this.CD);
+        const lastParamName = this.varNames[lastIdx];        
         // Переносим данные последнего элемента на место удаляемого
         this.varNames[varIdx] = this.varNames[lastIdx];
-        this.varSymbols[varIdx] = this.varSymbols[lastIdx];
-        
+        this.varSymbols[varIdx] = this.varSymbols[lastIdx];        
         // Обновляем индекс бывшего последнего элемента в хэш-таблице
         this.varHash[lastParamName] = varIdx;
     }
