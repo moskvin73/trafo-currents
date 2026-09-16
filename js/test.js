@@ -148,4 +148,7 @@ function test3() {
           com.evaluate(this);
     }}};
 
+    const symbols = new SymbolTableContext();
+    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.context.acquireId(name)); }
+    const sym_pi = acquireVar("pi");
 }
