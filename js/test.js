@@ -137,10 +137,12 @@ export function test2() {
 export function test3() {
   // Снимаем квалификацию с помощью деструктуризации
   const { ASSIGN, OR, XOR, AND, ADD, SUB, MUL, DIV, POW } = Code.OperatorBinType;
+  const symbols = new SymbolTableContext();
 
   // Создаём выполнитель
     const executor = {
       report: [],
+      scope_context: symbols,
       evaluate_stack: [],
       evaluate_loc: null,
       index_code: 0,
@@ -155,7 +157,6 @@ export function test3() {
       this.code = null;
   }};
 
-    const symbols = new SymbolTableContext();
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
