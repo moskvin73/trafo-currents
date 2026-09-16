@@ -572,7 +572,7 @@ class BinCodeOpOp extends BaseBinCode {
 }    
 //#endregion BaseBinCode
 
-//#rigion ASSIGN
+//#region ASSIGN
 class AssignCodeValueValue extends Code {
     constructor(let_value, value) {
         super();
