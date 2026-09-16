@@ -107,7 +107,7 @@ export class SymbolTableContext {
 
   get loading() { return this.#loading; }
 
-  #invokeAddVarable(...args) { this.#listenersAddVarable.forEach(callback => callback(...args)); }
+  #invokeAddVarable(source, newIndex) { this.#listenersAddVarable.forEach(callback => callback(source, newIndex)); }
   subscribeAddVarable(callback) {
    if (typeof callback === 'function') {
       this.#listenersAddVarable.add(callback);
