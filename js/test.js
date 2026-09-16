@@ -155,7 +155,7 @@ export function test3() {
   }};
 
     const symbols = new SymbolTableContext();
-    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.context.acquireId(name)); };
+    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new new Code.OpConst(value); };
