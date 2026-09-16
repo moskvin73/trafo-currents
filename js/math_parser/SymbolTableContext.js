@@ -296,19 +296,22 @@ export class SymbolTableContext {
 
     // Удаляем имя из хэш-таблицы
     delete this.varHash[name];
-    return true;
   }
 
   deleteGlobalForId(varIdx) {
     const real_id = varIdx - this.CD;
-    if (varIdx >= this.CD && varIdx < this.varNames.length) return this.#internalDeleteGlobalForId(varIdx - this.CD);
+    if (varIdx >= this.CD && varIdx < this.varNames.length) { 
+      this.#internalDeleteGlobalForId(varIdx - this.CD);
+      return true;
+    }
     return false;
   }
 
   deleteGlobalForName(name) {
     const varIdx = this.varHash[name];
     if (varIdx === undefined) return false;
-    return this.#internalDeleteGlobalForId(varIdx);
+    this.#internalDeleteGlobalForId(varIdx);
+    return true;
   }
   
   getNameById(id) {
