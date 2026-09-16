@@ -143,9 +143,10 @@ export function test3() {
       report: [],
       evaluate_stack: [],
       evaluate_loc: null,
-      code: in_code,
       index_code: 0,
-      evaluate: () => {
+      code: null,
+      evaluate: (code) => {
+        this.code = code;
         while (this.index_code < this.code.length) {
           const com = this.code[this.index_code++];
           com.evaluate(this);
