@@ -301,7 +301,7 @@ export class SymbolTableContext {
 
   deleteGlobalForId(varIdx) {
     const real_id = varIdx - this.CD;
-    if (varIdx >= this.CD) return this.#internalDeleteGlobalForId(varIdx - this.CD);
+    if (varIdx >= this.CD && varIdx < this.varNames.length) return this.#internalDeleteGlobalForId(varIdx - this.CD);
     return false;
   }
 
