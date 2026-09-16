@@ -300,7 +300,7 @@ export class SymbolTableContext {
 
   deleteGlobalForId(varIdx) {
     const real_id = varIdx - this.CD;
-    if (varIdx >= this.CD && varIdx < this.varNames.length) { 
+    if (varIdx >= this.CD && varIdx < this.varSymbols.length) { 
       this.#internalDeleteGlobalForId(varIdx - this.CD);
       return true;
     }
