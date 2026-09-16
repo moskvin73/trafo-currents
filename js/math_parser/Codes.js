@@ -34,6 +34,11 @@ export class Code {
         }        
     }
 
+    // Дефолтная реализация (можно оставить пустой или выкидывать ошибку)
+    toString(_context) {
+        throw new Error("Метод toString(context) должен быть реализован.");
+    }    
+
     evaluate(context) {
         try
         {
