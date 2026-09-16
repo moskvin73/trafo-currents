@@ -165,6 +165,7 @@ export function test3() {
       ...c1,
       ...c3,
     ];
+    console.log(sym_pi.value);
     executor.evaluate(codes);
     console.log(sym_pi.value);
 }
