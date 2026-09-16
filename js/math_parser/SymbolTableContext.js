@@ -151,7 +151,11 @@ export class SymbolTableContext {
       get type() { return state.type; },
       get value() { return state.value; },
       get context() { return insance; },
-      set context(newContext) { insance = newContext; },
+      set context(newContext) {
+        if (insance.getIdByName(name) === null) 
+          insance = newContext;
+        else throw new Error("Недопустимое изминеи контекста"); 
+      },
       get name() { return name; },
       subscribeUpdateVarable(callback) {
         if (typeof callback === 'function') {
