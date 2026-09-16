@@ -635,6 +635,7 @@ class AssignCodeValueOp extends Code {
 regCode(AssignCodeValueOp);
 //#endregion ASSIGN
 
+//#region INDEXING
 function isNumberType(obj) {
     if (!obj) return false;
     
@@ -651,7 +652,6 @@ function isNumberType(obj) {
     return false;
 }
 
-//#region INDEXING
 export class IndexRowCode extends Code {
     constructor() {
         super();
