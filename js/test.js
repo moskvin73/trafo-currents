@@ -164,7 +164,7 @@ export function test3() {
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new Code.OpConst(value); };
 
-    const c0 = Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI));
+    const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), new Code.PopCode() ];
     const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
     const c3 = Code.createBinCode(ASSIGN, operand_v(sym_pi), c1);
     const codes = [
