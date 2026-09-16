@@ -90,11 +90,18 @@ export function test2() {
     const context = new SymbolTableContext();
     const id_var = context.acquireId("Varable");
     context.varSymbols[id_var - context.CD].value = new RealNumber(3.14);
-    const id = context.acquireId("myCode");
+    var_sym = context.varSymbols[id_var - context.CD];
+    let id = context.acquireId("myCode");
+
+    context.subscribeIndexRenumbering((source, lastIdx, newIndex) => {
+      if (lastIdx === id) id = newIndex;
+    });
 
     // Допустим, интерпретатор записал в эту переменную вашу новую рабочую матрицу
     const codes = [ new Code.OpVarableGlobal(context.varSymbols[id_var - context.CD]) ];
     context.varSymbols[id - context.CD].value = new VarableCode(codes, 0, 0, null);
+
+    context.deleteGlobalForId(id_var);
 
     const savedState = context.serializeGlobalContext();
     localStorage.setItem("global_symbol_table", savedState);
