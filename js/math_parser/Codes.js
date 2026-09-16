@@ -395,7 +395,7 @@ export class OpConst extends OpValue {
         this.value = value;
     }
 
-    getValue(context) { return value; }
+    getValue(context) { return this.value; }
 
     createCodePush() { return new PushCodeConst(this.value); }
 
