@@ -136,13 +136,16 @@ export function test2() {
 
 function test3() {
   // Создаём выполнитель
-  const executor = (codes) => {
-    const data = {
+    const executor = {
       report: [],
       evaluate_stack: [],
       evaluate_loc: null,
-    };
-    
-  }
+      code: in_code,
+      index_code: 0,
+      evaluate: () => {
+        while (this.index_code < this.code.length) {
+          const com = this.code[this.index_code++];
+          com.evaluate(this);
+    }}};
 
 }
