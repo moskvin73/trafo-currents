@@ -633,7 +633,7 @@ class AssignCodeValueOp extends Code {
      }    
 }
 regCode(AssignCodeValueOp);
-//#endrigion ASSIGN
+//#endregion ASSIGN
 
 function isNumberType(obj) {
     if (!obj) return false;
