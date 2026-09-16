@@ -142,7 +142,7 @@ export class SymbolTableContext {
   }
   unsubscribeUpdateSettings(callback) { this.#listenersUpdateSettings.delete(callback); }
 
-  static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; }
+  static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; } 
 
   static #create_sybol(state, insance, name) {
     const listenersUpdateVarable = new Set();
