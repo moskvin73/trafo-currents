@@ -277,6 +277,7 @@ export class SymbolTableContext {
   }
 
   #internalDeleteGlobalForId(varIdx) {
+    #invokeDeleteVarable(this, varId + this.CD);
     const name = this.varNames[varIdx];
     const lastIdx = this.varSymbols.length - 1;
     // Если удаляемый элемент не последний, меняем его местами с последним
