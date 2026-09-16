@@ -145,7 +145,7 @@ export function test3() {
       evaluate_loc: null,
       index_code: 0,
       code: null,
-      evaluate: (code) => {
+      evaluate(code) {
         this.code = code;
         while (this.index_code < this.code.length) {
           const com = this.code[this.index_code++];
