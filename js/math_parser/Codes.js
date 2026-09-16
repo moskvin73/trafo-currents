@@ -972,7 +972,7 @@ const SubstitutionTableBin = new Map([
         (l_o, r_o) => { return [new AssignCodeValueValue(l_o, r_o)]; }
     ],
     [
-        getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
+        getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.EVALUATE),
         (l_o, r_o) => { return [new AssignCodeValueOp(l_o), ...r_o]; }
     ],
 
