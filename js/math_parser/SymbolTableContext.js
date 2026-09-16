@@ -277,9 +277,9 @@ export class SymbolTableContext {
   }
 
   #internalDeleteGlobalForId(varIdx) {
+    const name = this.varNames[varIdx];
     const lastIdx = this.varSymbols.length - 1;
-
-    // 2. Если удаляемый элемент не последний, меняем его местами с последним
+    // Если удаляемый элемент не последний, меняем его местами с последним
     if (varIdx < lastIdx) {
         const lastParamName = this.varNames[lastIdx];
         
@@ -290,12 +290,11 @@ export class SymbolTableContext {
         // Обновляем индекс бывшего последнего элемента в хэш-таблице
         this.varHash[lastParamName] = varIdx;
     }
-
-    // 3. Удаляем последний элемент из массивов (теперь там дубликат или удаляемый элемент)
+    // Удаляем последний элемент из массивов (теперь там дубликат или удаляемый элемент)
     this.varNames.pop();
     this.varSymbols.pop();
 
-    // 4. Удаляем имя из хэш-таблицы
+    // Удаляем имя из хэш-таблицы
     delete this.varHash[name];
     return true;
   }
