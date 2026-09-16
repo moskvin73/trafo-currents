@@ -276,6 +276,10 @@ export class DefineVarableCode extends Code {
 }
 regCode(DefineVarableCode);
 
+export class PopCode extends Code {
+
+}
+
 //#region PUSH
 export class PushCodeConst extends Code {
     constructor(value) {
