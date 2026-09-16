@@ -172,5 +172,7 @@ export function test3() {
       ...c3,
     ];
     executor.evaluate(codes);
+    console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
+    console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
     console.log(`Значение переменной: pi = ${sym_pi.value}`);
 }
