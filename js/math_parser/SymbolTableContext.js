@@ -151,6 +151,7 @@ export class SymbolTableContext {
       get type() { return state.type; },
       get value() { return state.value; },
       get context() { return insance; },
+      set context(newContext) { insance = newContext; }
       get name() { return name; },
       subscribeUpdateVarable(callback) {
         if (typeof callback === 'function') {
