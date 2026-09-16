@@ -306,7 +306,6 @@ regCode(PushCodeConst);
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
 function checkSymbol(sym) {
-    checkSymbolNull(sym);
     const name = sym.name;
     if (sym.type === SYM_UNDEFINED) {
         throw new Error(`Переменная "${name}" не инициализирована.`);
@@ -317,7 +316,7 @@ function checkSymbol(sym) {
 }
 
 function checkSymbolAll(sym) {
-    if (sym === null) throw new Error(`Символ не опредилён.`);
+    checkSymbolNull(sym)
     checkSymbol(sym);
 }
 
