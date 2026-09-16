@@ -566,7 +566,7 @@ class BinCodeValueValue extends BaseBinCode {
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
-        context.evaluate_stack.push(operator(l, r));
+        context.evaluate_stack.push(this.operator(l, r));
     }
    
   toJSON() {
@@ -595,7 +595,7 @@ class BinCodeOpValue extends BaseBinCode {
         const stack = context.evaluate_stack; 
         const l_op = stack.pop();
         const { l, r } = dispatcher.promoteTypes(l_op, this.value.getValue(context));
-        stack.push(operator(l, r));
+        stack.push(this.operator(l, r));
     }
 
   toJSON() {
@@ -622,7 +622,7 @@ class BinCodeValueOp extends BaseBinCode {
         const stack = context.evaluate_stack; 
         const r_op = stack.pop();
         const { l, r } = dispatcher.promoteTypes(this.value.getValue(context), r_op);
-        stack.push(operator(l, r));
+        stack.push(this.operator(l, r));
     }    
 
     toJSON() {
@@ -649,7 +649,7 @@ class BinCodeOpOp extends BaseBinCode {
         const r_op = stack.pop();
         const l_op = stack.pop(); 
         const { l, r } = dispatcher.promoteTypes(l_op, r_op);
-        stack.push(operator(l, r));
+        stack.push(this.operator(l, r));
     }
     
     toJSON() {
