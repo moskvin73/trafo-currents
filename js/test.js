@@ -150,7 +150,9 @@ export function test3() {
         while (this.index_code < this.code.length) {
           const com = this.code[this.index_code++];
           com.evaluate(this);
-    }}};
+      }
+      this.code = null;
+  }};
 
     const symbols = new SymbolTableContext();
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.context.acquireId(name)); };
