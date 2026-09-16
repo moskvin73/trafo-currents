@@ -134,6 +134,15 @@ export function test2() {
   }    
 }
 
-function test3 {
-  
+function test3() {
+  // Создаём выполнитель
+  const executor = (codes) => {
+    const data = {
+      report: [],
+      evaluate_stack: [],
+      evaluate_loc: null,
+    };
+    
+  }
+
 }
