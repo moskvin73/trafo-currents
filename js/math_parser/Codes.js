@@ -282,7 +282,7 @@ export class PopCode extends Code {
     }
 
     internal_evaluate(context) {
-        context.evaluate_stack.pop();
+        context.last_popped = context.evaluate_stack.pop();
     }
 
     toJSON() {
