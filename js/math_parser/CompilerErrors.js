@@ -1,7 +1,9 @@
+
+export class BaseLocation {}
 /**
  * Класс, описывающий точную координату в исходном коде.
  */
-export class SourceLocation {
+export class SourceLocation extends BaseLocation {
   constructor(lexer, start, end, startLine, startLineIdx, endLine, endLineIdx) {
     this.lexer = lexer;
     this.start = start;
@@ -49,7 +51,7 @@ export class SourceLocation {
   }
 }
 
-export class IndependentSourceLocation {
+export class IndependentSourceLocation extends BaseLocation {
   constructor(location) {
     // Если это создание в рантайме из живой локации
     if (location instanceof SourceLocation) {
