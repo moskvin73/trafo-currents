@@ -576,7 +576,7 @@ export class MatrixNode extends MathNode {
     }
     const rowCount = this.#rows.length;
     const colCount = rows.length > 0 ? rows[0].length : 0;
-    ret_code = [...ret_code, new Code.MatrixCode(rowCount, colCount)];
+    ret_code = [...ret_code, new Code.MatrixComm(rowCount, colCount)];
     return ret_code;
   }
 
@@ -1832,9 +1832,9 @@ export class IndexNode extends RefNode {
     const rowExpr_code = Code.operandImplementСode(this.rowExpr.createCode(context));
     if (this.colExpr) {
       const colExpr_code = Code.operandImplementСode(this.colExpr.createCode(context));
-      return [...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexMatrixCode()];
+      return [...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexMatrixComm()];
     } else {
-      return [...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexRowCode()];
+      return [...rowExpr_code, ...target_code, this.createLocationCode(), new Code.IndexRowComm()];
     }
   }
 
@@ -1886,9 +1886,9 @@ export class AssignIndexNode extends IndexNode {
     const let_value_code = Code.operandImplementСode(this.expression.createCode(context));
     if (this.colExpr) {
       const colExpr_code = Code.operandImplementСode(this.colExpr.createCode(context));
-      return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexMatrixCode()];
+      return [...let_value_code, ...colExpr_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexMatrixComm()];
     } else {
-      return [...let_value_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexRowCode()];
+      return [...let_value_code, ...rowExpr_code, ...target_code, this.createLocationCode(), new Code.AssignIndexRowComm()];
     }
   }
 

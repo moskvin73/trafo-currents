@@ -173,12 +173,12 @@ export class ErrorComm extends Command {
     constructor(msg) {
         super();
         if (typeof msg !== 'string') {
-            throw new TypeError(`Неверный тип пораметра класса ErrorComm msg: ${mag}, параметр msg должен быть строкой`);
+            throw new TypeError(`Неверный тип пораметра класса ErrorComm msg: ${mag}, пораметр должен быть строкой`);
         }
         this.msg = msg;
     }
 
-    toString(context) { return `error "${this.msg}"`; }
+    toString(_context) { return `error "${this.msg}"`; }
 
     internal_evaluate(context) {
         throw new EvaluateError(this.msg);
@@ -203,11 +203,19 @@ export class ErrorComm extends Command {
 }
 regCode(ErrorComm);
 
-export class IF_Code extends Command {
+export class IFComm extends Command {
     constructor(len_code_false) {
         super();
+    
+        // Проверяем, что значение является целым числом
+        if (!Number.isInteger(len_code_false)) {
+        throw new TypeError(`Неверный тип пораметра класса ErrorComm len_code_false: ${len_code_false}, пораметр должен быть целым числом.`);
+        }
+
         this.len_code_false = len_code_false;
     }
+
+    toString(_context) { return `if_jmp st[op], "${this.en_code_false}"`; }
 
     internal_evaluate(context) {
         const if_result = context.evaluate_stack.pop();
@@ -227,14 +235,14 @@ export class IF_Code extends Command {
     static get dataTypeName() { return "IF_Code"; }
 
     static fromJSON(data) {
-        return new IF_Code(
+        return new IFComm(
             data.len_code_false,
         );
     }  
 }
-regCode(IF_Code);
+regCode(IFComm);
 
-export class Goto_Code extends Command {
+export class GotoComm extends Command {
     constructor(len_code) {
         super();
         this.len_code = len_code;
@@ -253,12 +261,12 @@ export class Goto_Code extends Command {
     static get dataTypeName() { return "Goto_Code"; }
 
     static fromJSON(data) {
-        return new Goto_Code(
+        return new GotoComm(
             data.len_code,
         );
     }  
 }
-regCode(Goto_Code);
+regCode(GotoComm);
 
 export class DefineVarableCode extends Command {
     constructor(funcId, statements, paramsCount, localsCount) {
@@ -306,7 +314,7 @@ export class DefineVarableCode extends Command {
 }
 regCode(DefineVarableCode);
 
-export class PopCode extends Command {
+export class PopComm extends Command {
     constructor(value) {
         super();
     }
@@ -324,13 +332,13 @@ export class PopCode extends Command {
     static get dataTypeName() { return "PopCode"; }
 
     static fromJSON(data) {
-        return new PopCode();
+        return new PopComm();
     }    
 }
-regCode(PopCode);
+regCode(PopComm);
 
 //#region PUSH
-export class PushCodeConst extends Command {
+export class PushCommConst extends Command {
     constructor(value) {
         super();
         this.value = value;
@@ -350,12 +358,12 @@ export class PushCodeConst extends Command {
     static get dataTypeName() { return "PushCodeConst"; }
 
     static fromJSON(data) {
-        return new PushCodeConst(
+        return new PushCommConst(
             restoreDataType(data.value)
         );
     }    
 }
-regCode(PushCodeConst);
+regCode(PushCommConst);
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
@@ -374,7 +382,7 @@ function checkSymbolAll(sym) {
     checkSymbol(sym);
 }
 
-export class PushCodeVarbleLocal extends Command {
+export class PushCommVarbleLocal extends Command {
     constructor(id_name) {
         this.id_name = id_name;
     }
@@ -395,14 +403,14 @@ export class PushCodeVarbleLocal extends Command {
     static get dataTypeName() { return "PushCodeVarbleLocal"; }
 
     static fromJSON(data) {
-        return new PushCodeVarbleLocal(
+        return new PushCommVarbleLocal(
             data.id_name,
         );
     }
 }
-regCode(PushCodeVarbleLocal);
+regCode(PushCommVarbleLocal);
 
-export class PushCodeVarbleGlobal extends Command {
+export class PushCommVarbleGlobal extends Command {
     constructor(sym) {
         checkSymbolNull(sym);
         this.symbol = sym;
@@ -426,14 +434,14 @@ export class PushCodeVarbleGlobal extends Command {
     static fromJSON(data) {
         const data_restore = data.context.dataFromJSON(data.sym_data);
         if ('callback' in data_restore) {
-            const instance = new PushCodeVarbleGlobal(data_restore.proxyPlaceholder);
+            const instance = new PushCommVarbleGlobal(data_restore.proxyPlaceholder);
             data_restore.callback = (realSymbol) => { instance.symbol = realSymbol; };
             return instance;
         }
-        else return new PushCodeVarbleGlobal(data_restore);
+        else return new PushCommVarbleGlobal(data_restore);
     }
 }
-regCode(PushCodeVarbleGlobal);
+regCode(PushCommVarbleGlobal);
 //#endregion PUSH
 
 //#region CONST_VAR 
@@ -451,7 +459,7 @@ export class OpConst extends OpValue {
 
     getValue(_context) { return this.value; }
 
-    createCodePush() { return new PushCodeConst(this.value); }
+    createCodePush() { return new PushCommConst(this.value); }
 
     toJSON() {
         return {
@@ -500,7 +508,7 @@ export class OpVarableLocal extends OpVarable {
         return sym; 
     }
 
-    createCodePush() { return new PushCodeVarbleLocal(this.id_name); }
+    createCodePush() { return new PushCommVarbleLocal(this.id_name); }
 
     toJSON() {
         return {
@@ -526,7 +534,7 @@ export class OpVarableGlobal extends OpVarable {
         this.symbol = sym;
     }
 
-    createCodePush() { return new PushCodeVarbleGlobal(this.symbol); }
+    createCodePush() { return new PushCommVarbleGlobal(this.symbol); }
 
     getSymbol(_context) { 
         checkSymbol(this.symbol); 
@@ -558,7 +566,7 @@ export class OpVarableGlobal extends OpVarable {
 regCode(OpVarableGlobal);
 //#endregion CONST_VAR 
 
-export class MatrixCode extends Command {
+export class MatrixComm extends Command {
     constructor(cont_row, count_col) {
         super();
         this.cont_row = cont_row;
@@ -603,7 +611,7 @@ export class MatrixCode extends Command {
 }
 
 //#region BaseBinCode
-class BaseBinCode extends Command {
+class BaseBinComm extends Command {
     constructor() {
         super();
     }
@@ -611,7 +619,7 @@ class BaseBinCode extends Command {
     operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
 }
 
-class BinCodeValueValue extends BaseBinCode {
+class BinCommValueValue extends BaseBinComm {
     constructor(l_value, r_value) {
         super();
         this.l_value = l_value;
@@ -639,7 +647,7 @@ class BinCodeValueValue extends BaseBinCode {
   }
 }
 
-class BinCodeOpValue extends BaseBinCode {
+class BinCommOpValue extends BaseBinComm {
     constructor(value) {
         super();
         this.value = value;
@@ -666,7 +674,7 @@ class BinCodeOpValue extends BaseBinCode {
     }
 }
 
-class BinCodeValueOp extends BaseBinCode {
+class BinCommValueOp extends BaseBinComm {
     constructor(value) {
         super();
         this.value = value;
@@ -693,7 +701,7 @@ class BinCodeValueOp extends BaseBinCode {
     }
 }    
 
-class BinCodeOpOp extends BaseBinCode {
+class BinCommOpOp extends BaseBinComm {
     constructor() {
         super(loc, astNode);
     }
@@ -720,7 +728,7 @@ class BinCodeOpOp extends BaseBinCode {
 //#endregion BaseBinCode
 
 //#region ASSIGN
-class AssignCodeValueValue extends Command {
+class AssignCommValueValue extends Command {
     constructor(let_value, value) {
         super();
         this.let_value = let_value;
@@ -744,15 +752,15 @@ class AssignCodeValueValue extends Command {
     static get dataTypeName() { return "AssignCodeValueValue"; }
 
     static fromJSON(data) {
-        return new AssignCodeValueValue(
+        return new AssignCommValueValue(
             restoreDataType(data.let_value),
             restoreDataType(data.value)
         );
      }    
 }
-regCode(AssignCodeValueValue);
+regCode(AssignCommValueValue);
 
-class AssignCodeValueOp extends Command {
+class AssignCommValueOp extends Command {
     constructor(let_value) {
         super();
         this.let_value = let_value;
@@ -775,12 +783,12 @@ class AssignCodeValueOp extends Command {
     static get dataTypeName() { return "AssignCodeValueOp"; }
 
     static fromJSON(data) {
-        return new AssignCodeValueOp(
+        return new AssignCommValueOp(
             restoreDataType(data.let_value)
         );
      }    
 }
-regCode(AssignCodeValueOp);
+regCode(AssignCommValueOp);
 //#endregion ASSIGN
 
 //#region INDEXING
@@ -800,7 +808,7 @@ function isNumberType(obj) {
     return false;
 }
 
-export class IndexRowCode extends Command {
+export class IndexRowComm extends Command {
     constructor() {
         super();
     }
@@ -841,7 +849,7 @@ export class IndexRowCode extends Command {
     }
 }
 
-export class AssignIndexRowCode extends Command {
+export class AssignIndexRowComm extends Command {
     constructor() {
         super();
     }
@@ -855,7 +863,7 @@ export class AssignIndexRowCode extends Command {
     }
 }
 
-export class IndexMatrixCode extends Command {
+export class IndexMatrixComm extends Command {
     constructor() {
         super();
     }
@@ -888,7 +896,7 @@ export class IndexMatrixCode extends Command {
     }
 }
 
-export class AssignIndexMatrixCode extends Command {
+export class AssignIndexMatrixComm extends Command {
     constructor() {
         super();
     }
@@ -904,7 +912,7 @@ export class AssignIndexMatrixCode extends Command {
 //#endregion INDEXING
 
 //#region ADD
-class AddCodeValueValue extends BinCodeValueValue {
+class AddCommValueValue extends BinCommValueValue {
     constructor(l_value, r_value) {
         super(l_value, r_value);
     }
@@ -913,11 +921,11 @@ class AddCodeValueValue extends BinCodeValueValue {
 
     static get dataTypeName() { return "AddCodeValueValue"; }
 
-    static fromJSON(data) { return BinCodeValueValue.create(AddCodeValueValue, data); }
+    static fromJSON(data) { return BinCommValueValue.create(AddCommValueValue, data); }
 }
-regCode(AddCodeValueValue);
+regCode(AddCommValueValue);
 
-class AddCodeOpValue extends BinCodeOpValue {
+class AddCommOpValue extends BinCommOpValue {
     constructor(value) {
         super(value);
     }
@@ -926,11 +934,11 @@ class AddCodeOpValue extends BinCodeOpValue {
   
     static get dataTypeName() { return "AddCodeOpValue"; }
 
-    static fromJSON(data) { return BinCodeOpValue.create(AddCodeOpValue, data); }    
+    static fromJSON(data) { return BinCommOpValue.create(AddCommOpValue, data); }    
 }
-regCode(AddCodeOpValue);     
+regCode(AddCommOpValue);     
 
-class AddCodeValueOp extends BinCodeValueOp {
+class AddCommValueOp extends BinCommValueOp {
     constructor(value) {
         super(value);
     }
@@ -938,7 +946,7 @@ class AddCodeValueOp extends BinCodeValueOp {
     operator(l, r) { return l.add(r) }
 }    
 
-class AddCodeOpOp extends BinCodeOpOp {
+class AddCommOpOp extends BinCommOpOp {
     constructor() {
         super();
     }
@@ -947,13 +955,13 @@ class AddCodeOpOp extends BinCodeOpOp {
 
     static get dataTypeName() { return "AddCodeOpOp"; }
 
-    static fromJSON(data) { return BinCodeOpOp.create(AddCodeOpOp, data); }    
+    static fromJSON(data) { return BinCommOpOp.create(AddCommOpOp, data); }    
 }
-regCode(AddCodeOpOp);
+regCode(AddCommOpOp);
 //#endregion ADD
 
 //#region SUB
-class SubCodeValueValue extends BinCodeValueValue {
+class SubCommValueValue extends BinCommValueValue {
     constructor(l_value, r_value) {
         super(l_value, r_value);
     }
@@ -962,11 +970,11 @@ class SubCodeValueValue extends BinCodeValueValue {
 
     static get dataTypeName() { return "SubCodeValueValue"; }
 
-    static fromJSON(data) { return BinCodeValueValue.create(SubCodeValueValue, data); }
+    static fromJSON(data) { return BinCommValueValue.create(SubCommValueValue, data); }
 }
-regCode(SubCodeValueValue);    
+regCode(SubCommValueValue);    
 
-class SubCodeOpValue extends BinCodeOpValue {
+class SubCommOpValue extends BinCommOpValue {
     constructor(value) {
         super(value);
     }
@@ -975,11 +983,11 @@ class SubCodeOpValue extends BinCodeOpValue {
   
     static get dataTypeName() { return "SubCodeOpValue"; }
 
-    static fromJSON(data) { return BinCodeOpValue.create(SubCodeOpValue, data); }    
+    static fromJSON(data) { return BinCommOpValue.create(SubCommOpValue, data); }    
 }
-regCode(SubCodeOpValue);     
+regCode(SubCommOpValue);     
 
-class SubCodeValueOp extends BinCodeValueOp {
+class SubCommValueOp extends BinCommValueOp {
     constructor(value) {
         super(value);
     }
@@ -987,7 +995,7 @@ class SubCodeValueOp extends BinCodeValueOp {
     operator(l, r) { return l.subtract(r) }
 }    
 
-class SubCodeOpOp extends BinCodeOpOp {
+class SubCommOpOp extends BinCommOpOp {
     constructor() {
         super();
     }
@@ -996,9 +1004,9 @@ class SubCodeOpOp extends BinCodeOpOp {
 
     static get dataTypeName() { return "SubCodeOpOp"; }
 
-    static fromJSON(data) { return BinCodeOpOp.create(SubCodeOpOp, data); }    
+    static fromJSON(data) { return BinCommOpOp.create(SubCommOpOp, data); }    
 }
-regCode(SubCodeOpOp);       
+regCode(SubCommOpOp);       
 //#endregion SUB 
 
 export const OperatorBinType = {
@@ -1029,15 +1037,15 @@ const SubstitutionTableBin = new Map([
     // ASSIGN
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o) => { return [new AssignCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AssignCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AssignCodeValueOp(l_o)]; }
+        (l_o, r_o) => { return [...r_o, new AssignCommValueOp(l_o)]; }
     ],
 
     // ADD
@@ -1050,35 +1058,35 @@ const SubstitutionTableBin = new Map([
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AddCodeValueValue(l_o, r_o)]; }
+        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.CONST),
-        (l_o, r_o) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+        (l_o, r_o) => { return [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AddCodeValueOp(l_o)]; }
+        (l_o, r_o) => { return [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [...l_o, new AddCodeOpValue(r_o)]; }
+        (l_o, r_o) => { return [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AddCodeValueOp(l_o)]; }
+        (l_o, r_o) => { return [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...l_o, ...r_o, new AddCodeOpOp()]; }
+        (l_o, r_o) => { return [...l_o, ...r_o, new AddCommOpOp()]; }
     ],
 
 ]);
