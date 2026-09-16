@@ -134,7 +134,10 @@ export function test2() {
   }    
 }
 
-function test3() {
+export function test3() {
+  // Снимаем квалификацию с помощью деструктуризации
+  const { ASSIGN, OR, XOR, AND, ADD, SUB, MUL, DIV, POW } = Code.OperatorBinType;
+
   // Создаём выполнитель
     const executor = {
       report: [],
@@ -149,6 +152,13 @@ function test3() {
     }}};
 
     const symbols = new SymbolTableContext();
-    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.context.acquireId(name)); }
+    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.context.acquireId(name)); };
     const sym_pi = acquireVar("pi");
+    const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
+    const operand_c = (value) => { return new new Code.OpConst(value); };
+    const codes = [
+      Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.POW)),
+      Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1)), 
+    ];
+    executor.evaluate(codes);
 }
