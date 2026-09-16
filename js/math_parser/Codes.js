@@ -425,7 +425,7 @@ class OpVarable extends OpValue {
 
     getSymbolNoCheck(_context) { throw new Error("[Code]: Метод getSymbolNoCheck() не реализован."); }
 
-    getValue(context) { return getSymbol(context).value; }
+    getValue(context) { return this.getSymbol(context).value; }
 }
 
 export class OpVarableLocal extends OpVarable {
