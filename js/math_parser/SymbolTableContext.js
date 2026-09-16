@@ -158,7 +158,6 @@ export class SymbolTableContext {
     }
   }
 
-
   #initVarable(name = null) {
       return SymbolTableContext.#create_sybol(SymbolTableContext.#defaultState(), this, name);
   }    
@@ -277,6 +276,42 @@ export class SymbolTableContext {
     return newGlobalId;
   }
 
+  #internalDeleteGlobalForId(varIdx) {
+    const lastIdx = this.varSymbols.length - 1;
+
+    // 2. Если удаляемый элемент не последний, меняем его местами с последним
+    if (varIdx < lastIdx) {
+        const lastParamName = this.varNames[lastIdx];
+        
+        // Переносим данные последнего элемента на место удаляемого
+        this.varNames[varIdx] = this.varNames[lastIdx];
+        this.varSymbols[varIdx] = this.varSymbols[lastIdx];
+        
+        // Обновляем индекс бывшего последнего элемента в хэш-таблице
+        this.varHash[lastParamName] = varIdx;
+    }
+
+    // 3. Удаляем последний элемент из массивов (теперь там дубликат или удаляемый элемент)
+    this.varNames.pop();
+    this.varSymbols.pop();
+
+    // 4. Удаляем имя из хэш-таблицы
+    delete this.varHash[name];
+    return true;
+  }
+
+  deleteGlobalForId(varIdx) {
+    const real_id = varIdx - this.CD;
+    if (varIdx >= this.CD) return this.#internalDeleteGlobalForId(varIdx - this.CD);
+    return false;
+  }
+
+  deleteGlobalForName(name) {
+    const varIdx = this.varHash[name];
+    if (varIdx === undefined) return false;
+    return this.#internalDeleteGlobalForId(varIdx - this.CD);
+  }
+  
   getNameById(id) {
     if (id >= this.LOCAL_MARKER) {
       const payload = id - this.LOCAL_MARKER;
