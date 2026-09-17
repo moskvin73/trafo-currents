@@ -169,7 +169,7 @@ export function test3() {
     DEBUG: true,
 
     evaluate() {
-        let cmds = this.commands;
+        let cmds = this._commands;
         if (!cmds) return;
 
         let len_code = cmds.length;
