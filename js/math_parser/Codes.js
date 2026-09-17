@@ -1428,17 +1428,17 @@ export class CommandBuilder {
         const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
             this.#currentCode = 
-                #checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode));
+                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode));
         }
 		if (l === self) {
             this.#currentCode = 
-                #checkCountStackCommand(createBinCode(operand, this.#currentCode, r), r_sc);
+                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, r), r_sc);
         }
 		if (r === self) {
             this.#currentCode = 
-                #checkCountStackCommand(reateBinCode(operand, l, this.#currentCode), l_sc);
+                this.#checkCountStackCommand(reateBinCode(operand, l, this.#currentCode), l_sc);
 		} else {
-            this.#append(#checkCountStackCommand(createBinCode(operand, l, r), l_sc + r_sc));
+            this.#append(this.#checkCountStackCommand(createBinCode(operand, l, r), l_sc + r_sc));
 		}
 		return this;
 	}
