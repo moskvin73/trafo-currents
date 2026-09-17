@@ -1249,8 +1249,15 @@ export class CommandBuilder {
             this.#currentCode = unionCommands(this.#currentCode, newCode);
         }
     }
+
+    #checkOperand(op) {
+        if (op instanceof OperandValue || op === self) return op;
+        if (op instanceof CommandBuilder) return op.build();
+        throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
+    }
 	
-	#creator(operand, l, r) {
+	#creator(operand, l_op, r_op) {
+        const l = 
 		if (l === self && r === self) {
 			this.#currentCode = createBinCode(operand, this.#currentCode, this.#currentCode);
         }
