@@ -160,7 +160,7 @@ export function test3() {
 
             const len = this.evaluate_stack.length;
             if (len > c_le)
-              console.log(`st[top] = ${this.evaluate_stack[len - 1]}`);
+              console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
             c_le = len;
         }
         this.commands = null;
@@ -176,7 +176,7 @@ export function test3() {
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
     sym_pi.subscribeUpdateVarable((sym) => {
-      console.log(`set varablt: ${sym.name} = ${sym.value}`);
+      console.log(` set varablt: ${sym.name} = ${sym.value}`);
     });
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new Code.OpConst(value); };
