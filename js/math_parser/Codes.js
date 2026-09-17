@@ -343,7 +343,7 @@ export class PopComm extends Command {
         super();
     }
 
-    toString(context) { return `pop st[top]`; }
+    toString(_context) { return `pop st[top]`; }
 
     internal_evaluate(context) {
         context.last_popped = context.evaluate_stack.pop();
@@ -369,6 +369,8 @@ export class PushCommConst extends Command {
         super();
         this.value = value;
     }
+
+    toString(_context) { return `push ${this.value}`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(value);
