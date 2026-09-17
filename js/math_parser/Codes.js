@@ -1372,7 +1372,7 @@ export class CommandBuilder {
 
     get countStack() { return this.#countStack; }
 
-    #checkCountStack() { if (this.#countStack < 0) throw new Error(`[CommandBuilder] Отрицательный стек`); }
+    #checkCountStack() { if (this.#countStack < 0) throw new Error(`[CommandBuilder] Неверный набор каоманд. Отрицательный стек`); }
 
     // Вспомогательный метод для объединения текущего кода с новым
     #append(newCode) {
