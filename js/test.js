@@ -160,7 +160,7 @@ export function test3() {
 
       toStringCommands() {
         if (!this.commands) return '';
-        return this.commands.map(com => com.toString(scope_context)).join('\n');
+        return this.commands.map(com => com.toString(this.scope_context)).join('\n');
       }
     };
 
