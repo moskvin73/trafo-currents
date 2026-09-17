@@ -1415,8 +1415,8 @@ export class CommandBuilder {
     }
 	
 	#creator(operand, l_op, r_op) {
-        const { l, l_sc } = this.#checkOperand(l_op);
-        const { r, r_sc } = this.#checkOperand(r_op);
+        const { op: l, st_c:l_sc } = this.#checkOperand(l_op);
+        const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
             const comm = createBinCode(operand, this.#currentCode, this.#currentCode);
             this.#countStack += comm.pushStackCount - comm.popStackCount; 
