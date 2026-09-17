@@ -531,6 +531,8 @@ export class OpVarableLocal extends OpVarable {
         this.id_name = id_name;
     }
 
+    toString(context) { return `${context.getNameById(this.id_name)}`; }
+
     getSymbol(context) {
         const sym = context.scope_context.getSymbolById(this.id_name);
         checkSymbolAll(sym); 
@@ -568,6 +570,8 @@ export class OpVarableGlobal extends OpVarable {
         checkSymbolNull(sym);
         this.symbol = sym;
     }
+
+    toString(_context) { return `${this.symbol.name}`; }
 
     createCodePush() { return new PushCommVarbleGlobal(this.symbol); }
 
