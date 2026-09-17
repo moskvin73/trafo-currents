@@ -217,7 +217,7 @@ export function test3() {
       toStringCommands() {
         if (!this.commands) return '';
         const ctx = this.scope_context;
-        return this.commands.map(com => com.toString(ctx)).join('\n');
+        return this.commands.map((com, index) => `${index}: ${com.toString(ctx)}`).join('\n');
       },
 
       createReportRecord(node, value) {
