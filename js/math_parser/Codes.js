@@ -519,6 +519,13 @@ export class OpConst extends OperandValue {
 }
 regCode(OpConst);
 
+function assertOperandVarable(value, paramName, context) {
+  if (!(value instanceof OpConst)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+
 class OpVarable extends OperandValue {
     constructor() {
         super();
@@ -529,6 +536,12 @@ class OpVarable extends OperandValue {
     getSymbolNoCheck(_context) { throw new Error("[Code]: Метод getSymbolNoCheck() не реализован."); }
 
     getValue(context) { return this.getSymbol(context).value; }
+}
+
+function assertOperandVarable(value, paramName, context) {
+  if (!(value instanceof OperandValue)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
 }
 
 export class OpVarableLocal extends OpVarable {
