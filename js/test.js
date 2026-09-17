@@ -141,14 +141,21 @@ export function test3() {
 
   // Создаём выполнитель
     const executor = {
+      // Список отчётов ((Измняется командами))
       report: [],
       // Хранит последнее значение, извлеченное из стека evaluate_stack методом pop
       last_popped : null,
+      // Контекст символов перименных
       scope_context: symbols,
+      // Стек выполнения
       evaluate_stack: [],
+      // Значение локации команды выполненя ((Измняется командами))
       evaluate_loc: null,
+      // Текущий индекс командв (Измняется командами)
       index_comm: 0,
+      // Ткущий набор выполняемых команд (Измняется командами)
       commands: null,
+      // Флаг выполнения
       is_evaluate: false,
       evaluate() {
           if (!this.commands) return;
