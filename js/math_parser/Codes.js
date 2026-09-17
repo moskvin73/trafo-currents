@@ -486,7 +486,7 @@ export class OperandValue extends Command {
             throw new TypeError('Нельзя создавать экземпляры базового класса "OperandValue" напрямую.');
         }
     }
-    
+
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
     createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
@@ -536,6 +536,10 @@ function assertOperandConst(value, paramName, context) {
 class OpVarable extends OperandValue {
     constructor() {
         super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === OpVarable) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "OpVarable" напрямую.');
+        }
     }
 
     getSymbol(_context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
@@ -642,7 +646,6 @@ function assertOperandVarableGlobal(value, paramName, context) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
   }
 }
-
 //#endregion CONST_VAR 
 
 export class MatrixComm extends Command {
@@ -697,6 +700,10 @@ export class MatrixComm extends Command {
 class BaseBinComm extends Command {
     constructor() {
         super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BaseBinComm) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BaseBinComm" напрямую.');
+        }
     }
 
     operator(l, r) { throw new Error("[Command]: Метод operator(l. r) не реализован."); }
@@ -707,6 +714,10 @@ class BaseBinComm extends Command {
 class BinCommValueValue extends BaseBinComm {
     constructor(l_value, r_value) {
         super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BinCommValueValue) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommValueValue" напрямую.');
+        }
         assertOperand(l_value, 'l_value', `${new.target.name}`);
         assertOperand(r_value, 'r_value', `${new.target.name}`);
         this.l_value = l_value;
@@ -739,6 +750,10 @@ class BinCommValueValue extends BaseBinComm {
 class BinCommOpValue extends BaseBinComm {
     constructor(value) {
         super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BinCommOpValue) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommOpValue" напрямую.');
+        }
         assertOperand(value, 'value', `${new.target.name}`);
         this.value = value;
     }
@@ -769,6 +784,10 @@ class BinCommOpValue extends BaseBinComm {
 class BinCommValueOp extends BaseBinComm {
     constructor(value) {
         super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BinCommValueOp) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommValueOp" напрямую.');
+        }
         assertOperand(value, 'value', `${new.target.name}`);
         this.value = value;
     }
@@ -798,7 +817,11 @@ class BinCommValueOp extends BaseBinComm {
 
 class BinCommOpOp extends BaseBinComm {
     constructor() {
-        super(loc, astNode);
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BinCommOpOp) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommOpOp" напрямую.');
+        }
     }
 
     toString(context) { return `${this.commandName()}  st[top - 1], st[top]`; }
