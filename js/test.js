@@ -158,7 +158,8 @@ export function test3() {
     _commands: null,
     get commands() { return internalCommands; },
     set commands(v) { 
-      _commands= v; 
+      _commands= v;
+      index_comm = 0;
       if (this.is_evaluate) {
         this._commandsChanged = true;
       }       
@@ -190,6 +191,7 @@ export function test3() {
 
             com.evaluate(this);
 
+            // Предпологается что при изминени кода меняется и индекс
             idx = this.index_comm;
             if (this._commandsChanged) {
               cmds = this._commands;
