@@ -179,6 +179,7 @@ export function test3() {
       ...c3,
     ];
 
+    const ss = executor.toStringCommands();
     console.log(executor.toStringCommands());
     executor.evaluate(codes);
     console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
