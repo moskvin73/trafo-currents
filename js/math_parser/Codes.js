@@ -1209,7 +1209,8 @@ function getOperandType(op) {
 }
 
 export function operandImplementСode(op) {
-    if (op instanceof OpConst || op instanceof OpVarable || op instanceof Command) return [op.createCodePush()];
+    if (op instanceof OpConst || op instanceof OpVarable) return [op.createCodePush()];
+    else if (op instanceof Command) return [op];
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
 }
