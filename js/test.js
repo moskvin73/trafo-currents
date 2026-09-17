@@ -149,9 +149,8 @@ export function test3() {
       evaluate_loc: null,
       index_comm: 0,
       commands: null,
-      evaluate(commands) {
-          if (!commands) return;
-          this.commands = commands;
+      evaluate() {
+          if (!this.commands) return;
           while (this.index_comm < this.commands.length) {
             const com = this.commands[this.index_comm++];
             com.evaluate(this);
@@ -174,14 +173,14 @@ export function test3() {
     const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), comm_pop() ];
     const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
     const c3 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), c1), comm_pop()];
-    const codes = [
+    const command = [
       ...c0,
       ...c3,
     ];
 
-    const ss = executor.toStringCommands();
+    executor.commands = command;
     console.log(executor.toStringCommands());
-    executor.evaluate(codes);
+    executor.evaluate();
     console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
     console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
     console.log(`Значение переменной: pi = ${sym_pi.value}`);
