@@ -165,6 +165,8 @@ export function test3() {
     },
     // Флаг выполнения
     is_evaluate: false,
+    DEBUG: true,
+
     evaluate() {
         let cmds = this.commands;
         if (!cmds) return;
@@ -173,22 +175,38 @@ export function test3() {
         this.is_evaluate = true;
         this._commandsChanged = false;
 
-        console.log('***start evaluate***');
+        if (this.DEBUG) console.log('***start evaluate***');
+
         const stack = this.evaluate_stack;
         let prev_stack_len = stack.length;
+
         try {
-          while (this.index_comm < len_code) {
-            const com = cmds[this.index_comm++];
-            console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+          let idx = this.index_comm;
+
+          while (idx < len_code) {
+            const com = cmds[idx++];
+
+            if (this.DEBUG) console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+
             com.evaluate(this);
 
-            const len = stack.length;
-            if (len > prev_stack_len)
-              console.log(` st[top] = ${stack[len - 1]}`);
-            prev_stack_len = len;
+            idx = this.index_comm;
+            if (this._commandsChanged) {
+              cmds = this._commands;
+              this._commandsChanged = false;
+            }
+
+            if (this.DEBUG) {
+              const current_len = stack.length;
+              if (current_len > prev_stack_len)
+                console.log(` st[top] = ${stack[current_len - 1]}`);
+              prev_stack_len = current_len;
+            }
           }
+          
+          this.index_comm = idx;
         } finally {
-          console.log('***end evaluate***');
+          if (this.DEBUG) console.log('***end evaluate***');
           this.is_evaluate = false;
         }
       },
