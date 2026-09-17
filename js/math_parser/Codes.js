@@ -34,7 +34,7 @@ export class Command {
         }        
     }
 
-    // Дефолтная реализация (можно оставить пустой или выкидывать ошибку)
+    // Дефолтная реализация
     toString(_context) {
         throw new Error("Метод toString(context) должен быть реализован.");
     }    
