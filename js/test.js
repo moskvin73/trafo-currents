@@ -252,10 +252,7 @@ export function test3() {
   const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
   const c1 = Code.createBinCode(ADD, op_n("pi"), op_c(1));
   const c3 = [...Code.createBinCode(ASSIGN, op_n("pi"), c1), comm_pop()];
-  const command = [
-    ...c0,
-    ...c3,
-  ];
+  const command = unionCommands(c0, c3);
 
   executor.commands = command;
   console.log('***Коммады кода***');
