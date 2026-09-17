@@ -420,6 +420,10 @@ export class PushCommConst extends Command {
         context.evaluate_stack.push(value);
     }
 
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 0; }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -468,6 +472,10 @@ export class PushCommVarbleLocal extends Command {
         context.evaluate_stack.push(sym.value);
     }
 
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 0; }
+   
     toJSON() {
         return {
             ...super.toJSON(),
@@ -497,6 +505,10 @@ export class PushCommVarbleGlobal extends Command {
         checkSymbol(this.symbol);
         context.evaluate_stack.push(this.symbol.value);
     }
+    
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 0; }
 
     toJSON() {
         const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
