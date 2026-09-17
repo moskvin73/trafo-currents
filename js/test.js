@@ -197,9 +197,9 @@ export function test3() {
             if (this._commandsChanged) {
               cmds = this._commands;
               len_code = cmds.length;
-              idx = this.index_comm;
               this._commandsChanged = false;
             }
+            idx = this.index_comm;
 
             if (this.DEBUG) {
               const current_len = stack.length;
