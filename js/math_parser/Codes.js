@@ -525,7 +525,6 @@ function assertOperandVarable(value, paramName, context) {
   }
 }
 
-
 class OpVarable extends OperandValue {
     constructor() {
         super();
@@ -584,6 +583,12 @@ export class OpVarableLocal extends OpVarable {
 }
 regCode(OpVarableLocal);
 
+function assertOperandVarableLocal(value, paramName, context) {
+  if (!(value instanceof OpVarableLocal)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
 export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
@@ -623,6 +628,13 @@ export class OpVarableGlobal extends OpVarable {
     }
 }
 regCode(OpVarableGlobal);
+
+function assertOperandVarableGlobalvalue, paramName, context) {
+  if (!(value instanceof OpVarableGlobal)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
 //#endregion CONST_VAR 
 
 export class MatrixComm extends Command {
