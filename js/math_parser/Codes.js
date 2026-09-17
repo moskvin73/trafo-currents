@@ -519,7 +519,7 @@ export class OpConst extends OperandValue {
 }
 regCode(OpConst);
 
-function assertOperandVarable(value, paramName, context) {
+function assertOperandConst(value, paramName, context) {
   if (!(value instanceof OpConst)) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
   }
