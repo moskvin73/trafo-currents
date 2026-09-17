@@ -18,7 +18,7 @@ export class EvaluateError extends Error {
 
 export class Command {
     constructor() {
-        // Защита от создания экземпляра самого базового класса (опционально)
+        // Защита от создания экземпляра самого базового класса
         if (new.target === Command) {
             throw new TypeError('Нельзя создавать экземпляры базового класса "Command" напрямую.');
         }
