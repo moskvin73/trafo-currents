@@ -154,18 +154,25 @@ export function test3() {
     // Текущий индекс командв (Измняется командами)
     index_comm: 0,
     // Ткущий набор выполняемых команд (Измняется командами)
-    commands: null,
+    //commands: null,
+    internalCommands: null,
+    updateCommands: null,
+    get commands() { return internalCommands; },
+    set commands(v) { internalCommands = v; updateCommands(); },
     // Флаг выполнения
     is_evaluate: false,
     evaluate() {
-        if (!this.commands) return;
+        let cmds = this.commands;
+        if (!cmds) return;
+        let len_code = cmds.length;
         this.is_evaluate = true;
+        updateCommands = () => { cmds = this.commands; len_code = cmds.length; };
         console.log('***start evaluate***');
         const stack = this.evaluate_stack;
         let c_le = this.stack.length;
         try {
-          while (this.index_comm < this.commands.length) {
-            const com = this.commands[this.index_comm++];
+          while (this.index_comm < len_code) {
+            const com = cmds[this.index_comm++];
             console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
             com.evaluate(this);
 
