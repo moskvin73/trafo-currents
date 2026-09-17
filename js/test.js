@@ -191,6 +191,7 @@ export function test3() {
     ];
 
     executor.commands = command;
+    console.log('***Коммады кода***');
     console.log(executor.toStringCommands());
     executor.evaluate();
     console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
