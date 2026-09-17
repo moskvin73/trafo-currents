@@ -186,7 +186,7 @@ export function test3() {
           while (idx < len_code) {
             const com = cmds[idx++];
 
-            if (this.DEBUG) console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+            if (this.DEBUG) console.log(`${idx - 1}: ${com.toString(this.scope_context)}`);
 
             com.evaluate(this);
 
@@ -203,7 +203,7 @@ export function test3() {
               prev_stack_len = current_len;
             }
           }
-          
+          // Обновляем финальный индекс в объекте по завершении цикла
           this.index_comm = idx;
         } finally {
           if (this.DEBUG) console.log('***end evaluate***');
