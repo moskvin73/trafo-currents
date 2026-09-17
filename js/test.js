@@ -160,7 +160,7 @@ export function test3() {
             const len = this.evaluate_stack.length;
             if (len > c_le)
               console.log(`${this.index_comm}: ${com.toString(this.scope_context)}: st[top] = ${this.evaluate_stack[len - 1]}`);
-            else console.log(com.toString(this.scope_context));
+            else console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
             c_le = len;
         }
         this.commands = null;
