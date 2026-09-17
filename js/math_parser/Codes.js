@@ -479,6 +479,14 @@ regCode(PushCommVarbleGlobal);
 
 //#region CONST_VAR 
 export class OperandValue extends Command {
+    constructor() {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === OperandValue) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "OperandValue" напрямую.');
+        }
+    }
+    
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
     createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
