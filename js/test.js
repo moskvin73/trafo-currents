@@ -171,8 +171,8 @@ export function test3() {
 
         let len_code = cmds.length;
         this.is_evaluate = true;
+        this._commandsChanged = false;
 
-        updateCommands = () => { cmds = this.commands; len_code = cmds.length; };
         console.log('***start evaluate***');
         const stack = this.evaluate_stack;
         let prev_stack_len = stack.length;
