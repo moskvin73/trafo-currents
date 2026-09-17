@@ -1006,6 +1006,8 @@ class AddCommValueValue extends BinCommValueValue {
         super(l_value, r_value);
     }
     
+    commandName() { return 'add'; }
+
     operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCodeValueValue"; }
@@ -1019,6 +1021,8 @@ class AddCommOpValue extends BinCommOpValue {
         super(value);
     }
     
+    commandName() { return 'add'; }
+
     operator(l, r) { return l.add(r) }
   
     static get dataTypeName() { return "AddCodeOpValue"; }
@@ -1032,6 +1036,8 @@ class AddCommValueOp extends BinCommValueOp {
         super(value);
     }
     
+    commandName() { return 'add'; }
+
     operator(l, r) { return l.add(r) }
 }    
 
@@ -1040,6 +1046,8 @@ class AddCommOpOp extends BinCommOpOp {
         super();
     }
     
+    commandName() { return 'add'; }
+
     operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCodeOpOp"; }
@@ -1055,6 +1063,8 @@ class SubCommValueValue extends BinCommValueValue {
         super(l_value, r_value);
     }
     
+    commandName() { return 'sub'; }
+
     operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCodeValueValue"; }
@@ -1068,6 +1078,8 @@ class SubCommOpValue extends BinCommOpValue {
         super(value);
     }
     
+    commandName() { return 'sub'; }
+
     operator(l, r) { return l.subtract(r) }
   
     static get dataTypeName() { return "SubCodeOpValue"; }
@@ -1089,6 +1101,8 @@ class SubCommOpOp extends BinCommOpOp {
         super();
     }
     
+    commandName() { return 'sub'; }
+
     operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCodeOpOp"; }
