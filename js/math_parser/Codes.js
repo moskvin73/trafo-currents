@@ -1341,13 +1341,6 @@ export function operandImplementСode(op) {
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
 }
 
-function unionCommands(...args) {
-    if (args.length < 2) {
-        throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
-    }
-    return args.map(operandImplementСode).flat(Infinity);
-}
-
 export function createBinCode(operator, l_op, r_op) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
@@ -1357,6 +1350,35 @@ export function createBinCode(operator, l_op, r_op) {
     }
     const processFn = SubstitutionTableBin.get(key);
     return processFn(l_op, r_op);
+}
+
+function unionCommands(...args) {
+    if (args.length < 2) {
+        throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
+    }
+    let totalStackCount = 0;
+
+    const commands = args.map(arg => {
+        // Вызываем исходную функцию для каждого аргумента
+        const implemented = operandImplementСode(arg);
+        
+        // Если это был OpConst или OpVarable, то operandImplementСode 
+        // вернула массив, содержащий результат op.createCodePush()
+        if (arg instanceof OpConst || arg instanceof OpVarable) {
+            // Берем созданный push-объект и прибавляем его stack count к общей сумме
+            const codePushObj = implemented[0];
+            totalStackCount += codePushObj.pushStackCount - codePushObj.popStackCount;
+        }
+
+        return implemented;
+    }).flat(Infinity);
+
+    // Возвращаем объект, содержащий и массив, и сумму
+    return {
+        commands,
+        totalStackCount
+    };   
+    //return args.map(operandImplementСode).flat(Infinity);
 }
 
 export const self = null;
@@ -1379,7 +1401,10 @@ export class CommandBuilder {
         if (this.#currentCode === null) {
             this.#currentCode = newCode;
         } else {
-            this.#currentCode = unionCommands(this.#currentCode, newCode);
+            const result = unionCommands(this.#currentCode, newCode);
+            this.#currentCode = result.commands;
+            this.#countStack += result.totalStackCount;
+            this.#checkCountStack();
         }
     }
 
