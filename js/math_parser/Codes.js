@@ -674,13 +674,13 @@ class BaseBinComm extends Command {
 class BinCommValueValue extends BaseBinComm {
     constructor(l_value, r_value) {
         super();
-        assertOperand(l_value, 'l_value', `${new.target.name}`)
-        assertOperand(r_value, 'r_value', `${new.target.name}`)
+        assertOperand(l_value, 'l_value', `${new.target.name}`);
+        assertOperand(r_value, 'r_value', `${new.target.name}`);
         this.l_value = l_value;
         this.r_value = r_value;
     }
 
-    toString(context) { return `${this.commandName} ${this.l_value}, ${this.r_value}`; }
+    toString(context) { return `${this.commandName()} ${this.l_value}, ${this.r_value}`; }
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
@@ -706,8 +706,11 @@ class BinCommValueValue extends BaseBinComm {
 class BinCommOpValue extends BaseBinComm {
     constructor(value) {
         super();
+        assertOperand(value, 'value', `${new.target.name}`);
         this.value = value;
     }
+
+    toString(context) { return `${this.commandName()} st[top], ${this.value}`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
@@ -733,8 +736,11 @@ class BinCommOpValue extends BaseBinComm {
 class BinCommValueOp extends BaseBinComm {
     constructor(value) {
         super();
+        assertOperand(value, 'value', `${new.target.name}`);
         this.value = value;
     }
+
+    toString(context) { return `${this.commandName()}  ${this.value}, st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
@@ -761,6 +767,8 @@ class BinCommOpOp extends BaseBinComm {
     constructor() {
         super(loc, astNode);
     }
+
+    toString(context) { return `${this.commandName()}  st[top - 1], st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
