@@ -505,7 +505,7 @@ export class PushCommVarbleGlobal extends Command {
         checkSymbol(this.symbol);
         context.evaluate_stack.push(this.symbol.value);
     }
-    
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
@@ -1448,11 +1448,11 @@ export class CommandBuilder {
             this.#currentCode = 
                 this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode));
         }
-		if (l === self) {
+		else if (l === self) {
             this.#currentCode = 
                 this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, r), r_sc);
         }
-		if (r === self) {
+		else if (r === self) {
             this.#currentCode = 
                 this.#checkCountStackCommand(createBinCode(operand, l, this.#currentCode), l_sc);
 		} else {
