@@ -250,10 +250,18 @@ export function test3() {
   const op_c = (value) => { return new Code.OpConst(value); };
   const comm_pop = () => { return new Code.PopComm() };
 
-  const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
+  let command = Code.unionCommands(Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), 
+                                   comm_pop(),
+                                   Code.createBinCode(ADD, op_n("pi"), op_c(1))
+                                  );
+  command = Code.unionCommands(command,
+                               Code.createBinCode(ASSIGN, op_n("pi"), c1), 
+                               comm_pop() 
+                              );
+  /*const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
   const c1 = Code.createBinCode(ADD, op_n("pi"), op_c(1));
   const c3 = [...Code.createBinCode(ASSIGN, op_n("pi"), c1), comm_pop()];
-  const command = Code.unionCommands(c0, c3);
+  const command = Code.unionCommands(c0, c3);*/
 
   executor.commands = command;
   console.log('***Коммады кода***');
