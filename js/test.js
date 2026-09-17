@@ -158,8 +158,8 @@ export function test3() {
     _commands: null,
     get commands() { return internalCommands; },
     set commands(v) { 
-      _commands= v;
-      index_comm = 0;
+      this._commands= v;
+      this.index_comm = 0;
       if (this.is_evaluate) {
         this._commandsChanged = true;
       }       
