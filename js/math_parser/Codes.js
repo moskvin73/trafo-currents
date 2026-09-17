@@ -826,6 +826,8 @@ class AssignCommValueValue extends Command {
         this.value = value;
     }
     
+    toString(context) { return `let ${this.let_value.toString(context)}, ${this.value.toString(context)}`; }
+
     internal_evaluate(context) {
         const sym = this.let_value.getSymbolNoCheck(context);
         const value = this.value.getValue(context);
@@ -857,6 +859,8 @@ class AssignCommValueOp extends Command {
         assertOperandVarable(let_value, 'let_value', 'AssignCommValueValue');
         this.let_value = let_value;
     }
+
+    toString(context) { return `let ${this.let_value.toString(context)}, st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
