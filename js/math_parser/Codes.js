@@ -1341,7 +1341,7 @@ export function operandImplementСode(op) {
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
 }
 
-export function unionCommands(...args) {
+function unionCommands(...args) {
     if (args.length < 2) {
         throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
     }
