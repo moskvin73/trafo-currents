@@ -629,7 +629,7 @@ export class OpVarableGlobal extends OpVarable {
 }
 regCode(OpVarableGlobal);
 
-function assertOperandVarableGlobalvalue, paramName, context) {
+function assertOperandVarableGlobal(value, paramName, context) {
   if (!(value instanceof OpVarableGlobal)) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
   }
