@@ -343,6 +343,8 @@ export class PopComm extends Command {
         super();
     }
 
+    toString(context) { return `pop st[top]`; }
+
     internal_evaluate(context) {
         context.last_popped = context.evaluate_stack.pop();
     }
