@@ -666,7 +666,9 @@ class BaseBinComm extends Command {
         super();
     }
 
-    operator(l, r) { throw new Error("[Code]: Метод operator(l. r) не реализован."); }
+    operator(l, r) { throw new Error("[Command]: Метод operator(l. r) не реализован."); }
+
+    commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
 }
 
 class BinCommValueValue extends BaseBinComm {
@@ -678,7 +680,7 @@ class BinCommValueValue extends BaseBinComm {
         this.r_value = r_value;
     }
 
-
+    toString(context) { return `${this.commandName} ${this.l_value}, ${this.r_value}`; }
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
