@@ -1430,6 +1430,7 @@ export class CommandBuilder {
         // На всякий случай
         const comm = new PopComm();
         this.#countStack += comm.pushStackCount - comm.popStackCount;
+        this.#checkCountStack();
         this.#append(comm);
         return this;
     }
