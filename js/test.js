@@ -154,6 +154,9 @@ export function test3() {
           while (this.index_comm < this.commands.length) {
             const com = this.commands[this.index_comm++];
             com.evaluate(this);
+            if (this.evaluate_stack.length > 0)
+              console.log(`${com.toString(this.scope_context)}: st[top] = ${this.evaluate_stack[this.evaluate_stack.length]}`);
+            else console.log(com.toString(this.scope_context));
         }
         this.commands = null;
       },
