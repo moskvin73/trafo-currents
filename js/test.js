@@ -195,6 +195,7 @@ export function test3() {
             idx = this.index_comm;
             if (this._commandsChanged) {
               cmds = this._commands;
+              len_code = cmds.length;
               this._commandsChanged = false;
             }
 
