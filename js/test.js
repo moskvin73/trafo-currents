@@ -189,6 +189,7 @@ export function test3() {
 
             if (this.DEBUG) console.log(`${idx - 1}: ${com.toString(this.scope_context)}`);
 
+            this.index_comm = idx;
             com.evaluate(this);
 
             // Предпологается что при изминени кода меняется и индекс
@@ -196,6 +197,7 @@ export function test3() {
             if (this._commandsChanged) {
               cmds = this._commands;
               len_code = cmds.length;
+              idx = this.index_comm;
               this._commandsChanged = false;
             }
 
@@ -206,8 +208,6 @@ export function test3() {
               prev_stack_len = current_len;
             }
           }
-          // Обновляем финальный индекс в объекте по завершении цикла
-          this.index_comm = idx;
         } finally {
           if (this.DEBUG) console.log('***end evaluate***');
           this.is_evaluate = false;
