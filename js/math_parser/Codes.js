@@ -1372,6 +1372,8 @@ export class CommandBuilder {
 
     get countStack() { return this.#countStack; }
 
+    #checkCountStack() { if (this.#countStack < 0) throw new Error(`[CommandBuilder] Отрицательный стек`); }
+
     // Вспомогательный метод для объединения текущего кода с новым
     #append(newCode) {
         if (this.#currentCode === null) {
@@ -1397,18 +1399,19 @@ export class CommandBuilder {
         }
 		if (l === self) {
             const comm = createBinCode(operand, this.#currentCode, r);
-            this.#countStack += comm.pushStackCount - comm.popStackCount; 
+            this.#countStack += comm.pushStackCount - comm.popStackCount + r_sc; 
 			this.#currentCode = comm;
         }
 		if (r === self) {
             const comm = reateBinCode(operand, l, this.#currentCode);
-            this.#countStack += comm.pushStackCount - comm.popStackCount;
+            this.#countStack += comm.pushStackCount - comm.popStackCount + l_sc;
 			this.#currentCode = comm;
 		} else {
             const comm = createBinCode(operand, l, r);
-            this.#countStack += comm.pushStackCount - comm.popStackCount;
+            this.#countStack += comm.pushStackCount - comm.popStackCount + l_sc + r_sc;
 			this.#append(comm);
 		}
+        this.#checkCountStack();
 		return this;
 	}
 
