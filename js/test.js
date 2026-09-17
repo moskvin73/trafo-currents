@@ -155,12 +155,12 @@ export function test3() {
           let c_le = this.evaluate_stack.length;
           while (this.index_comm < this.commands.length) {
             const com = this.commands[this.index_comm++];
+            console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
             com.evaluate(this);
 
             const len = this.evaluate_stack.length;
             if (len > c_le)
-              console.log(`${this.index_comm}: ${com.toString(this.scope_context)}: st[top] = ${this.evaluate_stack[len - 1]}`);
-            else console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+              console.log(`st[top] = ${this.evaluate_stack[len - 1]}`);
             c_le = len;
         }
         this.commands = null;
