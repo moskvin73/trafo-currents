@@ -447,6 +447,8 @@ export class PushCommVarbleGlobal extends Command {
         this.symbol = sym;
     }
 
+    toString(_context) { return `push ${this.symbol.name}`; }
+
     internal_evaluate(context) {
         checkSymbol(this.symbol);
         context.evaluate_stack.push(this.symbol.value);
