@@ -248,7 +248,6 @@ export function test3() {
   const op_v = (sym) => { return new Code.OpVarableGlobal(sym); };
   const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
   const op_c = (value) => { return new Code.OpConst(value); };
-  const comm_pop = () => { return new Code.PopComm() };
 
   const builder = new Code.CommandBuilder();
   const command = builder
