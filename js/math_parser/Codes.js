@@ -289,19 +289,10 @@ regCode(GotoComm);
 export class DefineVarableComm extends Command {
     constructor(funcId, commands, paramsCount, localsCount) {
         super();
-        if (!Number.isInteger(funcId)) {
-            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm funcId: ${funcId}, пораметр должен быть целым числом.`);
-        }
-        if (!(Array.isArray(commands) && commands.every(item => item instanceof Command))) {
-            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm commands: ${commands}, пораметр должен быть массивом комммад типа Command.`);
-        }
-        if (!Number.isInteger(paramsCount)) {
-            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm paramsCount: ${paramsCount}, пораметр должен быть целым числом.`);
-        }
-        if (!Number.isInteger(localsCount)) {
-            throw new TypeError(`Неверный тип пораметра конструктора класса DefineVarableComm localsCount: ${localsCount}, пораметр должен быть целым числом.`);
-        }
-
+        assertInteger(funcId, 'funcId', 'DefineVarableComm');
+        assertCommands(command, 'command', 'DefineVarableComm');
+        assertInteger(paramsCount, 'paramsCount', 'DefineVarableComm');
+        assertInteger(localsCount, 'localsCount', 'DefineVarableComm');
         this.funcId = funcId;
         this.statements = commands;
         this.paramsCount = paramsCount;
