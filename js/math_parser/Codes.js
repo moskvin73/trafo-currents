@@ -106,6 +106,18 @@ function regCode(ClassRef) {
   registerDataType(ClassRef.dataTypeName, ClassRef.fromJSON);
 }
 
+function assertInteger(value, paramName, context) {
+  if (!Number.isInteger(value)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым числом. Получено: ${value}`);
+  }
+}
+
+function assertString(value, paramName, context) {
+  if (!Number.isInteger(typeof value !== 'string')) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть строкой. Получено: ${value}`);
+  }
+}
+
 export class LocationComm extends Command {
     constructor(loc) {
         super();
@@ -172,9 +184,7 @@ regCode(ReportComm);
 export class ErrorComm extends Command {
     constructor(msg) {
         super();
-        if (typeof msg !== 'string') {
-            throw new TypeError(`Неверный тип пораметра класса ErrorComm msg: ${mag}, пораметр должен быть строкой`);
-        }
+        assertString(msg, 'msg', 'ErrorComm');
         this.msg = msg;
     }
 
@@ -207,10 +217,7 @@ export class IFComm extends Command {
     constructor(len_code_false) {
         super();
     
-        // Проверяем, что значение является целым числом
-        if (!Number.isInteger(len_code_false)) {
-        throw new TypeError(`Неверный тип пораметра класса ErrorComm len_code_false: ${len_code_false}, пораметр должен быть целым числом.`);
-        }
+        assertInteger(len_code_false, 'len_code_false', 'IFComm');
 
         this.len_code_false = len_code_false;
     }
