@@ -180,23 +180,21 @@ export function test3() {
       }
     };
 
+    const getSymbol = (source, id) => {
+      if (executor.is_evaluate)
+        return source.getSymbolById(id);
+      else  
+        return source.getParseSymbolById(id);
+    };
     const out_updte_sym = (sym) => {
       console.log(` set varable: ${sym.name} = ${sym.value}`);
     };
     symbols.subscribeAddVarable((source, id) => {
-      let new_sym;
-      if (executor.is_evaluate)
-        new_sym = source.getSymbolById(id);
-      else  
-        new_sym = source.getParseSymbolById(id);
+      const new_sym = getSymbol(source, id);
       new_sym.subscribeUpdateVarable(out_updte_sym);
     });
     symbols.subscribeDeleteVarable((source, id) => {
-      let del_sym;
-      if (executor.is_evaluate)
-        del_sym = source.getSymbolById(id);
-      else  
-        del_sym = source.getParseSymbolById(id);
+      const del_sym = getSymbol(source, id);
       del_sym.unsubscribeUpdateVarable(out_updte_sym);
     });
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
