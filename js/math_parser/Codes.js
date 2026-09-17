@@ -1362,10 +1362,15 @@ export function createBinCode(operator, l_op, r_op) {
 export const self = null;
 export class CommandBuilder {
 	#currentCode;
+    #countStack;   
+
     constructor() {
         // Храним текущий накопленный код
         this.#currentCode = null;
+        this.#countStack = 0;
     }
+
+    get countStack() { return this.#countStack; }
 
     // Вспомогательный метод для объединения текущего кода с новым
     #append(newCode) {
