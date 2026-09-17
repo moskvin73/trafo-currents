@@ -255,7 +255,7 @@ export function test3() {
                                    Code.createBinCode(ADD, op_n("pi"), op_c(1))
                                   );
   command = Code.unionCommands(command,
-                               Code.createBinCode(ASSIGN, op_n("pi"), c1), 
+                               Code.createBinCode(ASSIGN, op_n("pi"), command), 
                                comm_pop() 
                               );
   /*const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
