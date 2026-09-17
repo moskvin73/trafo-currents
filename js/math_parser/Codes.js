@@ -417,7 +417,7 @@ export class PushCommConst extends Command {
     toString(_context) { return `push ${this.value}`; }
 
     internal_evaluate(context) {
-        context.evaluate_stack.push(value);
+        context.evaluate_stack.push(this.value);
     }
 
     get pushStackCount() { return 1; }
