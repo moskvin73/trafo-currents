@@ -1382,24 +1382,32 @@ export class CommandBuilder {
     }
 
     #checkOperand(op) {
-        if (op instanceof OperandValue || op === self) return op;
-        if (op instanceof CommandBuilder) return op.build();
+        if (op instanceof OperandValue || op === self) return { op, st_c: 0 };
+        if (op instanceof CommandBuilder) return { op: op.build(), st_c: op.countStack };
         throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
     }
 	
 	#creator(operand, l_op, r_op) {
-        const l = this.#checkOperand(l_op);
-        const r = this.#checkOperand(r_op);
+        const { l, l_sc } = this.#checkOperand(l_op);
+        const { r, r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
-			this.#currentCode = createBinCode(operand, this.#currentCode, this.#currentCode);
+            const comm = createBinCode(operand, this.#currentCode, this.#currentCode);
+            this.#countStack += comm.pushStackCount - comm.popStackCount; 
+			this.#currentCode = comm;
         }
 		if (l === self) {
-			this.#currentCode = createBinCode(operand, this.#currentCode, r);
+            const comm = createBinCode(operand, this.#currentCode, r);
+            this.#countStack += comm.pushStackCount - comm.popStackCount; 
+			this.#currentCode = comm;
         }
 		if (r === self) {
-			this.#currentCode = createBinCode(operand, l, this.#currentCode);
+            const comm = reateBinCode(operand, l, this.#currentCode);
+            this.#countStack += comm.pushStackCount - comm.popStackCount;
+			this.#currentCode = comm;
 		} else {
-			this.#append(createBinCode(operand, l, r));
+            const comm = createBinCode(operand, l, r);
+            this.#countStack += comm.pushStackCount - comm.popStackCount;
+			this.#append(comm);
 		}
 		return this;
 	}
