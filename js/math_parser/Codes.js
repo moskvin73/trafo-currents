@@ -68,8 +68,12 @@ export class Command {
     }
  
     internal_evaluate(context) {
-        throw new Error("[Code]: Метод evaluate() не реализован.");
+        throw new Error("[Command]: Метод evaluate() не реализован.");
     }
+
+    get pushStackCount() { throw new Error("[Command]: Геттер pushStackCount не реализован."); }
+
+    get popStackCount() { throw new Error("[Command]: Геттер popStackCount не реализован."); }
 
     toJSON() {
         return {
@@ -148,6 +152,10 @@ export class LocationComm extends Command {
         context.evaluate_loc = loc;
     }
 
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -181,6 +189,10 @@ export class ReportComm extends Command {
         }
     }
 
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -210,6 +222,10 @@ export class ErrorComm extends Command {
     internal_evaluate(context) {
         throw new EvaluateError(this.msg);
     }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
 
     toJSON() {
         return {
@@ -249,6 +265,10 @@ export class IFComm extends Command {
         }
     }
 
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 1; }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -280,6 +300,11 @@ export class GotoComm extends Command {
     internal_evaluate(context) {
         context.index_code += this.len_code;
     }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -326,6 +351,10 @@ export class DefineVarableComm extends Command {
         funcSymbol.value = closure;
     }
 
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
     toJSON() {
             return {
             ...super.toJSON(),
@@ -360,6 +389,10 @@ export class PopComm extends Command {
         context.last_popped = context.evaluate_stack.pop();
     }
 
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 1; }
+   
     toJSON() {
         return {
             ...super.toJSON(),
@@ -497,6 +530,10 @@ export class OperandValue extends Command {
             throw new TypeError('Нельзя создавать экземпляры базового класса "OperandValue" напрямую.');
         }
     }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
 
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
@@ -705,6 +742,10 @@ export class MatrixComm extends Command {
         );
         context.evaluate_stack.push(new Matrix(finalElements));
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return this.cont_row * this.count_col; }
 }
 
 //#region BaseBinCode
