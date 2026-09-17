@@ -746,6 +746,21 @@ export class MatrixComm extends Command {
     get pushStackCount() { return 1; }
 
     get popStackCount() { return this.cont_row * this.count_col; }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            cont_row: this.cont_row,
+            count_col: this.count_col
+        };
+    }
+
+    static get dataTypeName() { return "MatrixComm"; }
+
+    static fromJSON(data) {
+        return new MatrixComm(data.cont_row, data.count_col);
+    }    
+
 }
 
 //#region BaseBinCode
