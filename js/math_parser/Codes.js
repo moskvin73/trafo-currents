@@ -877,7 +877,7 @@ class BinCommValueOp extends BaseBinComm {
         this.value = value;
     }
 
-    toString(context) { return `${this.commandName()}  ${this.value}, st[top]`; }
+    toString(context) { return `${this.commandName()} ${this.value}, st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
@@ -911,7 +911,7 @@ class BinCommOpOp extends BaseBinComm {
         }
     }
 
-    toString(context) { return `${this.commandName()}  st[top - 1], st[top]`; }
+    toString(context) { return `${this.commandName()} st[top - 1], st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
