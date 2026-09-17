@@ -1418,7 +1418,7 @@ export class CommandBuilder {
 	
     #checkCountStackCommand(comm, add = 0) {
         const oper = Array.isArray(comm) ? comm.at(-1) : comm;
-        this.#countStack += comm.pushStackCount - comm.popStackCount + add;
+        this.#countStack += oper.pushStackCount - oper.popStackCount + add;
         this.#checkCountStack(); 
         return comm;
     }
