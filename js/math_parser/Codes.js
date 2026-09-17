@@ -259,10 +259,7 @@ export class GotoComm extends Command {
     constructor(len_code) {
         super();
 
-        // Проверяем, что значение является целым числом
-        if (!Number.isInteger(len_code)) {
-        throw new TypeError(`Неверный тип пораметра класса GotoComm len_code: ${len_code}, пораметр должен быть целым числом.`);
-        }
+        assertInteger(len_code, 'len_code', 'IGotoComm');
 
         this.len_code = len_code;
     }
