@@ -176,7 +176,7 @@ export function test3() {
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
     sym_pi.subscribeUpdateVarable((sym) => {
-      console.log(`${sym.name} = ${sym.value}`);
+      console.log(`set varablt: ${sym.name} = ${sym.value}`);
     });
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new Code.OpConst(value); };
