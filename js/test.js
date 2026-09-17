@@ -156,7 +156,7 @@ export function test3() {
     // Ткущий набор выполняемых команд (Измняется командами)
     _commandsChanged: false,
     _commands: null,
-    get commands() { return internalCommands; },
+    get commands() { return this._commands; },
     set commands(v) { 
       this._commands= v;
       this.index_comm = 0;
