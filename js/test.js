@@ -147,17 +147,23 @@ export function test3() {
       scope_context: symbols,
       evaluate_stack: [],
       evaluate_loc: null,
-      index_code: 0,
-      code: null,
-      evaluate(code) {
-        if (!code) return;
-        this.code = code;
-        while (this.index_code < this.code.length) {
-          const com = this.code[this.index_code++];
-          com.evaluate(this);
+      index_comm: 0,
+      commands: null,
+      evaluate(commands) {
+          if (!commands) return;
+          this.commands = commands;
+          while (this.index_comm < this.commands.length) {
+            const com = this.commands[this.index_comm++];
+            com.evaluate(this);
+        }
+        this.commands = null;
+      },
+
+      toStringCommands() {
+        if (!commands) return '';
+        return this.commands.map(com => com.toString(scope_context)).join('\n');
       }
-      this.code = null;
-  }};
+    };
 
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const sym_pi = acquireVar("pi");
@@ -171,6 +177,7 @@ export function test3() {
       ...c0,
       ...c3,
     ];
+
     executor.evaluate(codes);
     console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
     console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
