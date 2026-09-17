@@ -1335,7 +1335,7 @@ function getOperandType(op) {
 }
 
 export function operandImplementСode(op) {
-    if (op instanceof OpConst || op instanceof OpVarable) return [op.createCodePush()];
+    if (op instanceof OperandValue) return [op.createCodePush()];
     else if (op instanceof Command) return [op];
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
@@ -1364,7 +1364,7 @@ function unionCommands(...args) {
         
         // Если это был OpConst или OpVarable, то operandImplementСode 
         // вернула массив, содержащий результат op.createCodePush()
-        if (arg instanceof OpConst || arg instanceof OpVarable) {
+        if (arg instanceof OperandValue) {
             // Берем созданный push-объект и прибавляем его stack count к общей сумме
             const codePushObj = implemented[0];
             totalStackCount += codePushObj.pushStackCount - codePushObj.popStackCount;
