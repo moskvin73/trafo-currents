@@ -178,6 +178,7 @@ export function test3() {
       ...c3,
     ];
 
+    console.log(executor.toStringCommands());
     executor.evaluate(codes);
     console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
     console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
