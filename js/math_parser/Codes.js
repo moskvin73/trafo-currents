@@ -1291,6 +1291,6 @@ export class CommandBuilder {
 	
     // Финальный метод, который возвращает готовый результат
     build() {
-        return this.currentCode;
+        return this.#currentCode;
     }
 }
