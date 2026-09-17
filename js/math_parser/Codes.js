@@ -1257,7 +1257,8 @@ export class CommandBuilder {
     }
 	
 	#creator(operand, l_op, r_op) {
-        const l = 
+        const l = this.#checkOperand(l_op);
+        const r = this.#checkOperand(r_op);
 		if (l === self && r === self) {
 			this.#currentCode = createBinCode(operand, this.#currentCode, this.#currentCode);
         }
@@ -1273,13 +1274,13 @@ export class CommandBuilder {
 	}
 
     // Команда ASSIGN
-    assign(target, value) {
-		return this.#creator(OperatorBinType.ASSIGN, target, value);
+    assign(l_op, r_op) {
+		return this.#creator(OperatorBinType.ASSIGN, l_op, r_op);
     }
 
     // Команда ADD
-    add(target, value) {
-		return this.#creator(OperatorBinType.ADD, target, value);
+    add(l_op, r_op) {
+		return this.#creator(OperatorBinType.ADD, l_op, r_op);
     }
 
     // Команда POP
