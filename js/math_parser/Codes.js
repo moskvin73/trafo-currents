@@ -119,7 +119,7 @@ function assertCommands(value, paramName, context) {
 }
 
 function assertString(value, paramName, context) {
-  if (!Number.isInteger(typeof value !== 'string')) {
+  if (!(typeof value !== 'string')) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен быть строкой. Получено: ${value}`);
   }
 }
@@ -478,13 +478,19 @@ regCode(PushCommVarbleGlobal);
 //#endregion PUSH
 
 //#region CONST_VAR 
-export class OpValue extends Command {
+export class OperandValue extends Command {
     getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
 
     createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
 }
  
-export class OpConst extends OpValue {
+function assertOperand(value, paramName, context) {
+  if (!(value instanceof OperandValue)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+export class OpConst extends OperandValue {
     constructor(value) {
         super();
         this.value = value;
@@ -513,7 +519,7 @@ export class OpConst extends OpValue {
 }
 regCode(OpConst);
 
-class OpVarable extends OpValue {
+class OpVarable extends OperandValue {
     constructor() {
         super();
     }
@@ -666,9 +672,13 @@ class BaseBinComm extends Command {
 class BinCommValueValue extends BaseBinComm {
     constructor(l_value, r_value) {
         super();
+        assertOperand(l_value, 'l_value', `${new.target.name}`)
+        assertOperand(r_value, 'r_value', `${new.target.name}`)
         this.l_value = l_value;
         this.r_value = r_value;
     }
+
+
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
