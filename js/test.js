@@ -151,7 +151,7 @@ export function test3() {
       commands: null,
       evaluate() {
           if (!this.commands) return;
-          console.log('start evaluate');
+          console.log('***start evaluate***');
           let c_le = this.evaluate_stack.length;
           while (this.index_comm < this.commands.length) {
             const com = this.commands[this.index_comm++];
@@ -164,7 +164,7 @@ export function test3() {
             c_le = len;
         }
         this.commands = null;
-        console.log('end evaluate');
+        console.log('***end evaluate***');
       },
 
       toStringCommands() {
