@@ -161,16 +161,17 @@ export function test3() {
         if (!this.commands) return;
         this.is_evaluate = true;
         console.log('***start evaluate***');
-        let c_le = this.evaluate_stack.length;
+        const stack = this.evaluate_stack;
+        let c_le = this.stack.length;
         try {
           while (this.index_comm < this.commands.length) {
             const com = this.commands[this.index_comm++];
             console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
             com.evaluate(this);
 
-            const len = this.evaluate_stack.length;
+            const len = this.stack.length;
             if (len > c_le)
-              console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
+              console.log(` st[top] = ${this.stack[len - 1]}`);
             c_le = len;
           }
         } finally {
@@ -181,7 +182,8 @@ export function test3() {
 
       toStringCommands() {
         if (!this.commands) return '';
-        return this.commands.map(com => com.toString(this.scope_context)).join('\n');
+        const ctx = this.scope_context;
+        return this.commands.map(com => com.toString(ctx)).join('\n');
       },
 
       createReportRecord(node, value) {
