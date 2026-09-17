@@ -1456,7 +1456,7 @@ export class CommandBuilder {
     // Команда POP
     pop() {
         // На всякий случай
-        this.#append(cthis.#checkCountStackCommand(new PopComm()));
+        this.#append(this.#checkCountStackCommand(new PopComm()));
         return this;
     }
 	
