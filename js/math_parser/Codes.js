@@ -1277,7 +1277,7 @@ export class CommandBuilder {
 
     // Команда POP
     pop() {
-        this._append(new Code.PopComm());
+        this._append(new PopComm());
         return this;
     }
 	
