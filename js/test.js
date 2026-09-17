@@ -173,8 +173,6 @@ export function test3() {
               console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
             c_le = len;
           }
-        } catch(err) {
-          throw err;
         } finally {
           console.log('***end evaluate***');
           this.is_evaluate = false;
