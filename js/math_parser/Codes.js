@@ -415,6 +415,8 @@ export class PushCommVarbleLocal extends Command {
         this.id_name = id_name;
     }
 
+    toString(context) { return `push ${context.getNameById(this.id_name)}`; }
+
     internal_evaluate(context) {
         sym = context.scope_context.getSymbolById(this.id_name);
         checkSymbolAll(sym);
