@@ -935,8 +935,12 @@ class AssignCommValueValue extends Command {
         const value = this.value.getValue(context);
         context.evaluate_stack.push(sym.value = value);
     }
-  
-     toJSON() {
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 0; }
+    
+    toJSON() {
         return {
         ...super.toJSON(),
         let_value: this.let_value,
@@ -971,7 +975,11 @@ class AssignCommValueOp extends Command {
         stack.push(sym.value = value);
     }
 
-     toJSON() {
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 1; }
+
+    toJSON() {
         return {
         ...super.toJSON(),
         let_value: this.let_value
@@ -1045,6 +1053,10 @@ export class IndexRowComm extends Command {
     evaluate_command(context, matrixObj, rowIndex, colIndex) {
         context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 2; }
 }
 
 export class AssignIndexRowComm extends Command {
@@ -1059,6 +1071,10 @@ export class AssignIndexRowComm extends Command {
         matrixObj.set(rowIndex, colIndex, l);
         context.evaluate_stack.push(l);
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 3; }   
 }
 
 export class IndexMatrixComm extends Command {
@@ -1092,6 +1108,10 @@ export class IndexMatrixComm extends Command {
     evaluate_command(context, matrixObj, rowIndex, colIndex) {
         context.evaluate_stack.push(matrixObj.get(rowIndex, colIndex));
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 3; }   
 }
 
 export class AssignIndexMatrixComm extends Command {
@@ -1106,6 +1126,10 @@ export class AssignIndexMatrixComm extends Command {
         matrixObj.set(rowIndex, colIndex, l);
         context.evaluate_stack.push(l);
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 4; }   
 }
 //#endregion INDEXING
 
