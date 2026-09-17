@@ -32,6 +32,16 @@ export class Command {
         if (this.toString.length !== 1) {
             throw new TypeError(`Метод toString в классе "${new.target.name}" должен принимать ровно 1 аргумент (context).`);
         }        
+
+        // Проверяем, переопределен ли метод в дочернем классе
+        if (this.toString === Command.prototype.internal_evaluate) {
+            throw new TypeError(`Класс "${new.target.name}" должен переопределить метод internal_evaluate(context).`);
+        }
+
+        // Проверяем количество аргументов (сигнатуру)
+        if (this.toString.length !== 1) {
+            throw new TypeError(`Метод internal_evaluate в классе "${new.target.name}" должен принимать ровно 1 аргумент (context).`);
+        }        
     }
 
     // Дефолтная реализация
