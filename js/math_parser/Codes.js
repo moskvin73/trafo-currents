@@ -1394,7 +1394,9 @@ export class CommandBuilder {
 
     get countStack() { return this.#countStack; }
 
-    #checkCountStack() { if (this.#countStack < 0) throw new Error(`[CommandBuilder] Неверный набор каоманд. Отрицательный стек`); }
+    #checkCountStack() { 
+        if (this.#countStack < 0) throw new Error(`[CommandBuilder] Неверный набор каоманд. Отрицательный стек`); 
+    }
 
     // Вспомогательный метод для объединения текущего кода с новым
     #append(newCode) {
@@ -1414,29 +1416,30 @@ export class CommandBuilder {
         throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
     }
 	
+    #checkCountStackCommand(comm, add = 0) {
+        const oper = Array.isArray(comm) ? comm.at(-1) : comm;
+        this.#countStack += comm.pushStackCount - comm.popStackCount + add;
+        this.#checkCountStack(); 
+        return comm;
+    }
+
 	#creator(operand, l_op, r_op) {
         const { op: l, st_c:l_sc } = this.#checkOperand(l_op);
         const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
-            const comm = createBinCode(operand, this.#currentCode, this.#currentCode);
-            this.#countStack += comm.pushStackCount - comm.popStackCount; 
-			this.#currentCode = comm;
+            this.#currentCode = 
+                #checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode));
         }
 		if (l === self) {
-            const comm = createBinCode(operand, this.#currentCode, r);
-            this.#countStack += comm.pushStackCount - comm.popStackCount + r_sc; 
-			this.#currentCode = comm;
+            this.#currentCode = 
+                #checkCountStackCommand(createBinCode(operand, this.#currentCode, r), r_sc);
         }
 		if (r === self) {
-            const comm = reateBinCode(operand, l, this.#currentCode);
-            this.#countStack += comm.pushStackCount - comm.popStackCount + l_sc;
-			this.#currentCode = comm;
+            this.#currentCode = 
+                #checkCountStackCommand(reateBinCode(operand, l, this.#currentCode), l_sc);
 		} else {
-            const comm = createBinCode(operand, l, r);
-            this.#countStack += comm.pushStackCount - comm.popStackCount + l_sc + r_sc;
-			this.#append(comm);
+            this.#append(#checkCountStackCommand(createBinCode(operand, l, r), l_sc + r_sc));
 		}
-        this.#checkCountStack();
 		return this;
 	}
 
