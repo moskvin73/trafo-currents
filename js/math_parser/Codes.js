@@ -1442,9 +1442,9 @@ export class CommandBuilder {
         }
 		if (r === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(reateBinCode(operand, l, this.#currentCode), l_sc);
+                this.#checkCountStackCommand(createBinCode(operand, l, this.#currentCode), l_sc);
 		} else {
-            this.#append(this.#checkCountStackCommand(reateBinCode(operand, l, r), l_sc + r_sc));
+            this.#append(this.#checkCountStackCommand(createBinCode(operand, l, r), l_sc + r_sc));
 		}
 		return this;
 	}
