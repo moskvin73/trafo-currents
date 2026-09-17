@@ -140,95 +140,94 @@ export function test3() {
   const symbols = new SymbolTableContext();
 
   // Создаём выполнитель
-    const executor = {
-      // Список отчётов ((Измняется командами))
-      report: [],
-      // Хранит последнее значение, извлеченное из стека evaluate_stack методом pop
-      last_popped : null,
-      // Контекст символов перименных
-      scope_context: symbols,
-      // Стек выполнения
-      evaluate_stack: [],
-      // Значение локации команды выполненя ((Измняется командами))
-      evaluate_loc: null,
-      // Текущий индекс командв (Измняется командами)
-      index_comm: 0,
-      // Ткущий набор выполняемых команд (Измняется командами)
-      commands: null,
-      // Флаг выполнения
-      is_evaluate: false,
-      evaluate() {
-          if (!this.commands) return;
-          this.is_evaluate = true;
-          console.log('***start evaluate***');
-          let c_le = this.evaluate_stack.length;
-          try {
-            while (this.index_comm < this.commands.length) {
-              const com = this.commands[this.index_comm++];
-              console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
-              com.evaluate(this);
+  const executor = {
+    // Список отчётов ((Измняется командами))
+    report: [],
+    // Хранит последнее значение, извлеченное из стека evaluate_stack методом pop
+    last_popped : null,
+    // Контекст символов перименных
+    scope_context: symbols,
+    // Стек выполнения
+    evaluate_stack: [],
+    // Значение локации команды выполненя ((Измняется командами))
+    evaluate_loc: null,
+    // Текущий индекс командв (Измняется командами)
+    index_comm: 0,
+    // Ткущий набор выполняемых команд (Измняется командами)
+    commands: null,
+    // Флаг выполнения
+    is_evaluate: false,
+    evaluate() {
+        if (!this.commands) return;
+        this.is_evaluate = true;
+        console.log('***start evaluate***');
+        let c_le = this.evaluate_stack.length;
+        try {
+          while (this.index_comm < this.commands.length) {
+            const com = this.commands[this.index_comm++];
+            console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+            com.evaluate(this);
 
-              const len = this.evaluate_stack.length;
-              if (len > c_le)
-                console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
-              c_le = len;
-            }
-          } catch(err) {
-            throw err;
-          } finally {
-            console.log('***end evaluate***');
-            this.is_evaluate = false;
+            const len = this.evaluate_stack.length;
+            if (len > c_le)
+              console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
+            c_le = len;
           }
-        },
-
-        toStringCommands() {
-          if (!this.commands) return '';
-          return this.commands.map(com => com.toString(this.scope_context)).join('\n');
-        },
-
-        createReportRecord(node, value) {
-          if (value) {
-          const rn = { node, value };
-          this.report.push(rn);
+        } catch(err) {
+          throw err;
+        } finally {
+          console.log('***end evaluate***');
+          this.is_evaluate = false;
         }
+      },
+
+      toStringCommands() {
+        if (!this.commands) return '';
+        return this.commands.map(com => com.toString(this.scope_context)).join('\n');
+      },
+
+      createReportRecord(node, value) {
+        if (value) {
+        this.report.push({ node, value });
       }
-    };
+    }
+  };
 
-    const getSymbol = (source, id) => {
-      if (executor.is_evaluate)
-        return source.getSymbolById(id);
-      else  
-        return source.getParseSymbolById(id);
-    };
-    const out_updte_sym = (sym) => {
-      console.log(` set varable: ${sym.name} = ${sym.value}`);
-    };
-    symbols.subscribeAddVarable((source, id) => {
-      const new_sym = getSymbol(source, id);
-      new_sym.subscribeUpdateVarable(out_updte_sym);
-    });
-    symbols.subscribeDeleteVarable((source, id) => {
-      const del_sym = getSymbol(source, id);
-      del_sym.unsubscribeUpdateVarable(out_updte_sym);
-    });
-    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
-    const op_v = (sym) => { return new Code.OpVarableGlobal(sym); };
-    const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
-    const op_c = (value) => { return new Code.OpConst(value); };
-    const comm_pop = () => { return new Code.PopComm() };
+  const getSymbol = (source, id) => {
+    if (executor.is_evaluate)
+      return source.getSymbolById(id);
+    else  
+      return source.getParseSymbolById(id);
+  };
+  const out_updte_sym = (sym) => {
+    console.log(` set varable: ${sym.name} = ${sym.value}`);
+  };
+  symbols.subscribeAddVarable((source, id) => {
+    const new_sym = getSymbol(source, id);
+    new_sym.subscribeUpdateVarable(out_updte_sym);
+  });
+  symbols.subscribeDeleteVarable((source, id) => {
+    const del_sym = getSymbol(source, id);
+    del_sym.unsubscribeUpdateVarable(out_updte_sym);
+  });
+  const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
+  const op_v = (sym) => { return new Code.OpVarableGlobal(sym); };
+  const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
+  const op_c = (value) => { return new Code.OpConst(value); };
+  const comm_pop = () => { return new Code.PopComm() };
 
-    const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
-    const c1 = Code.createBinCode(ADD, op_n("pi"), op_c(1));
-    const c3 = [...Code.createBinCode(ASSIGN, op_n("pi"), c1), comm_pop()];
-    const command = [
-      ...c0,
-      ...c3,
-    ];
+  const c0 = [...Code.createBinCode(ASSIGN, op_n("pi"), op_c(Math.PI)), comm_pop() ];
+  const c1 = Code.createBinCode(ADD, op_n("pi"), op_c(1));
+  const c3 = [...Code.createBinCode(ASSIGN, op_n("pi"), c1), comm_pop()];
+  const command = [
+    ...c0,
+    ...c3,
+  ];
 
-    executor.commands = command;
-    console.log('***Коммады кода***');
-    console.log(executor.toStringCommands());
-    executor.evaluate();
-    console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
-    console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
+  executor.commands = command;
+  console.log('***Коммады кода***');
+  console.log(executor.toStringCommands());
+  executor.evaluate();
+  console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
+  console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
 }
