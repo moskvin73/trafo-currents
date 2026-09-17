@@ -1246,33 +1246,33 @@ export class CommandBuilder {
         if (this.#currentCode === null) {
             this.#currentCode = newCode;
         } else {
-            this.#currentCode = Code.unionCommands(this.#currentCode, newCode);
+            this.#currentCode = unionCommands(this.#currentCode, newCode);
         }
     }
 	
 	#creator(operand, l, r) {
 		if (l === self && r === self) {
-			this.#currentCode = Code.createBinCode(operand, this.#currentCode, this.#currentCode);
+			this.#currentCode = createBinCode(operand, this.#currentCode, this.#currentCode);
         }
 		if (l === self) {
-			this.#currentCode = Code.createBinCode(operand, this.#currentCode, r);
+			this.#currentCode = createBinCode(operand, this.#currentCode, r);
         }
 		if (r === self) {
-			this.#currentCode = Code.createBinCode(operand, l, this.#currentCode);
+			this.#currentCode = createBinCode(operand, l, this.#currentCode);
 		} else {
-			this.#append(Code.createBinCode(operand, l, r));
+			this.#append(createBinCode(operand, l, r));
 		}
 		return this;
 	}
 
     // Команда ASSIGN
     assign(target, value) {
-		return this.#creator(ASSIGN, target, value);
+		return this.#creator(OperatorBinType.ASSIGN, target, value);
     }
 
     // Команда ADD
     add(target, value) {
-		return this.#creator(ADD, target, value);
+		return this.#creator(OperatorBinType.ADD, target, value);
     }
 
     // Команда POP
