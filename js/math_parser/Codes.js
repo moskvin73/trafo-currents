@@ -609,9 +609,13 @@ regCode(OpVarableGlobal);
 export class MatrixComm extends Command {
     constructor(cont_row, count_col) {
         super();
+        assertInteger(cont_row, 'cont_row', 'MatrixComm');
+        assertInteger(count_col, 'count_col', 'MatrixComm');
         this.cont_row = cont_row;
         this.count_col = count_col;
     }
+
+    toString(_context) { return `def_matrix ${this.cont_row}, ${this.count_col}`; }
 
     internal_evaluate(context) {
         const evaluatedElements = []; 
