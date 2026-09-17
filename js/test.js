@@ -172,11 +172,18 @@ export function test3() {
             console.log('***end evaluate***');
             this.is_evaluate = false;
           }
-      },
+        },
 
-      toStringCommands() {
-        if (!this.commands) return '';
-        return this.commands.map(com => com.toString(this.scope_context)).join('\n');
+        toStringCommands() {
+          if (!this.commands) return '';
+          return this.commands.map(com => com.toString(this.scope_context)).join('\n');
+        },
+
+        createReportRecord(node, value) {
+          if (value) {
+          const rn = { node, value };
+          this.report.push(rn);
+        }
       }
     };
 
