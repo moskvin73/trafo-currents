@@ -149,7 +149,7 @@ export function test3() {
       evaluate_loc: null,
       index_comm: 0,
       commands: null,
-      is_evaluate: false;
+      is_evaluate: false,
       evaluate() {
           if (!this.commands) return;
           this.is_evaluate = true;
@@ -184,11 +184,19 @@ export function test3() {
       console.log(` set varable: ${sym.name} = ${sym.value}`);
     };
     symbols.subscribeAddVarable((source, id) => {
-      const new_sym = source.getParseSymbolById(id);
+      let new_sym;
+      if (executor.is_evaluate)
+        new_sym = source.getSymbolById(id);
+      else  
+        new_sym = source.getParseSymbolById(id);
       new_sym.subscribeUpdateVarable(out_updte_sym);
     });
     symbols.subscribeDeleteVarable((source, id) => {
-      const del_sym = source.getParseSymbolById(id);
+      let del_sym;
+      if (executor.is_evaluate)
+        del_sym = source.getSymbolById(id);
+      else  
+        del_sym = source.getParseSymbolById(id);
       del_sym.unsubscribeUpdateVarable(out_updte_sym);
     });
     const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
