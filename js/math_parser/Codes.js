@@ -1232,3 +1232,57 @@ export function createBinCode(operator, l_op, r_op) {
     const processFn = SubstitutionTableBin.get(key);
     return processFn(l_op, r_op);
 }
+
+export const self = null;
+export class CommandBuilder {
+	#currentCode;
+    constructor(initialCode = null) {
+        // Храним текущий накопленный код
+        this.#currentCode = initialCode;
+    }
+
+    // Вспомогательный метод для объединения текущего кода с новым
+    #append(newCode) {
+        if (this.#currentCode === null) {
+            this.#currentCode = newCode;
+        } else {
+            this.#currentCode = Code.unionCommands(this.#currentCode, newCode);
+        }
+    }
+	
+	#creator(operand, l, r) {
+		if (l === self && r === self) {
+			this.#currentCode = Code.createBinCode(operand, this.#currentCode, this.#currentCode);
+        }
+		if (l === self) {
+			this.#currentCode = Code.createBinCode(operand, this.#currentCode, r);
+        }
+		if (r === self) {
+			this.#currentCode = Code.createBinCode(operand, l, this.#currentCode);
+		} else {
+			this.#append(Code.createBinCode(operand, l, r));
+		}
+		return this;
+	}
+
+    // Команда ASSIGN
+    assign(target, value) {
+		return this.#creator(ASSIGN, target, value);
+    }
+
+    // Команда ADD
+    add(target, value) {
+		return this.#creator(ADD, target, value);
+    }
+
+    // Команда POP
+    pop() {
+        this._append(new Code.PopComm());
+        return this;
+    }
+	
+    // Финальный метод, который возвращает готовый результат
+    build() {
+        return this.currentCode;
+    }
+}
