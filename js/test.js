@@ -172,22 +172,23 @@ export function test3() {
         let cmds = this._commands;
         if (!cmds) return;
 
+        const isDebug = this.DEBUG;
         let len_code = cmds.length;
         this.is_evaluate = true;
         this._commandsChanged = false;
 
-        if (this.DEBUG) console.log('***start evaluate***');
+        if (isDebug) console.log('***start evaluate***');
 
         const stack = this.evaluate_stack;
         let prev_stack_len = stack.length;
-
+        const ctx = this.scope_context;
         try {
           let idx = this.index_comm;
 
           while (idx < len_code) {
             const com = cmds[idx++];
 
-            if (this.DEBUG) console.log(`${idx - 1}: ${com.toString(this.scope_context)}`);
+            if (isDebug) console.log(`${idx - 1}: ${com.toString(ctx)}`);
 
             this.index_comm = idx;
             com.evaluate(this);
@@ -208,7 +209,7 @@ export function test3() {
             }
           }
         } finally {
-          if (this.DEBUG) console.log('***end evaluate***');
+          if (isDebug) console.log('***end evaluate***');
           this.is_evaluate = false;
         }
       },
@@ -220,7 +221,7 @@ export function test3() {
       },
 
       createReportRecord(node, value) {
-        if (value) {
+        if (value !== undefined && value !== null) {
         this.report.push({ node, value });
       }
     }
