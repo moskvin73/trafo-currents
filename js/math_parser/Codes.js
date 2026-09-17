@@ -874,6 +874,8 @@ class BinCommValueOp extends BaseBinComm {
         stack.push(this.operator(l, r));
     }    
 
+    get popStackCount() { return 1; }
+
     toJSON() {
         return {
         ...super.toJSON(),
@@ -906,6 +908,8 @@ class BinCommOpOp extends BaseBinComm {
         const { l, r } = dispatcher.promoteTypes(l_op, r_op);
         stack.push(this.operator(l, r));
     }
+
+    get popStackCount() { return 2; }
     
     toJSON() {
         return {
