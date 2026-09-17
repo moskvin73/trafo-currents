@@ -412,6 +412,7 @@ function checkSymbolAll(sym) {
 
 export class PushCommVarbleLocal extends Command {
     constructor(id_name) {
+        assertInteger(id_name, 'id_name', 'PushCommVarbleLocal');
         this.id_name = id_name;
     }
 
