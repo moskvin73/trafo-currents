@@ -528,6 +528,7 @@ class OpVarable extends OpValue {
 export class OpVarableLocal extends OpVarable {
     constructor(id_name) {
         super();
+        assertInteger(id_name, 'id_name', 'OpVarableLocal');
         this.id_name = id_name;
     }
 
