@@ -149,22 +149,27 @@ export function test3() {
       evaluate_loc: null,
       index_comm: 0,
       commands: null,
+      is_evaluate: false;
       evaluate() {
           if (!this.commands) return;
+          this.is_evaluate = true;
           console.log('***start evaluate***');
           let c_le = this.evaluate_stack.length;
-          while (this.index_comm < this.commands.length) {
-            const com = this.commands[this.index_comm++];
-            console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
-            com.evaluate(this);
+          try {
+            while (this.index_comm < this.commands.length) {
+              const com = this.commands[this.index_comm++];
+              console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
+              com.evaluate(this);
 
-            const len = this.evaluate_stack.length;
-            if (len > c_le)
-              console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
-            c_le = len;
-        }
-        this.commands = null;
-        console.log('***end evaluate***');
+              const len = this.evaluate_stack.length;
+              if (len > c_le)
+                console.log(` st[top] = ${this.evaluate_stack[len - 1]}`);
+              c_le = len;
+            }
+          } finally {
+            console.log('***end evaluate***');
+            this.is_evaluate = false;
+          }
       },
 
       toStringCommands() {
