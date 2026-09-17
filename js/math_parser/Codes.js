@@ -1205,7 +1205,14 @@ export function operandImplementСode(op) {
     if (op instanceof OpConst || op instanceof OpVarable) return [op.createCodePush()];
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
     throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
-} 
+}
+
+export function unionCode(...args) {
+    if (args.length < 2) {
+        throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
+    }
+    return args.map(operandImplementСode).flat(Infinity);
+}
 
 export function createBinCode(operator, l_op, r_op) {
     const lop_type = getOperandType(l_op);
