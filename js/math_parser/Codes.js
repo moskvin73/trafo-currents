@@ -776,6 +776,10 @@ class BaseBinComm extends Command {
     operator(l, r) { throw new Error("[Command]: Метод operator(l. r) не реализован."); }
 
     commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 2; }
 }
 
 class BinCommValueValue extends BaseBinComm {
