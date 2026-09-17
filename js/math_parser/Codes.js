@@ -112,6 +112,12 @@ function assertInteger(value, paramName, context) {
   }
 }
 
+function assertCommands(value, paramName, context) {
+  if (!(Array.isArray(value) && value.every(item => item instanceof Command))) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть массивом комммад типа 'Command'. Получено: ${value}`);
+  }
+}
+
 function assertString(value, paramName, context) {
   if (!Number.isInteger(typeof value !== 'string')) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен быть строкой. Получено: ${value}`);
