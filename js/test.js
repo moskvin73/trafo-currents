@@ -169,10 +169,11 @@ export function test3() {
     const sym_pi = acquireVar("pi");
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new Code.OpConst(value); };
+    const comm_pop = () => { return new Code.PopComm() };
 
-    const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), new Code.PopComm() ];
+    const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), comm_pop() ];
     const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
-    const c3 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), c1), new Code.PopComm()];
+    const c3 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), c1), comm_pop()];
     const codes = [
       ...c0,
       ...c3,
