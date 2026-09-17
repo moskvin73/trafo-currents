@@ -75,7 +75,7 @@ export class Command {
 
     get popStackCount() { throw new Error("[Command]: Геттер popStackCount не реализован."); }
 
-    get isModifedStack() { this.pushStackCount > 0 || this.popStackCount > 0; }
+    get modifiesStack() { this.pushStackCount > 0 || this.popStackCount > 0; }
 
     toJSON() {
         return {
