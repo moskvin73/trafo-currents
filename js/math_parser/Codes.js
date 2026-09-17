@@ -778,8 +778,6 @@ class BaseBinComm extends Command {
     commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
 
     get pushStackCount() { return 1; }
-
-    get popStackCount() { return 2; }
 }
 
 class BinCommValueValue extends BaseBinComm {
@@ -801,21 +799,23 @@ class BinCommValueValue extends BaseBinComm {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
         context.evaluate_stack.push(this.operator(l, r));
     }
-   
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      l_value: this.l_value,
-      r_value: this.r_value,
-    };
-  }
 
-  static create(ClassRef, data) {
-     return new ClassRef(
-      restoreDataType(data.l_value),
-      restoreDataType(data.r_value)
-    );   
-  }
+    get popStackCount() { return 0; }
+   
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        l_value: this.l_value,
+        r_value: this.r_value,
+        };
+    }
+
+    static create(ClassRef, data) {
+        return new ClassRef(
+        restoreDataType(data.l_value),
+        restoreDataType(data.r_value)
+        );   
+    }
 }
 
 class BinCommOpValue extends BaseBinComm {
@@ -838,17 +838,19 @@ class BinCommOpValue extends BaseBinComm {
         stack.push(this.operator(l, r));
     }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      value: this.value,
-    };
-  }
+    get popStackCount() { return 1; }
 
-  static create(ClassRef, data) {
-     return new ClassRef(
-      restoreDataType(data.value)
-    );   
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        value: this.value,
+        };
+    }
+
+    static create(ClassRef, data) {
+        return new ClassRef(
+        restoreDataType(data.value)
+        );   
     }
 }
 
