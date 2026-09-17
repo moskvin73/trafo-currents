@@ -258,7 +258,7 @@ export function test3() {
                                comm_pop() 
                               );*/
   const builder = new Code.CommandBuilder();
-  const command =builder
+  const command = builder
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .add(op_n("pi"), op_c(1))
