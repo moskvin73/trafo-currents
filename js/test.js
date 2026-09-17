@@ -193,7 +193,6 @@ export function test3() {
             com.evaluate(this);
 
             // Предпологается что при изминени кода меняется и индекс
-            idx = this.index_comm;
             if (this._commandsChanged) {
               cmds = this._commands;
               len_code = cmds.length;
