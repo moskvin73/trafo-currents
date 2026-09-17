@@ -154,32 +154,38 @@ export function test3() {
     // Текущий индекс командв (Измняется командами)
     index_comm: 0,
     // Ткущий набор выполняемых команд (Измняется командами)
-    //commands: null,
-    internalCommands: null,
-    updateCommands: null,
+    _commandsChanged: false,
+    _commands: null,
     get commands() { return internalCommands; },
-    set commands(v) { internalCommands = v; updateCommands(); },
+    set commands(v) { 
+      _commands= v; 
+      if (this.is_evaluate) {
+        this._commandsChanged = true;
+      }       
+    },
     // Флаг выполнения
     is_evaluate: false,
     evaluate() {
         let cmds = this.commands;
         if (!cmds) return;
+
         let len_code = cmds.length;
         this.is_evaluate = true;
+
         updateCommands = () => { cmds = this.commands; len_code = cmds.length; };
         console.log('***start evaluate***');
         const stack = this.evaluate_stack;
-        let c_le = this.stack.length;
+        let prev_stack_len = stack.length;
         try {
           while (this.index_comm < len_code) {
             const com = cmds[this.index_comm++];
             console.log(`${this.index_comm}: ${com.toString(this.scope_context)}`);
             com.evaluate(this);
 
-            const len = this.stack.length;
-            if (len > c_le)
-              console.log(` st[top] = ${this.stack[len - 1]}`);
-            c_le = len;
+            const len = stack.length;
+            if (len > prev_stack_len)
+              console.log(` st[top] = ${stack[len - 1]}`);
+            prev_stack_len = len;
           }
         } finally {
           console.log('***end evaluate***');
