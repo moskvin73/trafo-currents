@@ -173,17 +173,24 @@ export function test3() {
       }
     };
 
-    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
-    const sym_pi = acquireVar("pi");
-    sym_pi.subscribeUpdateVarable((sym) => {
+    const out_updte_sym = (sym) => {
       console.log(` set varable: ${sym.name} = ${sym.value}`);
+    };
+    symbols.subscribeAddVarable((source, id) => {
+      const new_sym = source.getParseSymbolById(id);
+      new_sym.subscribeUpdateVarable(out_updte_sym);
     });
+    symbols.subscribeDeleteVarable((source, id) => {
+      const del_sym = source.getParseSymbolById(id);
+      del_sym.unsubscribeUpdateVarable(out_updte_sym);
+    });
+    const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
     const operand_v = (sym) => { return new Code.OpVarableGlobal(sym); };
     const operand_c = (value) => { return new Code.OpConst(value); };
     const comm_pop = () => { return new Code.PopComm() };
 
-    const c0 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), operand_c(Math.PI)), comm_pop() ];
-    const c1 = Code.createBinCode(ADD, operand_v(sym_pi), operand_c(1));
+    const c0 = [...Code.createBinCode(ASSIGN, operand_v(acquireVar("pi")), operand_c(Math.PI)), comm_pop() ];
+    const c1 = Code.createBinCode(ADD, operand_v(acquireVar("pi")), operand_c(1));
     const c3 = [...Code.createBinCode(ASSIGN, operand_v(sym_pi), c1), comm_pop()];
     const command = [
       ...c0,
