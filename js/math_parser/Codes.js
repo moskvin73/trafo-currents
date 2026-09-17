@@ -1236,9 +1236,9 @@ export function createBinCode(operator, l_op, r_op) {
 export const self = null;
 export class CommandBuilder {
 	#currentCode;
-    constructor(initialCode = null) {
+    constructor() {
         // Храним текущий накопленный код
-        this.#currentCode = initialCode;
+        this.#currentCode = null;
     }
 
     // Вспомогательный метод для объединения текущего кода с новым
