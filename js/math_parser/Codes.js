@@ -802,7 +802,6 @@ export class MatrixComm extends Command {
     static fromJSON(data) {
         return new MatrixComm(data.cont_row, data.count_col);
     }    
-
 }
 
 //#region BaseUnCode
