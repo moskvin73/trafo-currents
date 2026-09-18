@@ -860,6 +860,20 @@ class UnCommOp extends BaseUnComm {
 //#endregion BaseUnCode
 
 //#region NEG
+class NegCommValue extends UnCommValue {
+    constructor(value) {
+        super(value);
+    }
+    
+    commandName() { return 'neg'; }
+
+    operator(op) { return op.negate() }
+
+    static get dataTypeName() { return "NegCommValue"; }
+
+    static fromJSON(data) { return UnCommValue.create(NegCommValue, data); }
+}
+regCode(NegCommValue);
 
 //#endregion NEG
 
