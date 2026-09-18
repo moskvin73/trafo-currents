@@ -859,6 +859,10 @@ class UnCommOp extends BaseUnComm {
 }    
 //#endregion BaseUnCode
 
+//#region NEG
+
+//#endregion NEG
+
 //#region BaseBinCode
 class BaseBinComm extends Command {
     constructor() {
