@@ -1187,6 +1187,23 @@ class BinCommOpOp extends BaseBinComm {
         stack.push(this.operator(l, r));
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_r = simulatedStack.pop();
+        const st_l = simulatedStack.pop();
+        if (st_l.type === 'const' && st_r.type === 'const') {
+            const { l, r } = dispatcher.promoteTypes(st_l.value, st_r.value);
+            const calc_v = this.operator(l, r);
+            simulatedStack.push({type: 'const', value: calc_v});
+        } else if (st_l.type === 'const') {
+
+        } else if (st_r.type === 'const') {
+
+        } else {
+            optimizedCode.push(this);
+            simulatedStack.push({ type: 'unknown' });
+        }
+    }
+
     get popStackCount() { return 2; }
     
     toJSON() {
