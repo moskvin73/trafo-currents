@@ -1852,6 +1852,7 @@ export class CommandBuilder {
             }
             else optimizedCode.push(comm);
         }
+        this.#currentCode = optimizedCode;
     }
 
     // Финальный метод, который возвращает готовый результат
