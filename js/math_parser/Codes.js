@@ -1962,6 +1962,8 @@ export class CommandBuilder {
         for (const comm of this.#currentCode) {
             comm.foldConstants(optimizedCode, simulatedStack);
         }
+        const v_top = simulatedStack.at(-1);
+        if (v_top.type === 'const') this.#append(v_top);    
         this.#currentCode = optimizedCode;
     }
 }
