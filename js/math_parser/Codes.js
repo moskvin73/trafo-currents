@@ -1955,7 +1955,7 @@ export class CommandBuilder {
     }
     
     foldConstants() {
-        if (!this.#currentCode || isConstant) return;
+        if (!this.#currentCode || this.isConstant) return;
         const optimizedCode = [];
         const simulatedStack = [];
 
