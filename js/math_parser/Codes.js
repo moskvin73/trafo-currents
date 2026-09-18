@@ -1827,7 +1827,7 @@ export class CommandBuilder {
                     optimizedCode.push(comm);
                 }
             }
-            else if (comm instanceof BaseBinComm) {
+            else if (comm instanceof BinCommOpOp) {
                 const st_top = simulatedStack.at(-1);
                 const st_top_prev = simulatedStack.at(-2);
                 if (st_top.type === 'const' && st_top_prev === 'const')
