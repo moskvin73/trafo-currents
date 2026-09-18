@@ -1870,15 +1870,13 @@ export class CommandBuilder {
             else if (comm instanceof AssignCommValueOp) {
                 const st_top = simulatedStack.at(-1);
                 if (st_top.type === 'const') {
-                    simulatedStack.pop();
                     optimizedCode.push(new AssignCommValueValue(comm.let_value, new OpConst(st_top)));
                 } else {
-                    simulatedStack.pop();
-                    simulatedStack.push({ type: 'unknown' });
                     optimizedCode.push(comm);
                 }
             }
             else if (comm instanceof PopComm) {
+                
                 simulatedStack.pop();
                 optimizedCode.push(comm);
             }
