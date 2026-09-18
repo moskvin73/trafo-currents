@@ -411,7 +411,7 @@ regCode(PopComm);
 
 //#region PUSH
 class PushComm extends Command {
-    
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
@@ -1805,7 +1805,16 @@ export class CommandBuilder {
         const simulatedStack = [];
 
         for (const comm of this.#currentCode) {
-            if (comm instanceof )
+            if (comm instanceof PushCommConst) {
+                simulatedStack.push({type: 'const' value: comm.value});
+                optimizedCode.push(comm);
+            }
+            else if (comm instanceof PushComm) {
+                simulatedStack.push({ type: 'unknown' });
+            }
+            else if (comm instanceof BaseUnComm) {
+                
+            }
         }
     }
 
