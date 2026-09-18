@@ -265,7 +265,7 @@ export function test3() {
 
   builder.foldConstants();
   if (builder.isConstant) {
-    console.log(`Код отсутсвет константное занчение: ${builder.constan}`);
+    console.log(`Код отсутсвет константное занчение: ${builder.constant}`);
   } else {
     executor.commands = builder.build();
     console.log('***Коммады кода***');
