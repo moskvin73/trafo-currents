@@ -1846,6 +1846,20 @@ export class CommandBuilder {
                     optimizedCode.push(comm);
                 } 
             }
+            else if (comm instanceof BinCommOpValue || comm instanceof BinCommValueOp) {
+                const st_top = simulatedStack.at(-1);
+                if (st_top.type === 'const' && comm.value instanceof OpConst) {
+                    const temp = { evaluate_stack: [st_top.value] };
+                    comm.internal_evaluate(temp);
+                    simulatedStack.pop();
+                    simulatedStack.push({type: 'const', value: temp.at(-1)});
+                    optimizedCode.pop();
+                } else {
+                    simulatedStack.pop();
+                    simulatedStack.push({ type: 'unknown' });
+                    optimizedCode.push(comm);
+                }
+            }
             else if (comm instanceof PopComm) {
                 simulatedStack.pop();
                 optimizedCode.push(comm);
