@@ -264,10 +264,14 @@ export function test3() {
   .pop();*/
 
   builder.foldConstants();
-  executor.commands = builder.build();
-  console.log('***Коммады кода***');
-  console.log(executor.toStringCommands());
-  executor.evaluate();
-  console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
-  console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
+  if (builder.isConstant) {
+    console.log(builder.constan);
+  } else {
+    executor.commands = builder.build();
+    console.log('***Коммады кода***');
+    console.log(executor.toStringCommands());
+    executor.evaluate();
+    console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
+    console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
+  }
 }
