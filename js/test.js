@@ -156,7 +156,8 @@ export function test3() {
     _commandsChanged: false,
     _commands: null,
     get commands() { return this._commands; },
-    set commands(v) { 
+    set commands(v) {
+      if (!Code.is_comands(v)) throw new Error('Значение не является последовательность команд');
       this._commands= v;
       this.index_comm = 0;
       if (this.is_evaluate) {
