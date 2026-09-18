@@ -1807,7 +1807,6 @@ export class CommandBuilder {
         for (const comm of this.#currentCode) {
             if (comm instanceof PushCommConst) {
                 simulatedStack.push({type: 'const', value: comm.value});
-                optimizedCode.push(comm);
             }
             else if (comm instanceof PushComm) {
                 simulatedStack.push({ type: 'unknown' });
@@ -1820,7 +1819,6 @@ export class CommandBuilder {
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                    optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
                     simulatedStack.push({ type: 'unknown' });
@@ -1837,8 +1835,6 @@ export class CommandBuilder {
                     simulatedStack.pop();
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                    optimizedCode.pop();
-                    optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
                     simulatedStack.pop();
@@ -1853,7 +1849,6 @@ export class CommandBuilder {
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                    optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
                     simulatedStack.push({ type: 'unknown' });
