@@ -1836,16 +1836,15 @@ export class CommandBuilder {
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const' value: temp.at(-1)});
                 } else {
+                    simulatedStack.pop();
+                    simulatedStack.pop();
                     simulatedStack.push({ type: 'unknown' });
                     optimizedCode.push(comm);
                 } 
             }
             else if (comm instanceof PopComm) {
-                const st_top = simulatedStack.at(-1);
-                if (st_top.type !== 'unknown') {
-                    simulatedStack.pop();
-                    optimizedCode.push(comm);
-                } else simulatedStack.pop();
+                simulatedStack.pop();
+                optimizedCode.push(comm);
             }
             else optimizedCode.push(comm);
         }
