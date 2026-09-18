@@ -1816,11 +1816,19 @@ export class CommandBuilder {
             else if (comm instanceof BaseUnComm) {
                 const st_top = simulatedStack.at(-1);
                 if (st_top.type === 'const') {
-                    comm.internal_evaluate({ evaluate_stack: simulatedStack });
+                    const temp = { evaluate_stack: [st_top] };
+                    comm.internal_evaluate(temp);
+                    simulatedStack.pop();
+                    simulatedStack.push({type: 'const' value: temp.at(-1)});
                 } else {
                     simulatedStack.push({ type: 'unknown' });
                     optimizedCode.push(comm);
                 }
+            }
+            else if (comm instanceof BaseBinComm) {
+                const st_top = simulatedStack.at(-1);
+                const st_top_prev = simulatedStack.at(-2);
+                if (st_top.type === 'const' && st_top_prev === 'const')
             }
         }
     }
