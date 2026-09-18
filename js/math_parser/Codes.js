@@ -1876,10 +1876,8 @@ export class CommandBuilder {
                 }
             }
             else if (comm instanceof PopComm) {
-                const st_top = simulatedStack.pop();
-                if (st_top.type !== 'const') {
-                    optimizedCode.push(comm);
-                }
+                simulatedStack.pop();
+                optimizedCode.push(comm);
             }
             else optimizedCode.push(comm);
         }
