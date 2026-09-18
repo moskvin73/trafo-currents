@@ -1821,6 +1821,7 @@ export class CommandBuilder {
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const' value: temp.at(-1)});
                 } else {
+                    simulatedStack.pop();
                     simulatedStack.push({ type: 'unknown' });
                     optimizedCode.push(comm);
                 }
