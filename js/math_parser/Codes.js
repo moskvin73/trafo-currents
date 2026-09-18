@@ -1444,9 +1444,9 @@ regCode(SubCommOpOp);
 //#endregion SUB 
 
 const OperatorUnType = {
-    PLUS,
-    NEG,
-    NOT
+    PLUS: 0,
+    NEG:  1,
+    NOT:  2,
 };
 
 const OperatorBinType = {
