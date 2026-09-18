@@ -1562,7 +1562,18 @@ class SubCommOpOp extends BinCommOpOp {
 
     static fromJSON(data) { return BinCommOpOp.create(SubCommOpOp, data); }    
 }
-regCode(SubCommOpOp);       
+regCode(SubCommOpOp);
+
+const recreateMethodsSub = {
+    recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
+    recreateCommOpValue(value) { return new SubCommOpValue(value); },
+    recreateCommValueOp(value) { return new SubCommValueOp(value); }
+};
+
+const classesToExtendSub = [SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp];
+for (const cls of classesToExtendSub) {
+    Object.assign(cls.prototype, recreateMethodsSub);
+}
 //#endregion SUB 
 
 const OperatorUnType = {
