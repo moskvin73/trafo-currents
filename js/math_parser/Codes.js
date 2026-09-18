@@ -1265,7 +1265,13 @@ class SubCommOpOp extends BinCommOpOp {
 regCode(SubCommOpOp);       
 //#endregion SUB 
 
-export const OperatorBinType = {
+const OperatorUnType = {
+    PLUS,
+    MINUS,
+    NOT
+};
+
+const OperatorBinType = {
     ASSIGN:     0,
     OR:         1,
     XOR:        2,

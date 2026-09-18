@@ -136,7 +136,6 @@ export function test2() {
 
 export function test3() {
   // Снимаем квалификацию с помощью деструктуризации
-  const { ASSIGN, OR, XOR, AND, ADD, SUB, MUL, DIV, POW } = Code.OperatorBinType;
   const symbols = new SymbolTableContext();
 
   // Создаём выполнитель
