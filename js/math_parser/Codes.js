@@ -1098,10 +1098,6 @@ class BinCommOpValue extends BaseBinComm {
         } 
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
-
-    }
-
     get popStackCount() { return 1; }
 
     toJSON() {
