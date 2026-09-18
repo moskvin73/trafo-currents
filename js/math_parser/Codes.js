@@ -393,6 +393,11 @@ export class PopComm extends Command {
         context.last_popped = context.evaluate_stack.pop();
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.pop();
+        optimizedCode.push(this);
+    }
+
     get pushStackCount() { return 0; }
 
     get popStackCount() { return 1; }
