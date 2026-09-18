@@ -1840,6 +1840,13 @@ export class CommandBuilder {
                     optimizedCode.push(comm);
                 } 
             }
+            else if (comm instanceof PopComm) {
+                const st_top = simulatedStack.at(-1);
+                if (st_top.type !== 'unknown') {
+                    simulatedStack.pop();
+                    optimizedCode.push(comm);
+                } else simulatedStack.pop();
+            }
             else optimizedCode.push(comm);
         }
     }
