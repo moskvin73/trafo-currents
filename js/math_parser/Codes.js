@@ -1751,7 +1751,6 @@ export class CommandBuilder {
 		if (l === self) {
             this.#currentCode = 
                 this.#checkCountStackCommand(createUnCode(operand, this.#currentCode));
-        }
 		} else {
             this.#append(this.#checkCountStackCommand(createUnCode(operand, l), l_sc));
 		}
