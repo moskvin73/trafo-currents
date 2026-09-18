@@ -1014,6 +1014,10 @@ class BaseBinComm extends Command {
 
     recreateCommValueValue(l_value, r_value) { throw new Error("[Command]: Метод recreateCommValueValue() не реализован."); }
 
+    recreateCommOpValue(value) { throw new Error("[Command]: Метод recreateCommValueValue() не реализован."); }
+
+    recreateCommValueOp(value) { throw new Error("[Command]: Метод recreateCommValueValue() не реализован."); }
+
     get pushStackCount() { return 1; }
 }
 
