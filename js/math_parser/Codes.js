@@ -1685,7 +1685,7 @@ export class CommandBuilder {
         return comm;
     }
 
-	#creator(operand, l_op, r_op) {
+	#creatorBin(operand, l_op, r_op) {
         const { op: l, st_c:l_sc } = this.#checkOperand(l_op);
         const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
@@ -1707,12 +1707,12 @@ export class CommandBuilder {
 
     // Команда ASSIGN
     assign(l_op, r_op) {
-		return this.#creator(OperatorBinType.ASSIGN, l_op, r_op);
+		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op);
     }
 
     // Команда ADD
     add(l_op, r_op) {
-		return this.#creator(OperatorBinType.ADD, l_op, r_op);
+		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
     }
 
     // Команда POP
