@@ -1860,6 +1860,13 @@ export class CommandBuilder {
                     optimizedCode.push(comm);
                 }
             }
+            else if (comm instanceof AssignCommValueValue) {
+                if (comm.value instanceof OpConst) {
+                    simulatedStack.push({type: 'const', value: comm.value.value});
+                }
+                else simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push(comm);
+            }
             else if (comm instanceof PopComm) {
                 simulatedStack.pop();
                 optimizedCode.push(comm);
