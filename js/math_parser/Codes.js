@@ -1297,7 +1297,7 @@ class AssignCommValueOp extends Command {
         if (st_top.type === 'const') {
             optimizedCode.push(new AssignCommValueValue(this.let_value, new OpConst(st_top)));
         } else {
-            optimizedCode.push(comm);
+            optimizedCode.push(this);
         }
     }
 
