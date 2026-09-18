@@ -867,7 +867,7 @@ class NegCommValue extends UnCommValue {
     
     commandName() { return 'neg'; }
 
-    operator(op) { return op.negate() }
+    operator(op) { return op.negate(); }
 
     static get dataTypeName() { return "NegCommValue"; }
 
@@ -875,6 +875,20 @@ class NegCommValue extends UnCommValue {
 }
 regCode(NegCommValue);
 
+class NegCommOp extends UnCommOp {
+    constructor() {
+        super();
+    }
+    
+    commandName() { return 'add'; }
+
+    operator(op) { return op.negate(); }
+
+    static get dataTypeName() { return "NegCommOp"; }
+
+    static fromJSON(data) { return UnCommOp.create(NegCommOp, data); }    
+}
+regCode(NegCommOp);
 //#endregion NEG
 
 //#region BaseBinCode
