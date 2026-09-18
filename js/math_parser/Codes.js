@@ -1806,7 +1806,7 @@ export class CommandBuilder {
 
         for (const comm of this.#currentCode) {
             if (comm instanceof PushCommConst) {
-                simulatedStack.push({type: 'const' value: comm.value});
+                simulatedStack.push({type: 'const', value: comm.value});
                 optimizedCode.push(comm);
             }
             else if (comm instanceof PushComm) {
@@ -1816,10 +1816,10 @@ export class CommandBuilder {
             else if (comm instanceof BaseUnComm) {
                 const st_top = simulatedStack.at(-1);
                 if (st_top.type === 'const') {
-                    const temp = { evaluate_stack: [st_top] };
+                    const temp = { evaluate_stack: [st_top.value] };
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
-                    simulatedStack.push({type: 'const' value: temp.at(-1)});
+                    simulatedStack.push({type: 'const', value: temp.at(-1)});
                     optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
@@ -1832,11 +1832,11 @@ export class CommandBuilder {
                 const st_top_prev = simulatedStack.at(-2);
                 if (st_top.type === 'const' && st_top_prev === 'const')
                 {
-                    const temp = { evaluate_stack: [st_top_prev, st_top] };
+                    const temp = { evaluate_stack: [st_top_prev.value, st_top.value] };
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
                     simulatedStack.pop();
-                    simulatedStack.push({type: 'const' value: temp.at(-1)});
+                    simulatedStack.push({type: 'const', value: temp.at(-1)});
                     optimizedCode.pop();
                     optimizedCode.pop();
                 } else {
