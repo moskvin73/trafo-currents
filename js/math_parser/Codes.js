@@ -1846,7 +1846,12 @@ export class CommandBuilder {
     }
 
     get isConstant() { return this.#currentCode instanceof OpConst; }
-    
+
+    get Constant() {
+        if (isConstant) return this.#currentCode.value;
+        throw new Error(`[CommandBuilder] Код не содержит кнстантное значение`);
+    }
+
     get countStack() { return this.#countStack; }
 
     #checkCountStack() { 
@@ -1950,7 +1955,7 @@ export class CommandBuilder {
     }
     
     foldConstants() {
-        if (!this.#currentCode) return;
+        if (!this.#currentCode || isConstant) return;
         const optimizedCode = [];
         const simulatedStack = [];
 
