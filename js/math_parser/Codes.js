@@ -1245,6 +1245,14 @@ class AssignCommValueValue extends Command {
         context.evaluate_stack.push(sym.value = value);
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        if (this.value instanceof OpConst) {
+            simulatedStack.push({type: 'const', value: this.value.value});
+        }
+        else simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push(this);        
+    }
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
@@ -1282,6 +1290,15 @@ class AssignCommValueOp extends Command {
         const sym = this.let_value.getSymbolNoCheck(context);
         const value = stack.pop();
         stack.push(sym.value = value);
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.at(-1);
+        if (st_top.type === 'const') {
+            optimizedCode.push(new AssignCommValueValue(this.let_value, new OpConst(st_top)));
+        } else {
+            optimizedCode.push(comm);
+        }
     }
 
     get pushStackCount() { return 1; }
