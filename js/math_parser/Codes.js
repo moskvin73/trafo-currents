@@ -839,6 +839,11 @@ class UnCommValue extends BaseUnComm {
         context.evaluate_stack.push(this.operator(this.value.getValue(context)));
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push(this);
+    }
+
     get popStackCount() { return 0; }
    
     toJSON() {
@@ -1030,6 +1035,11 @@ class BinCommValueValue extends BaseBinComm {
         context.evaluate_stack.push(this.operator(l, r));
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push(this);
+    }
+
     get popStackCount() { return 0; }
    
     toJSON() {
@@ -1066,6 +1076,20 @@ class BinCommOpValue extends BaseBinComm {
         const l_op = stack.pop();
         const { l, r } = dispatcher.promoteTypes(l_op, this.value.getValue(context));
         stack.push(this.operator(l, r));
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.pop();
+        if (st_top.type === 'const' && this.value instanceof OpConst)
+        {
+            const { l, r } = dispatcher.promoteTypes(st_top.value, this.value.value);
+            const calc_v = this.operator(l, r);
+            simulatedStack.push({type: 'const', value: calc_v});   
+        }
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+
     }
 
     get popStackCount() { return 1; }
