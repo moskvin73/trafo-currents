@@ -1452,12 +1452,6 @@ class AddCommValueValue extends BinCommValueValue {
 
     operator(l, r) { return l.add(r) }
 
-    recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); }
-
-    recreateCommOpValue(value) { return new AddCommOpValue(value); }
-
-    recreateCommValueOp(value) { return new AddCommValueOp(value); }
-
     static get dataTypeName() { return "AddCodeValueValue"; }
 
     static fromJSON(data) { return BinCommValueValue.create(AddCommValueValue, data); }
@@ -1503,6 +1497,17 @@ class AddCommOpOp extends BinCommOpOp {
     static fromJSON(data) { return BinCommOpOp.create(AddCommOpOp, data); }    
 }
 regCode(AddCommOpOp);
+
+const recreateMethodsAdd = {
+    recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
+    recreateCommOpValue(value) { return new AddCommOpValue(value); },
+    recreateCommValueOp(value) { return new AddCommValueOp(value); }
+};
+
+const classesToExtendAdd = [AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp];
+for (const cls of classesToExtendAdd) {
+    Object.assign(cls.prototype, recreateMethodsAdd);
+}
 //#endregion ADD
 
 //#region SUB
