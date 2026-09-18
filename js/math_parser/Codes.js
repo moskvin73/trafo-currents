@@ -1134,6 +1134,24 @@ class BinCommValueOp extends BaseBinComm {
         stack.push(this.operator(l, r));
     }    
 
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.pop();
+        if (st_top.type === 'const' && this.value instanceof OpConst)
+        {
+            const { l, r } = dispatcher.promoteTypes(this.value.value, st_top.value);
+            const calc_v = this.operator(l, r);
+            simulatedStack.push({type: 'const', value: calc_v});   
+        }
+        else if (st_top.type === 'const') {
+            // Нужно перессоздать BinCommValueValue
+            optimizedCode.push(recreateCommValueValue(this.value, st_top.value));
+            simulatedStack.push({ type: 'unknown' });
+        } else {
+            optimizedCode.push(this);
+            simulatedStack.push({ type: 'unknown' });
+        } 
+    }
+
     get popStackCount() { return 1; }
 
     toJSON() {
