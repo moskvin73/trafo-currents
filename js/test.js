@@ -253,7 +253,8 @@ export function test3() {
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .add(op_c(10), op_c(1))       // 10 + 1 = 11
-  .add(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
+  .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
+  .neg(Code.self)
   .add(op_n("pi"), Code.self)   // pi + 89
   .assign(op_n("pi"), Code.self) // pi = pi + 89
   .pop()
