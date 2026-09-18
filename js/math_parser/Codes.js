@@ -1473,6 +1473,23 @@ function getUnKey(operator, operand) {
     return (operator << 8) + r_operand;
 }
 
+const SubstitutionTableUn = new Map([
+    // PLUS
+    [
+        getUnKey(OperatorUnType.PLUS, OperandsType.CONST),
+        (op) => { return new OpConst(op); }
+    ],
+    [
+        getUnKey(OperatorBinType.PLUS, OperandsType.VARABLE),
+        (op) => { return [new PlusCommValue(op)]; }
+    ],
+    [
+        getUnKey(OperatorBinType.ADD, OperandsType.EVALUATE),
+        (op) => { return [...op, new PlusCommOp()]; }
+    ],
+
+]);
+
 function getBinKey(operator, l_operand, r_operand) {
     return (operator << 8) + (l_operand << 4) + r_operand;
 }
