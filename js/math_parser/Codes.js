@@ -1577,6 +1577,47 @@ const SubstitutionTableBin = new Map([
         (l_o, r_o) => { return [...l_o, ...r_o, new AddCommOpOp()]; }
     ],
 
+    // SUB
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.CONST),
+        (l_o, r_o) => {
+            const { l, r } = dispatcher.promoteTypes(l_o.getValue(), r_o.getValue()); 
+            return new OpConst(l.subtract(r)); 
+        }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.CONST),
+        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.VARABLE),
+        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.VARABLE),
+        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.CONST),
+        (l_o, r_o) => { return [...l_o, new SubCommOpValue(r_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.EVALUATE),
+        (l_o, r_o) => { return [...r_o, new SubCommValueOp(l_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.VARABLE),
+        (l_o, r_o) => { return [...l_o, new SubCommOpValue(r_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.EVALUATE),
+        (l_o, r_o) => { return [...r_o, new SubCommValueOp(l_o)]; }
+    ],
+    [
+        getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.EVALUATE),
+        (l_o, r_o) => { return [...l_o, ...r_o, new SubCommOpOp()]; }
+    ],
+
 ]);
 
 function getOperandType(op) {
