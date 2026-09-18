@@ -1820,6 +1820,7 @@ export class CommandBuilder {
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const' value: temp.at(-1)});
+                    optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
                     simulatedStack.push({ type: 'unknown' });
@@ -1836,6 +1837,8 @@ export class CommandBuilder {
                     simulatedStack.pop();
                     simulatedStack.pop();
                     simulatedStack.push({type: 'const' value: temp.at(-1)});
+                    optimizedCode.pop();
+                    optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
                     simulatedStack.pop();
