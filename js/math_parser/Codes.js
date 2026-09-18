@@ -1727,6 +1727,18 @@ export class CommandBuilder {
 		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
     }
 
+    plus(op) {
+        return this.#creatorUn(OperatorUnType.PLUS, op);
+    }    
+
+    neg(op) {
+        return this.#creatorUn(OperatorUnType.NEG, op);
+    }    
+
+    not(op) {
+        return this.#creatorUn(OperatorUnType.NOR, op);
+    }    
+
     // Команда POP
     pop() {
         // На всякий случай
