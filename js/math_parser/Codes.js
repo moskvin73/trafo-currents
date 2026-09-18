@@ -1840,6 +1840,7 @@ export class CommandBuilder {
                     optimizedCode.push(comm);
                 } 
             }
+            else optimizedCode.push(comm);
         }
     }
 
