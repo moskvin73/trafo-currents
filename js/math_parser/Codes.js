@@ -1780,6 +1780,10 @@ export class CommandBuilder {
     add(l_op, r_op) {
 		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
     }
+
+    sub(l_op, r_op) {
+		return this.#creatorBin(OperatorBinType.SUB, l_op, r_op);
+    }
     //#endregion BIN
 
     // Команда POP
