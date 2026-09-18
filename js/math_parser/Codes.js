@@ -1964,6 +1964,6 @@ export class CommandBuilder {
         }
         this.#currentCode = optimizedCode;
         const v_top = simulatedStack.at(-1);
-        if (v_top.type === 'const') this.#append(new OpConst(v_top));    
+        if (v_top.type === 'const') this.#append(new OpConst(v_top.value));    
     }
 }
