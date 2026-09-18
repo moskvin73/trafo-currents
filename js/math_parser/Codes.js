@@ -1089,7 +1089,9 @@ class BinCommOpValue extends BaseBinComm {
         else if (st_top.type === 'const') {
 
         } else {
-            
+            simulatedStack.pop();
+            optimizedCode.push(this);
+            simulatedStack.push({ type: 'unknown' });
         } 
     }
 
