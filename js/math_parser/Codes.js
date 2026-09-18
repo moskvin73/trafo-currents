@@ -794,7 +794,69 @@ class BaseUnComm extends Command {
     get pushStackCount() { return 1; }
 }
 
+class UnCommValue extends BaseUnComm {
+    constructor(value) {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BinCommValueValue) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommValueValue" напрямую.');
+        }
+        assertOperand(value, 'value', `${new.target.name}`);
+        this.value = value;
+    }
 
+    toString(context) { return `${this.commandName()} ${this.value}`; }
+
+    internal_evaluate(context) {
+        context.evaluate_stack.push(this.operator(this.value.getValue(context)));
+    }
+
+    get popStackCount() { return 0; }
+   
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        value: this.value,
+        };
+    }
+
+    static create(ClassRef, data) {
+        return new ClassRef(
+        restoreDataType(data.value),
+        );   
+    }
+}
+
+class UnCommOp extends BaseUnComm {
+    constructor() {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === UnCommOp) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommOpOp" напрямую.');
+        }
+    }
+
+    toString(context) { return `${this.commandName()} st[top]`; }
+
+    internal_evaluate(context) {
+        const stack = context.evaluate_stack;
+        const op = stack.pop();
+        stack.push(this.operator(op));
+    }
+
+    get popStackCount() { return 1; }
+    
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        };
+    }
+
+    static create(ClassRef, data) {
+        return new ClassRef(
+        );       
+    }
+}    
 //#endregion BaseUnCode
 
 //#region BaseBinCode
