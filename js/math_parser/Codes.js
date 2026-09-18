@@ -872,6 +872,16 @@ class UnCommOp extends BaseUnComm {
         stack.push(this.operator(op));
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.pop();
+        if (st_top.type === 'const') {
+            const calc_v = this.operator(st_top.value);
+            simulatedStack.push({type: 'const', value: calc_v});
+        } else {
+            simulatedStack.push({ type: 'unknown' });
+        }
+    }
+
     get popStackCount() { return 1; }
     
     toJSON() {
