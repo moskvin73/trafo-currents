@@ -1627,7 +1627,7 @@ const SubstitutionTableUn = new Map([
     // PLUS
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.CONST),
-        (op) => { return new OpConst(op); }
+        (op) => { return new OpConst(op.value); }
     ],
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.VARABLE),
@@ -1641,7 +1641,7 @@ const SubstitutionTableUn = new Map([
     // NEG
     [
         getUnKey(OperatorUnType.NEG, OperandsType.CONST),
-        (op) => { return new OpConst(op.negate()); }
+        (op) => { return new OpConst(op.value.negate()); }
     ],
     [
         getUnKey(OperatorUnType.NEG, OperandsType.VARABLE),
@@ -1655,7 +1655,7 @@ const SubstitutionTableUn = new Map([
     // NOT
     [
         getUnKey(OperatorUnType.NOT, OperandsType.CONST),
-        (op) => { return new OpConst(op.not()); }
+        (op) => { return new OpConst(op.value.not()); }
     ],
     [
         getUnKey(OperatorUnType.NOT, OperandsType.VARABLE),
