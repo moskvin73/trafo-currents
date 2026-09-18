@@ -436,6 +436,10 @@ export class PushCommConst extends PushComm {
         context.evaluate_stack.push(this.value);
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({type: 'const', value: this.value});
+    }
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
