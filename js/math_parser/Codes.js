@@ -1819,7 +1819,7 @@ export class CommandBuilder {
                     const temp = { evaluate_stack: [st_top.value] };
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.at(-1)});
+                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
                     optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
@@ -1836,7 +1836,7 @@ export class CommandBuilder {
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
                     simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.at(-1)});
+                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
                     optimizedCode.pop();
                     optimizedCode.pop();
                 } else {
@@ -1852,7 +1852,7 @@ export class CommandBuilder {
                     const temp = { evaluate_stack: [st_top.value] };
                     comm.internal_evaluate(temp);
                     simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.at(-1)});
+                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
                     optimizedCode.pop();
                 } else {
                     simulatedStack.pop();
