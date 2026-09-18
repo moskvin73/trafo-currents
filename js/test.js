@@ -169,7 +169,7 @@ export function test3() {
 
     evaluate() {
         let cmds = this._commands;
-        if (!cmds) return;
+        if (!cmds || cmds.length == 0) return;
 
         const isDebug = this.DEBUG;
         let len_code = cmds.length;
