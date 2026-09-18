@@ -859,6 +859,38 @@ class UnCommOp extends BaseUnComm {
 }    
 //#endregion BaseUnCode
 
+//#region PLUS
+class PlusCommValue extends UnCommValue {
+    constructor(value) {
+        super(value);
+    }
+    
+    commandName() { return 'plus'; }
+
+    operator(op) { return op; }
+
+    static get dataTypeName() { return "PlusCommValue"; }
+
+    static fromJSON(data) { return UnCommValue.create(PlusCommValue, data); }
+}
+regCode(PlusCommValue);
+
+class PlusCommOp extends UnCommOp {
+    constructor() {
+        super();
+    }
+    
+    commandName() { return 'plus'; }
+
+    operator(op) { return op; }
+
+    static get dataTypeName() { return "PlusCommOp"; }
+
+    static fromJSON(data) { return UnCommOp.create(PlusCommOp, data); }    
+}
+regCode(PlusCommOp);
+//#endregion PLUS
+
 //#region NEG
 class NegCommValue extends UnCommValue {
     constructor(value) {
