@@ -1604,6 +1604,16 @@ export function createBinCode(operator, l_op, r_op) {
     return processFn(l_op, r_op);
 }
 
+export function createUnCode(operator, op) {
+    const op_type = getOperandType(op);
+    const key = getUnKey(operator, op_type);
+    if (!SubstitutionTableUn.has(key)) {
+        throw new Error(`Операция не поддерживается: не найден обработчик для ключа "${key}"`);
+    }
+    const processFn = SubstitutionTableUn.get(key);
+    return processFn(op);
+}
+
 function unionCommands(...args) {
     if (args.length < 2) {
         throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
