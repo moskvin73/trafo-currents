@@ -777,6 +777,22 @@ export class MatrixComm extends Command {
 
 }
 
+//#region BaseUnCode
+class BaseUnComm extends Command {
+    constructor() {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === BaseUnComm) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "BaseBinComm" напрямую.');
+        }
+    }
+
+    commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
+
+    get pushStackCount() { return 1; }
+}
+//#endregion BaseUnCode
+
 //#region BaseBinCode
 class BaseBinComm extends Command {
     constructor() {
