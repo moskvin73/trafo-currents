@@ -1717,16 +1717,7 @@ export class CommandBuilder {
 		return this;
 	}
    
-    // Команда ASSIGN
-    assign(l_op, r_op) {
-		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op);
-    }
-
-    // Команда ADD
-    add(l_op, r_op) {
-		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
-    }
-
+    //#region UN
     plus(op) {
         return this.#creatorUn(OperatorUnType.PLUS, op);
     }    
@@ -1737,7 +1728,18 @@ export class CommandBuilder {
 
     not(op) {
         return this.#creatorUn(OperatorUnType.NOR, op);
-    }    
+    }
+    //#endregion UN    
+
+    //#region BIN
+    assign(l_op, r_op) {
+		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op);
+    }
+
+    add(l_op, r_op) {
+		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
+    }
+    //#endregion BIN
 
     // Команда POP
     pop() {
