@@ -1792,6 +1792,10 @@ export class CommandBuilder {
         return this;
     }
 	
+    foldConstants() {
+
+    }
+    
     // Финальный метод, который возвращает готовый результат
     build() {
         return this.#currentCode;
