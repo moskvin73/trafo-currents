@@ -492,6 +492,11 @@ export class PushCommVarbleLocal extends PushComm {
         context.evaluate_stack.push(sym.value);
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push(this);
+    }
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
@@ -524,6 +529,11 @@ export class PushCommVarbleGlobal extends PushComm {
     internal_evaluate(context) {
         checkSymbol(this.symbol);
         context.evaluate_stack.push(this.symbol.value);
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push(this);
     }
 
     get pushStackCount() { return 1; }
