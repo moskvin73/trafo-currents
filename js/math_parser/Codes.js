@@ -1445,7 +1445,7 @@ regCode(SubCommOpOp);
 
 const OperatorUnType = {
     PLUS,
-    MINUS,
+    NEG,
     NOT
 };
 
@@ -1480,14 +1480,41 @@ const SubstitutionTableUn = new Map([
         (op) => { return new OpConst(op); }
     ],
     [
-        getUnKey(OperatorBinType.PLUS, OperandsType.VARABLE),
+        getUnKey(OperatorUnType.PLUS, OperandsType.VARABLE),
         (op) => { return [new PlusCommValue(op)]; }
     ],
     [
-        getUnKey(OperatorBinType.ADD, OperandsType.EVALUATE),
+        getUnKey(OperatorUnType.PLUS, OperandsType.EVALUATE),
         (op) => { return [...op, new PlusCommOp()]; }
     ],
 
+    // NEG
+    [
+        getUnKey(OperatorUnType.NEG, OperandsType.CONST),
+        (op) => { return new OpConst(op.negate()); }
+    ],
+    [
+        getUnKey(OperatorUnType.NEG, OperandsType.VARABLE),
+        (op) => { return [new NegCommValue(op)]; }
+    ],
+    [
+        getUnKey(OperatorUnType.NEG, OperandsType.EVALUATE),
+        (op) => { return [...op, new NegCommOp()]; }
+    ],
+
+    // NOT
+    [
+        getUnKey(OperatorUnType.NOT, OperandsType.CONST),
+        (op) => { return new OpConst(op.not()); }
+    ],
+    [
+        getUnKey(OperatorUnType.NOT, OperandsType.VARABLE),
+        (op) => { return [new NotCommValue(op)]; }
+    ],
+    [
+        getUnKey(OperatorUnType.NOT, OperandsType.EVALUATE),
+        (op) => { return [...op, new NotCommOp()]; }
+    ],
 ]);
 
 function getBinKey(operator, l_operand, r_operand) {
