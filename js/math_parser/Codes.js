@@ -1690,7 +1690,7 @@ export class CommandBuilder {
         const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode));
+                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode), this.#countStack);
         }
 		else if (l === self) {
             this.#currentCode = 
@@ -1705,6 +1705,18 @@ export class CommandBuilder {
 		return this;
 	}
 
+ 	#creatorUn(operand, op) {
+        const { op: l, st_c:l_sc } = this.#checkOperand(op);
+		if (l === self) {
+            this.#currentCode = 
+                this.#checkCountStackCommand(createUnCode(operand, this.#currentCode));
+        }
+		} else {
+            this.#append(this.#checkCountStackCommand(createUnCode(operand, l), l_sc));
+		}
+		return this;
+	}
+   
     // Команда ASSIGN
     assign(l_op, r_op) {
 		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op);
