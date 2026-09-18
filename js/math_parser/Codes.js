@@ -77,9 +77,7 @@ export class Command {
 
     get modifiesStack() { return this.pushStackCount > 0 || this.popStackCount > 0; }
 
-    foldConstants(optimizedCode, simulatedStack) {
-        optimizedCode.push(this);
-    }
+    foldConstants(optimizedCode, simulatedStack) { optimizedCode.push(this); }
 
     toJSON() {
         return {
