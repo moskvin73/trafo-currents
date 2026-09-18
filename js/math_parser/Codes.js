@@ -1012,6 +1012,8 @@ class BaseBinComm extends Command {
 
     commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
 
+    recreateCommValueValue(l_value, r_value) { throw new Error("[Command]: Метод recreateCommValueValue() не реализован."); }
+
     get pushStackCount() { return 1; }
 }
 
