@@ -1470,7 +1470,7 @@ const OperandsType = {
 };
 
 function getUnKey(operator, operand) {
-    return (operator << 8) + r_operand;
+    return (operator << 8) + operand;
 }
 
 const SubstitutionTableUn = new Map([
