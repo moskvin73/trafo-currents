@@ -1811,9 +1811,16 @@ export class CommandBuilder {
             }
             else if (comm instanceof PushComm) {
                 simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push(comm);
             }
             else if (comm instanceof BaseUnComm) {
-                
+                const st_top = simulatedStack.at(-1);
+                if (st_top.type === 'const') {
+                    comm.internal_evaluate({ evaluate_stack: simulatedStack });
+                } else {
+                    simulatedStack.push({ type: 'unknown' });
+                    optimizedCode.push(comm);
+                }
             }
         }
     }
