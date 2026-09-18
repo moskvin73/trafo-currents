@@ -257,10 +257,10 @@ export function test3() {
   .neg(Code.self)
   .add(op_n("pi"), Code.self)   // pi + 89
   .assign(op_n("pi"), Code.self) // pi = pi + 89
-  .pop()
-  .build();
+  .pop();
 
-  executor.commands = command;
+  builder.foldConstants();
+  executor.commands = builder.build();
   console.log('***Коммады кода***');
   console.log(executor.toStringCommands());
   executor.evaluate();
