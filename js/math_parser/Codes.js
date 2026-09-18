@@ -1195,9 +1195,9 @@ class BinCommOpOp extends BaseBinComm {
             const calc_v = this.operator(l, r);
             simulatedStack.push({type: 'const', value: calc_v});
         } else if (st_l.type === 'const') {
-
+            // Пересоздать BinCommValueOp
         } else if (st_r.type === 'const') {
-
+            // Пересоздать BinCommOpValue
         } else {
             optimizedCode.push(this);
             simulatedStack.push({ type: 'unknown' });
