@@ -1291,6 +1291,10 @@ const OperandsType = {
     EVALUATE:    2,
 };
 
+function getUnKey(operator, operand) {
+    return (operator << 8) + r_operand;
+}
+
 function getBinKey(operator, l_operand, r_operand) {
     return (operator << 8) + (l_operand << 4) + r_operand;
 }
