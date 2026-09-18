@@ -1771,7 +1771,7 @@ const SubstitutionTableBin = new Map([
 ]);
 
 export function is_comands(comands) {
-    return Array.isArray(comands) && (comands.every(item => item instanceof Command));
+    return Array.isArray(comands) && comands.every(item => item instanceof Command);
 }
 
 function getOperandType(op) {
