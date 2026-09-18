@@ -880,7 +880,7 @@ class NegCommOp extends UnCommOp {
         super();
     }
     
-    commandName() { return 'add'; }
+    commandName() { return 'neg'; }
 
     operator(op) { return op.negate(); }
 
@@ -890,6 +890,38 @@ class NegCommOp extends UnCommOp {
 }
 regCode(NegCommOp);
 //#endregion NEG
+
+//#region NOT
+class NotCommValue extends UnCommValue {
+    constructor(value) {
+        super(value);
+    }
+    
+    commandName() { return 'not'; }
+
+    operator(op) { return op.not(); }
+
+    static get dataTypeName() { return "NotCommValue"; }
+
+    static fromJSON(data) { return UnCommValue.create(NotCommValue, data); }
+}
+regCode(NotCommValue);
+
+class NotCommOp extends UnCommOp {
+    constructor() {
+        super();
+    }
+    
+    commandName() { return 'not'; }
+
+    operator(op) { return op.not(); }
+
+    static get dataTypeName() { return "NotCommOp"; }
+
+    static fromJSON(data) { return UnCommOp.create(NotCommOp, data); }    
+}
+regCode(NotCommOp);
+//#region NOT
 
 //#region BaseBinCode
 class BaseBinComm extends Command {
