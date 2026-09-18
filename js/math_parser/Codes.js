@@ -787,10 +787,14 @@ class BaseUnComm extends Command {
         }
     }
 
+    operator(op) { throw new Error("[Command]: Метод operator(op) не реализован."); }
+
     commandName() { throw new Error("[Command]: Метод commandName() не реализован."); }
 
     get pushStackCount() { return 1; }
 }
+
+
 //#endregion BaseUnCode
 
 //#region BaseBinCode
