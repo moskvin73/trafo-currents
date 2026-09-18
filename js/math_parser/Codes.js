@@ -1200,8 +1200,12 @@ class BinCommOpOp extends BaseBinComm {
             simulatedStack.push({type: 'const', value: calc_v});
         } else if (st_l.type === 'const') {
             // Пересоздать BinCommValueOp
+            optimizedCode.push(recreateCommValueOp(st_l.value));
+            simulatedStack.push({ type: 'unknown' });
         } else if (st_r.type === 'const') {
             // Пересоздать BinCommOpValue
+            optimizedCode.push(recreateCommOpValue(st_r.value));
+            simulatedStack.push({ type: 'unknown' });
         } else {
             optimizedCode.push(this);
             simulatedStack.push({ type: 'unknown' });
