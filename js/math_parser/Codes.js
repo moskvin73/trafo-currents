@@ -410,7 +410,14 @@ export class PopComm extends Command {
 regCode(PopComm);
 
 //#region PUSH
-export class PushCommConst extends Command {
+class PushComm extends Command {
+    
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 0; }
+}
+
+export class PushCommConst extends PushComm {
     constructor(value) {
         super();
         this.value = value;
@@ -460,7 +467,7 @@ function checkSymbolAll(sym) {
     checkSymbol(sym);
 }
 
-export class PushCommVarbleLocal extends Command {
+export class PushCommVarbleLocal extends PushComm {
     constructor(id_name) {
         assertInteger(id_name, 'id_name', 'PushCommVarbleLocal');
         this.id_name = id_name;
@@ -495,7 +502,7 @@ export class PushCommVarbleLocal extends Command {
 }
 regCode(PushCommVarbleLocal);
 
-export class PushCommVarbleGlobal extends Command {
+export class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
         checkSymbolNull(sym);
         this.symbol = sym;
@@ -953,7 +960,7 @@ class NotCommOp extends UnCommOp {
     static fromJSON(data) { return UnCommOp.create(NotCommOp, data); }    
 }
 regCode(NotCommOp);
-//#region NOT
+//#endregion NOT
 
 //#region BaseBinCode
 class BaseBinComm extends Command {
@@ -1793,9 +1800,15 @@ export class CommandBuilder {
     }
 	
     foldConstants() {
+        if (!this.#currentCode) return;
+        const optimizedCode = [];
+        const simulatedStack = [];
 
+        for (const comm of this.#currentCode) {
+            if (comm instanceof )
+        }
     }
-    
+
     // Финальный метод, который возвращает готовый результат
     build() {
         return this.#currentCode;
