@@ -1813,7 +1813,7 @@ export class CommandBuilder {
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push(comm);
             }
-            else if (comm instanceof BaseUnComm) {
+            else if (comm instanceof UnCommOp) {
                 const st_top = simulatedStack.at(-1);
                 if (st_top.type === 'const') {
                     const temp = { evaluate_stack: [st_top.value] };
