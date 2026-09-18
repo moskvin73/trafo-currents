@@ -1829,6 +1829,16 @@ export class CommandBuilder {
                 const st_top = simulatedStack.at(-1);
                 const st_top_prev = simulatedStack.at(-2);
                 if (st_top.type === 'const' && st_top_prev === 'const')
+                {
+                    const temp = { evaluate_stack: [st_top_prev, st_top] };
+                    comm.internal_evaluate(temp);
+                    simulatedStack.pop();
+                    simulatedStack.pop();
+                    simulatedStack.push({type: 'const' value: temp.at(-1)});
+                } else {
+                    simulatedStack.push({ type: 'unknown' });
+                    optimizedCode.push(comm);
+                } 
             }
         }
     }
