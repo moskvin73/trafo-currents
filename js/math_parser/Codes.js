@@ -1452,6 +1452,12 @@ class AddCommValueValue extends BinCommValueValue {
 
     operator(l, r) { return l.add(r) }
 
+    recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); }
+
+    recreateCommOpValue(value) { return new AddCommOpValue(value); }
+
+    recreateCommValueOp(value) { return new AddCommValueOp(value); }
+
     static get dataTypeName() { return "AddCodeValueValue"; }
 
     static fromJSON(data) { return BinCommValueValue.create(AddCommValueValue, data); }
