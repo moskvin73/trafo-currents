@@ -1852,7 +1852,7 @@ export class CommandBuilder {
     get isConstant() { return this.#currentCode instanceof OpConst; }
 
     get constant() {
-        if (isConstant) return this.#currentCode.value;
+        if (this.isConstant) return this.#currentCode.value;
         throw new Error(`[CommandBuilder] Код не содержит кнстантное значение`);
     }
 
