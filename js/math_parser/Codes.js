@@ -1094,7 +1094,7 @@ class BinCommOpValue extends BaseBinComm {
         }
         else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
-            optimizedCode.push(this.recreateCommValueValue(st_top.value, this.value));
+            optimizedCode.push(this.recreateCommValueValue(new OpConst(st_top.value), this.value));
             simulatedStack.push({ type: 'unknown' });
         } else {
             optimizedCode.push(this);
@@ -1148,7 +1148,7 @@ class BinCommValueOp extends BaseBinComm {
         }
         else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
-            optimizedCode.push(this.recreateCommValueValue(this.value, st_top.value));
+            optimizedCode.push(this.recreateCommValueValue(this.value, new OpConst(st_top.value)));
             simulatedStack.push({ type: 'unknown' });
         } else {
             optimizedCode.push(this);
@@ -1200,11 +1200,11 @@ class BinCommOpOp extends BaseBinComm {
             simulatedStack.push({type: 'const', value: calc_v});
         } else if (st_l.type === 'const') {
             // Пересоздать BinCommValueOp
-            optimizedCode.push(this.recreateCommValueOp(st_l.value));
+            optimizedCode.push(this.recreateCommValueOp(new OpConst(st_l.value)));
             simulatedStack.push({ type: 'unknown' });
         } else if (st_r.type === 'const') {
             // Пересоздать BinCommOpValue
-            optimizedCode.push(this.recreateCommOpValue(st_r.value));
+            optimizedCode.push(this.recreateCommOpValue(new OpConst(st_r.value)));
             simulatedStack.push({ type: 'unknown' });
         } else {
             optimizedCode.push(this);
