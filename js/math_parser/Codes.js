@@ -1948,76 +1948,7 @@ export class CommandBuilder {
         const simulatedStack = [];
 
         for (const comm of this.#currentCode) {
-            if (comm instanceof PushCommConst) {
-                simulatedStack.push({type: 'const', value: comm.value});
-            }
-            else if (comm instanceof PushComm) {
-                simulatedStack.push({ type: 'unknown' });
-                optimizedCode.push(comm);
-            }
-            else if (comm instanceof UnCommOp) {
-                const st_top = simulatedStack.at(-1);
-                if (st_top.type === 'const') {
-                    const temp = { evaluate_stack: [st_top.value] };
-                    comm.internal_evaluate(temp);
-                    simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                } else {
-                    simulatedStack.pop();
-                    simulatedStack.push({ type: 'unknown' });
-                    optimizedCode.push(comm);
-                }
-            }
-            else if (comm instanceof BinCommOpOp) {
-                const st_top = simulatedStack.at(-1);
-                const st_top_prev = simulatedStack.at(-2);
-                if (st_top.type === 'const' && st_top_prev === 'const')
-                {
-                    const temp = { evaluate_stack: [st_top_prev.value, st_top.value] };
-                    comm.internal_evaluate(temp);
-                    simulatedStack.pop();
-                    simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                } else {
-                    simulatedStack.pop();
-                    simulatedStack.pop();
-                    simulatedStack.push({ type: 'unknown' });
-                    optimizedCode.push(comm);
-                } 
-            }
-            else if (comm instanceof BinCommOpValue || comm instanceof BinCommValueOp) {
-                const st_top = simulatedStack.at(-1);
-                if (st_top.type === 'const' && comm.value instanceof OpConst) {
-                    const temp = { evaluate_stack: [st_top.value] };
-                    comm.internal_evaluate(temp);
-                    simulatedStack.pop();
-                    simulatedStack.push({type: 'const', value: temp.evaluate_stack.pop()});
-                } else {
-                    simulatedStack.pop();
-                    simulatedStack.push({ type: 'unknown' });
-                    optimizedCode.push(comm);
-                }
-            }
-            else if (comm instanceof AssignCommValueValue) {
-                if (comm.value instanceof OpConst) {
-                    simulatedStack.push({type: 'const', value: comm.value.value});
-                }
-                else simulatedStack.push({ type: 'unknown' });
-                optimizedCode.push(comm);
-            }
-            else if (comm instanceof AssignCommValueOp) {
-                const st_top = simulatedStack.at(-1);
-                if (st_top.type === 'const') {
-                    optimizedCode.push(new AssignCommValueValue(comm.let_value, new OpConst(st_top)));
-                } else {
-                    optimizedCode.push(comm);
-                }
-            }
-            else if (comm instanceof PopComm) {
-                simulatedStack.pop();
-                optimizedCode.push(comm);
-            }
-            else optimizedCode.push(comm);
+            comm.foldConstants(optimizedCode, simulatedStack);
         }
         this.#currentCode = optimizedCode;
     }
