@@ -12,7 +12,7 @@ export class EvaluateError extends Error {
   constructor(message, loc) {
     super(message);
     this.name = "EvaluateError";
-    this.loc = processed;
+    this.location = loc;
   }
 }
 

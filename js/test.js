@@ -224,14 +224,15 @@ export function test3() {
               prev_stack_len = current_len;
             }
           }
+        } catch(err) {
+          if (err instanceof Code.EvaluateError) {
+            console.log(`Rintime error: ${err.location} ${err.message}`)
+          }
+          else throw err;
         } finally {
           if (isDebug) console.log('***end evaluate***');
           this.is_evaluate = false;
         }
-      },
-
-      error(message, loc, severity = 'error') {
-        console.log(`Ошибка: ${loc} ${severity}: ${message}`);
       },
 
       toStringCommands() {
@@ -302,7 +303,7 @@ export function test3() {
     try {
       executor.evaluate();
     } catch(err) {
-      console.log(`throw: ${err}`);  
+      console.log(`throw: ${err} ${err.stack}`);  
     } finally {
       console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
       console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
