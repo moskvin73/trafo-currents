@@ -132,6 +132,12 @@ function assertInteger(value, paramName, context) {
   }
 }
 
+function assertUnsignedInteger(value, paramName, context) {
+  if (!Number.isInteger(value) || value < 0) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено. Получено: ${value}`);
+  }
+}
+
 function assertCommands(value, paramName, context) {
   if (!(Array.isArray(value) && value.every(item => item instanceof Command))) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен быть массивом комммад типа 'Command'. Получено: ${value}`);
@@ -379,8 +385,8 @@ export class DefineVarableComm extends Command {
         super();
         assertInteger(funcId, 'funcId', 'DefineVarableComm');
         assertCommands(command, 'command', 'DefineVarableComm');
-        assertInteger(paramsCount, 'paramsCount', 'DefineVarableComm');
-        assertInteger(localsCount, 'localsCount', 'DefineVarableComm');
+        assertUnsignedInteger(paramsCount, 'paramsCount', 'DefineVarableComm');
+        assertUnsignedInteger(localsCount, 'localsCount', 'DefineVarableComm');
         this.funcId = funcId;
         this.statements = commands;
         this.paramsCount = paramsCount;
@@ -789,8 +795,8 @@ function assertOperandVarableGlobal(value, paramName, context) {
 export class MatrixComm extends Command {
     constructor(cont_row, count_col) {
         super();
-        assertInteger(cont_row, 'cont_row', 'MatrixComm');
-        assertInteger(count_col, 'count_col', 'MatrixComm');
+        assertUnsignedInteger(cont_row, 'cont_row', 'MatrixComm');
+        assertUnsignedInteger(count_col, 'count_col', 'MatrixComm');
         this.cont_row = cont_row;
         this.count_col = count_col;
     }
