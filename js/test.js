@@ -299,8 +299,13 @@ export function test3() {
     executor.commands = builder.build();
     console.log('***Коммады кода***');
     console.log(executor.toStringCommands());
-    executor.evaluate();
-    console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
-    console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
+    try {
+      executor.evaluate();
+    } catch(err) {
+      console.log('throw: ${err}');  
+    } finally {
+      console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
+      console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
+    }
   }
 }
