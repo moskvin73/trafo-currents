@@ -1092,8 +1092,15 @@ class BinCommValueValue extends BaseBinComm {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({ type: 'unknown' });
-        optimizedCode.push(this);
+        if (this.l_value instanceof OpConst && this.r_value instanceof OpConst) {
+            const op_l = this.l_value.value;
+            const op_r = this.r_value.value;
+            const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
+            simulatedStack.push({type: 'const', value: this.operator(l, r));
+        } else {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode.push(this);
+        }
     }
 
     get popStackCount() { return 0; }
