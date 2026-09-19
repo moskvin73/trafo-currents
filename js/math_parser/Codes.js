@@ -1917,7 +1917,7 @@ export class CommandBuilder {
 		return this;
 	}
    
-    location(loc)
+    location(loc) {
         this.#append(this.#checkCountStackCommand(new LocationComm(loc)));
         return this;
     }
