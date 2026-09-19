@@ -146,7 +146,8 @@ function assertString(value, paramName, context) {
 export class LocationComm extends Command {
     constructor(loc) {
         super();
-        if (!(loc instanceof BaseLocation)) throw new TypeError(`Неверный тип пораметра класса LocationComm loc: ${loc}, пораметр loc должн экземпляром значения возвращающемого MathLexer.createLocation() лексера`);
+        if (!(loc instanceof BaseLocation)) 
+            throw new TypeError(`Неверный тип пораметра класса LocationComm loc: ${loc}, пораметр loc должн экземпляром значения возвращающемого MathLexer.createLocation() лексера`);
         this.loc = loc;
     }
 
