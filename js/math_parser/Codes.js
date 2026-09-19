@@ -2029,7 +2029,8 @@ export class CommandBuilder {
         if (this.#currentCode.length === 0) {
             const v_top = simulatedStack.at(-1);
             if (v_top.type === 'const') this.#append(new OpConst(v_top.value));
-        }    
+        }
+        else removeDuplicateLocations();    
     }
 
     removeDuplicateLocations() {
