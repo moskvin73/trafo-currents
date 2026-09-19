@@ -862,7 +862,26 @@ export class MatrixComm extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
+        // читаем элименты из стека
+        const c = popStackCount;
+        let all_constnts = true;
+        const constnts = [];
+        while (c--) { 
+            const st_top = simulatedStack.pop();
+            if (st_top.type === 'const' && all_constnts) {
+                constnts.push(st_top.value);
+            } else all_constnts = false;
+        }
+        if (all_constnts) {
+
+        }
+        else {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode.push(this);
+        }
+
     }
+
     get pushStackCount() { return 1; }
 
     get popStackCount() { return this.cont_row * this.count_col; }
