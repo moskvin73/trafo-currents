@@ -9,10 +9,10 @@ import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './
 import VarableCode from '../varables/VarableCode.js';
 
 export class EvaluateError extends Error {
-  constructor(message, processed) {
+  constructor(message, loc) {
     super(message);
     this.name = "EvaluateError";
-    this.processed = processed;
+    this.loc = processed;
   }
 }
 
@@ -57,13 +57,7 @@ export class Command {
         }
         catch(err)
         {
-            const msg = err.toString();
-            const loc = context.evaluate_loc;
-            if (loc) {
-                context.error(msg, loc, "Runtime");
-                throw new EvaluateError(msg, true);
-            }
-            else throw new EvaluateError(msg, false);
+            throw new EvaluateError(err.toString(), context.evaluate_loc);
         }
     }
  
