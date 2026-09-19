@@ -135,7 +135,7 @@ export function test2() {
 }
 
 export function test3() {
-  
+
     const loc_data = {
       locType: "IndependentLoc",
       start: 0,
@@ -268,6 +268,7 @@ export function test3() {
   .sub(op_c(10), op_c(1))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
+  .report('astNode')
   .pop()
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
