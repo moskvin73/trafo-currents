@@ -805,7 +805,7 @@ export class MatrixComm extends Command {
         this.count_col = count_col;
     }
 
-    toString(_context) { return `create_matrix ${this.cont_row}, ${this.count_col}`; }
+    toString(_context) { return `matrix ${this.cont_row}, ${this.count_col}`; }
 
     operand(stack) {
         const evaluatedElements = []; 
