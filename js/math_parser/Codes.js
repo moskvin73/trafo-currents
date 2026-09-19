@@ -887,7 +887,7 @@ class UnCommValue extends BaseUnComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.operator(this.value.vale));
+            simulatedStack.push({type: 'const', value: this.operator(this.value.value));
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
