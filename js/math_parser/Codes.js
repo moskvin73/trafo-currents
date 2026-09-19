@@ -57,7 +57,7 @@ export class Command {
         }
         catch(err)
         {
-            throw new EvaluateError(err.toString(), context.evaluate_loc);
+            throw new EvaluateError(err.message || String(err), context.evaluate_loc);
         }
     }
  
