@@ -1922,7 +1922,7 @@ export class CommandBuilder {
         return this;
     }
 
-    repory(astNode) {
+    report(astNode) {
         this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
         return this;
     }
