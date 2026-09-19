@@ -302,7 +302,7 @@ export function test3() {
     try {
       executor.evaluate();
     } catch(err) {
-      console.log('throw: ${err}');  
+      console.log(`throw: ${err}`);  
     } finally {
       console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
       console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
