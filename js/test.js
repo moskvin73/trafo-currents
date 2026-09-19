@@ -265,11 +265,13 @@ export function test3() {
 
   const builder = new Code.CommandBuilder();
   const command = builder
+  .location(loc)
   .sub(op_c(10), op_c(1))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
   .report('astNode')
   .pop()
+  .location(loc)
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .sub(op_c(10), op_c(1))       // 10 + 1 = 11
