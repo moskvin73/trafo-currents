@@ -850,8 +850,7 @@ export class MatrixComm extends Command {
         }
         if (all_constnts) {
             simulatedStack.push({type: 'const', value: this.operand(constnts)});   
-        }
-        else {
+        } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
         }
