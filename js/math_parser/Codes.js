@@ -1919,12 +1919,12 @@ export class CommandBuilder {
    
     location(loc)
         this.#append(this.#checkCountStackCommand(new LocationComm(loc)));
-        retur this;
+        return this;
     }
 
     repory(astNode) {
         this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
-        retur this;
+        return this;
     }
     //#region UN
     plus(op) {
