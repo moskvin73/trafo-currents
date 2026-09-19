@@ -226,7 +226,7 @@ export function test3() {
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
-            console.log(`Rintime error: ${err.location} ${err.message}`)
+            console.log(`Rintime error: ${err.location} ${err.message}`);
           }
           else throw err;
         } finally {
