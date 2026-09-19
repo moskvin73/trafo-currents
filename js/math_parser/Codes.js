@@ -844,10 +844,14 @@ export class MatrixComm extends Command {
         const constnts = [];
         while (c--) { 
             const st_top = simulatedStack.pop();
-            if (all_constnts && st_top.type === 'const') {
+            if (st_top.type === 'const') {
                 constnts.push(st_top.value);
-            } else all_constnts = false;
+            } else {
+                all_constnts = false;
+                break;
+            }
         }
+        if (c > 0) while (c--) simulatedStack.pop();
         if (all_constnts) {
             simulatedStack.push({type: 'const', value: this.operand(constnts)});   
         } else {
