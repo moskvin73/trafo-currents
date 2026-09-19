@@ -178,6 +178,7 @@ export class LocationComm extends Command {
 }
 regCode(LocationComm);
 
+//#region REPORT
 class ReportCommConst extends Command {
     constructor(astNode, value) {
         super();
@@ -258,6 +259,7 @@ class ReportComm extends Command {
     }  
 }
 regCode(ReportComm);
+//#endregion REPORT
 
 export class ErrorComm extends Command {
     constructor(msg) {
