@@ -136,18 +136,20 @@ export function test2() {
 
 export function test3() {
 
+  const loc = (line, col =  1) => {
     const loc_data = {
       locType: "IndependentLoc",
       start: 0,
       end: 0,
-      line: 1,
+      line: line,
       startLineIdx: 0,
       endLine: 1,
       endLineIdx: 0,
-      column: 1,
+      column: col,
       endColumn: 1
     };
-    const loc = new IndependentSourceLocation(loc_data);
+    return new IndependentSourceLocation(loc_data);
+  };  
 
   // Снимаем квалификацию с помощью деструктуризации
   const symbols = new SymbolTableContext();
@@ -265,14 +267,14 @@ export function test3() {
 
   const builder = new Code.CommandBuilder();
   const command = builder
-  .location(loc)
+  .location(loc(1))
   .sub(op_c(10), op_c(1))       // 10 + 1 = 11
-  .location(loc)
+  .location(loc(2))
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
   .report('astNode')
   .pop()
-  .location(loc)
+  .location(loc(3))
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .sub(op_c(10), op_c(1))       // 10 + 1 = 11
