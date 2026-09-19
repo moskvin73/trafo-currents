@@ -5,6 +5,7 @@ export class BaseLocation {}
  */
 export class SourceLocation extends BaseLocation {
   constructor(lexer, start, end, startLine, startLineIdx, endLine, endLineIdx) {
+    super();
     this.lexer = lexer;
     this.start = start;
     this.end = end;
@@ -53,6 +54,7 @@ export class SourceLocation extends BaseLocation {
 
 export class IndependentSourceLocation extends BaseLocation {
   constructor(location) {
+    super();
     // Если это создание в рантайме из живой локации
     if (location instanceof SourceLocation) {
       this.start = location.start;
