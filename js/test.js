@@ -82,7 +82,7 @@ export function test(data) {
 export function test2() {
     console.log("=== Старт тестирования сериализации ===");
 
-    console.log("Зарегистрированные типы:", debugRegistry());
+    console.log("Зарегистрированные типы:", debugRegistry());    
 
   try {
 
@@ -135,6 +135,20 @@ export function test2() {
 }
 
 export function test3() {
+  
+    const loc_data = {
+      locType: "IndependentLoc",
+      start: 0,
+      end: 0,
+      line: 1,
+      startLineIdx: 0,
+      endLine: 1,
+      endLineIdx: 0,
+      column: 1,
+      endColumn: 1
+    };
+    const loc = new IndependentSourceLocation(loc_data);
+
   // Снимаем квалификацию с помощью деструктуризации
   const symbols = new SymbolTableContext();
 
