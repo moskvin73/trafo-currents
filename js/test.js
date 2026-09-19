@@ -230,6 +230,10 @@ export function test3() {
         }
       },
 
+      error(message, loc, severity = 'error') {
+        console.log(`Ошибка: ${loc} ${severity}: ${message}`);
+      }
+
       toStringCommands() {
         if (!this.commands) return '';
         const ctx = this.scope_context;
