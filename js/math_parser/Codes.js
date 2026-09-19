@@ -353,9 +353,7 @@ regCode(IFComm);
 export class GotoComm extends Command {
     constructor(len_code) {
         super();
-
         assertInteger(len_code, 'len_code', 'IGotoComm');
-
         this.len_code = len_code;
     }
 
