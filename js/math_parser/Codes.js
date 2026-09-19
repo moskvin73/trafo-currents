@@ -178,7 +178,41 @@ export class LocationComm extends Command {
 }
 regCode(LocationComm);
 
-export class ReportComm extends Command {
+class ReportCommConst extends Command {
+    constructor(astNode, value) {
+        super();
+        this.astNode = astNode;
+        this.value = value;
+    }
+
+    toString(context) { return `report ${this.astNode}, ${this.value}`; }
+
+    internal_evaluate(context) {
+        context.createReportRecord(this.astNode, this.value);
+    }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            astNode: this.astNode
+        };
+    }
+
+    static get dataTypeName() { return "ReportCommConst"; }
+
+    static fromJSON(data) {
+        return new ReportCommConst(
+            restoreDataType(data.astNode)
+        );
+    }  
+}
+regCode(ReportCommConst);
+
+class ReportComm extends Command {
     constructor(astNode) {
         super();
         this.astNode = astNode;
@@ -190,8 +224,16 @@ export class ReportComm extends Command {
         const stack = context.evaluate_stack;
         const len = stack.length;
         if (len > 0) {
-            context.createReportRecord(this.astNode, stack[len - 1]);
+            context.createReportRecord(this.astNode, stack.at(-1));
         }
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.at(-1);
+        if (st_top.type === 'const') {
+            
+        }
+        else optimizedCode.push(this);
     }
 
     get pushStackCount() { return 0; }
