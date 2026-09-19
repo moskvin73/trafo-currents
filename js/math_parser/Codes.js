@@ -1976,6 +1976,7 @@ export class CommandBuilder {
         this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
         return this;
     }
+    
     //#region UN
     plus(op) {
         return this.#creatorUn(OperatorUnType.PLUS, op);
