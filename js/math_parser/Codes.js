@@ -198,8 +198,8 @@ class ReportCommConst extends Command {
     toJSON() {
         return {
             ...super.toJSON(),
-            astNode: this.astNode
-            value: this.value;
+            astNode: this.astNode,
+            value: this.value
         };
     }
 
