@@ -154,7 +154,7 @@ export class LocationComm extends Command {
     toString(context) { return `location ${this.loc}`; }
 
     internal_evaluate(context) {
-        context.evaluate_loc = loc;
+        context.evaluate_loc = this.loc;
     }
 
     get pushStackCount() { return 0; }
@@ -1976,7 +1976,7 @@ export class CommandBuilder {
         this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
         return this;
     }
-    
+
     //#region UN
     plus(op) {
         return this.#creatorUn(OperatorUnType.PLUS, op);
