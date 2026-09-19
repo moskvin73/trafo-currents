@@ -231,7 +231,7 @@ class ReportComm extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.at(-1);
         if (st_top.type === 'const') {
-            
+            optimizedCode.push(new ReportCommConst(this.astNode, st_top.value));
         }
         else optimizedCode.push(this);
     }
