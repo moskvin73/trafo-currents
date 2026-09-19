@@ -839,19 +839,19 @@ export class MatrixComm extends Command {
 
     foldConstants(optimizedCode, simulatedStack) {
         // читаем элименты из стека
-        const c = popStackCount;
+        let c = popStackCount;
         let all_constnts = true;
         const constnts = [];
-        while (c-- >= 0) { 
+        while (c-- > 0) { 
             const st_top = simulatedStack.pop();
             if (st_top.type === 'const') {
                 constnts.push(st_top.value);
             } else {
                 all_constnts = false;
+                while (c-- > 0) simulatedStack.pop();
                 break;
             }
         }
-        while (c-- >= 0) simulatedStack.pop();
         if (all_constnts) {
             simulatedStack.push({type: 'const', value: this.operand(constnts)});   
         } else {
