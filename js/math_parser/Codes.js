@@ -394,8 +394,8 @@ export class PopComm extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.pop();
-        optimizedCode.push(this);
+        const st_top = simulatedStack.pop();
+        if (st_top.type !== 'const') optimizedCode.push(this);
     }
 
     get pushStackCount() { return 0; }
