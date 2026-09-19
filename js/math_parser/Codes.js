@@ -2031,4 +2031,15 @@ export class CommandBuilder {
             if (v_top.type === 'const') this.#append(new OpConst(v_top.value));
         }    
     }
+
+    removeDuplicateLocations() {
+        if (!this.#currentCode || this.isConstant) return;
+        this.#currentCode = this.#currentCode.filter((item, index, arr) => {
+            // Если это не целевой тип, просто оставляем элемент
+            if (typeof item !== targetType) return true; 
+            
+            // Если это целевой тип, оставляем только если предыдущий элемент не равен текущему
+            return item !== arr[index - 1];
+        });
+    }
 }
