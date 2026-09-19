@@ -138,7 +138,7 @@ function assertCommands(value, paramName, context) {
 }
 
 function assertString(value, paramName, context) {
-  if (!(typeof value !== 'string')) {
+  if (typeof value !== 'string') {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен быть строкой. Получено: ${value}`);
   }
 }
