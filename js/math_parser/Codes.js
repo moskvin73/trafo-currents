@@ -138,6 +138,12 @@ function assertUnsignedInteger(value, paramName, context) {
   }
 }
 
+function assertSignedInteger(value, paramName, context) {
+  if (!Number.isInteger(value) || value >= 0) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено. Получено: ${value}`);
+  }
+}
+
 function assertCommands(value, paramName, context) {
   if (!(Array.isArray(value) && value.every(item => item instanceof Command))) {
     throw new TypeError(`[${context}] Параметр "${paramName}" должен быть массивом комммад типа 'Command'. Получено: ${value}`);
