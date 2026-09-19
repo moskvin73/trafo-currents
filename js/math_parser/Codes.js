@@ -1979,6 +1979,11 @@ export class CommandBuilder {
         return this;
     }
 
+    error(msg) {
+        this.#append(this.#checkCountStackCommand(new ErrorComm(msg)));
+        return this;
+    }
+
     //#region UN
     plus(op) {
         return this.#creatorUn(OperatorUnType.PLUS, op);
