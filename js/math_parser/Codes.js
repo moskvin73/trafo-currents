@@ -842,7 +842,7 @@ export class MatrixComm extends Command {
         const c = popStackCount;
         let all_constnts = true;
         const constnts = [];
-        while (c--) { 
+        while (c-- >= 0) { 
             const st_top = simulatedStack.pop();
             if (st_top.type === 'const') {
                 constnts.push(st_top.value);
@@ -851,7 +851,7 @@ export class MatrixComm extends Command {
                 break;
             }
         }
-        if (c > 0) while (c--) simulatedStack.pop();
+        while (c-- >= 0) simulatedStack.pop();
         if (all_constnts) {
             simulatedStack.push({type: 'const', value: this.operand(constnts)});   
         } else {
