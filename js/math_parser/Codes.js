@@ -16,6 +16,13 @@ export class EvaluateError extends Error {
   }
 }
 
+class UserError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "UserError";
+  }
+}
+
 export class Command {
     constructor() {
         // Защита от создания экземпляра самого базового класса
@@ -265,7 +272,7 @@ export class ErrorComm extends Command {
     toString(_context) { return `error "${this.msg}"`; }
 
     internal_evaluate(context) {
-        throw new EvaluateError(this.msg);
+        throw new UserError(this.msg);
     }
 
     get pushStackCount() { return 0; }
