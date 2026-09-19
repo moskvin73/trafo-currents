@@ -2037,7 +2037,7 @@ export class CommandBuilder {
         if (!this.#currentCode || this.isConstant) return;
         this.#currentCode = this.#currentCode.filter((item, index, arr) => {
             // Если это не целевой тип, просто оставляем элемент
-            if (typeof item !== LocationComm) return true; 
+            if (!(item instanceof LocationComm)) return true; 
             
             // Если это целевой тип, оставляем только если предыдущий элемент не равен текущему
             return item !== arr[index - 1];
