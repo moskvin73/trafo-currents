@@ -1682,7 +1682,7 @@ const SubstitutionTableUn = new Map([
     // PLUS
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.CONST),
-        (op) => { return new OpConst(op.value); }
+        (op) => { return [new PlusCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.VARABLE),
@@ -1696,7 +1696,7 @@ const SubstitutionTableUn = new Map([
     // NEG
     [
         getUnKey(OperatorUnType.NEG, OperandsType.CONST),
-        (op) => { return new OpConst(op.value.negate()); }
+        (op) => { return [new NegCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NEG, OperandsType.VARABLE),
@@ -1710,7 +1710,7 @@ const SubstitutionTableUn = new Map([
     // NOT
     [
         getUnKey(OperatorUnType.NOT, OperandsType.CONST),
-        (op) => { return new OpConst(op.value.not()); }
+        (op) => { return [new NotCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NOT, OperandsType.VARABLE),
@@ -1744,10 +1744,7 @@ const SubstitutionTableBin = new Map([
     // ADD
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o) => {
-            const { l, r } = dispatcher.promoteTypes(l_o.getValue(), r_o.getValue()); 
-            return new OpConst(l.add(r)); 
-        }
+        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
@@ -1785,10 +1782,7 @@ const SubstitutionTableBin = new Map([
     // SUB
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o) => {
-            const { l, r } = dispatcher.promoteTypes(l_o.getValue(), r_o.getValue()); 
-            return new OpConst(l.subtract(r)); 
-        }
+        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.CONST),
