@@ -273,7 +273,7 @@ export function test3() {
   .location(loc(2))
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
-  .report('astNode')
+  .report('astNode1')
   .pop()
   .location(loc(3))
   .assign(op_n("pi"), op_c(Math.PI))
@@ -283,6 +283,7 @@ export function test3() {
   .neg(Code.self)
   .add(op_n("pi"), Code.self)   // pi + 89
   .assign(op_n("pi"), Code.self) // pi = pi + 89
+  .report('astNode2')
   .pop();
 
   builder.foldConstants();
