@@ -199,6 +199,7 @@ class ReportCommConst extends Command {
         return {
             ...super.toJSON(),
             astNode: this.astNode
+            value: this.value;
         };
     }
 
@@ -206,7 +207,8 @@ class ReportCommConst extends Command {
 
     static fromJSON(data) {
         return new ReportCommConst(
-            restoreDataType(data.astNode)
+            restoreDataType(data.astNode),
+            restoreDataType(data.value)
         );
     }  
 }
