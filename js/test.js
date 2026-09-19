@@ -226,7 +226,7 @@ export function test3() {
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
-            console.log(`Rintime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}`);
+            console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}`);
           }
           else throw err;
         } finally {
