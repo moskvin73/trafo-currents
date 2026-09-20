@@ -220,7 +220,7 @@ export default class SemanticDispatcher {
     const currentName = getTypeNameString(currentTypeId);
     //const currentName = typeof currentTypeId === 'function' ? currentTypeId.name : currentTypeId;
     //const targetName = typeof targetTypeId === 'function' ? targetTypeId.name : targetTypeId;
-    const targetName =  = getTypeNameString(targetTypeId);
+    const targetName = getTypeNameString(targetTypeId);
     throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${currentName} к ${targetName}`);
   }
 }
