@@ -233,6 +233,18 @@ export default class SemanticDispatcher {
 
 export const dispatcher = new SemanticDispatcher();
 
+export function convertAnArbitraryTypeToParserBaseType(value) {
+    const type = typeof value;
+    const sourceType = type === 'object' && valueToCast !== null ? valueToCast.constructor : type;
+
+    if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${sourceType}`);
+    const actualConfig = TYPE_REGISTRY.get(sourceType);
+    if (actualConfig.selfPromote !== null) {
+        return actualConfig.selfPromote(value);
+    }
+    return value;
+}
+
 // Реализация таблицы через объект объектов (или Map)
 const CAST_TABLE = new Map([
   // Правила конвертации ИЗ типа 'bool'
