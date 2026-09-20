@@ -273,13 +273,13 @@ export function test3() {
   const op_c = (value) => { return new Code.OpConst(value); };
 
   const builderMatrix = (matrix) => {
-    const actualTypes = (arg) => {
+    /*const actualTypes = (arg) => {
       const type = typeof arg;
       return type === 'object' && arg !== null ? arg.constructor : type;
     };
 
     const actualConvert = (value) => {
-      /*const actualType = actualTypes(value);
+      const actualType = actualTypes(value);
       if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${actualType}`);
       const actualConfig = TYPE_REGISTRY.get(actualType);
       if (actualConfig.selfPromote !== null) {
