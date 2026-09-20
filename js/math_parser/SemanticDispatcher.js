@@ -235,7 +235,7 @@ export const dispatcher = new SemanticDispatcher();
 
 export function toParserBase(value) {
     const type = typeof value;
-    const sourceType = type === 'object' && valueToCast !== null ? valueToCast.constructor : type;
+    const sourceType = type === 'object' && value !== null ? valueToCast.constructor : type;
 
     if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${sourceType}`);
     const actualConfig = TYPE_REGISTRY.get(sourceType);
