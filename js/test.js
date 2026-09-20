@@ -278,16 +278,20 @@ export function test3() {
       return type === 'object' && arg !== null ? arg.constructor : type;
     };
 
+    const actualConvert = (value) => {
+      const actualType = actualTypes(value);
+      if (!TYPE_REGISTRY.has(key)) throw new TypeError(`Нежопустимый тип данных ${actualType}`);
+      const actualConfig = TYPE_REGISTRY.get(actualType);
+      if (actualConfig.selfPromote !== null) {
+         return actualConfig.selfPromote(value);
+      }
+      return value;
+    };
+
     for (let i = 0; i < matrix.length; i++) {
       for (let j = 0; j < matrix[i].length; j++) {
-        let value = matrix[i][j];
-        const actualType = actualTypes(value);
-        const actualConfig = TYPE_REGISTRY.get(actualType);
-        if (actualConfig.selfPromote !== null) {
-            value = actualConfig.selfPromote(value);
-        }
         // Приводим каждый элемент к числу с плавающей точкой
-        matrix[i][j] = new RealNumber(matrix[i][j]); 
+        matrix[i][j] = actualConvert(matrix[i][j]); 
       }
     }
     return new Matrix(matrix);
