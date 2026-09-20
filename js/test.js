@@ -288,23 +288,25 @@ export function test3() {
       return value;
     };
 
-    for (let i = 0; i < matrix.length; i++) {
+    /*for (let i = 0; i < matrix.length; i++) {
       for (let j = 0; j < matrix[i].length; j++) {
         // Приводим каждый элемент к числу с плавающей точкой
         matrix[i][j] = actualConvert(matrix[i][j]); 
       }
-    }
+    }*/
 
     const builder = new Code.CommandBuilder();
 
+    cont_row = matrix.length;
+    count_col = matrix[0].length;
     for (let i = matrix.length - 1; i >= 0; i--) {
       const row = matrix[i];
       for (let j = row.length - 1; j >= 0; j--) {
-        builder.push(row[j]);
+        builder.push(actualConvert(row[j]));
       }
     }
 
-    return builder;
+    return builder.matrix();
   };
 
   // Создаём матрицу
