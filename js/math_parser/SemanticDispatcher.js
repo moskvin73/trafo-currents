@@ -233,7 +233,7 @@ export default class SemanticDispatcher {
 
 export const dispatcher = new SemanticDispatcher();
 
-export function convertAnArbitraryTypeToParserBaseType(value) {
+export function toParserBase(value) {
     const type = typeof value;
     const sourceType = type === 'object' && valueToCast !== null ? valueToCast.constructor : type;
 
