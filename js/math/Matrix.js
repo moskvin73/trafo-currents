@@ -211,6 +211,21 @@ export default class Matrix extends MathType {
    * @returns {Matrix}
    */
   subtract(other) {
+    // 1. Проверяем, является ли "other" матрицей/вектором
+    // Используем Symbol.for, чтобы избежать циклических импортов
+    const isMatrix = typeof other === 'object' && other !== null && 
+                     (other.constructor.typeId === Symbol.for('Math.Matrix') || other instanceof Matrix);
+
+    if (!isMatrix) {
+      // --- ВАРИАНТ А: Умножение матрицы на скаляр (RealNumber/ComplexNumber) ---
+      // Мы не знаем, какой именно тип у other, но мы знаем, что у него есть метод multiply!
+      // Поэтому мы просто берем каждый наш элемент и умножаем его на этот скаляр.
+      const resultElements = this.getRawRows().map(row =>
+        row.map(cell => cell.subtract(other))
+      );
+      return new Matrix(resultElements);
+    }
+
     const o = Matrix.from(other);
 
     if (this.rowCount !== o.rowCount || this.colCount !== o.colCount) {
