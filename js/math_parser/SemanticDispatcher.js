@@ -45,10 +45,10 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
   return 'unknown';
 }
 
-export function getTypeByTypeNameForParser(parseTypeName) {
-    const targetType = TYPE_CLASSES[parseTypeName];
+export function getTypeByTypeNameForParser(parserTypeName) {
+    const targetType = TYPE_CLASSES[parserTypeName];
     if (!targetType) {
-      throw new Error(`Тип данных "${parseTypeName}" не зарегистрирован в ядре калькулятора.`);
+      throw new Error(`Тип данных "${parserTypeName}" не зарегистрирован в ядре калькулятора.`);
     }
     return targetType;
 }
