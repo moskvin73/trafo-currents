@@ -297,11 +297,11 @@ export function test3() {
 
     const builder = new Code.CommandBuilder();
 
-    cont_row = matrix.length;
-    count_col = matrix[0].length;
-    for (let i = matrix.length - 1; i >= 0; i--) {
+    const cont_row = matrix.length;
+    const count_col = matrix[0].length;
+    for (let i = cont_row - 1; i >= 0; i--) {
       const row = matrix[i];
-      for (let j = row.length - 1; j >= 0; j--) {
+      for (let j = count_col - 1; j >= 0; j--) {
         builder.push(actualConvert(row[j]));
       }
     }
