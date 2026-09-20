@@ -522,7 +522,7 @@ export default class Matrix extends MathType {
         row.push(i === j ? V1 : Z);
       }
       I.push(row);
-    }    //const I = Matrix.identity(n).getRawRows();
+    }
 
     // Прямой и обратный ход Гаусса-Жордана
     for (let i = 0; i < n; i++) {
