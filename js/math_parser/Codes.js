@@ -1561,6 +1561,12 @@ function binIsRightMatrix(l, r) {
     return !isLeftMatrix && isRightMatrix;
 }
 
+function extendBinPrototypes(classes, methods) {
+    for (const cls of classes) {
+        Object.assign(cls.prototype, methods);
+    }
+}
+
 //#region ADD
 class AddCommValueValue extends BinCommValueValue {
     constructor(l_value, r_value) {
@@ -1622,7 +1628,7 @@ class AddCommOpOp extends BinCommOpOp {
 }
 regCode(AddCommOpOp);
 
-const recreateMethodsAdd = {
+/*const recreateMethodsAdd = {
     operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
     recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new AddCommOpValue(value); },
@@ -1632,7 +1638,15 @@ const recreateMethodsAdd = {
 const classesToExtendAdd = [AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp];
 for (const cls of classesToExtendAdd) {
     Object.assign(cls.prototype, recreateMethodsAdd);
-}
+}*/
+extendBinPrototypes([AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp],
+    {
+        operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
+        recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
+        recreateCommOpValue(value) { return new AddCommOpValue(value); },
+        recreateCommValueOp(value) { return new AddCommValueOp(value); }
+    }
+)
 //#endregion ADD
 
 //#region SUB
@@ -1696,7 +1710,7 @@ class SubCommOpOp extends BinCommOpOp {
 }
 regCode(SubCommOpOp);
 
-const recreateMethodsSub = {
+/*const recreateMethodsSub = {
     operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
     recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new SubCommOpValue(value); },
@@ -1706,7 +1720,15 @@ const recreateMethodsSub = {
 const classesToExtendSub = [SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp];
 for (const cls of classesToExtendSub) {
     Object.assign(cls.prototype, recreateMethodsSub);
-}
+}*/
+extendBinPrototypes([SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp],
+    {
+        operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
+        recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
+        recreateCommOpValue(value) { return new SubCommOpValue(value); },
+        recreateCommValueOp(value) { return new SubCommValueOp(value); }
+    }   
+)
 //#endregion SUB 
 
 const OperatorUnType = {
