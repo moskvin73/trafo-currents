@@ -304,7 +304,7 @@ export function test3() {
       }
     }
 
-    return new Matrix(matrix);
+    return builder;
   };
 
   // Создаём матрицу
