@@ -271,6 +271,22 @@ export function test3() {
   const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
   const op_c = (value) => { return new Code.OpConst(value); };
 
+  const creayeMatrix = (matrix) => {
+    for (let i = 0; i < matrix.length; i++) {
+      for (let j = 0; j < matrix[i].length; j++) {
+        // Приводим каждый элемент к числу с плавающей точкой
+        matrix[i][j] = new RealNumber(matrix[i][j]); 
+      }
+    }
+    return new Matrix(matrix);
+  };
+
+  // Создаём матрицу
+  const m = creayeMatrix([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+  ]);
   const builder = new Code.CommandBuilder();
   const command = builder
   .location(loc(1))
