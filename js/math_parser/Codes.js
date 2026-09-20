@@ -849,7 +849,7 @@ export class MatrixComm extends Command {
 
     foldConstants(optimizedCode, simulatedStack) {
         // читаем элименты из стека
-        let c = popStackCount;
+        let c = this.popStackCount;
         let all_constnts = true;
         const constnts = [];
         while (c-- > 0) { 
