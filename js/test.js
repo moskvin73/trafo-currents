@@ -306,7 +306,7 @@ export function test3() {
       }
     }
 
-    return builder.matrix();
+    return builder.matrix(cont_row, count_col);
   };
 
   // Создаём матрицу
