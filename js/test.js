@@ -273,28 +273,6 @@ export function test3() {
   const op_c = (value) => { return new Code.OpConst(value); };
 
   const builderMatrix = (matrix) => {
-    /*const actualTypes = (arg) => {
-      const type = typeof arg;
-      return type === 'object' && arg !== null ? arg.constructor : type;
-    };
-
-    const actualConvert = (value) => {
-      const actualType = actualTypes(value);
-      if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${actualType}`);
-      const actualConfig = TYPE_REGISTRY.get(actualType);
-      if (actualConfig.selfPromote !== null) {
-         return actualConfig.selfPromote(value);
-      }
-      return value;
-    };*/
-
-    /*for (let i = 0; i < matrix.length; i++) {
-      for (let j = 0; j < matrix[i].length; j++) {
-        // Приводим каждый элемент к числу с плавающей точкой
-        matrix[i][j] = actualConvert(matrix[i][j]); 
-      }
-    }*/
-
     const builder = new Code.CommandBuilder();
 
     const cont_row = matrix.length;
