@@ -249,7 +249,7 @@ export default class Matrix extends MathType {
 
     // Вычитаем поэлементно
     const resultElements = this.#rows.map((row, rowIndex) =>
-      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)))
+      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)).negate())
     );
 
     return new Matrix(resultElements);
@@ -281,7 +281,7 @@ export default class Matrix extends MathType {
 
     // Вычитаем поэлементно
     const resultElements = this.#rows.map((row, rowIndex) =>
-      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)))
+      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex).))
     );
 
     return new Matrix(resultElements);
