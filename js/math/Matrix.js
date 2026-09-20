@@ -49,7 +49,23 @@ export default class Matrix extends MathType {
       throw new TypeError("[Matrix]: Данные должны быть непустым двумерным массивом.");
     }
 
+    const haveSameType = (a, b) => {
+      // Обработка случаев с null или undefined
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+
+      // Для объектов и классов проверяем конструктор (например, Class1 и Class2)
+      if (typeof a === 'object' || typeof a === 'function') {
+        return a.constructor === b.constructor;
+      }
+
+      // Для простых (примитивных) типов используем typeof
+      return typeof a === typeof b;   
+    }
+
     const expectedColCount = elements[0].length; // Берем эталон по первой строке
+
+    const expectedValue = elements[0][0];
     
     this.#rows = elements.map((row, rowIndex) => {
       if (!Array.isArray(row)) {
@@ -62,7 +78,8 @@ export default class Matrix extends MathType {
       return row.map((cell, colIndex) => {
         // Матрица принимает ТОЛЬКО готовые объекты вашей системы
         if (cell instanceof MathType) {
-          return cell;
+          if (haveSameType(cell, expectedValue)) return cell;
+          throw new TypeError(`[Matrix]: Несответсвие типов элментов [${rowIndex}][${colIndex}] должен быть наследником MathType.`);
         }
         throw new TypeError(`[Matrix]: Элемент [${rowIndex}][${colIndex}] должен быть наследником MathType.`);
       });
