@@ -327,7 +327,6 @@ export function test3() {
   .location(loc(3))
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
-  .error("Пользовательская ошибка")
   .location(loc(4))
   .sub(op_c(10), m)//op_c(1))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
