@@ -1174,7 +1174,7 @@ export class AddNode extends BinaryOpNode {
 
   static fromJSON(data) { return BinaryOpNode.create(AddNode, data); }
 
-  getPriority() { return OpPriority.OR; }
+  getPriority() { return OpPriority.ADD_SUB; }
 
   internal_evaluate(context) {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
