@@ -512,7 +512,7 @@ export default class Matrix extends MathType {
     for (let i = 0; i < n; i++) {
       const row = [];
       for (let j = 0; j < n; j++) {
-        row.push(i === j ? V : Z);
+        row.push(i === j ? V1 : Z);
       }
       I.push(row);
     }    //const I = Matrix.identity(n).getRawRows();
