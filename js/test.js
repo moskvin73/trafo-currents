@@ -318,7 +318,7 @@ export function test3() {
   const builder = new Code.CommandBuilder();
   const command = builder
   .location(loc(1))
-  .sub(m, op_c(10))//, op_c(1))       // 10 + 1 = 11
+  .sub(m, op_c(new ComplexNumber(10, 10)))//, op_c(1))       // 10 + 1 = 11
   .location(loc(2))
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
