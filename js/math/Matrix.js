@@ -187,6 +187,19 @@ export default class Matrix extends MathType {
    * @returns {Matrix}
    */
   add(other) {
+    const isMatrix = typeof other === 'object' && other !== null && 
+                     (other.constructor.typeId === Symbol.for('Math.Matrix') || other instanceof Matrix);
+
+    if (!isMatrix) {
+      // --- ВАРИАНТ А: Умножение матрицы на скаляр (RealNumber/ComplexNumber) ---
+      // Мы не знаем, какой именно тип у other, но мы знаем, что у него есть метод multiply!
+      // Поэтому мы просто берем каждый наш элемент и умножаем его на этот скаляр.
+      const resultElements = this.getRawRows().map(row =>
+        row.map(cell => cell.add(other))
+      );
+      return new Matrix(resultElements);
+    }
+
     // Приводим тип через вашу систему конвертеров (на случай, если передали что-то приводимое)
     const o = Matrix.from(other);
 
