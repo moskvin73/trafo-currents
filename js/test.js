@@ -272,7 +272,7 @@ export function test3() {
   const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
   const op_c = (value) => { return new Code.OpConst(value); };
 
-  const creayeMatrix = (matrix) => {
+  const builderMatrix = (matrix) => {
     const actualTypes = (arg) => {
       const type = typeof arg;
       return type === 'object' && arg !== null ? arg.constructor : type;
@@ -308,7 +308,7 @@ export function test3() {
   };
 
   // Создаём матрицу
-  const m = creayeMatrix([
+  const m = builderMatrix([
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
