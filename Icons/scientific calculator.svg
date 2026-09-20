@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
+  <!-- Фон калькулятора (темный графит для профессионального вида) -->
+  <rect x="3" y="2" width="26" height="28" rx="4" fill="#2A2F35" />
+  
+  <!-- Профессиональный инженерный дисплей (светло-бирюзовый/неоновый) -->
+  <rect x="6" y="5" width="20" height="6" rx="1" fill="#00F0FF" opacity="0.15" />
+  <rect x="6" y="5" width="20" height="6" rx="1" stroke="#00F0FF" stroke-width="1.2" fill="none" />
+  
+  <!-- Текст/графика на дисплее (имитация формулы) -->
+  <path d="M9 7.5 L12 7.5 M10.5 7.5 L10.5 9.5" stroke="#00F0FF" stroke-width="1" stroke-linecap="round" />
+  <circle cx="15" cy="8" r="1" fill="#00F0FF" />
+  <path d="M18 9 Q20 6 22 9" fill="none" stroke="#00F0FF" stroke-width="1" />
+
+  <!-- Блок инженерных функций (верхний ряд кнопок) -->
+  <!-- Интеграл (символ высшей математики) -->
+  <path d="M8 15 C8 13.5 9 13.5 9 13 L9 17 C9 17.5 10 17.5 10 16" fill="none" stroke="#FF9F43" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Число Пи -->
+  <path d="M14 14 L18 14 M15 14 L15 17 M17 14 L17 17" fill="none" stroke="#FF9F43" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Кнопка функции f(x) или корень -->
+  <path d="M22 16.5 L23 14 L25 14" fill="none" stroke="#FF9F43" stroke-width="1.2" stroke-linecap="round" />
+  <path d="M21.5 15.5 L22.5 15.5" stroke="#FF9F43" stroke-width="1" />
+
+  <!-- Сетка стандартных цифровых кнопок (светло-серые, сбалансированные) -->
+  <!-- Ряд 1 -->
+  <rect x="6" y="19" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+  <rect x="11" y="19" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+  <rect x="16" y="19" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+  
+  <!-- Ряд 2 -->
+  <rect x="6" y="24" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+  <rect x="11" y="24" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+  <rect x="16" y="24" width="4" height="3" rx="0.5" fill="#E2E8F0" />
+
+  <!-- Выделенная кнопка действия ( Enter / Равно - акцентный синий) -->
+  <rect x="22" y="19" width="4" height="8" rx="0.5" fill="#0084FF" />
+  <!-- Знак равенства внутри кнопки -->
+  <path d="M23.5 22 L24.5 22 M23.5 24 L24.5 24" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" />
+</svg>
