@@ -1629,10 +1629,6 @@ class SubCommValueValue extends BinCommValueValue {
         super(l_value, r_value);
     }
     
-    commandName() { return 'sub'; }
-
-    //operator(l, r) { return l.subtract(r) }
-
     static get dataTypeName() { return "SubCommValueValue"; }
 
     static fromJSON(data) { return BinCommValueValue.create(SubCommValueValue, data); }
@@ -1644,10 +1640,6 @@ class SubCommOpValue extends BinCommOpValue {
         super(value);
     }
     
-    commandName() { return 'sub'; }
-
-    //operator(l, r) { return l.subtract(r) }
-  
     static get dataTypeName() { return "SubCommOpValue"; }
 
     static fromJSON(data) { return BinCommOpValue.create(SubCommOpValue, data); }    
@@ -1658,10 +1650,6 @@ class SubCommValueOp extends BinCommValueOp {
     constructor(value) {
         super(value);
     }
-    
-    commandName() { return 'sub'; }
-
-    //operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCommValueOp"; }
 
@@ -1673,10 +1661,6 @@ class SubCommOpOp extends BinCommOpOp {
     constructor() {
         super();
     }
-    
-    commandName() { return 'sub'; }
-
-    //operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCommOpOp"; }
 
@@ -1684,19 +1668,9 @@ class SubCommOpOp extends BinCommOpOp {
 }
 regCode(SubCommOpOp);
 
-/*const recreateMethodsSub = {
-    operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
-    recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
-    recreateCommOpValue(value) { return new SubCommOpValue(value); },
-    recreateCommValueOp(value) { return new SubCommValueOp(value); }
-};
-
-const classesToExtendSub = [SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp];
-for (const cls of classesToExtendSub) {
-    Object.assign(cls.prototype, recreateMethodsSub);
-}*/
 extendBinPrototypes([SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp],
     {
+        commandName() { return 'sub'; },
         operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
         recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
         recreateCommOpValue(value) { return new SubCommOpValue(value); },
