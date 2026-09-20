@@ -1929,6 +1929,8 @@ export class CommandBuilder {
         this.#countStack = 0;
     }
 
+    get length() { return this.#currentCode?.length}
+    
     get isConstant() { return this.#currentCode instanceof OpConst; }
 
     get constant() {
