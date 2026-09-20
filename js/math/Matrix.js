@@ -505,7 +505,7 @@ export default class Matrix extends MathType {
     // Создаем копию нашей матрицы
     const M = this.getRawRows();
     
-    // Генерируем единичную матрицу такой же размерности и берем ее строки
+    // Генерируем единичную матрицу такой же размерности
     const M_0_0 = this.get(0, 0);
     const from =  M_0_0.constructor.from;
     let V1, Z
