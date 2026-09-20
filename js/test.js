@@ -294,6 +294,16 @@ export function test3() {
         matrix[i][j] = actualConvert(matrix[i][j]); 
       }
     }
+
+    const builder = new Code.CommandBuilder();
+
+    for (let i = matrix.length - 1; i >= 0; i--) {
+      const row = matrix[i];
+      for (let j = row.length - 1; j >= 0; j--) {
+        builder.push(row[j]);
+      }
+    }
+
     return new Matrix(matrix);
   };
 

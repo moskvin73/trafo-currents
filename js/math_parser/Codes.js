@@ -2050,6 +2050,11 @@ export class CommandBuilder {
     }
     //#endregion BIN
 
+    push(value) {
+        this.#append(this.#checkCountStackCommand(new PushCodeConst(value)));
+        return this;
+    }
+
     // Команда POP
     pop() {
         // На всякий случай
