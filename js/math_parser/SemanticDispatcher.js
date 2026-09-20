@@ -232,3 +232,64 @@ export default class SemanticDispatcher {
 }
 
 export const dispatcher = new SemanticDispatcher();
+
+// Реализация таблицы через объект объектов (или Map)
+const CAST_TABLE = new Map([
+  // Правила конвертации ИЗ типа 'bool'
+  [ 'boolean', {
+    casts: new Map([
+    [BoolValue,      (value) => new BoolValue(value)],
+    ]),
+  }],
+  [ BoolValue, {
+    casts: new Map([
+    [BoolValue,      (value) => value],
+    ]),
+  }],
+  // Правила конвертации ИЗ типа 'real'
+  [ 'number', {
+    casts: new Map([
+    [BoolValue,      (value) => BoolValue.from(value !== 0)], 
+    [RealNumber,     (value) => RealNumber.from(value)],      
+    [ComplexNumber,  (value) => ComplexNumber.from(value)],
+    [Matrix,         (value) => new Matrix([value])],
+    ]),
+  }],
+  [ RealNumber, {
+    casts: new Map([
+    [BoolValue,      (value) => BoolValue.from(!value.equals(0))], 
+    [RealNumber,     (value) => value],      
+    [ComplexNumber,  (value) => ComplexNumber.from(value)],
+    [Matrix,         (value) => new Matrix([[value]])],
+    ]),
+  }],
+  // Правила конвертации ИЗ типа 'complex'
+  [ComplexNumber, {
+    casts: new Map([
+    [BoolValue,      (value) => BoolValue.from(!value.equals(0))],
+    [RealNumber,     (value) => RealNumber.from(value.real)],      
+    [ComplexNumber,  (value) => value],
+    [Matrix,         (value) => new Matrix([[value]])],
+    ]),
+  }],
+  [Matrix, {
+    casts: new Map([
+    [Matrix,         (value) => value],
+    ]),
+  }],
+]);
+
+export function CastValue(targetType, valueToCast) {
+    const type = typeof valueToCast;
+    const sourceType = type === 'object' && valueToCast !== null ? valueToCast.constructor : type;
+
+    const config =  CAST_TABLE.get(sourceType);
+    const castFunction = config?.casts.get(targetType);
+    if (castFunction) {
+      return castFunction(valueToCast);
+    }
+
+    const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
+    const name_targetType = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
+    this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
+}
