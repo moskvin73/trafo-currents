@@ -279,14 +279,14 @@ export function test3() {
     };
 
     const actualConvert = (value) => {
-      const actualType = actualTypes(value);
+      /*const actualType = actualTypes(value);
       if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${actualType}`);
       const actualConfig = TYPE_REGISTRY.get(actualType);
       if (actualConfig.selfPromote !== null) {
          return actualConfig.selfPromote(value);
       }
       return value;
-    };
+    };*/
 
     /*for (let i = 0; i < matrix.length; i++) {
       for (let j = 0; j < matrix[i].length; j++) {
@@ -302,7 +302,7 @@ export function test3() {
     for (let i = cont_row - 1; i >= 0; i--) {
       const row = matrix[i];
       for (let j = count_col - 1; j >= 0; j--) {
-        builder.push(actualConvert(row[j]));
+        builder.push(row[j]);
       }
     }
 
