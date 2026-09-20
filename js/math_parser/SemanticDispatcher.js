@@ -45,6 +45,14 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
   return 'unknown';
 }
 
+export function getParseNameType() {
+    const targetType = TYPE_CLASSES[targetType];
+    if (!targetType) {
+      throw new Error(`Тип данных "${targetType}" не зарегистрирован в ядре калькулятора.`);
+    }
+    return targetType;
+}
+
 export const TYPE_REGISTRY = new Map([
   // 1. Примитив JS число. 
   ['number', {
