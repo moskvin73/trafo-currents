@@ -1087,6 +1087,19 @@ regCode(NotCommOp);
 //#endregion NOT
 
 //#region BaseBinCode
+function binIsRightMatrix(l, r) {
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
+    const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
+    return !isLeftMatrix && isRightMatrix;
+}
+
+function extendBinPrototypes(classes, methods) {
+    for (const cls of classes) {
+        Object.assign(cls.prototype, methods);
+    }
+}
+
 class BaseBinComm extends Command {
     constructor() {
         super();
@@ -1553,19 +1566,6 @@ export class AssignIndexMatrixComm extends Command {
     get popStackCount() { return 4; }   
 }
 //#endregion INDEXING
-
-function binIsRightMatrix(l, r) {
-    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
-    const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
-    const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
-    return !isLeftMatrix && isRightMatrix;
-}
-
-function extendBinPrototypes(classes, methods) {
-    for (const cls of classes) {
-        Object.assign(cls.prototype, methods);
-    }
-}
 
 //#region ADD
 class AddCommValueValue extends BinCommValueValue {
