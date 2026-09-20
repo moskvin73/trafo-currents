@@ -1177,7 +1177,27 @@ export class AddNode extends BinaryOpNode {
   getPriority() { return OpPriority.ADD_SUB; }
 
   internal_evaluate(context) {
-    const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
+
+    // 1. Вычисляем левую и правую части
+    const leftValue = this.left.internal_evaluate(context);
+    const rightValue = this.right.internal_evaluate(context);
+
+    // 2. Выравниваем скаляры между собой (если это, например, Real и Complex)
+    const { l, r } = dispatcher.promoteTypes(leftValue, rightValue);
+
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+
+    // 3. Проверяем, является ли левый операнд ЧИСЛОМ, а правый — МАТРИЦЕЙ
+    const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
+    const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
+
+    if (!isLeftMatrix && isRightMatrix) {
+      // Математический закон: Скаляр * Матрица === Матрица * Скаляр
+      // Вызываем метод умножения у матрицы (r), передавая ей скаляр (l)
+      return r.add(l);
+    }
+
+    //const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.add(r);
   }
 
