@@ -507,7 +507,7 @@ export default class Matrix extends MathType {
     
     // Генерируем единичную матрицу такой же размерности
     const M_0_0 = this.get(0, 0);
-    const from =  M_0_0.constructor.from;
+    const from = M_0_0.constructor.from.bind(M_0_0.constructor);
     let V1, Z
     if (from) {
       V1 = from(1); Z = from(0);
