@@ -2,7 +2,7 @@ import BoolValue from './math/BoolValue.js';
 import RealNumber from './math/RealNumber.js';
 import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
-import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
+import { TYPE_REGISTRY, restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
 import { IndependentSourceLocation } from './math_parser/CompilerErrors.js';
 import * as AST from './math_parser/ASTNodes.js';
@@ -272,8 +272,19 @@ export function test3() {
   const op_c = (value) => { return new Code.OpConst(value); };
 
   const creayeMatrix = (matrix) => {
+    const actualTypes = (arg) => {
+      const type = typeof arg;
+      return type === 'object' && arg !== null ? arg.constructor : type;
+    };
+
     for (let i = 0; i < matrix.length; i++) {
       for (let j = 0; j < matrix[i].length; j++) {
+        let value = matrix[i][j];
+        actualType = actualTypes(value);
+        const actualConfig = TYPE_REGISTRY.get(actualType);
+        if (actualConfig.selfPromote !== null) {
+            value = actualConfig.selfPromote(value);
+        }
         // Приводим каждый элемент к числу с плавающей точкой
         matrix[i][j] = new RealNumber(matrix[i][j]); 
       }
