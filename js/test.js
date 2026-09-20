@@ -329,7 +329,7 @@ export function test3() {
   .pop()
   .error("Пользовательская ошибка")
   .location(loc(4))
-  .sub(op_c(10), op_c(1))       // 10 + 1 = 11
+  .sub(op_c(10), m)//op_c(1))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
   .add(op_n("pi"), Code.self)   // pi + 89
