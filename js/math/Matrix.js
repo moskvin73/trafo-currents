@@ -506,8 +506,15 @@ export default class Matrix extends MathType {
     const M = this.getRawRows();
     
     // Генерируем единичную матрицу такой же размерности и берем ее строки
-    const V1 = this.get(0, 0).constructor.from ? this.get(0, 0).constructor.from(1) : this.get(0,0).divide(this.get(0,0));
-    const Z = this.get(0, 0).constructor.from ? this.get(0, 0).constructor.from(0) : this.get(0,0).subtract(this.get(0,0));
+    const M_0_0 = this.get(0, 0);
+    const from =  M_0_0.constructor.from;
+    let V1, Z
+    if (from) {
+      V1 = from(1); Z = from(0);
+    }
+    else {
+      V1 = M_0_0.divide(M_0_0); Z = M_0_0.subtract(M_0_0);
+    } 
     const I = [];
     for (let i = 0; i < n; i++) {
       const row = [];
