@@ -4,6 +4,47 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import Matrix from '../math/Matrix.js';
 
+const TYPE_CLASSES = {
+  'bool': BoolValue,
+  'real': RealNumber,
+  'сomplex': ComplexNumber,
+  'matrix':  Matrix
+};
+
+const REVERSE_TYPE_CLASSES = new Map(
+  Object.entries(TYPE_CLASSES).map(([name, ClassRef]) => [ClassRef, name])
+);
+
+/**
+ * Функция-обертка для получения строкового имени типа.
+ * @param {string|Function|null|undefined} typeRef - Строка ('number', 'boolean') или класс (Matrix, RealNumber)
+ * @param {Map} reverseMap - Ваш словарь REVERSE_TYPE_CLASSES (Маппинг: Класс -> Строка)
+ * @returns {string} - Понятное имя типа для пользователя
+ */
+export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
+  // 1. Защита от пустых значений (если что-то пошло не так в AST)
+  if (typeRef === null || typeRef === undefined) {
+    return 'empty';
+  }
+
+  // 2. Если это уже строка (например, 'number', 'boolean', 'string')
+  if (typeof typeRef === 'string') {
+    return typeRef;
+  }
+
+  // 3. Если это функция-конструктор (ваш класс типа Matrix, ComplexNumber и т.д.)
+  if (typeof typeRef === 'function') {
+    return reverseMap.get(typeRef) || typeRef.name || 'unknown_class';
+  }
+
+  // 4. На случай, если передан сам объект-экземпляр вместо его типа/класса
+  if (typeof typeRef === 'object' && typeRef.constructor) {
+    return reverseMap.get(typeRef.constructor) || typeRef.constructor.name || 'unknown_object';
+  }
+
+  return 'unknown';
+}
+
 export const TYPE_REGISTRY = new Map([
   // 1. Примитив JS число. 
   ['number', {
@@ -176,8 +217,10 @@ export default class SemanticDispatcher {
       return castFunction(value);
     }
 
-    const currentName = typeof currentTypeId === 'function' ? currentTypeId.name : currentTypeId;
-    const targetName = typeof targetTypeId === 'function' ? targetTypeId.name : targetTypeId;
+    const currentName = getTypeNameString(currentTypeId);
+    //const currentName = typeof currentTypeId === 'function' ? currentTypeId.name : currentTypeId;
+    //const targetName = typeof targetTypeId === 'function' ? targetTypeId.name : targetTypeId;
+    const targetName =  = getTypeNameString(targetTypeId);
     throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${currentName} к ${targetName}`);
   }
 }
