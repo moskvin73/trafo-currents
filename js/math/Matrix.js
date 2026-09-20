@@ -506,7 +506,14 @@ export default class Matrix extends MathType {
     const M = this.getRawRows();
     
     // Генерируем единичную матрицу такой же размерности и берем ее строки
-    const I = Matrix.identity(n).getRawRows();
+    const detValue = this.get(0, 0).constructor.from ? this.get(0, 0).constructor.from(1) : this.get(0,0).divide(this.get(0,0));
+    const I = [];
+    for (let i = 0; i < n; i++) {
+      const row = new Array(n).fill(0);
+      row[i] = detValue;
+      I.push(row);
+    }
+    //const I = Matrix.identity(n).getRawRows();
 
     // Прямой и обратный ход Гаусса-Жордана
     for (let i = 0; i < n; i++) {
