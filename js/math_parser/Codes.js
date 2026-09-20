@@ -1572,10 +1572,6 @@ class AddCommValueValue extends BinCommValueValue {
     constructor(l_value, r_value) {
         super(l_value, r_value);
     }
-    
-    commandName() { return 'add'; }
-
-    //operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCommValueValue"; }
 
@@ -1588,10 +1584,6 @@ class AddCommOpValue extends BinCommOpValue {
         super(value);
     }
     
-    commandName() { return 'add'; }
-
-    //operator(l, r) { return l.add(r) }
-  
     static get dataTypeName() { return "AddCommOpValue"; }
 
     static fromJSON(data) { return BinCommOpValue.create(AddCommOpValue, data); }    
@@ -1603,10 +1595,6 @@ class AddCommValueOp extends BinCommValueOp {
         super(value);
     }
     
-    commandName() { return 'add'; }
-
-    //operator(l, r) { return l.add(r) }
-
     static get dataTypeName() { return "AddCommValueOp"; }
 
     static fromJSON(data) { return BinCommValueOp.create(AddCommValueOp, data); }
@@ -1618,29 +1606,15 @@ class AddCommOpOp extends BinCommOpOp {
         super();
     }
     
-    commandName() { return 'add'; }
-
-    //operator(l, r) { return l.add(r) }
-
     static get dataTypeName() { return "AddCommOpOp"; }
 
     static fromJSON(data) { return BinCommOpOp.create(AddCommOpOp, data); }    
 }
 regCode(AddCommOpOp);
 
-/*const recreateMethodsAdd = {
-    operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
-    recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
-    recreateCommOpValue(value) { return new AddCommOpValue(value); },
-    recreateCommValueOp(value) { return new AddCommValueOp(value); }
-};
-
-const classesToExtendAdd = [AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp];
-for (const cls of classesToExtendAdd) {
-    Object.assign(cls.prototype, recreateMethodsAdd);
-}*/
 extendBinPrototypes([AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp],
     {
+        commandName() { return 'add'; },
         operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
         recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
         recreateCommOpValue(value) { return new AddCommOpValue(value); },
