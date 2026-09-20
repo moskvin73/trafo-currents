@@ -1554,6 +1554,13 @@ export class AssignIndexMatrixComm extends Command {
 }
 //#endregion INDEXING
 
+function binIsMatrix(l, r) {
+    const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
+    const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
+    const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
+    return {isLeftMatrix,  isRightMatrix};
+}
+
 //#region ADD
 class AddCommValueValue extends BinCommValueValue {
     constructor(l_value, r_value) {
