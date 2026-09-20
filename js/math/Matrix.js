@@ -510,11 +510,12 @@ export default class Matrix extends MathType {
     const Z = this.get(0, 0).constructor.from ? this.get(0, 0).constructor.from(0) : this.get(0,0).subtract(this.get(0,0));
     const I = [];
     for (let i = 0; i < n; i++) {
-      const row = new Array(n).fill(0);
-      row[i] = detValue;
+      const row = [];
+      for (let j = 0; j < n; j++) {
+        row.push(i === j ? V : Z);
+      }
       I.push(row);
-    }
-    //const I = Matrix.identity(n).getRawRows();
+    }    //const I = Matrix.identity(n).getRawRows();
 
     // Прямой и обратный ход Гаусса-Жордана
     for (let i = 0; i < n; i++) {
