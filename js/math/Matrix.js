@@ -79,7 +79,7 @@ export default class Matrix extends MathType {
         // Матрица принимает ТОЛЬКО готовые объекты вашей системы
         if (cell instanceof MathType) {
           if (haveSameType(cell, expectedValue)) return cell;
-          throw new TypeError(`[Matrix]: Несответсвие типов элментов [${rowIndex}][${colIndex}] должен быть наследником MathType.`);
+          throw new TypeError(`[Matrix]: Несответсвие типов элментов [0, 0] и [${rowIndex}][${colIndex}].`);
         }
         throw new TypeError(`[Matrix]: Элемент [${rowIndex}][${colIndex}] должен быть наследником MathType.`);
       });
