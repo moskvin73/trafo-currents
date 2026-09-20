@@ -1929,8 +1929,14 @@ export class CommandBuilder {
         this.#countStack = 0;
     }
 
+    /**
+     * Возвращает длину текущего кода.
+     * 
+     * @readonly
+     * @returns {number|undefined} Количество символов в коде или undefined, если код не задан.
+     */
     get length() { return this.#currentCode?.length}
-    
+
     get isConstant() { return this.#currentCode instanceof OpConst; }
 
     get constant() {
