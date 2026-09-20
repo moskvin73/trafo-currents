@@ -181,7 +181,7 @@ export class LocationComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "LocationCode"; }
+    static get dataTypeName() { return "LocationComm"; }
 
     static fromJSON(data) {
         return new LocationComm(
@@ -298,7 +298,7 @@ export class ErrorComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "ErrorCode"; }
+    static get dataTypeName() { return "ErrorComm"; }
 
     static fromJSON(data) {
         return new ErrorComm(
@@ -340,7 +340,7 @@ export class IFComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "IF_Code"; }
+    static get dataTypeName() { return "IFComm"; }
 
     static fromJSON(data) {
         return new IFComm(
@@ -374,7 +374,7 @@ export class GotoComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "Goto_Code"; }
+    static get dataTypeName() { return "GotoComm"; }
 
     static fromJSON(data) {
         return new GotoComm(
@@ -427,7 +427,7 @@ export class DefineVarableComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "DefineVarableCode"; }
+    static get dataTypeName() { return "DefineVarableComm"; }
 
     static fromJSON(data) {
             return new DefineVarableComm(
@@ -466,7 +466,7 @@ export class PopComm extends Command {
         };
     }
 
-    static get dataTypeName() { return "PopCode"; }
+    static get dataTypeName() { return "PopComm"; }
 
     static fromJSON(data) {
         return new PopComm();
@@ -509,7 +509,7 @@ export class PushCommConst extends PushComm {
         };
     }
 
-    static get dataTypeName() { return "PushCodeConst"; }
+    static get dataTypeName() { return "PushCommConst"; }
 
     static fromJSON(data) {
         return new PushCommConst(
@@ -566,7 +566,7 @@ export class PushCommVarbleLocal extends PushComm {
         };
     }
 
-    static get dataTypeName() { return "PushCodeVarbleLocal"; }
+    static get dataTypeName() { return "PushCommVarbleLocal"; }
 
     static fromJSON(data) {
         return new PushCommVarbleLocal(
@@ -606,7 +606,7 @@ export class PushCommVarbleGlobal extends PushComm {
         };
     }
 
-    static get dataTypeName() { return "PushCodeVarbleGlobal"; }
+    static get dataTypeName() { return "PushCommVarbleGlobal"; }
 
     static fromJSON(data) {
         const data_restore = data.context.dataFromJSON(data.sym_data);
@@ -1359,7 +1359,7 @@ class AssignCommValueValue extends Command {
         };
     }
    
-    static get dataTypeName() { return "AssignCodeValueValue"; }
+    static get dataTypeName() { return "AssignCommValueValue"; }
 
     static fromJSON(data) {
         return new AssignCommValueValue(
@@ -1373,7 +1373,7 @@ regCode(AssignCommValueValue);
 class AssignCommValueOp extends Command {
     constructor(let_value) {
         super();
-        assertOperandVarable(let_value, 'let_value', 'AssignCommValueValue');
+        assertOperandVarable(let_value, 'let_value', 'AssignCommValueOp');
         this.let_value = let_value;
     }
 
@@ -1407,7 +1407,7 @@ class AssignCommValueOp extends Command {
         };
     }
    
-    static get dataTypeName() { return "AssignCodeValueOp"; }
+    static get dataTypeName() { return "AssignCommValueOp"; }
 
     static fromJSON(data) {
         return new AssignCommValueOp(
@@ -1564,7 +1564,7 @@ class AddCommValueValue extends BinCommValueValue {
 
     operator(l, r) { return l.add(r) }
 
-    static get dataTypeName() { return "AddCodeValueValue"; }
+    static get dataTypeName() { return "AddCommValueValue"; }
 
     static fromJSON(data) { return BinCommValueValue.create(AddCommValueValue, data); }
 }
@@ -1579,7 +1579,7 @@ class AddCommOpValue extends BinCommOpValue {
 
     operator(l, r) { return l.add(r) }
   
-    static get dataTypeName() { return "AddCodeOpValue"; }
+    static get dataTypeName() { return "AddCommOpValue"; }
 
     static fromJSON(data) { return BinCommOpValue.create(AddCommOpValue, data); }    
 }
@@ -1593,7 +1593,12 @@ class AddCommValueOp extends BinCommValueOp {
     commandName() { return 'add'; }
 
     operator(l, r) { return l.add(r) }
-}    
+
+    static get dataTypeName() { return "AddCommValueOp"; }
+
+    static fromJSON(data) { return BinCommValueOp.create(AddCommValueOp, data); }
+}   
+regCode(AddCommValueOp);
 
 class AddCommOpOp extends BinCommOpOp {
     constructor() {
@@ -1604,7 +1609,7 @@ class AddCommOpOp extends BinCommOpOp {
 
     operator(l, r) { return l.add(r) }
 
-    static get dataTypeName() { return "AddCodeOpOp"; }
+    static get dataTypeName() { return "AddCommOpOp"; }
 
     static fromJSON(data) { return BinCommOpOp.create(AddCommOpOp, data); }    
 }
@@ -1632,7 +1637,7 @@ class SubCommValueValue extends BinCommValueValue {
 
     operator(l, r) { return l.subtract(r) }
 
-    static get dataTypeName() { return "SubCodeValueValue"; }
+    static get dataTypeName() { return "SubCommValueValue"; }
 
     static fromJSON(data) { return BinCommValueValue.create(SubCommValueValue, data); }
 }
@@ -1647,7 +1652,7 @@ class SubCommOpValue extends BinCommOpValue {
 
     operator(l, r) { return l.subtract(r) }
   
-    static get dataTypeName() { return "SubCodeOpValue"; }
+    static get dataTypeName() { return "SubCommOpValue"; }
 
     static fromJSON(data) { return BinCommOpValue.create(SubCommOpValue, data); }    
 }
@@ -1658,8 +1663,15 @@ class SubCommValueOp extends BinCommValueOp {
         super(value);
     }
     
+    commandName() { return 'sub'; }
+
     operator(l, r) { return l.subtract(r) }
+
+    static get dataTypeName() { return "SubCommValueOp"; }
+
+    static fromJSON(data) { return BinCommValueOp.create(SubCommValueOp, data); }
 }    
+regCode(SubCommValueOp);
 
 class SubCommOpOp extends BinCommOpOp {
     constructor() {
@@ -1670,7 +1682,7 @@ class SubCommOpOp extends BinCommOpOp {
 
     operator(l, r) { return l.subtract(r) }
 
-    static get dataTypeName() { return "SubCodeOpOp"; }
+    static get dataTypeName() { return "SubCommOpOp"; }
 
     static fromJSON(data) { return BinCommOpOp.create(SubCommOpOp, data); }    
 }
@@ -2051,7 +2063,7 @@ export class CommandBuilder {
     //#endregion BIN
 
     push(value) {
-        this.#append(this.#checkCountStackCommand(new PushCodeConst(value)));
+        this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
         return this;
     }
 
