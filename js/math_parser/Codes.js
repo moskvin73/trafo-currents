@@ -1623,7 +1623,7 @@ class AddCommOpOp extends BinCommOpOp {
 regCode(AddCommOpOp);
 
 const recreateMethodsAdd = {
-    operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); }
+    operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
     recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new AddCommOpValue(value); },
     recreateCommValueOp(value) { return new AddCommValueOp(value); }
@@ -1697,7 +1697,7 @@ class SubCommOpOp extends BinCommOpOp {
 regCode(SubCommOpOp);
 
 const recreateMethodsSub = {
-    operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); }
+    operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
     recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new SubCommOpValue(value); },
     recreateCommValueOp(value) { return new SubCommValueOp(value); }
