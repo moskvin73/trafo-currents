@@ -1554,11 +1554,11 @@ export class AssignIndexMatrixComm extends Command {
 }
 //#endregion INDEXING
 
-function binIsMatrix(l, r) {
+function binIsRightMatrix(l, r) {
     const MATRIX_SYMBOL = Symbol.for('Math.Matrix');
     const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
     const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
-    return {isLeftMatrix,  isRightMatrix};
+    return !isLeftMatrix && isRightMatrix;
 }
 
 //#region ADD
@@ -1569,7 +1569,7 @@ class AddCommValueValue extends BinCommValueValue {
     
     commandName() { return 'add'; }
 
-    operator(l, r) { return l.add(r) }
+    //operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCommValueValue"; }
 
@@ -1584,7 +1584,7 @@ class AddCommOpValue extends BinCommOpValue {
     
     commandName() { return 'add'; }
 
-    operator(l, r) { return l.add(r) }
+    //operator(l, r) { return l.add(r) }
   
     static get dataTypeName() { return "AddCommOpValue"; }
 
@@ -1599,7 +1599,7 @@ class AddCommValueOp extends BinCommValueOp {
     
     commandName() { return 'add'; }
 
-    operator(l, r) { return l.add(r) }
+    //operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCommValueOp"; }
 
@@ -1614,7 +1614,7 @@ class AddCommOpOp extends BinCommOpOp {
     
     commandName() { return 'add'; }
 
-    operator(l, r) { return l.add(r) }
+    //operator(l, r) { return l.add(r) }
 
     static get dataTypeName() { return "AddCommOpOp"; }
 
@@ -1623,6 +1623,7 @@ class AddCommOpOp extends BinCommOpOp {
 regCode(AddCommOpOp);
 
 const recreateMethodsAdd = {
+    operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); }
     recreateCommValueValue(l_value, r_value) { return new AddCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new AddCommOpValue(value); },
     recreateCommValueOp(value) { return new AddCommValueOp(value); }
@@ -1642,7 +1643,7 @@ class SubCommValueValue extends BinCommValueValue {
     
     commandName() { return 'sub'; }
 
-    operator(l, r) { return l.subtract(r) }
+    //operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCommValueValue"; }
 
@@ -1657,7 +1658,7 @@ class SubCommOpValue extends BinCommOpValue {
     
     commandName() { return 'sub'; }
 
-    operator(l, r) { return l.subtract(r) }
+    //operator(l, r) { return l.subtract(r) }
   
     static get dataTypeName() { return "SubCommOpValue"; }
 
@@ -1672,7 +1673,7 @@ class SubCommValueOp extends BinCommValueOp {
     
     commandName() { return 'sub'; }
 
-    operator(l, r) { return l.subtract(r) }
+    //operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCommValueOp"; }
 
@@ -1687,7 +1688,7 @@ class SubCommOpOp extends BinCommOpOp {
     
     commandName() { return 'sub'; }
 
-    operator(l, r) { return l.subtract(r) }
+    //operator(l, r) { return l.subtract(r) }
 
     static get dataTypeName() { return "SubCommOpOp"; }
 
@@ -1696,6 +1697,7 @@ class SubCommOpOp extends BinCommOpOp {
 regCode(SubCommOpOp);
 
 const recreateMethodsSub = {
+    operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); }
     recreateCommValueValue(l_value, r_value) { return new SubCommValueValue(l_value, r_value); },
     recreateCommOpValue(value) { return new SubCommOpValue(value); },
     recreateCommValueOp(value) { return new SubCommValueOp(value); }
