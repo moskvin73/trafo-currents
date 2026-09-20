@@ -2034,6 +2034,11 @@ export class CommandBuilder {
         return this;
     }
 
+    matrix(cont_row, count_col) {
+        this.#append(this.#checkCountStackCommand(new MatrixComm(cont_row, count_col)));
+        return this;
+    }
+
     //#region UN
     plus(op) {
         return this.#creatorUn(OperatorUnType.PLUS, op);
