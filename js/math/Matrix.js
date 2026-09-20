@@ -249,7 +249,7 @@ export default class Matrix extends MathType {
 
     // Вычитаем поэлементно
     const resultElements = this.#rows.map((row, rowIndex) =>
-      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)).negate())
+      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex)))
     );
 
     return new Matrix(resultElements);
@@ -266,7 +266,7 @@ export default class Matrix extends MathType {
       // Мы не знаем, какой именно тип у other, но мы знаем, что у него есть метод multiply!
       // Поэтому мы просто берем каждый наш элемент и умножаем его на этот скаляр.
       const resultElements = this.getRawRows().map(row =>
-        row.map(cell => cell.subtract(other))
+        row.map(cell => cell.subtract(other).negate())
       );
       return new Matrix(resultElements);
     }
@@ -281,7 +281,7 @@ export default class Matrix extends MathType {
 
     // Вычитаем поэлементно
     const resultElements = this.#rows.map((row, rowIndex) =>
-      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex).))
+      row.map((cell, colIndex) => cell.subtract(o.get(rowIndex, colIndex).negate()))
     );
 
     return new Matrix(resultElements);
