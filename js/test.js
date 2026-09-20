@@ -2,12 +2,13 @@ import BoolValue from './math/BoolValue.js';
 import RealNumber from './math/RealNumber.js';
 import ComplexNumber from './math/ComplexNumber.js';
 import Matrix from './math/Matrix.js';
-import { TYPE_REGISTRY, restoreDataType, debugRegistry } from './math_parser/DataTypeRegistry.js';
+import { restoreDataType, debugRegistry } from './DataTypeRegistry.js';
 import { SymbolTableContext } from './math_parser/SymbolTableContext.js';
 import { IndependentSourceLocation } from './math_parser/CompilerErrors.js';
 import * as AST from './math_parser/ASTNodes.js';
 import VarableCode from './varables/VarableCode.js';
 import * as Code from './math_parser/Codes.js';
+import { TYPE_REGISTRY } from './math_parser/SemanticDispatcher.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
