@@ -280,7 +280,7 @@ export function test3() {
 
     const actualConvert = (value) => {
       const actualType = actualTypes(value);
-      if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Нежопустимый тип данных ${actualType}`);
+      if (!TYPE_REGISTRY.has(actualType)) throw new TypeError(`Недопустимый тип данных ${actualType}`);
       const actualConfig = TYPE_REGISTRY.get(actualType);
       if (actualConfig.selfPromote !== null) {
          return actualConfig.selfPromote(value);
