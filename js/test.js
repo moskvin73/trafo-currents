@@ -208,12 +208,12 @@ export function test3() {
 
             if (isDebug) console.log(`${idx - 1}: ${com.toString(ctx)}`);
 
-            if (this.DEBUG) {
+            /*if (this.DEBUG) {
               const current_len = stack.length;
               if (current_len > prev_stack_len)
                 console.log(` st[top] = ${stack.peek()}`);
               prev_stack_len = current_len;
-            }
+            }*/
 
             this.index_comm = idx;
             com.evaluate(this);
