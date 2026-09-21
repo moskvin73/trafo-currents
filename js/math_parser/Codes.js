@@ -823,8 +823,8 @@ export class MatrixComm extends Command {
         // За стартовую точку возьмём самый первый элемент матрицы [0][0].
         let targetSample = evaluatedElements[0][0];
 
-        for (const [rowIndex, row] of evaluatedElements) {
-            for (const [colIndex, cell] of row) {
+        for (const [rowIndex, row] of evaluatedElements.entries()) {
+            for (const [colIndex, cell] of row.entries()) {
                 // Вызываем диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
                 // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
                 try {
