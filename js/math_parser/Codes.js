@@ -2129,7 +2129,7 @@ export class CommandBuilder {
             c_len = optimizedCode.length;
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
-                error = true;
+                errors = true;
                 context?.error(err.message, loc);
                 if (optimizedCode.length === c_len) optimizedCode.push(comm);
                 if (simulatedStack.length === s_len) {
