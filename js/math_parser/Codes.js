@@ -2130,7 +2130,6 @@ export class CommandBuilder {
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
                 context?.error(err.message, loc);
-            } finally {
                 if (optimizedCode.length === c_len) optimizedCode.push(comm);
                 if (simulatedStack.length === s_len) {
                     // Команда вообще не трогала стек (сразу упала) -> эмулируем её влияние
