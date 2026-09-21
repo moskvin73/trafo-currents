@@ -218,6 +218,12 @@ export function test3() {
             this.index_comm = idx;
             com.evaluate(this);
 
+            if (this.DEBUG) {
+              if (com.modifiesStack)
+                console.log(` st[top] = ${stack.peek()}`);
+              prev_stack_len = stack.length;
+            }
+
             // Предпологается что при изминени кода меняется и индекс
             if (this._commandsChanged) {
               cmds = this._commands;
