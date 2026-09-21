@@ -327,7 +327,7 @@ export function test3() {
     } catch(err) {
       console.log(`throw: ${err} ${err.stack}`);  
     } finally {
-      console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack}`);
+      console.log(`Состояние стека после выполнения кода ${executor.evaluate_stack.peek()}`);
       console.log(`Последнее значение, извлеченное из стека ${executor.last_popped}`);
     }
   }
