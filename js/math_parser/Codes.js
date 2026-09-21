@@ -2122,13 +2122,14 @@ export class CommandBuilder {
         const optimizedCode = [];
         const simulatedStack = new Stack();
 
-        let loc; let s_len = 0; let c_len;
+        let loc; let s_len = 0; let c_len; error = false;
         for (const comm of this.#currentCode) {
             if (comm instanceof LocationComm) loc = comm.loc;
             s_len = simulatedStack.length;
             c_len = optimizedCode.length;
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
+                error = true;
                 context?.error(err.message, loc);
                 if (optimizedCode.length === c_len) optimizedCode.push(comm);
                 if (simulatedStack.length === s_len) {
@@ -2158,6 +2159,7 @@ export class CommandBuilder {
                 }
             }
         }
+        if (this.error) return;
         this.#currentCode = optimizedCode;
         if (this.#currentCode.length === 0) {
             const v_top = simulatedStack.peek();
