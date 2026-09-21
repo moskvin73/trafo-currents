@@ -195,9 +195,7 @@ export default class MathType {
 
     if (value === null || value === undefined) {
       throw new class extends ErrorMath {
-        getMes(func) {
-          return `Невозможно привести ${value} к типу ${func(currentClassName)}.`;
-        }
+        getMes(func) { return `Невозможно привести ${value} к типу ${func(currentClassName)}.`; }
       }(`[${currentClassName}]: Невозможно привести ${value} к типу ${currentClassName}.`);
     }
 
