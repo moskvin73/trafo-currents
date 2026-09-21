@@ -7,6 +7,7 @@ import { BaseLocation, restoreLocation } from './CompilerErrors.js';
 import { dispatcher } from './SemanticDispatcher.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
+import { Stack }  from '../math/util.js';
 
 export class EvaluateError extends Error {
   constructor(message, loc) {
@@ -240,7 +241,7 @@ class ReportComm extends Command {
         const stack = context.evaluate_stack;
         const len = stack.length;
         if (len > 0) {
-            context.createReportRecord(this.astNode, stack.at(-1));
+            context.createReportRecord(this.astNode, stack.peek());
         }
     }
 
@@ -2078,7 +2079,7 @@ export class CommandBuilder {
     foldConstants() {
         if (!this.#currentCode || this.isConstant) return;
         const optimizedCode = [];
-        const simulatedStack = [];
+        const simulatedStack = new Stack();
 
         for (const comm of this.#currentCode) {
             comm.foldConstants(optimizedCode, simulatedStack);
