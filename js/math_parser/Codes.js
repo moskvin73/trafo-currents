@@ -2128,7 +2128,7 @@ export class CommandBuilder {
             s_len = simulatedStack.length;
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
-                context.error(err.message, loc);
+                context?.error(err.message, loc);
             } finally {
                 const len = comm.pushStackCount - comm.popStackCount;
                 if (simulatedStack.length === s_len) {

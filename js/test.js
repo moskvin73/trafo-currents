@@ -320,7 +320,7 @@ export function test3() {
   .report('astNode2')
   .pop();
 
-  builder.foldConstants();
+  builder.foldConstants(contextError);
   if (builder.isConstant) {
     console.log(`Код отсутсвет константное занчение: ${builder.constant}`);
   } else {
