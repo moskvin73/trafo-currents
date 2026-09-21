@@ -1335,6 +1335,51 @@ class BinCommOpOp extends BaseBinComm {
 //#endregion BaseBinCode
 
 //#region ASSIGN
+class AssignCommValueConst extends Command {
+    constructor(let_value, value) {
+        super();
+        /*assertOperandVarable(let_value, 'let_value', 'AssignCommValueValue');
+        assertOperand(value, 'value', 'AssignCommValueValue');*/
+        this.let_value = let_value;
+        this.value = value;
+    }
+    
+    toString(context) { return `let_c ${this.let_value.toString(context)}, ${this.value.toString(context)}`; }
+
+    internal_evaluate(context) {
+        const sym = this.let_value.getSymbolNoCheck(context);
+        const value = this.value.getValue(context);
+        sym.value = value;
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        optimizedCode.push(this);        
+    }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+    
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        let_value: this.let_value,
+        value: this.value
+        };
+    }
+   
+    static get dataTypeName() { return "AssignCommValueConst"; }
+
+    static fromJSON(data) {
+        return new AssignCommValueConst(
+            restoreDataType(data.let_value),
+            restoreDataType(data.value)
+        );
+     }    
+}
+regCode(AssignCommValueConst);
+
+
 class AssignCommValueValue extends Command {
     constructor(let_value, value) {
         super();
