@@ -207,6 +207,13 @@ export function test3() {
 
             if (isDebug) console.log(`${idx - 1}: ${com.toString(ctx)}`);
 
+            if (this.DEBUG) {
+              const current_len = stack.length;
+              if (current_len > prev_stack_len || com.modifiesStack)
+                console.log(` st[top] = ${stack[current_len - 1]}`);
+              prev_stack_len = current_len;
+            }
+
             this.index_comm = idx;
             com.evaluate(this);
 
@@ -217,13 +224,6 @@ export function test3() {
               this._commandsChanged = false;
             }
             idx = this.index_comm;
-
-            if (this.DEBUG) {
-              const current_len = stack.length;
-              if (current_len > prev_stack_len || com.modifiesStack)
-                console.log(` st[top] = ${stack[current_len - 1]}`);
-              prev_stack_len = current_len;
-            }
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
