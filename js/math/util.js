@@ -91,3 +91,41 @@ export class IndexedMap {
     return this.#store.length;
   }  
 }
+
+export class Stack {
+  #items = []; // Приватное свойство, чтобы никто не мог изменить массив напрямую
+
+  // Добавить элемент в стек
+  push(element) {
+    this.#items.push(element);
+  }
+
+  // Удалить и вернуть элемент со стекa (с проверкой)
+  pop() {
+    if (this.isEmpty()) {
+      throw new Error("Стек пуст! Невозможно выполнить pop().");
+    }
+    return this.#items.pop();
+  }
+
+  // Посмотреть верхний элемент без удаления
+  peek() {
+    if (this.isEmpty()) return undefined;
+    return this.#items[this.#items.length - 1];
+  }
+
+  // Проверить, пуст ли стек
+  isEmpty() {
+    return this.#items.length === 0;
+  }
+
+  // Получить размер стека
+  size() {
+    return this.#items.length;
+  }
+
+  // Очистить стек
+  clear() {
+    this.#items = [];
+  }
+}
