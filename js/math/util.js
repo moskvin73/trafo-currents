@@ -119,10 +119,7 @@ export class Stack {
     return this.#items.length === 0;
   }
 
-  // Получить размер стека
-  size() {
-    return this.#items.length;
-  }
+  get length() { return this.#items.length; }
 
   // Очистить стек
   clear() {

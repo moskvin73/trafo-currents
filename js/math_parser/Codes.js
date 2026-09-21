@@ -246,7 +246,7 @@ class ReportComm extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        const st_top = simulatedStack.at(-1);
+        const st_top = simulatedStack.peek();
         if (st_top.type === 'const') {
             optimizedCode.push(new ReportCommConst(this.astNode, st_top.value));
         }
@@ -2086,7 +2086,7 @@ export class CommandBuilder {
         }
         this.#currentCode = optimizedCode;
         if (this.#currentCode.length === 0) {
-            const v_top = simulatedStack.at(-1);
+            const v_top = simulatedStack.peek();
             if (v_top.type === 'const') this.#append(new OpConst(v_top.value));
         }
         else this.removeDuplicateLocations();    
