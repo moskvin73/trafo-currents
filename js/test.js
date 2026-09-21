@@ -151,7 +151,22 @@ export function test3() {
       endColumn: 1
     };
     return new IndependentSourceLocation(loc_data);
-  };  
+  };
+  
+  const incLoc = (loc) => {
+    const loc_data = {
+      locType: "IndependentLoc",
+      start: 0,
+      end: 0,
+      line: loc.line + 1,
+      startLineIdx: 0,
+      endLine: 1,
+      endLineIdx: 0,
+      column: loc.column,
+      endColumn: 1
+    };
+    return new IndependentSourceLocation(loc_data);
+  };
 
   // Снимаем квалификацию с помощью деструктуризации
   const symbols = new SymbolTableContext();
@@ -299,19 +314,20 @@ export function test3() {
     [4, new ComplexNumber(1, 2), 6],
     [7, 8, 9]
   ]);
+  const c_loc = loc(1);
   const builder = new Code.CommandBuilder();
   const command = builder
-  .location(loc(1))
+  .location(c_loc)
   .sub(m, op_c(new ComplexNumber(10, 10)))//, op_c(1))       // 10 + 1 = 11
-  .location(loc(2))
+  .location(c_loc = incLoc(c_loc))
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
   .report('astNode1')
   .pop()
-  .location(loc(3))
+  .location(c_loc = incLoc(c_loc))
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
-  .location(loc(4))
+  .location(c_loc = incLoc(c_loc))
   .sub(op_c(10), m)//op_c(1))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
