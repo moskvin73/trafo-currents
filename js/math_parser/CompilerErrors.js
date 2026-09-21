@@ -94,7 +94,7 @@ export class IndependentSourceLocation extends BaseLocation {
     };
   }
 
-  isInLine() { return this._startLine === this._endLine; }
+  isInLine() { return this.line === this.endLine; }
 
   toString() {
     return `строка ${this.line}, позиция ${this.column}`;
