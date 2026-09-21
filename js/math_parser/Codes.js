@@ -2144,7 +2144,7 @@ export class CommandBuilder {
                         if (simulatedStack.length > targetLength) {
                             // Стек переполнен относительно целевого состояния -> лишнее удаляем
                             while (simulatedStack.length > targetLength) {
-                                let c = imulatedStack.length - targetLength;
+                                let c = simulatedStack.length - targetLength;
                                 while (c-- > 0) simulatedStack.pop();
                             }
                         } else {
