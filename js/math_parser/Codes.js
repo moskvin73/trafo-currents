@@ -1338,8 +1338,6 @@ class BinCommOpOp extends BaseBinComm {
 class AssignCommValueConst extends Command {
     constructor(let_value, value) {
         super();
-        /*assertOperandVarable(let_value, 'let_value', 'AssignCommValueValue');
-        assertOperand(value, 'value', 'AssignCommValueValue');*/
         this.let_value = let_value;
         this.value = value;
     }
@@ -1378,7 +1376,6 @@ class AssignCommValueConst extends Command {
      }    
 }
 regCode(AssignCommValueConst);
-
 
 class AssignCommValueValue extends Command {
     constructor(let_value, value) {
