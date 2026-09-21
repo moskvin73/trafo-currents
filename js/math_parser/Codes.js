@@ -2122,7 +2122,7 @@ export class CommandBuilder {
         const optimizedCode = [];
         const simulatedStack = new Stack();
 
-        let loc; let s_len = 0; let c_len; error = false;
+        let loc; let s_len = 0; let c_len; errors = false;
         for (const comm of this.#currentCode) {
             if (comm instanceof LocationComm) loc = comm.loc;
             s_len = simulatedStack.length;
@@ -2159,7 +2159,7 @@ export class CommandBuilder {
                 }
             }
         }
-        if (this.error) return;
+        if (errors) return;
         this.#currentCode = optimizedCode;
         if (this.#currentCode.length === 0) {
             const v_top = simulatedStack.peek();
