@@ -1342,12 +1342,12 @@ class AssignCommValueConst extends Command {
         this.value = value;
     }
     
-    toString(context) { return `let_c ${this.let_value.toString(context)}, ${this.value.toString(context)}`; }
+    toString(context) { return `let_c ${this.let_value.toString(context)}, ${this.value}`; }
 
     internal_evaluate(context) {
         const sym = this.let_value.getSymbolNoCheck(context);
-        const value = this.value.getValue(context);
-        sym.value = value;
+        //const value = this.value.getValue(context);
+        sym.value = this.value;
     }
 
     foldConstants(optimizedCode, simulatedStack) {
