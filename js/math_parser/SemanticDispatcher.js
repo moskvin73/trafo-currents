@@ -227,7 +227,7 @@ export default class SemanticDispatcher {
 
     const currentName = getTypeNameString(currentTypeId);
     const targetName = getTypeNameString(targetTypeId);
-    throw new Error(`[Semantic Error]: Невозможно автоматически привести тип ${currentName} к ${targetName}`);
+    throw new Error(`Невозможно автоматически привести тип ${currentName} к ${targetName}`);
   }
 }
 
@@ -303,5 +303,5 @@ export function CastValue(targetType, valueToCast) {
 
     const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
     const name_targetType = getTypeNameString(targetType, REVERSE_TYPE_CLASSES);
-    this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
+    throw new Error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
 }
