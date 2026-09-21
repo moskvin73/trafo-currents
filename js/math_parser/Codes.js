@@ -2132,10 +2132,27 @@ export class CommandBuilder {
             } finally {
                 const len = comm.pushStackCount - comm.popStackCount;
                 if (simulatedStack.length === s_len) {
+                    // Команда вообще не трогала стек (сразу упала) -> эмулируем её влияние
                     let c = comm.popStackCount;
                     while (c-- > 0) simulatedStack.pop();
                     c = comm.pushStackCount;
                     while (c-- > 0) simulatedStack.push({ type: 'unknown' });
+                } else {
+                    const expectedDelta = comm.pushStackCount - comm.popStackCount;
+                    const targetLength = s_len + expectedDelta;
+                    if (simulatedStack.length !== targetLength) {
+                        if (simulatedStack.length > targetLength) {
+                            // Стек переполнен относительно целевого состояния -> лишнее удаляем
+                            while (simulatedStack.length > targetLength) {
+                                simulatedStack.pop();
+                            }
+                        } else {
+                            // На стеке не хватает элементов до целевого состояния -> добиваем unknown
+                            while (simulatedStack.length < targetLength) {
+                                simulatedStack.push({ type: 'unknown' });
+                            }
+                        }                        
+                    }
                 }
             }
         }
