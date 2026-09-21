@@ -1350,6 +1350,7 @@ class AssignCommValueConst extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({type: 'const', value: this.value});
         optimizedCode.push(this);        
     }
 
@@ -1394,12 +1395,14 @@ class AssignCommValueValue extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        /*if (this.value instanceof OpConst) {
+        if (this.value instanceof OpConst) {
             simulatedStack.push({type: 'const', value: this.value.value});
+            optimizedCode.push(new AssignCommValueConst(this.let_value, this.value.value));    
         }
-        else simulatedStack.push({ type: 'unknown' });*/
-        simulatedStack.push({ type: 'unknown' });
-        optimizedCode.push(this);        
+        else {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode.push(this);
+        }        
     }
 
     get pushStackCount() { return 1; }
