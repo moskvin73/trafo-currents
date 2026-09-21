@@ -823,11 +823,15 @@ export class MatrixComm extends Command {
         // За стартовую точку возьмём самый первый элемент матрицы [0][0].
         let targetSample = evaluatedElements[0][0];
 
-        for (const row of evaluatedElements) {
-            for (const cell of row) {
-                // Вызываем ваш диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
+        for (const [rowIndex, row] of evaluatedElements) {
+            for (const [colIndex, cell] of row) {
+                // Вызываем диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
                 // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
-                const { l } = dispatcher.promoteTypes(targetSample, cell);
+                try {
+                    const { l } = dispatcher.promoteTypes(targetSample, cell);
+                } catch (err) {
+                    throw new Error(`Элемент матрицы [${rowIndex}, ${colIndex}]: ${err.message}`);
+                }
                 targetSample = l; // Запоминаем текущий самый сильный объект-эталон
             }
         }
