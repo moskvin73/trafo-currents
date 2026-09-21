@@ -9,6 +9,7 @@ import * as AST from './math_parser/ASTNodes.js';
 import VarableCode from './varables/VarableCode.js';
 import * as Code from './math_parser/Codes.js';
 import { TYPE_REGISTRY } from './math_parser/SemanticDispatcher.js';
+import { Stack } from './math/util.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
@@ -164,7 +165,7 @@ export function test3() {
     // Контекст символов перименных
     scope_context: symbols,
     // Стек выполнения
-    evaluate_stack: [],
+    evaluate_stack: new Stack(),
     // Значение локации команды выполненя ((Измняется командами))
     evaluate_loc: null,
     // Текущий индекс командв (Измняется командами)
