@@ -840,13 +840,7 @@ export class MatrixComm extends Command {
         // приводим ВСЕ элементы к его типу через promoteTypes
         const finalElements = evaluatedElements.map(row =>
             row.map(cell => {
-                try {
-                    const { r } = dispatcher.promoteTypes(targetSample, cell);
-                    return r; // r — это наш cell, подтянутый диспетчером до уровня targetSample!
-                }
-                catch (err) { 
-                    return targetSample;
-                }
+                const { r } = dispatcher.promoteTypes(targetSample, cell);
             })
         );
         return new Matrix(finalElements);
