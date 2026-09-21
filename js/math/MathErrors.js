@@ -1,21 +1,22 @@
 export class ErrorMath extends TypeError {
     constructor(message) {
         super(message);
-        this.currentClassName = currentClassName;
         this.name = "ErrorMath";
+
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === ErrorMath) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "ErrorMath" напрямую.');
+        }
     }
 
     createMessages(funcGetTypeNameString) {
         if (funcGetTypeNameString === 'function')
-            return interanlcreateMessages(funcGetTypeNameString); 
-        return ''; 
+            return this.interanlcreateMessages(funcGetTypeNameString); 
+        return this.message; 
     }
-}
 
-export class ErrorCastMathTypeNoValue extends TypeError {
-    constructor(message, currentClassName) {
-        super(message);
-        this.currentClassName = currentClassName;
-        this.name = "ErrorCastMathTypeNoValue";
-    }
+    // Виртуальный метод, который должен быть переопределен в локальных классах
+    internalCreateMessages(funcGetTypeNameString) {
+        throw new Error('Метод internalCreateMessages() должен быть переопределен в подклассе.');
+    }    
 }
