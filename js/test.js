@@ -253,8 +253,7 @@ export function test3() {
         if (value !== undefined && value !== null) {
           const report = { node, value };
           this.report.push(report);
-          //console.log(`Отчёт: ${JSON.stringify(this.report.at(-1), null, 2)}`);
-        console.log(`Отчёт: ${report.node} = ${report.value}`);
+          console.log(`Отчёт: ${report.node} = ${report.value}`);
       }
     }
   };
