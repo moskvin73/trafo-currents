@@ -194,7 +194,11 @@ export default class MathType {
     const currentClassName = this.name;
 
     if (value === null || value === undefined) {
-      throw new TypeError(`[${currentClassName}]: Невозможно привести ${value} к типу ${currentClassName}.`);
+      throw new class extends ErrorMath {
+        getMes(func) {
+          return `Невозможно привести ${value} к типу ${func(currentClassName)}.`;
+        }
+      }(`[${currentClassName}]: Невозможно привести ${value} к типу ${currentClassName}.`);
     }
 
     // 1. Извлекаем ключ: для объектов — ссылка на класс-конструктор, для примитивов — typeof строка
