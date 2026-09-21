@@ -209,7 +209,7 @@ export function test3() {
 
             if (this.DEBUG) {
               const current_len = stack.length;
-              if (current_len > prev_stack_len || com.modifiesStack)
+              if (current_len > prev_stack_len)// || com.modifiesStack)
                 console.log(` st[top] = ${stack[current_len - 1]}`);
               prev_stack_len = current_len;
             }
