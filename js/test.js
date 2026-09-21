@@ -286,6 +286,13 @@ export function test3() {
     return builder.matrix(cont_row, count_col);
   };
 
+  const contextError = {
+    errors: [],
+    error(message, loc, severity = 'error') {
+      errors.push(`[${severity}]: ${loc ?? 'Unknown location'} S{message}`);
+    },
+  };
+
   // Создаём матрицу
   const m = builderMatrix([
     [1, 2, 3],
