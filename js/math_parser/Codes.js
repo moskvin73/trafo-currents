@@ -1346,7 +1346,6 @@ class AssignCommValueConst extends Command {
 
     internal_evaluate(context) {
         const sym = this.let_value.getSymbolNoCheck(context);
-        //const value = this.value.getValue(context);
         sym.value = this.value;
     }
 
