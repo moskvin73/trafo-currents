@@ -448,7 +448,11 @@ export class PopComm extends Command {
     toString(_context) { return `pop st[top]`; }
 
     internal_evaluate(context) {
-        context.last_popped = context.evaluate_stack.pop();
+        const stack = context.evaluate_stack;
+        if (stack.length > 0){
+            context.last_popped = stack.pop();
+        }
+        else throw new Error("Стек пуст! Невозможно выполнить pop().");
     }
 
     foldConstants(optimizedCode, simulatedStack) {
