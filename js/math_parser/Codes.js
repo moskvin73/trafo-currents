@@ -841,6 +841,7 @@ export class MatrixComm extends Command {
         const finalElements = evaluatedElements.map(row =>
             row.map(cell => {
                 const { r } = dispatcher.promoteTypes(targetSample, cell);
+                return r;
             })
         );
         return new Matrix(finalElements);
