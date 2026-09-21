@@ -198,7 +198,6 @@ export function test3() {
         if (isDebug) console.log('***start evaluate***');
 
         const stack = this.evaluate_stack;
-        let prev_stack_len = stack.length;
         const ctx = this.scope_context;
         try {
           let idx = this.index_comm;
@@ -208,20 +207,12 @@ export function test3() {
 
             if (isDebug) console.log(`${idx - 1}: ${com.toString(ctx)}`);
 
-            /*if (this.DEBUG) {
-              const current_len = stack.length;
-              if (current_len > prev_stack_len)
-                console.log(` st[top] = ${stack.peek()}`);
-              prev_stack_len = current_len;
-            }*/
-
             this.index_comm = idx;
             com.evaluate(this);
 
             if (this.DEBUG) {
               if (com.modifiesStack)
                 console.log(` st[top] = ${stack.peek()}`);
-              prev_stack_len = stack.length;
             }
 
             // Предпологается что при изминени кода меняется и индекс
