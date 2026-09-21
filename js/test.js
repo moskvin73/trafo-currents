@@ -315,10 +315,10 @@ export function test3() {
     [4, new ComplexNumber(1, 2), 6],
     [7, 8, 9]
   ]);
-  const c_loc = loc(1);
+  const c_loc = loc(0);
   const builder = new Code.CommandBuilder();
   const command = builder
-  .location(c_loc)
+  .location(incLoc(c_loc))
   .sub(m, op_c(new ComplexNumber(10, 10)))//, op_c(1))       // 10 + 1 = 11
   .location(incLoc(c_loc))
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
