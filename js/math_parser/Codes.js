@@ -2151,7 +2151,7 @@ export class CommandBuilder {
                             // На стеке не хватает элементов до целевого состояния -> добиваем unknown
                             while (simulatedStack.length < targetLength) {
                                 let c = targetLength - simulatedStack.length
-                                while (c-- < 0) simulatedStack.push({ type: 'unknown' });
+                                while (c-- > 0) simulatedStack.push({ type: 'unknown' });
                             }
                         }                        
                     }
