@@ -2122,15 +2122,16 @@ export class CommandBuilder {
         const optimizedCode = [];
         const simulatedStack = new Stack();
 
-        let loc; let s_len = 0;
+        let loc; let s_len = 0; let c_len;
         for (const comm of this.#currentCode) {
             if (comm instanceof LocationComm) loc = comm.loc;
             s_len = simulatedStack.length;
+            c_len = optimizedCode.length;
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
                 context?.error(err.message, loc);
             } finally {
-                const len = comm.pushStackCount - comm.popStackCount;
+                if (optimizedCode.length === c_len) optimizedCode.push(comm);
                 if (simulatedStack.length === s_len) {
                     // Команда вообще не трогала стек (сразу упала) -> эмулируем её влияние
                     let c = comm.popStackCount;
