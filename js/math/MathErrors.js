@@ -11,12 +11,12 @@ export class ErrorMath extends TypeError {
 
     createMessages(funcGetTypeNameString) {
         if (funcGetTypeNameString === 'function')
-            return this.interanlcreateMessages(funcGetTypeNameString); 
+            return this.getMes(funcGetTypeNameString); 
         return this.message; 
     }
 
     // Виртуальный метод, который должен быть переопределен в локальных классах
-    internalCreateMessages(funcGetTypeNameString) {
-        throw new Error('Метод internalCreateMessages() должен быть переопределен в подклассе.');
+    getMes(funcGetTypeNameString) {
+        throw new Error('Метод getMes() должен быть переопределен в подклассе.');
     }    
 }
