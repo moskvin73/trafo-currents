@@ -289,7 +289,7 @@ export function test3() {
   const contextError = {
     errors: [],
     error(message, loc, severity = 'error') {
-      errors.push(`[${severity}]: ${loc ?? 'Unknown location'} S{message}`);
+      console.log(`[${severity}]: ${loc ?? 'Unknown location'} S{message}`);
     },
   };
 
