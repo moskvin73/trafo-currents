@@ -4,7 +4,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { BaseLocation, restoreLocation } from './CompilerErrors.js';
-import { dispatcher } from './SemanticDispatcher.js';
+import { dispatcher, toParserBase } from './SemanticDispatcher.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
@@ -449,11 +449,7 @@ export class PopComm extends Command {
     toString(_context) { return `pop st[top]`; }
 
     internal_evaluate(context) {
-        const stack = context.evaluate_stack;
-        if (stack.length > 0){
-            context.last_popped = stack.pop();
-        }
-        else throw new Error("Стек пуст! Невозможно выполнить pop().");
+        context.evaluate_stack.pop();
     }
 
     foldConstants(optimizedCode, simulatedStack) {
@@ -904,7 +900,7 @@ class BaseUnComm extends Command {
         }
     }
 
-    operator(op) { throw new Error("[BaseUnComm]: Метод operator(op) не реализован."); }
+    operator(_op) { throw new Error("[BaseUnComm]: Метод operator(op) не реализован."); }
 
     commandName() { throw new Error("[BaseUnComm]: Метод commandName() не реализован."); }
 
@@ -925,12 +921,12 @@ class UnCommValue extends BaseUnComm {
     toString(context) { return `${this.commandName()} ${this.value}`; }
 
     internal_evaluate(context) {
-        context.evaluate_stack.push(this.operator(this.value.getValue(context)));
+        context.evaluate_stack.push(this.operator(toParserBase(this.value.getValue(context))));
     }
 
     foldConstants(optimizedCode, simulatedStack) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.operator(this.value.value)});
+            simulatedStack.push({type: 'const', value: this.operator(toParserBase(this.value.value))});
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
@@ -966,14 +962,14 @@ class UnCommOp extends BaseUnComm {
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack;
-        const op = stack.pop();
+        const op = toParserBase(stack.pop());
         stack.push(this.operator(op));
     }
 
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            const calc_v = this.operator(st_top.value);
+            const calc_v = this.operator(toParserBase(st_top.value));
             simulatedStack.push({type: 'const', value: calc_v});
         } else {
             simulatedStack.push({ type: 'unknown' });
