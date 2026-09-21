@@ -2117,13 +2117,27 @@ export class CommandBuilder {
         return this.isConstant ? [] : this.#currentCode;
     }
     
-    foldConstants() {
+    foldConstants(context) {
         if (!this.#currentCode || this.isConstant) return;
         const optimizedCode = [];
         const simulatedStack = new Stack();
 
+        let loc; let s_len = 0;
         for (const comm of this.#currentCode) {
-            comm.foldConstants(optimizedCode, simulatedStack);
+            if (comm instanceof LocationComm) loc = comm.loc;
+            s_len = simulatedStack.length;
+            try { comm.foldConstants(optimizedCode, simulatedStack); }
+            catch(err) {
+                context.error(err.message, loc);
+            } finally {
+                const len = comm.pushStackCount - comm.popStackCount;
+                if (simulatedStack.length === s_len) {
+                    let c = comm.popStackCount;
+                    while (c-- > 0) simulatedStack.pop();
+                    c = comm.pushStackCount;
+                    while (c-- > 0) simulatedStack.push({ type: 'unknown' });
+                }
+            }
         }
         this.#currentCode = optimizedCode;
         if (this.#currentCode.length === 0) {
