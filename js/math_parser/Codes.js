@@ -829,10 +829,10 @@ export class MatrixComm extends Command {
                 // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
                 try {
                     const { l } = dispatcher.promoteTypes(targetSample, cell);
+                    targetSample = l; // Запоминаем текущий самый сильный объект-эталон
                 } catch (err) {
                     throw new Error(`Элемент матрицы [${rowIndex}, ${colIndex}]: ${err.message}`);
                 }
-                targetSample = l; // Запоминаем текущий самый сильный объект-эталон
             }
         }
 
