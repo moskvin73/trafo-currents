@@ -210,7 +210,7 @@ export function test3() {
 
             if (this.DEBUG) {
               const current_len = stack.length;
-              if (current_len > prev_stack_len)// || com.modifiesStack)
+              if (current_len > prev_stack_len)
                 console.log(` st[top] = ${stack.peek()}`);
               prev_stack_len = current_len;
             }
