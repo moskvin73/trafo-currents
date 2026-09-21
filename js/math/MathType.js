@@ -216,7 +216,9 @@ export default class MathType {
 
     if (!convert) {
       const typeName = typeof value === 'object' ? value.constructor.name : typeof value;
-      throw new TypeError(`[${currentClassName}]: Тип "${typeName}" не поддерживается для приведения.`);
+      throw new class extends ErrorMath {
+        getMes(func) { return `Тип "${func(typeName)}" не поддерживается для приведения..`; }
+      }(`[${currentClassName}]: Тип "${typeName}" не поддерживается для приведения.`);
     }
 
     // 4. Вызываем конвертер и сразу возвращаем результат
