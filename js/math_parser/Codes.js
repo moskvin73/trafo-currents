@@ -1447,11 +1447,12 @@ class AssignCommValueOp extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            optimizedCode.push(new AssignCommValueValue(this.let_value, new OpConst(st_top)));
+            simulatedStack.push({type: 'const', value: st_top});
+            optimizedCode.push(new AssignCommValueConst(this.let_value, st_top));
         } else {
+            simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
         }
-        simulatedStack.push({ type: 'unknown' });
     }
 
     get pushStackCount() { return 1; }
