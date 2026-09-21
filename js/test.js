@@ -154,8 +154,19 @@ export function test3() {
   };
   
   const incLoc = (loc) => {
-    loc.line += 1;
-    return loc;
+    loc.line++;
+    const loc_data = {
+      locType: "IndependentLoc",
+      start: 0,
+      end: 0,
+      line: loc.line,
+      startLineIdx: 0,
+      endLine: 1,
+      endLineIdx: 0,
+      column: loc.column,
+      endColumn: 1
+    };
+    return new IndependentSourceLocation(loc_data);
   };
 
   // Снимаем квалификацию с помощью деструктуризации
