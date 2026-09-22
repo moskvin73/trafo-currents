@@ -48,7 +48,7 @@ export class Command {
             if (err instanceof ErrorBase)
                 throw new EvaluateError(err.message || String(err), context.evaluate_loc, { cause: err });
             else if (err instanceof EvaluateError)
-                throw new EvaluateError(err.message || String(err), err.location, { cause: err });
+                throw new EvaluateError(err.message || String(err), err.location ?? context.evaluate_loc, { cause: err });
             throw err;
         }
     }
