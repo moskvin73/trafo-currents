@@ -524,7 +524,7 @@ class PushCommConstLoc extends PushCommConst {
         this.loc = loc;
     }
 
-    commandName() { return 'push_loc'; }
+    commandName() { return `push ${this.loc},`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(new ValueLoc(this.value, this.loc));
@@ -617,7 +617,7 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
         this.loc = loc;
     }
 
-    commandName() { return 'push_loc'; }
+    commandName() { return `push ${this.loc},`; }
 
     internal_evaluate(context) {
         sym = context.scope_context.getSymbolById(this.id_name);
@@ -695,7 +695,7 @@ class PushCommVarbleGlobalLoc extends PushComm {
         this.loc = loc;
     }
 
-    commandName() { return 'push_loc'; }
+    commandName() { return `push ${this.loc},`; }
 
     internal_evaluate(context) {
         checkSymbol(this.symbol);
