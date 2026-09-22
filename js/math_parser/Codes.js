@@ -1610,8 +1610,8 @@ class AssignCommValueOp extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            simulatedStack.push({type: 'const', value: st_top});
-            optimizedCode.push(new AssignCommValueConst(this.let_value, st_top));
+            simulatedStack.push({type: 'const', value: st_top.value});
+            optimizedCode.push(new AssignCommValueConst(this.let_value, st_top.value));
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
