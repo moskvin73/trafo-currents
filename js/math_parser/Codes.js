@@ -840,7 +840,6 @@ class MatrixComm extends Command {
     toString(_context) { return `matrix ${this.cont_row}, ${this.count_col}`; }
 
     operand(stack) {
-        if (popStackCount === 0) return;
         let targetSample = stack.peek();
         let loc = null;
         const evaluatedElements = [];
