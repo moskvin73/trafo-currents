@@ -50,7 +50,7 @@ export class ErrorBase extends Error {
                 causeStack = String(currentCause);
             }
 
-            currentStack += `\n\nCaused by: ${causeStack}`;
+            currentStack = `\n\nCaused by: ${causeStack}`;
             currentCause = currentCause?.cause;
         }
 
