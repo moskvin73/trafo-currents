@@ -3,6 +3,7 @@ import BoolValue from '../math/BoolValue.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import Matrix from '../math/Matrix.js';
+export { ErrorBase } from '../math/MathErrors.js'
 
 const TYPE_CLASSES = {
   'bool': BoolValue,
@@ -54,7 +55,7 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
 export function getTypeByTypeNameForParser(parserTypeName) {
     const targetType = TYPE_CLASSES[parserTypeName];
     if (!targetType) {
-      throw new Error(`Тип данных "${parserTypeName}" не зарегистрирован в ядре калькулятора.`);
+      throw new ErrorBase(`Тип данных "${parserTypeName}" не зарегистрирован в ядре калькулятора.`);
     }
     return targetType;
 }
@@ -233,7 +234,7 @@ export default class SemanticDispatcher {
 
     const currentName = getTypeNameString(currentTypeId);
     const targetName = getTypeNameString(targetTypeId);
-    throw new Error(`Невозможно автоматически привести тип "${currentName}" значение: (${value}) к типу "${targetName}"`);
+    throw new ErrorBase(`Невозможно автоматически привести тип "${currentName}" значение: (${value}) к типу "${targetName}"`);
   }
 }
 
@@ -309,5 +310,5 @@ export function CastValue(targetType, valueToCast) {
 
     const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
     const name_targetType = getTypeNameString(targetType, REVERSE_TYPE_CLASSES);
-    throw new Error(context, `Невозможно привести тип "${name_sourceType}" значение: (${valueToCast}) к типу "${name_targetType}".`);
+    throw new ErrorBase(context, `Невозможно привести тип "${name_sourceType}" значение: (${valueToCast}) к типу "${name_targetType}".`);
 }
