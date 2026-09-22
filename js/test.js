@@ -366,8 +366,8 @@ export function test3() {
   ]);
   const builder = new Code.CommandBuilder();
   const command = builder
-  .assign(op_n("pi"), op_c(Math.PI))
-  .sub(m, new Code.CommandBuilder().location(incLoc(c_loc)).push(new ComplexNumber(10, 10)))
+  .assign(op_n("z"), op_c(15))
+  .sub(m, new Code.CommandBuilder().location(incLoc(c_loc)).push(acquireVar(z)))
   .location(incLoc(c_loc))
   .sub(Code.self, op_c(-100))
   .neg(Code.self)
