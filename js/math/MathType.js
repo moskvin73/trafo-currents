@@ -29,7 +29,8 @@ export default class MathType {
     throw new class extends ErrorMath {
         getMes(func) { return `Метов "${methodName}" отсутствует для типа "${func(this)}".`; }
       }(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
-
+  }
+      
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
