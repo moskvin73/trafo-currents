@@ -525,6 +525,7 @@ class ValueLoc {
 
 class TopStackToValueLoc extends Command {
     constructor(loc) {
+        super();
         assertLocation(loc, "loc", "TopStackToValueLoc");
         this.loc = loc;
     }
