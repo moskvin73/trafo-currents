@@ -623,6 +623,7 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
         checkSymbolAll(sym);
         context.evaluate_stack.push(new ValueLoc(sym.value, this.loc));
     }
+    
     toJSON() {
         return {
             ...super.toJSON(),
