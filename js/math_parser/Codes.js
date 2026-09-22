@@ -479,7 +479,7 @@ class PushCommConst extends PushComm {
         this.value = value;
     }
 
-    toString(_context) { return `${commandName()} ${this.value}`; }
+    toString(_context) { return `${this.commandName()} ${this.value}`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(this.value);
@@ -574,7 +574,7 @@ class PushCommVarbleLocal extends PushComm {
         this.id_name = id_name;
     }
 
-    toString(context) { return `${commandName()} ${context.getNameById(this.id_name)}`; }
+    toString(context) { return `${this.commandName()} ${context.getNameById(this.id_name)}`; }
 
     internal_evaluate(context) {
         sym = context.scope_context.getSymbolById(this.id_name);
@@ -614,7 +614,7 @@ class PushCommVarbleGlobal extends PushComm {
         this.symbol = sym;
     }
 
-    toString(_context) { return `${commandName()} ${this.symbol.name}`; }
+    toString(_context) { return `${this.commandName()} ${this.symbol.name}`; }
 
     internal_evaluate(context) {
         checkSymbol(this.symbol);
