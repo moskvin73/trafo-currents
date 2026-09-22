@@ -26,7 +26,7 @@ export class ErrorBase extends Error {
         // 3. Динамически переопределяем свойство stack
         Object.defineProperty(this, 'stack', {
             get() {
-                return this.#getFullStack();
+                return this.#rawStack;//this.#getFullStack();
             },
             configurable: true,
             enumerable: false
