@@ -570,6 +570,7 @@ function checkSymbolAll(sym) {
 
 class PushCommVarbleLocal extends PushComm {
     constructor(id_name) {
+        super();
         assertInteger(id_name, 'id_name', 'PushCommVarbleLocal');
         this.id_name = id_name;
     }
@@ -607,6 +608,23 @@ class PushCommVarbleLocal extends PushComm {
     }
 }
 regCode(PushCommVarbleLocal);
+
+class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
+    constructor(id_name, loc) {
+        super(loc);
+        assertLocation(loc, "loc", "PushCommVarbleLocalLoc");
+        this.loc = loc;
+    }
+
+    commandName() { return 'push_loc'; }
+
+    internal_evaluate(context) {
+        sym = context.scope_context.getSymbolById(this.id_name);
+        checkSymbolAll(sym);
+        context.evaluate_stack.push(new ValueLoc(sym.value, this.loc));
+    }
+
+}
 
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
