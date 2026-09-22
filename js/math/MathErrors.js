@@ -16,7 +16,7 @@ export class ErrorMath extends TypeError {
     }
 
     // Виртуальный метод, который должен быть переопределен в локальных классах
-    getMes(funcGetTypeNameString) {
+    getMes(_funcGetTypeNameString) {
         throw new Error('Метод getMes() должен быть переопределен в подклассе.');
     }    
 }
