@@ -1,5 +1,12 @@
 
-export class BaseLocation {}
+export class BaseLocation {
+  constructor() {
+    // Защита от создания экземпляра самого базового класса
+    if (new.target === BaseLocation) {
+        throw new TypeError('Нельзя создавать экземпляры базового класса "Command" напрямую.');
+    }
+  }
+}
 /**
  * Класс, описывающий точную координату в исходном коде.
  */
