@@ -4,11 +4,11 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { BaseLocation, restoreLocation } from './CompilerErrors.js';
-import { dispatcher, toParserBase } from './SemanticDispatcher.js';
+import { dispatcher, toParserBase, getTypeNameString } from './SemanticDispatcher.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
-import { ErrorBase } from '../math/MathErrors.js'
+import { ErrorBase, ErrorMath } from '../math/MathErrors.js'
 
 export class EvaluateError extends ErrorBase {
   constructor(message, loc, options) {
@@ -47,7 +47,9 @@ export class Command {
         {
             if (err instanceof EvaluateError)
                 throw new EvaluateError(err.message || String(err), err.location ?? context.evaluate_loc, { cause: err });
-            else if (err instanceof ErrorBase)
+            if (err instanceof ErrorMath)
+                throw new EvaluateError(err.getMes(getTypeNameString) || String(err), context.evaluate_loc, { cause: err });
+            if (err instanceof ErrorBase)
                 throw new EvaluateError(err.message || String(err), context.evaluate_loc, { cause: err });
             throw err;
         }
