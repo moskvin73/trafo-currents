@@ -8,21 +8,54 @@ export class ErrorBase extends Error {
             super(messageOrOptions, options);
         }        
         this.name = "ErrorBase";
-    }
 
-    // Переопределяем геттер stack для вывода всей цепочки
-    get stack() {
-        let fullStack = super.stack;
+        // Сохраняем оригинальный стек, сгенерированный V8 для этого инстанса
+        // (убираем вызовы конструкторов из самого стека для чистоты)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
+
+        // 2. Явно переопределяем свойство stack на самом экземпляре
+        Object.defineProperty(this, 'stack', {
+            get() {
+                // Берем «родной» стек, который мы сохранили или который был создан при super()
+                // Свойства, созданные captureStackTrace, лежат на самом объекте, поэтому временно 
+                // скрываем геттер, чтобы получить оригинальную строку.
+                // Но проще и надежнее сохранить оригинальный стек в скрытое поле при конструировании:
+                return this.#getFullStack();
+            },
+            configurable: true,
+            enumerable: false
+        });        
+    }
+    
+    // Приватный метод для сборки цепочки
+    #getFullStack() {
+        // Чтобы не зациклиться, берем дескриптор оригинального стека, 
+        // но так как мы переопределили hidden поле, проще сразу сохранить его в конструкторе.
+        // Ниже чистая реализация без скрытых полей, использующая shadow-копию:
+        
+        let currentStack = this.#getRawStack();
         let currentCause = this.cause;
 
-        // Рекурсивно собираем стеки всех причин
         while (currentCause) {
-            fullStack += `\n\nCaused by: ${currentCause.stack || currentCause}`;
+            const causeStack = currentCause.stack || String(currentCause);
+            currentStack += `\n\nCaused by: ${causeStack}`;
             currentCause = currentCause.cause;
         }
 
-        return fullStack;
-    }    
+        return currentStack;
+    }
+
+    #getRawStack() {
+        // Получаем чистый стек без учета нашего геттера
+        const dummy = new Error();
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(dummy, this.constructor);
+        }
+        // Возвращаем стек, который был бы у ошибки по умолчанию
+        return Object.getOwnPropertyDescriptor(this, '_rawStack')?.value || super.stack || '';
+    }
 }
 
 export class ErrorMath extends ErrorBase {
