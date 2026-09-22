@@ -530,6 +530,21 @@ class PushCommConstLoc extends PushCommConst {
     foldConstants(optimizedCode, simulatedStack) {
         simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc)});
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            loc: this.loc
+        };
+    }
+
+    static get dataTypeName() { return "PushCommConst"; }
+
+    static fromJSON(data) {
+        return new PushCommConst(
+            restoreLocation(data.loc)
+        );
+    }    
 }
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
