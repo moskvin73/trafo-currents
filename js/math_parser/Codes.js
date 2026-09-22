@@ -464,7 +464,7 @@ class PopComm extends Command {
 regCode(PopComm);
 
 function outValue(value) {
-    return typeof typeRef === 'string' ? `"${value}"` : value;
+    return typeof value === 'string' ? `"${value}"` : value;
 }
 
 //#region PUSH
