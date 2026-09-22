@@ -11,6 +11,11 @@ const TYPE_CLASSES = {
   'matrix':  Matrix
 };
 
+const STRING_YO_REF = {
+  'boolean': BoolValue,
+  'number': RealNumber,
+};
+
 const REVERSE_TYPE_CLASSES = new Map(
   Object.entries(TYPE_CLASSES).map(([name, ClassRef]) => [ClassRef, name])
 );
@@ -29,7 +34,8 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
 
   // 2. Если это уже строка (например, 'number', 'boolean', 'string')
   if (typeof typeRef === 'string') {
-    return reverseMap.get(typeRef) || 'unknown_class';
+      const real_ref = STRING_YO_REF.get(typeRef);
+      return real_ref ? reverseMap.get(real_ref) : typeRef;
   }
 
   // 3. Если это функция-конструктор (ваш класс типа Matrix, ComplexNumber и т.д.)
