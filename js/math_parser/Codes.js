@@ -2300,9 +2300,11 @@ export class CommandBuilder {
             try { comm.foldConstants(optimizedCode, simulatedStack); }
             catch(err) {
                 if (err instanceof EvaluateError)
-                    context?.error(err.message, err.location ?? loc, err);
+                    context?.error(err.message || String(err), err.location ?? loc, err);
+                else if (err instanceof ErrorMath)
+                    context?.error(err.getMes(getTypeNameString) || String(err), err.location ?? loc, err);
                 else if (err instanceof ErrorBase)
-                    context?.error(err.message, loc, err);
+                    context?.error(err.message || String(err), loc, err);
                 else throw err;
                 errors = true;
                 if (optimizedCode.length === c_len) optimizedCode.push(comm);
