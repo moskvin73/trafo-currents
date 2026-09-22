@@ -813,7 +813,7 @@ export class MatrixComm extends Command {
                     const { l } = dispatcher.promoteTypes(targetSample, cell);
                     targetSample = l; // Запоминаем текущий самый сильный объект-эталон
                 } catch (err) {
-                    throw new Error(`Элемент матрицы [${rowIndex + 1}, ${colIndex + 1}]. ${err.message}`);
+                    throw new ErrorBase(`Элемент матрицы [${rowIndex + 1}, ${colIndex + 1}]. ${err.message}`);
                 }
             }
         }
