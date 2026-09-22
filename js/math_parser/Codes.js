@@ -518,7 +518,9 @@ class ValueLoc {
     constructor(value, loc) {
         this.value = value;
         this.loc = loc;
-    }    
+    }
+    
+    toString() { return `${this.loc}, ${this.value}`; }
 }
 
 class PushCommConstLoc extends PushCommConst {
