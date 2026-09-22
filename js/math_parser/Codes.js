@@ -8,8 +8,9 @@ import { dispatcher, toParserBase } from './SemanticDispatcher.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
+export { ErrorBase } from '../math/MathErrors.js'
 
-export class EvaluateError extends Error {
+export class EvaluateError extends ErrorBase {
   constructor(message, loc) {
     super(message);
     this.name = "EvaluateError";
@@ -17,7 +18,7 @@ export class EvaluateError extends Error {
   }
 }
 
-class UserError extends Error {
+class UserError extends ErrorBase {
   constructor(message) {
     super(message);
     this.name = "UserError";
@@ -30,27 +31,6 @@ export class Command {
         if (new.target === Command) {
             throw new TypeError('Нельзя создавать экземпляры базового класса "Command" напрямую.');
         }
-
-        /*
-        // Проверяем, переопределен ли метод в дочернем классе
-        if (this.toString === Command.prototype.toString) {
-            throw new TypeError(`Класс "${new.target.name}" должен переопределить метод toString(context).`);
-        }
-
-        // Проверяем количество аргументов (сигнатуру)
-        if (this.toString.length !== 1) {
-            throw new TypeError(`Метод toString в классе "${new.target.name}" должен принимать ровно 1 аргумент (context).`);
-        }        
-
-        // Проверяем, переопределен ли метод в дочернем классе
-        if (this.internal_evaluate === Command.prototype.internal_evaluate) {
-            throw new TypeError(`Класс "${new.target.name}" должен переопределить метод internal_evaluate(context).`);
-        }
-
-        // Проверяем количество аргументов (сигнатуру)
-        if (this.internal_evaluate.length !== 1) {
-            throw new TypeError(`Метод internal_evaluate в классе "${new.target.name}" должен принимать ровно 1 аргумент (context).`);
-        }*/        
     }
 
     // Дефолтная реализация
@@ -65,7 +45,9 @@ export class Command {
         }
         catch(err)
         {
-            throw new EvaluateError(err.message || String(err), context.evaluate_loc);
+            if (err instanceof ErrorBase)
+                throw new EvaluateError(err.message || String(err), context.evaluate_loc);
+            else throw err;
         }
     }
  
