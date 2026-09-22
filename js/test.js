@@ -343,6 +343,7 @@ export function test3() {
         .push(row[j], loc);
       }
     }
+    builder.location(incLoc(loc));
     return builder.matrix(cont_row, count_col);
   };
 
