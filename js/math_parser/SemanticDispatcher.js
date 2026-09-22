@@ -11,7 +11,7 @@ const TYPE_CLASSES = {
   'matrix':  Matrix
 };
 
-const STRING_YO_REF = {
+const STRING_TO_REF = {
   'boolean': BoolValue,
   'number': RealNumber,
 };
@@ -34,7 +34,7 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
 
   // 2. Если это уже строка (например, 'number', 'boolean', 'string')
   if (typeof typeRef === 'string') {
-      const real_ref = STRING_YO_REF.get(typeRef);
+      const real_ref = STRING_TO_REF.get(typeRef);
       return real_ref ? reverseMap.get(real_ref) : typeRef;
   }
 
