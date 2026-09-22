@@ -22,12 +22,13 @@ export default class MathType {
 
   // Универсальный хелпер для генерации ошибок
   #notImplemented(methodName) {
-    throw new Error(`[MathType]: Метод ${methodName} не реализован в классе ${this.constructor.name}`);
+    throw new Error(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
   }
 
   #notImplementedMath(methodName) {
-    throw new Error(`[MathType]: Метод ${methodName} не реализован в классе ${this.constructor.name}`);
-  }
+    throw new class extends ErrorMath {
+        getMes(func) { return `Метов ${methodName} отсутствует для класа ${func(this)}.`; }
+      }(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
 
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
