@@ -468,8 +468,6 @@ class PushComm extends Command {
 
     get popStackCount() { return 0; }
 
-    operator(_op) { throw new Error("[PushComm]: Метод operator(op) не реализован."); }
-
     commandName() { return 'push'; }    
 }
 
@@ -514,16 +512,24 @@ class ValueLoc {
     constructor(value, loc) {
         this.value = value;
         this.loc = loc;
-    }
+    }    
 }
 
 class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
+        super(value);
         assertLocation(loc, "loc", "PushCommConstLoc");
-        super(new ValueLoc(value, loc));
     }
 
-    toString(_context) { return `push_loc ${this.value}`; }
+    commandName() { return 'pus_loc'; }
+
+    internal_evaluate(context) {
+        context.evaluate_stack.push(new ValueLoc(this.value, this.loc));
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc)});
+    }
 }
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
