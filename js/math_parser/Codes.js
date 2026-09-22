@@ -520,7 +520,7 @@ class ValueLoc {
         this.loc = loc;
     }
     
-    toString() { return `[${this.loc}], ${this.value}`; }
+    toString() { return `[${this.loc}], ${outValue(this.value)}`; }
 }
 
 class TopStackToValueLoc extends Command {
