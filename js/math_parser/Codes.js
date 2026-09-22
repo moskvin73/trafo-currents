@@ -2227,7 +2227,7 @@ export class CommandBuilder {
         this.#currentCode = this.#currentCode.filter((item, index, arr) => {
             // Если это не целевой тип, просто оставляем элемент
             if (!(item instanceof LocationComm)) return true; 
-            return !(arr[index - 1] instanceof LocationComm);
+            return !(arr[index + 1] instanceof LocationComm);
         });
     }
 }
