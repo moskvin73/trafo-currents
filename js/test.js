@@ -337,7 +337,10 @@ export function test3() {
     for (let i = cont_row - 1; i >= 0; i--) {
       const row = matrix[i];
       for (let j = count_col - 1; j >= 0; j--) {
-        builder.push(row[j], incLoc(c_loc));
+        const loc = incLoc(c_loc);
+        builder
+        .location(loc)
+        .push(row[j], loc);
       }
     }
     return builder.matrix(cont_row, count_col);
