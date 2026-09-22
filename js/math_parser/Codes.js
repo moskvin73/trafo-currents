@@ -861,32 +861,6 @@ class MatrixComm extends Command {
             }
             evaluatedElements.push(row); 
         }
-        /*for (let i = 0; i < this.cont_row; i++) {
-            const row = []; 
-            for (let j = 0; j < this.count_col; j++) {
-                const value = stack.pop();
-                row.push(value);
-            }
-            evaluatedElements.push(row); 
-        }*/        
-        // Сначала найдём базовый "эталонный" тип, к которому нужно привести всю матрицу.
-        // Мы просто пройдёмся по всем элементам и будем последовательно вызывать promoteTypes.
-        // За стартовую точку возьмём самый первый элемент матрицы [0][0].
-        //let targetSample = evaluatedElements[0][0];
-
-        /*for (const [rowIndex, row] of evaluatedElements.entries()) {
-            for (const [colIndex, cell] of row.entries()) {
-                // Вызываем диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
-                // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
-                try {
-                    const { l } = dispatcher.promoteTypes(targetSample, cell);
-                    targetSample = l; // Запоминаем текущий самый сильный объект-эталон
-                } catch (err) {
-                    throw new ErrorBase(`Элемент матрицы [${rowIndex + 1}, ${colIndex + 1}]. ${err.message}`, { cause: err });
-                }
-            }
-        }*/
-
         // Теперь, когда targetSample гарантированно имеет самый высокий ранг в этой матрице,
         // приводим ВСЕ элементы к его типу через promoteTypes
         const finalElements = evaluatedElements.map(row =>
