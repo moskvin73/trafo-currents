@@ -523,6 +523,24 @@ class ValueLoc {
     toString() { return `${this.loc}, ${this.value}`; }
 }
 
+class TopStackToValueLoc extends Command {
+    constructor(loc) {
+        assertLocation(loc, "loc", "TopStackToValueLoc");
+        this.loc = loc;
+    }
+
+    toString(_context) { return `top_to_loc [${this.loc}]`; }
+
+    internal_evaluate(context) {
+        const st_top = context.evaluate_stack.pop();
+        if (st_top instanceof ValueLoc)
+            context.evaluate_stack.push(st_top);
+        else    
+            context.evaluate_stack.push(new ValueLoc(st_top, this.loc));
+    }
+
+}
+
 class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
         super(value);
