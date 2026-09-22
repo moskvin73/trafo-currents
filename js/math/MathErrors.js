@@ -1,13 +1,13 @@
 export class ErrorBase extends Error {
-    constructor(message) {
-        super(message);
+    constructor(message, options) {
+        super(message, options);
         this.name = "ErrorBase";
     }
 }
 
 export class ErrorMath extends ErrorBase {
-    constructor(message) {
-        super(message);
+    constructor(message, options) {
+        super(message, options);
         this.name = "ErrorMath";
 
         // Защита от создания экземпляра самого базового класса
