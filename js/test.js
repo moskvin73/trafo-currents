@@ -340,7 +340,8 @@ export function test3() {
         const loc = incLoc(c_loc);
         builder
         .location(loc)
-        .push(row[j], loc);
+        .push(row[j])
+        .topToLoc(loc);
       }
     }
     return builder
