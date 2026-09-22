@@ -136,6 +136,25 @@ export function test2() {
   }    
 }
 
+function getFirstStackTraceLine(err) {
+  if (!err || !err.stack) return '';
+  
+  // Разбиваем стек на отдельные строки
+  const lines = err.stack.split('\n');
+  
+  // Ищем первую строку, которая содержит двоеточие со строкой/колонкой (типично для путей файлов)
+  // и при этом НЕ является заголовком ошибки (исключаем строки без структуры вызова)
+  for (let line of lines) {
+    line = line.trim();
+    // Проверяем наличие паттерна ссылки (например, .js:237:11 или html:1160)
+    if (/\.(js|ts|html?|php)[^:\n]*:\d+/i.test(line) || line.includes('://')) {
+      return line;
+    }
+  }
+  
+  return '';
+}
+
 export function test3() {
 
   const loc = (line, col =  1) => {
@@ -241,7 +260,7 @@ export function test3() {
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
-            console.log(err.stack);
+            console.log(getFirstStackTraceLine(err));
             console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}`);
           }
           else throw err;
