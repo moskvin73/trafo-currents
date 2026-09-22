@@ -29,7 +29,7 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
 
   // 2. Если это уже строка (например, 'number', 'boolean', 'string')
   if (typeof typeRef === 'string') {
-    return typeRef;
+    return reverseMap.get(typeRef) || 'unknown_class';
   }
 
   // 3. Если это функция-конструктор (ваш класс типа Matrix, ComplexNumber и т.д.)
