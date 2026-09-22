@@ -2161,8 +2161,8 @@ export class CommandBuilder {
     // Вспомогательный метод для объединения текущего кода с новым
     #append(newCode) {
         if (this.#currentCode === null) {
-            /*if (newCode instanceof Command) this.#currentCode = [newCode];
-            else*/ this.#currentCode = newCode; 
+            if (newCode instanceof Command) this.#currentCode = [newCode];
+            else this.#currentCode = newCode; 
         } else {
             const result = unionCommands(this.#currentCode, newCode);
             this.#currentCode = result.commands;
