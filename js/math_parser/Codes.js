@@ -144,7 +144,7 @@ function assertLocation(value, paramName, context) {
         throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс BaseLocation. Получено: ${value}`);
 }
 
-export class LocationComm extends Command {
+class LocationComm extends Command {
     constructor(loc) {
         super();
         assertLocation(loc, 'loc', 'LocationComm');
@@ -261,7 +261,7 @@ class ReportComm extends Command {
 regCode(ReportComm);
 //#endregion REPORT
 
-export class ErrorComm extends Command {
+class ErrorComm extends Command {
     constructor(msg) {
         super();
         assertString(msg, 'msg', 'ErrorComm');
@@ -297,7 +297,7 @@ export class ErrorComm extends Command {
 }
 regCode(ErrorComm);
 
-export class IFComm extends Command {
+class IFComm extends Command {
     constructor(len_code_false) {
         super();
     
@@ -337,7 +337,7 @@ export class IFComm extends Command {
 }
 regCode(IFComm);
 
-export class GotoComm extends Command {
+class GotoComm extends Command {
     constructor(len_code) {
         super();
         assertInteger(len_code, 'len_code', 'IGotoComm');
@@ -371,7 +371,7 @@ export class GotoComm extends Command {
 }
 regCode(GotoComm);
 
-export class DefineVarableComm extends Command {
+class DefineVarableComm extends Command {
     constructor(funcId, commands, paramsCount, localsCount) {
         super();
         assertInteger(funcId, 'funcId', 'DefineVarableComm');
@@ -427,7 +427,7 @@ export class DefineVarableComm extends Command {
 }
 regCode(DefineVarableComm);
 
-export class PopComm extends Command {
+class PopComm extends Command {
     constructor(value) {
         super();
     }
@@ -469,7 +469,7 @@ class PushComm extends Command {
     get popStackCount() { return 0; }
 }
 
-export class PushCommConst extends PushComm {
+class PushCommConst extends PushComm {
     constructor(value) {
         super();
         this.value = value;
@@ -523,7 +523,7 @@ function checkSymbolAll(sym) {
     checkSymbol(sym);
 }
 
-export class PushCommVarbleLocal extends PushComm {
+class PushCommVarbleLocal extends PushComm {
     constructor(id_name) {
         assertInteger(id_name, 'id_name', 'PushCommVarbleLocal');
         this.id_name = id_name;
@@ -563,7 +563,7 @@ export class PushCommVarbleLocal extends PushComm {
 }
 regCode(PushCommVarbleLocal);
 
-export class PushCommVarbleGlobal extends PushComm {
+class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
         checkSymbolNull(sym);
         this.symbol = sym;
@@ -783,7 +783,7 @@ function assertOperandVarableGlobal(value, paramName, context) {
 }
 //#endregion CONST_VAR 
 
-export class MatrixComm extends Command {
+class MatrixComm extends Command {
     constructor(cont_row, count_col) {
         super();
         assertUnsignedInteger(cont_row, 'cont_row', 'MatrixComm');
@@ -1484,7 +1484,7 @@ function isNumberType(obj) {
     return false;
 }
 
-export class IndexRowComm extends Command {
+class IndexRowComm extends Command {
     constructor() {
         super();
     }
@@ -1529,7 +1529,7 @@ export class IndexRowComm extends Command {
     get popStackCount() { return 2; }
 }
 
-export class AssignIndexRowComm extends Command {
+class AssignIndexRowComm extends Command {
     constructor() {
         super();
     }
@@ -1547,7 +1547,7 @@ export class AssignIndexRowComm extends Command {
     get popStackCount() { return 3; }   
 }
 
-export class IndexMatrixComm extends Command {
+class IndexMatrixComm extends Command {
     constructor() {
         super();
     }
@@ -1584,7 +1584,7 @@ export class IndexMatrixComm extends Command {
     get popStackCount() { return 3; }   
 }
 
-export class AssignIndexMatrixComm extends Command {
+class AssignIndexMatrixComm extends Command {
     constructor() {
         super();
     }
