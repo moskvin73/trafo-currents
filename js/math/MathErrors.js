@@ -1,6 +1,12 @@
 export class ErrorBase extends Error {
-    constructor(message, options) {
-        super(message, options);
+    constructor(messageOrOptions, options) {
+        // Если первый аргумент — это объект с полем cause (вызов без строки сообщения)
+        if (typeof messageOrOptions === 'object' && messageOrOptions !== null && 'cause' in messageOrOptions) {
+            super(messageOrOptions.message || "", messageOrOptions);
+        } else {
+            // Стандартный вызов: super(message, options)
+            super(messageOrOptions, options);
+        }        
         this.name = "ErrorBase";
     }
 }
