@@ -379,7 +379,7 @@ export function test3() {
   .location(incLoc(c_loc))
   .sub(op_c(10), op_c(1))   
   .sub(Code.self, op_c(-100)) 
-  .neg(Code.self)
+  .neg(true)
   .add(op_n("pi"), Code.self) 
   .assign(op_n("pi"), Code.self)
   .report('astNode2')
