@@ -58,7 +58,7 @@ export default class MathType {
   // ==========================================
   // АБСТРАКТНАЯ БАЗОВАЯ АРИФМЕТИКА
   // ==========================================
-  negate() { this.#notImplementedMath('-'); }
+  negate() { this.#notImplementedMath('- (унарный)'); }
 
   add(other) { this.#notImplementedMath('+'); }
 
