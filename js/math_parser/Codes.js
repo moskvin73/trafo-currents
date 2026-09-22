@@ -11,8 +11,8 @@ import { Stack }  from '../math/util.js';
 import { ErrorBase } from '../math/MathErrors.js'
 
 export class EvaluateError extends ErrorBase {
-  constructor(message, loc) {
-    super(message);
+  constructor(message, loc, options) {
+    super(message, options);
     this.name = "EvaluateError";
     this.location = loc;
   }
@@ -46,7 +46,7 @@ export class Command {
         catch(err)
         {
             if (err instanceof ErrorBase)
-                throw new EvaluateError(err.message || String(err), context.evaluate_loc);
+                throw new EvaluateError(err.message || String(err), context.evaluate_loc, { cause: err });
             throw err;
         }
     }
