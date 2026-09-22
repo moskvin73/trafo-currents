@@ -538,14 +538,16 @@ class PushCommConstLoc extends PushCommConst {
         };
     }
 
-    static get dataTypeName() { return "PushCommConst"; }
+    static get dataTypeName() { return "PushCommConstLoc"; }
 
     static fromJSON(data) {
-        return new PushCommConst(
+        return new PushCommConstLoc(
+            restoreDataType(data.value),
             restoreLocation(data.loc)
         );
     }    
 }
+regCode(PushCommConstLoc);
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
