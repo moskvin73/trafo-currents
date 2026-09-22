@@ -532,13 +532,26 @@ class TopStackToValueLoc extends Command {
     toString(_context) { return `top_to_loc [${this.loc}]`; }
 
     internal_evaluate(context) {
-        const st_top = context.evaluate_stack.pop();
+        const stack = context.evaluate_stack;
+        const st_top = stack.pop();
         if (st_top instanceof ValueLoc)
-            context.evaluate_stack.push(st_top);
+            stack.push(st_top);
         else    
-            context.evaluate_stack.push(new ValueLoc(st_top, this.loc));
+            stack.push(new ValueLoc(st_top, this.loc));
     }
 
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.pop();
+        if (st_top.type === 'const') {
+            if (st_top instanceof ValueLoc)
+                stack.push({type: 'const', value: st_top});
+            else    
+                stack.push({type: 'const', value: new ValueLoc(st_top, this.loc)});
+        } else {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode.push(this);
+        }
+    }
 }
 
 class PushCommConstLoc extends PushCommConst {
