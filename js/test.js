@@ -367,7 +367,7 @@ export function test3() {
   const builder = new Code.CommandBuilder();
   const command = builder 
   .push(15)
-  .assign(op_n("z"),Code.self))
+  .assign(op_n("z"),Code.self)
   .sub(m, new Code.CommandBuilder().location(incLoc(c_loc)).push_gsym(acquireVar(z)))
   .location(incLoc(c_loc))
   .sub(Code.self, op_c(-100))
