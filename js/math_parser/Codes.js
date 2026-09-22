@@ -506,6 +506,30 @@ class PushCommConst extends PushComm {
 }
 regCode(PushCommConst);
 
+class ValueLoc {
+    constructor(value, loc) {
+        this.value = value;
+        this.loc = loc;
+    }
+}
+
+class PushCommConst extends PushCommConstLoc {
+    constructor(value, loc) {
+        super(value);
+        this.loc = loc;
+    }
+
+    toString(_context) { return `push_loc ${this.value}`; }
+
+    internal_evaluate(context) {
+        context.evaluate_stack.push(this.value);
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        simulatedStack.push({type: 'const', value: this.value});
+    }
+}
+
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
 
 function checkSymbol(sym) {
