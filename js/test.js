@@ -376,7 +376,7 @@ export function test3() {
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .location(incLoc(c_loc))
-  .sub(op_c(10), op_c('true'))       // 10 + 1 = 11
+  .sub(op_c(10), op_c(true))       // 10 + 1 = 11
   .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
   .neg(Code.self)
   .add(op_n("pi"), Code.self)   // pi + 89
