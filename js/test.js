@@ -366,7 +366,6 @@ export function test3() {
   ]);
   const builder = new Code.CommandBuilder();
   const command = builder
-  .location(incLoc(c_loc))
   .sub(m, op_c(new ComplexNumber(10, 10)))
   .location(incLoc(c_loc))
   .sub(Code.self, op_c(-100))
