@@ -1027,7 +1027,7 @@ class UnCommValue extends BaseUnComm {
         this.value = value;
     }
 
-    toString(context) { return `${this.commandName()} ${outValue(this.value)}`; }
+    toString(context) { return `${this.commandName()} ${outValue(this.value.toString(context))}`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(this.operator(toParserBase(this.value.getValue(context))));
@@ -1245,7 +1245,7 @@ class BinCommValueValue extends BaseBinComm {
         this.r_value = r_value;
     }
 
-    toString(context) { return `${this.commandName()} ${outValue(this.l_value)}, ${outValue(this.r_value)}`; }
+    toString(context) { return `${this.commandName()} ${outValue(this.l_value.toString(context))}, ${outValue(this.r_value.toString(context))}`; }
 
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
@@ -1291,7 +1291,7 @@ class BinCommOpValue extends BaseBinComm {
         this.value = value;
     }
 
-    toString(context) { return `${this.commandName()} st[top], ${outValue(this.value)}`; }
+    toString(context) { return `${this.commandName()} st[top], ${outValue(this.value.toString(context))}`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
@@ -1345,7 +1345,7 @@ class BinCommValueOp extends BaseBinComm {
         this.value = value;
     }
 
-    toString(context) { return `${this.commandName()} ${outValue(this.value)}, st[top]`; }
+    toString(context) { return `${this.commandName()} ${outValue(this.value.toString(context))}, st[top]`; }
 
     internal_evaluate(context) {
         const stack = context.evaluate_stack; 
