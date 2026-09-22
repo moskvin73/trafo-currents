@@ -345,7 +345,7 @@ export function test3() {
 
   const contextError = {
     errors: [],
-    error(message, loc, err, severity = 'error') {
+    error(message, loc, err = null, severity = 'error') {
       let str_ref = getFirstStackTraceLinkRef(err);
       if (str_ref && str_ref.length > 0) str_ref = '\n' + str_ref;
       console.log(`[${severity}]: ${loc ?? 'Unknown location'} ${message}${str_ref}`);
