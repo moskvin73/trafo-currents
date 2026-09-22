@@ -328,6 +328,7 @@ export function test3() {
   const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
   const op_c = (value) => { return new Code.OpConst(value); };
 
+  const c_loc = loc(0);
   const builderMatrix = (matrix) => {
     const builder = new Code.CommandBuilder();
 
@@ -336,10 +337,9 @@ export function test3() {
     for (let i = cont_row - 1; i >= 0; i--) {
       const row = matrix[i];
       for (let j = count_col - 1; j >= 0; j--) {
-        builder.push(row[j]);
+        builder.push(row[j], incLoc(c_loc);
       }
     }
-
     return builder.matrix(cont_row, count_col);
   };
 
@@ -358,7 +358,6 @@ export function test3() {
     [4, '5', 6],
     [7, 8, 9]
   ]);
-  const c_loc = loc(0);
   const builder = new Code.CommandBuilder();
   const command = builder
   .location(incLoc(c_loc))
