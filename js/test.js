@@ -280,8 +280,9 @@ export function test3() {
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
-            console.log(getFirstStackTraceLinkRef(err));
-            console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}`);
+            let str_ref = getFirstStackTraceLinkRef(err);
+            if (str_ref && str_ref.length > 0) str_ref = '\n' + str_ref
+            console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}${str_ref}`);
           }
           else throw err;
         } finally {
