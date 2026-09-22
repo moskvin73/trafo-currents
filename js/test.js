@@ -343,8 +343,9 @@ export function test3() {
         .push(row[j], loc);
       }
     }
-    builder.location(incLoc(loc));
-    return builder.matrix(cont_row, count_col);
+    return builder
+          .location(incLoc(c_loc))
+          .matrix(cont_row, count_col);
   };
 
   const contextError = {
