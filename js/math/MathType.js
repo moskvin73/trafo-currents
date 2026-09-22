@@ -28,7 +28,7 @@ export default class MathType {
   #notImplementedMath(methodName) {
     const typeRef = this.constructor;
     throw new class extends ErrorMath {
-        getMes(func) { return `Метов "${methodName}" отсутствует для типа "${func(typeRef)}".`; }
+        getMes(func) { return `Метод "${methodName}" отсутствует для типа "${func(typeRef)}".`; }
       }(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
   }
 
