@@ -155,6 +155,26 @@ function getFirstStackTraceLine(err) {
   return '';
 }
 
+function getFirstStackTraceLinkRef(err) {
+  if (!err || !err.stack) return '';
+  
+  const lines = err.stack.split('\n');
+  
+  // Регулярное выражение ищет сам путь и номера строк/колонок
+  // Оно захватывает всё, начиная от протокола (http://) или диска (C:\) / корня (/) 
+  // и заканчивая цифрами двоеточий
+  const linkRegex = /((?:https?|file):\/\/[^\s)]+|(?:\/|[A-Z]:\\)[^\s)]+:\d+:\d+)/i;
+
+  for (let line of lines) {
+    const match = line.match(linkRegex);
+    if (match) {
+      return match[1]; // Возвращаем только то, что попало в круглые скобки
+    }
+  }
+  
+  return '';
+}
+
 export function test3() {
 
   const loc = (line, col =  1) => {
@@ -260,7 +280,7 @@ export function test3() {
           }
         } catch(err) {
           if (err instanceof Code.EvaluateError) {
-            console.log(getFirstStackTraceLine(err));
+            console.log(getFirstStackTraceLinkRef(err));
             console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}`);
           }
           else throw err;
