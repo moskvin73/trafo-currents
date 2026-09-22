@@ -513,21 +513,13 @@ class ValueLoc {
     }
 }
 
-class PushCommConst extends PushCommConstLoc {
+class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
-        super(value);
-        this.loc = loc;
+        assertLocation(loc, "loc", "PushCommConstLoc");
+        super(new ValueLoc(value, loc));
     }
 
     toString(_context) { return `push_loc ${this.value}`; }
-
-    internal_evaluate(context) {
-        context.evaluate_stack.push(this.value);
-    }
-
-    foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: this.value});
-    }
 }
 
 function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
