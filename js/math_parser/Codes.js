@@ -556,7 +556,23 @@ class TopStackToValueLoc extends Command {
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 1; }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            loc: this.loc
+        };
+    }
+
+    static get dataTypeName() { return "TopStackToValueLoc"; }
+
+    static fromJSON(data) {
+        return new TopStackToValueLoc(
+            restoreLocation(data.loc)
+        );
+    }    
 }
+regCode(TopStackToValueLoc);
 
 class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
