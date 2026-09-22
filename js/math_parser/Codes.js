@@ -521,7 +521,7 @@ class PushCommConstLoc extends PushCommConst {
         assertLocation(loc, "loc", "PushCommConstLoc");
     }
 
-    commandName() { return 'pus_loc'; }
+    commandName() { return 'push_loc'; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(new ValueLoc(this.value, this.loc));
