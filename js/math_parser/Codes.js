@@ -552,6 +552,10 @@ class TopStackToValueLoc extends Command {
             optimizedCode.push(this);
         }
     }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 1; }
 }
 
 class PushCommConstLoc extends PushCommConst {
