@@ -521,6 +521,7 @@ class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
         super(value);
         assertLocation(loc, "loc", "PushCommConstLoc");
+        this.loc = loc;
     }
 
     commandName() { return 'push_loc'; }
@@ -611,7 +612,7 @@ regCode(PushCommVarbleLocal);
 
 class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
     constructor(id_name, loc) {
-        super(loc);
+        super(id_name);
         assertLocation(loc, "loc", "PushCommVarbleLocalLoc");
         this.loc = loc;
     }
