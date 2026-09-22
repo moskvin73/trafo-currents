@@ -2274,7 +2274,23 @@ export class CommandBuilder {
             this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
         return this;
     }
- 
+
+    push_gsym(value, loc = null) {
+        if (loc)
+            this.#append(this.#checkCountStackCommand(new PushCommVarbleGlobalLoc(value, loc)));
+        else
+            this.#append(this.#checkCountStackCommand(new PushCommVarbleGlobal(value)));
+        return this;
+    }
+
+    push_lsym(value, loc = null) {
+        if (loc)
+            this.#append(this.#checkCountStackCommand(new PushCommVarbleLocalLoc(value, loc)));
+        else
+            this.#append(this.#checkCountStackCommand(new PushCommVarbleLocal(value)));
+        return this;
+    }
+   
     // Команда POP
     pop() {
         // На всякий случай
