@@ -545,9 +545,9 @@ class TopStackToValueLoc extends Command {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             if (st_top instanceof ValueLoc)
-                stack.push({type: 'const', value: st_top});
+                simulatedStack.push({type: 'const', value: st_top});
             else    
-                stack.push({type: 'const', value: new ValueLoc(st_top, this.loc)});
+                simulatedStack.push({type: 'const', value: new ValueLoc(st_top, this.loc)});
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push(this);
