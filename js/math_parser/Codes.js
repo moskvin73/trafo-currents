@@ -467,6 +467,10 @@ class PushComm extends Command {
     get pushStackCount() { return 1; }
 
     get popStackCount() { return 0; }
+
+    operator(_op) { throw new Error("[PushComm]: Метод operator(op) не реализован."); }
+
+    commandName() { return 'push'; }    
 }
 
 class PushCommConst extends PushComm {
@@ -475,7 +479,7 @@ class PushCommConst extends PushComm {
         this.value = value;
     }
 
-    toString(_context) { return `push ${this.value}`; }
+    toString(_context) { return `${commandName()} ${this.value}`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(this.value);
