@@ -25,6 +25,10 @@ export default class MathType {
     throw new Error(`[MathType]: Метод ${methodName} не реализован в классе ${this.constructor.name}`);
   }
 
+  #notImplementedMath(methodName) {
+    throw new Error(`[MathType]: Метод ${methodName} не реализован в классе ${this.constructor.name}`);
+  }
+
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.
@@ -53,45 +57,47 @@ export default class MathType {
   // ==========================================
   // АБСТРАКТНАЯ БАЗОВАЯ АРИФМЕТИКА
   // ==========================================
-  negate() { this.#notImplemented('-'); }
+  negate() { this.#notImplementedMath('-'); }
 
-  add(other) { this.#notImplemented('+'); }
+  add(other) { this.#notImplementedMath('+'); }
 
-  subtract(other) { this.#notImplemented('-'); }
+  subtract(other) { this.#notImplementedMath('-'); }
 
-  multiply(other) { this.#notImplemented('*'); }
+  rsubtract(other) { this.#notImplementedMath('-'); }
 
-  divide(other) { this.#notImplemented('/'); }
+  multiply(other) { this.#notImplementedMath('*'); }
 
-  pow(other) { this.#notImplemented('^'); }
+  divide(other) { this.#notImplementedMath('/'); }
+
+  pow(other) { this.#notImplementedMath('^'); }
    
  // ==========================================
   // ОСНОВНЫЕ ЛОГИЧЕСКИЕ ОПЕРАЦИИ (СТРОКОВЫЕ КОМАНДЫ)
   // ==========================================
 
-  not() { this.#notImplemented('not'); }
+  not() { this.#notImplementedMath('not'); }
 
-  and(other) { this.#notImplemented('and'); }
+  and(other) { this.#notImplementedMath('and'); }
 
-  or(other) { this.#notImplemented('or'); }
+  or(other) { this.#notImplementedMath('or'); }
 
-  xor(other) { this.#notImplemented('xor'); }
+  xor(other) { this.#notImplementedMath('xor'); }
 
   // ==========================================
   // ОПЕРАЦИИ ОТНОШЕНИЯ (Relational Operators)
   // ==========================================
 
-  eq(other) { this.#notImplemented('=='); }
+  eq(other) { this.#notImplementedMath('=='); }
 
-  not_eq(other) { this.#notImplemented('!='); }
+  not_eq(other) { this.#notImplementedMath('!='); }
 
-  lt(other) { this.#notImplemented('<'); }
+  lt(other) { this.#notImplementedMath('<'); }
 
-  gt(other) { this.#notImplemented('>'); }
+  gt(other) { this.#notImplementedMath('>'); }
 
-  lte(other) { this.#notImplemented('<='); }
+  lte(other) { this.#notImplementedMath('<='); }
 
-  gte(other) { this.#notImplemented('>='); }    
+  gte(other) { this.#notImplementedMath('>='); }    
 
   /**
    * Преобразует число в формат TeX с учетом системной локали и научной нотации.
