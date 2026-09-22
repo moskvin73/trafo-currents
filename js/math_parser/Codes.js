@@ -912,7 +912,7 @@ class MatrixComm extends Command {
 
     operand(stack) {
         let targetSample = stack.peek();
-        if (value instanceof ValueLoc) {
+        if (targetSample instanceof ValueLoc) {
             targetSample = targetSample.value;
         }
         let loc = null;
