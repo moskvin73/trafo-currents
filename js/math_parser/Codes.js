@@ -153,7 +153,7 @@ class LocationComm extends Command {
         this.loc = loc;
     }
 
-    toString(context) { return `location ${this.loc}`; }
+    toString(context) { return `location [${this.loc}]`; }
 
     internal_evaluate(context) {
         context.evaluate_loc = this.loc;
