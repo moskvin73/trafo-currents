@@ -881,7 +881,7 @@ class MatrixComm extends Command {
         // читаем элименты из стека
         let c = this.popStackCount;
         let all_constnts = true;
-        const constnts = [];
+        const constnts = new Stack();
         while (c-- > 0) { 
             const st_top = simulatedStack.pop();
             if (st_top.type === 'const') {
