@@ -365,8 +365,9 @@ export function test3() {
     [7, 8, 9]
   ]);
   const builder = new Code.CommandBuilder();
-  const command = builder 
-  .assign(op_n("z"), new Code.CommandBuilder().push(15))
+  const command = builder
+  .push(15) 
+  .assign(op_n("z"), Code.self)
   .sub(m, Code.self)
   .location(incLoc(c_loc))
   .sub(Code.self, new Code.CommandBuilder().push(-100))
@@ -374,10 +375,12 @@ export function test3() {
   .report('astNode1')
   .pop()
   .location(incLoc(c_loc))
-  .assign(op_n("pi"), new Code.CommandBuilder().push(Math.PI))
+  .push(Math.PI)
+  .assign(op_n("pi"), Code.self)
   .pop()
   .location(incLoc(c_loc))
-  .sub(op_c(10), new Code.CommandBuilder().push(1))
+  .push(1)
+  .sub(op_c(10), Code.self)
   .sub(Code.self, new Code.CommandBuilder().push(-100)) 
   .neg(Code.self)
   .add(op_n("pi"), Code.self) 
