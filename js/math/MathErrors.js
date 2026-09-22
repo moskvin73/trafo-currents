@@ -9,6 +9,20 @@ export class ErrorBase extends Error {
         }        
         this.name = "ErrorBase";
     }
+
+    // Переопределяем геттер stack для вывода всей цепочки
+    get stack() {
+        let fullStack = super.stack;
+        let currentCause = this.cause;
+
+        // Рекурсивно собираем стеки всех причин
+        while (currentCause) {
+            fullStack += `\n\nCaused by: ${currentCause.stack || currentCause}`;
+            currentCause = currentCause.cause;
+        }
+
+        return fullStack;
+    }    
 }
 
 export class ErrorMath extends ErrorBase {
