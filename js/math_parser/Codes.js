@@ -868,7 +868,7 @@ class MatrixComm extends Command {
         // За стартовую точку возьмём самый первый элемент матрицы [0][0].
         //let targetSample = evaluatedElements[0][0];
 
-        for (const [rowIndex, row] of evaluatedElements.entries()) {
+        /*for (const [rowIndex, row] of evaluatedElements.entries()) {
             for (const [colIndex, cell] of row.entries()) {
                 // Вызываем диспетчер. Он посмотрит на ранги внутри своего приватного #registry,
                 // сам выполнит cast сильного типа и вернёт нам нормализованную пару!
@@ -879,7 +879,7 @@ class MatrixComm extends Command {
                     throw new ErrorBase(`Элемент матрицы [${rowIndex + 1}, ${colIndex + 1}]. ${err.message}`, { cause: err });
                 }
             }
-        }
+        }*/
 
         // Теперь, когда targetSample гарантированно имеет самый высокий ранг в этой матрице,
         // приводим ВСЕ элементы к его типу через promoteTypes
