@@ -912,6 +912,9 @@ class MatrixComm extends Command {
 
     operand(stack) {
         let targetSample = stack.peek();
+        if (value instanceof ValueLoc) {
+            targetSample = targetSample.value;
+        }
         let loc = null;
         const evaluatedElements = [];
         for (let i = 0; i < this.cont_row; i++) {
