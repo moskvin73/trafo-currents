@@ -841,18 +841,22 @@ class MatrixComm extends Command {
 
     operand(stack) {
         let targetSample = stack.peek();
+        let loc = null;
         const evaluatedElements = [];
         for (let i = 0; i < this.cont_row; i++) {
             const row = []; 
             for (let j = 0; j < this.count_col; j++) {
                 try {
                     let value = stack.pop();
-                    if (value instanceof ValueLoc) value = value.value;
+                    if (value instanceof ValueLoc) {
+                        value = value.value;
+                        loc = value.loc;
+                    }
                     const { l } = dispatcher.promoteTypes(targetSample, value);
                     targetSample = l; // Запоминаем текущий самый сильный объект-эталон
                     row.push(value);
                 } catch (err) {
-                    throw new ErrorBase(`Элемент матрицы [${i + 1}, ${j + 1}]. ${err.message}`, { cause: err });
+                    throw new EvaluateError(`Элемент матрицы [${i + 1}, ${j + 1}]. ${err.message}`, { cause: err });
                 }
             }
             evaluatedElements.push(row); 
