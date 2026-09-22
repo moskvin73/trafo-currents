@@ -140,7 +140,7 @@ function assertString(value, paramName, context) {
 }
 
 function assertLocation(value, paramName, context) {
-    if (!(loc instanceof BaseLocation)) 
+    if (!(value instanceof BaseLocation)) 
         throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс BaseLocation. Получено: ${value}`);
 }
 
