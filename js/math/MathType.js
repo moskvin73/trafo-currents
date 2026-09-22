@@ -27,7 +27,7 @@ export default class MathType {
 
   #notImplementedMath(methodName) {
     throw new class extends ErrorMath {
-        getMes(func) { return `Метов ${methodName} отсутствует для класа ${func(this)}.`; }
+        getMes(func) { return `Метов "${methodName}" отсутствует для типа "${func(this)}".`; }
       }(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
 
   /**
