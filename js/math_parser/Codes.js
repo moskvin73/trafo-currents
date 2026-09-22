@@ -439,7 +439,7 @@ class PopComm extends Command {
     toString(_context) { return `pop st[top]`; }
 
     internal_evaluate(context) {
-        context.evaluate_stack.pop();
+        context.last_popped = context.evaluate_stack.pop();
     }
 
     foldConstants(optimizedCode, simulatedStack) {
