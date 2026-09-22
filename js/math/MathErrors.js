@@ -1,4 +1,7 @@
 export class ErrorBase extends Error {
+     // Приватное поле для хранения оригинального стека
+    #rawStack = '';
+
     constructor(messageOrOptions, options) {
         // Если первый аргумент — это объект с полем cause (вызов без строки сообщения)
         if (typeof messageOrOptions === 'object' && messageOrOptions !== null && 'cause' in messageOrOptions) {
@@ -9,52 +12,49 @@ export class ErrorBase extends Error {
         }        
         this.name = "ErrorBase";
 
-        // Сохраняем оригинальный стек, сгенерированный V8 для этого инстанса
-        // (убираем вызовы конструкторов из самого стека для чистоты)
+        // Захватываем чистый стек вызовов для текущего места создания ошибки
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, this.constructor);
+            // captureStackTrace записывает стек в свойство `stack` текущего объекта.
+            // Сохраняем его в приватное поле и удаляем из объекта, чтобы не мешать геттеру.
+            this.#rawStack = this.stack;
+            delete this.stack; 
+        } else {
+            this.#rawStack = this.stack || '';
         }
 
-        // 2. Явно переопределяем свойство stack на самом экземпляре
+        // 3. Динамически переопределяем свойство stack
         Object.defineProperty(this, 'stack', {
             get() {
-                // Берем «родной» стек, который мы сохранили или который был создан при super()
-                // Свойства, созданные captureStackTrace, лежат на самом объекте, поэтому временно 
-                // скрываем геттер, чтобы получить оригинальную строку.
-                // Но проще и надежнее сохранить оригинальный стек в скрытое поле при конструировании:
                 return this.#getFullStack();
             },
             configurable: true,
             enumerable: false
-        });        
+        });
     }
-    
-    // Приватный метод для сборки цепочки
+
+    // Метод для сборки полной цепочки стека
     #getFullStack() {
-        // Чтобы не зациклиться, берем дескриптор оригинального стека, 
-        // но так как мы переопределили hidden поле, проще сразу сохранить его в конструкторе.
-        // Ниже чистая реализация без скрытых полей, использующая shadow-копию:
-        
-        let currentStack = this.#getRawStack();
+        let currentStack = this.#rawStack;
         let currentCause = this.cause;
 
+        // Рекурсивно обходим все вложенные причины (cause)
         while (currentCause) {
-            const causeStack = currentCause.stack || String(currentCause);
+            let causeStack = '';
+            
+            if (currentCause instanceof Error) {
+                // Если причина — стандартная или наша ошибка, берем её stack (включающий строки кода)
+                causeStack = currentCause.stack;
+            } else {
+                // Если cause — это просто строка или другой тип
+                causeStack = String(currentCause);
+            }
+
             currentStack += `\n\nCaused by: ${causeStack}`;
-            currentCause = currentCause.cause;
+            currentCause = currentCause?.cause;
         }
 
         return currentStack;
-    }
-
-    #getRawStack() {
-        // Получаем чистый стек без учета нашего геттера
-        const dummy = new Error();
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(dummy, this.constructor);
-        }
-        // Возвращаем стек, который был бы у ошибки по умолчанию
-        return Object.getOwnPropertyDescriptor(this, '_rawStack')?.value || super.stack || '';
     }
 }
 
