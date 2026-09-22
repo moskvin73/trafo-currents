@@ -507,10 +507,10 @@ function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ 
 function checkSymbol(sym) {
     const name = sym.name;
     if (sym.type === SYM_UNDEFINED) {
-        throw new Error(`Переменная "${name}" не инициализирована.`);
+        throw new ErrorBase(`Переменная "${name}" не инициализирована.`);
     }
     else if (sym.type !== SYM_VARIABLE) {
-       throw new Error(context, `Идентификатор "${name}" не является переменной.`);
+       throw new ErrorBase(context, `Идентификатор "${name}" не является переменной.`);
     }
 }
 
@@ -1890,21 +1890,21 @@ function getOperandType(op) {
     if (op instanceof OpConst) return OperandsType.CONST;
     else if (op instanceof OpVarable) return OperandsType.VARABLE;
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return OperandsType.EVALUATE;
-    throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`);
+    throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`);
 }
 
 export function operandImplementСode(op) {
     if (op instanceof OperandValue) return [op.createCodePush()];
     else if (op instanceof Command) return [op];
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
-    throw new TypeError(`[Code]: Неизвестны тип опранда ${op}`); 
+    throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`); 
 }
 
 export function createUnCode(operator, op) {
     const op_type = getOperandType(op);
     const key = getUnKey(operator, op_type);
     if (!SubstitutionTableUn.has(key)) {
-        throw new Error(`Операция не поддерживается: не найден обработчик для ключа "${key}"`);
+        throw new Error(`[CommandBuilder]: Операция не поддерживается: не найден обработчик для ключа "${key}"`);
     }
     const processFn = SubstitutionTableUn.get(key);
     return processFn(op);
@@ -1915,7 +1915,7 @@ export function createBinCode(operator, l_op, r_op) {
     const rop_type = getOperandType(r_op);
     const key = getBinKey(operator, lop_type, rop_type);
     if (!SubstitutionTableBin.has(key)) {
-        throw new Error(`Операция не поддерживается: не найден обработчик для ключа "${key}"`);
+        throw new Error(`[CommandBuilder]: Операция не поддерживается: не найден обработчик для ключа "${key}"`);
     }
     const processFn = SubstitutionTableBin.get(key);
     return processFn(l_op, r_op);
@@ -1923,7 +1923,7 @@ export function createBinCode(operator, l_op, r_op) {
 
 function unionCommands(...args) {
     if (args.length < 2) {
-        throw new TypeError(`[Code]: Число параметров функции unionCode должно быть минимум 2`); 
+        throw new TypeError(`[CommandBuilder]: Число параметров функции unionCode должно быть минимум 2`); 
     }
     let totalStackCount = 0;
 
@@ -1947,7 +1947,6 @@ function unionCommands(...args) {
         commands,
         totalStackCount
     };   
-    //return args.map(operandImplementСode).flat(Infinity);
 }
 
 export const self = null;
@@ -1979,7 +1978,7 @@ export class CommandBuilder {
     get countStack() { return this.#countStack; }
 
     #checkCountStack() { 
-        if (this.#countStack < 0) throw new Error(`[CommandBuilder] Неверный набор каоманд. Отрицательный стек`); 
+        if (this.#countStack < 0) throw new ErrorBase(`[CommandBuilder] Неверный набор каоманд. Отрицательный стек`); 
     }
 
     // Вспомогательный метод для объединения текущего кода с новым
