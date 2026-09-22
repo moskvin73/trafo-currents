@@ -11,10 +11,10 @@ const TYPE_CLASSES = {
   'matrix':  Matrix
 };
 
-const STRING_TO_REF = {
-  'boolean': BoolValue,
-  'number': RealNumber,
-};
+const STRING_TO_REF = new Map([
+  ['boolean', BoolValue],
+  ['number', RealNumber],
+]);
 
 const REVERSE_TYPE_CLASSES = new Map(
   Object.entries(TYPE_CLASSES).map(([name, ClassRef]) => [ClassRef, name])
