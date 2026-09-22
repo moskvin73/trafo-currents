@@ -282,7 +282,7 @@ export function test3() {
           if (err instanceof Code.EvaluateError) {
             let str_ref = getFirstStackTraceLinkRef(err);
             if (str_ref && str_ref.length > 0) str_ref = '\n' + str_ref;
-            console.log(`Runtime error: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}${str_ref}`);
+            console.log(`[Runtime error]: ${err?.location ?? 'Unknown location'} ${err?.message ?? 'No message'}${str_ref}`);
           }
           else throw err;
         } finally {
