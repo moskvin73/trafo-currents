@@ -1,4 +1,11 @@
-export class ErrorMath extends TypeError {
+export class ErrorBase extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "ErrorBase";
+    }
+}
+
+export class ErrorMath extends ErrorBase {
     constructor(message) {
         super(message);
         this.name = "ErrorMath";
