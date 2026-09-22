@@ -367,9 +367,9 @@ export function test3() {
   const builder = new Code.CommandBuilder();
   const command = builder
   .location(incLoc(c_loc))
-  .sub(m, op_c(new ComplexNumber(10, 10)))//, op_c(1))       // 10 + 1 = 11
+  .sub(m, op_c(new ComplexNumber(10, 10)))
   .location(incLoc(c_loc))
-  .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
+  .sub(Code.self, op_c(-100))
   .neg(Code.self)
   .report('astNode1')
   .pop()
@@ -377,11 +377,11 @@ export function test3() {
   .assign(op_n("pi"), op_c(Math.PI))
   .pop()
   .location(incLoc(c_loc))
-  .sub(op_c(10), op_c(1))       // 10 + 1 = 11
-  .sub(Code.self, op_c(-100))   // 10 + 1 + -100 = 89
+  .sub(op_c(10), op_c(1))   
+  .sub(Code.self, op_c(-100)) 
   .neg(Code.self)
-  .add(op_n("pi"), Code.self)   // pi + 89
-  .assign(op_n("pi"), Code.self) // pi = pi + 89
+  .add(op_n("pi"), Code.self) 
+  .assign(op_n("pi"), Code.self)
   .report('astNode2')
   .pop();
 
