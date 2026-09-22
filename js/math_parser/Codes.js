@@ -623,7 +623,7 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
         checkSymbolAll(sym);
         context.evaluate_stack.push(new ValueLoc(sym.value, this.loc));
     }
-    
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -644,6 +644,7 @@ regCode(PushCommVarbleLocalLoc);
 
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
+        super();
         checkSymbolNull(sym);
         this.symbol = sym;
     }
@@ -685,6 +686,41 @@ class PushCommVarbleGlobal extends PushComm {
     }
 }
 regCode(PushCommVarbleGlobal);
+
+class PushCommVarbleGlobalLoc extends PushComm {
+    constructor(sym, loc) {
+        super(sym);
+        assertLocation(loc, "loc", "PushCommVarbleGlobalLoc");
+        this.loc = loc;
+    }
+
+    commandName() { return 'push_loc'; }
+
+    internal_evaluate(context) {
+        checkSymbol(this.symbol);
+        context.evaluate_stack.push(new ValueLoc(this.symbol.value, this.loc));
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            loc: this.loc
+        };
+    }
+
+    static get dataTypeName() { return "PushCommVarbleGlobalLoc"; }
+
+    static fromJSON(data) {
+        const data_restore = data.context.dataFromJSON(data.sym_data);
+        if ('callback' in data_restore) {
+            const instance = new PushCommVarbleGlobalLoc(data_restore.proxyPlaceholder, restoreLocation(data.loc));
+            data_restore.callback = (realSymbol) => { instance.symbol = realSymbol; };
+            return instance;
+        }
+        else return new PushCommVarbleGlobalLoc(data_restore, restoreLocation(data.loc));
+    }
+}
+regCode(PushCommVarbleGlobalLoc);
 //#endregion PUSH
 
 //#region CONST_VAR 
@@ -2162,11 +2198,14 @@ export class CommandBuilder {
     }
     //#endregion BIN
 
-    push(value) {
-        this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
+    push(value, loc = null) {
+        if (loc)
+            this.#append(this.#checkCountStackCommand(new PushCommConstLoc(value, loc)));
+        else
+            this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
         return this;
     }
-
+ 
     // Команда POP
     pop() {
         // На всякий случай
