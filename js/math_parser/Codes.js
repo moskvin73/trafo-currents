@@ -856,7 +856,7 @@ class MatrixComm extends Command {
                     targetSample = l; // Запоминаем текущий самый сильный объект-эталон
                     row.push(value);
                 } catch (err) {
-                    throw new EvaluateError(`Элемент матрицы [${i + 1}, ${j + 1}]. ${err.message}`, { cause: err });
+                    throw new EvaluateError(`Элемент матрицы [${i + 1}, ${j + 1}]. ${err.message}`, loc, { cause: err });
                 }
             }
             evaluatedElements.push(row); 
