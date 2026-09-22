@@ -3,7 +3,7 @@ import BoolValue from '../math/BoolValue.js';
 import ComplexNumber from '../math/ComplexNumber.js';
 import RealNumber from '../math/RealNumber.js';
 import Matrix from '../math/Matrix.js';
-export { ErrorBase } from '../math/MathErrors.js'
+import { ErrorBase } from '../math/MathErrors.js'
 
 const TYPE_CLASSES = {
   'bool': BoolValue,

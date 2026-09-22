@@ -8,7 +8,7 @@ import { dispatcher, toParserBase } from './SemanticDispatcher.js';
 import { SymbolTableContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
-export { ErrorBase } from '../math/MathErrors.js'
+import { ErrorBase } from '../math/MathErrors.js'
 
 export class EvaluateError extends ErrorBase {
   constructor(message, loc) {
