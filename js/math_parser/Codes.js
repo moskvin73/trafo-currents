@@ -139,11 +139,15 @@ function assertString(value, paramName, context) {
   }
 }
 
+function assertLocation(value, paramName, context) {
+    if (!(loc instanceof BaseLocation)) 
+        throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс BaseLocation. Получено: ${value}`);
+}
+
 export class LocationComm extends Command {
     constructor(loc) {
         super();
-        if (!(loc instanceof BaseLocation)) 
-            throw new TypeError(`Неверный тип пораметра класса LocationComm loc: ${loc}, пораметр loc должн экземпляром значения возвращающемого MathLexer.createLocation() лексера`);
+        assertLocation(loc, 'loc', 'LocationComm');
         this.loc = loc;
     }
 
