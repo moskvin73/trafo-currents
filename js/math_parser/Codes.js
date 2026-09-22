@@ -2216,6 +2216,11 @@ export class CommandBuilder {
         return this;
     }
 
+    topToLoc(loc) {
+        this.#append(this.#checkCountStackCommand(new TopStackToValueLoc(loc)));
+        return this;
+    }
+
     report(astNode) {
         this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
         return this;
