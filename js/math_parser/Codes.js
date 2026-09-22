@@ -602,7 +602,7 @@ class PushCommVarbleLocal extends PushComm {
     static get dataTypeName() { return "PushCommVarbleLocal"; }
 
     static fromJSON(data) {
-        return new PushCommVarbleLocal(
+        return new PushCommVarbleLoca(
             data.id_name,
         );
     }
@@ -623,8 +623,23 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
         checkSymbolAll(sym);
         context.evaluate_stack.push(new ValueLoc(sym.value, this.loc));
     }
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            lo: this.loc
+        };
+    }
 
+    static get dataTypeName() { return "PushCommVarbleLocalLoc"; }
+
+    static fromJSON(data) {
+        return new PushCommVarbleLocalLoc(
+            data.id_name,
+            restoreLocation(data.loc)
+        );
+    }
 }
+regCode(PushCommVarbleLocalLoc);
 
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
