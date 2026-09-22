@@ -929,8 +929,8 @@ class MatrixComm extends Command {
                 try {
                     let value = stack.pop();
                     if (value instanceof ValueLoc) {
-                        value = value.value;
                         loc = value.loc;
+                        value = value.value;
                     }
                     const { l } = dispatcher.promoteTypes(targetSample, value);
                     targetSample = l; // Запоминаем текущий самый сильный объект-эталон
