@@ -463,6 +463,10 @@ class PopComm extends Command {
 }
 regCode(PopComm);
 
+function outValue(value) {
+    return typeof typeRef === 'string' ? `"${value}"` : value;
+}
+
 //#region PUSH
 class PushComm extends Command {
 
@@ -479,7 +483,7 @@ class PushCommConst extends PushComm {
         this.value = value;
     }
 
-    toString(_context) { return `${this.commandName()} ${this.value}`; }
+    toString(_context) { return `${this.commandName()} ${outValue(this.value)}`; }
 
     internal_evaluate(context) {
         context.evaluate_stack.push(this.value);
