@@ -233,7 +233,7 @@ export default class SemanticDispatcher {
 
     const currentName = getTypeNameString(currentTypeId);
     const targetName = getTypeNameString(targetTypeId);
-    throw new Error(`Невозможно автоматически привести тип ${currentName} к ${targetName}`);
+    throw new Error(`Невозможно автоматически привести тип ${currentName} (${value}) к ${targetName}`);
   }
 }
 
