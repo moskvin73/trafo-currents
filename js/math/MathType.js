@@ -26,11 +26,12 @@ export default class MathType {
   }
 
   #notImplementedMath(methodName) {
+    const instance = this;
     throw new class extends ErrorMath {
-        getMes(func) { return `Метов "${methodName}" отсутствует для типа "${func(this)}".`; }
+        getMes(func) { return `Метов "${methodName}" отсутствует для типа "${func(instance)}".`; }
       }(`[MathType]: Метод "${methodName}" не реализован в классе "${this.constructor.name}"`);
   }
-      
+
   /**
    * Возвращает чистое TeX/LaTeX представление объекта (БЕЗ знаков $ или $$).
    * Этот метод будет использоваться внутри дерева парсера (AST) для сборки сложных формул.

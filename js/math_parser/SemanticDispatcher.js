@@ -44,6 +44,7 @@ export function getTypeNameString(typeRef, reverseMap = REVERSE_TYPE_CLASSES) {
     return reverseMap.get(typeRef) || typeRef.name || 'unknown_class';
   }
 
+  
   // 4. На случай, если передан сам объект-экземпляр вместо его типа/класса
   if (typeof typeRef === 'object' && typeRef.constructor) {
     return reverseMap.get(typeRef.constructor) || typeRef.constructor.name || 'unknown_object';
