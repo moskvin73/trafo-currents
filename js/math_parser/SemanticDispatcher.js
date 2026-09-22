@@ -233,7 +233,7 @@ export default class SemanticDispatcher {
 
     const currentName = getTypeNameString(currentTypeId);
     const targetName = getTypeNameString(targetTypeId);
-    throw new Error(`Невозможно автоматически привести тип "${currentName}" значение: (${value}) к "${targetName}"`);
+    throw new Error(`Невозможно автоматически привести тип "${currentName}" значение: (${value}) к типу "${targetName}"`);
   }
 }
 
@@ -243,7 +243,7 @@ export function toParserBase(value) {
     const type = typeof value;
     const sourceType = type === 'object' && value !== null ? value.constructor : type;
 
-    if (!TYPE_REGISTRY.has(sourceType)) throw new TypeError(`Недопустимый тип данных ${sourceType}`);
+    if (!TYPE_REGISTRY.has(sourceType)) throw new TypeError(`Недопустимый тип данных "${sourceType}" значение: (${value})`);
     const actualConfig = TYPE_REGISTRY.get(sourceType);
     if (actualConfig.selfPromote !== null) {
         return actualConfig.selfPromote(value);
@@ -309,5 +309,5 @@ export function CastValue(targetType, valueToCast) {
 
     const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
     const name_targetType = getTypeNameString(targetType, REVERSE_TYPE_CLASSES);
-    throw new Error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
+    throw new Error(context, `Невозможно привести тип "${name_sourceType}" значение: (${valueToCast}) к типу "${name_targetType}".`);
 }
