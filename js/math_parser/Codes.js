@@ -2162,7 +2162,7 @@ export class CommandBuilder {
     #append(newCode) {
         if (this.#currentCode === null) {
             /*if (newCode instanceof Command) this.#currentCode = [newCode];
-            else*/ this.#currentCode = newCode;
+            else*/ this.#currentCode = newCode; 
         } else {
             const result = unionCommands(this.#currentCode, newCode);
             this.#currentCode = result.commands;
