@@ -838,19 +838,34 @@ class MatrixComm extends Command {
     toString(_context) { return `matrix ${this.cont_row}, ${this.count_col}`; }
 
     operand(stack) {
-        const evaluatedElements = []; 
+        let targetSample = stack.peek();
+        const evaluatedElements = [];
         for (let i = 0; i < this.cont_row; i++) {
+            const row = []; 
+            for (let j = 0; j < this.count_col; j++) {
+                try {
+                    const value = stack.pop();
+                    const { l } = dispatcher.promoteTypes(targetSample, value);
+                    targetSample = l; // Запоминаем текущий самый сильный объект-эталон
+                    row.push(value);
+                } catch (err) {
+                    throw new ErrorBase(`Элемент матрицы [${i + 1}, ${j + 1}]. ${err.message}`, { cause: err });
+                }
+            }
+            evaluatedElements.push(row); 
+        }
+        /*for (let i = 0; i < this.cont_row; i++) {
             const row = []; 
             for (let j = 0; j < this.count_col; j++) {
                 const value = stack.pop();
                 row.push(value);
             }
             evaluatedElements.push(row); 
-        }        
+        }*/        
         // Сначала найдём базовый "эталонный" тип, к которому нужно привести всю матрицу.
         // Мы просто пройдёмся по всем элементам и будем последовательно вызывать promoteTypes.
         // За стартовую точку возьмём самый первый элемент матрицы [0][0].
-        let targetSample = evaluatedElements[0][0];
+        //let targetSample = evaluatedElements[0][0];
 
         for (const [rowIndex, row] of evaluatedElements.entries()) {
             for (const [colIndex, cell] of row.entries()) {
