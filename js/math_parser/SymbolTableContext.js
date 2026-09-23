@@ -7,7 +7,19 @@ export const SYM_UNDEFINED = 0; // Идентификатор объявлен, 
 export const SYM_VARIABLE  = 1; // Обычная переменная (число, комплексное)
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
-export class SymbolTableContext {
+export class SymbolContext {
+  constructor() {}
+
+  get type() { throw new Error('[SymbolContext]: Геттер "type" не реализован.'); }
+  
+  get context() { throw new Error('[SymbolContext]: Геттер "context" не реализован.'); }
+
+  get value() { throw new Error('[SymbolContext]: Геттер "value" не реализован.'); }
+
+  get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
+}
+
+class ЕЕSymbolContext extends SymbolContext {
   #listenersUpdateVarable;
   #state;
   #insance;
