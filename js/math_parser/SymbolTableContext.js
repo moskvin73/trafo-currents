@@ -18,6 +18,8 @@ export class SymbolContext {
 
   get value() { throw new Error('[SymbolContext]: Геттер "value" не реализован.'); }
 
+  set value(_val) { throw new Error('[SymbolContext]: Геттер "value" не реализован.'); }
+
   get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
 }
 
@@ -41,7 +43,7 @@ class SymbolContextVar extends SymbolContext {
    this.#listenersUpdateVarable.forEach(callback => callback(sym)); 
   }
 
-  get type() { return this.#state.type; }
+  get type() { return this.#type; }
 
   get context() { return this.#insance; }
 
