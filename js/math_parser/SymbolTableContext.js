@@ -14,6 +14,8 @@ export class SymbolContext {
   
   get context() { throw new Error('[SymbolContext]: Геттер "context" не реализован.'); }
 
+  get name() { throw new Error('[SymbolContext]: Геттер "name" не реализован.'); }
+
   get value() { throw new Error('[SymbolContext]: Геттер "value" не реализован.'); }
 
   get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
