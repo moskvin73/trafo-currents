@@ -155,13 +155,13 @@ export class SymbolTableContext {
 
       this.fixedSymbols[i] = new class extends SymbolContext {
         constructor() { super(); }
-        get type() { return SYM_BUILTIN; },
-        get value() {  return overloads; },
+        get type() { return SYM_BUILTIN; }
+        get value() {  return overloads; }
         set value(_val) {
           throw new Error(`Идентификатор "${name}" является зарезервированным.`);
-        },
-        get description() { return description; },
-        get context() { return instance; },
+        }
+        get description() { return description; }
+        get context() { return instance; }
         get name() { return name; }
       };
       /*this.fixedSymbols[i] = {
