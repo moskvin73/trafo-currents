@@ -39,7 +39,7 @@ class SymbolContextVar extends SymbolContext {
     this.#value = value;
     this.#type = type;
     this.#insance = insance;
-    this.name = name;
+    this.#name = name;
     this.#description = '';
   }
 
