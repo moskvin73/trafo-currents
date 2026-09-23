@@ -12,11 +12,13 @@ export class SymbolTableContext {
   #state;
   #insance;
   #name;
+  #description;
   constructor(state, insance, name) {
     this.#listenersUpdateVarable = new Set();
     this.#state = state;
     this.#insance = insance;
     this.name = name;
+    this.#description = '';
   }
 
   #invoke(sym) {
@@ -36,6 +38,10 @@ export class SymbolTableContext {
     this.state.type = SYM_VARIABLE;
     this.#invoke(this);
   }
+
+  get description() { this.#description; }
+
+  set description(str) { this.#description = str; }
 
   set context(newContext) {
     if (this.#insance.getIdByName(#name) === null) 
