@@ -20,6 +20,10 @@ export class SymbolContext {
   set value(_val) { throw new Error('[SymbolContext]: Геттер "value" не реализован.'); }
 
   get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
+
+  subscribeUpdateVarable(callback) {}
+
+  unsubscribeUpdateVarable(callback) {}
 }
 
 class SymbolContextVar extends SymbolContext {
