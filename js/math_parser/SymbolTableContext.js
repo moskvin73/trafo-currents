@@ -8,6 +8,59 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolTableContext {
+  #listenersUpdateVarable;
+  #state;
+  #insance;
+  #name;
+  constructor(state, insance, name) {
+    this.#listenersUpdateVarable = new Set();
+    this.#state = state;
+    this.#insance = insance;
+    this.name = name;
+  }
+
+  #invoke(sym) {
+   this.#listenersUpdateVarable.forEach(callback => callback(sym)); 
+  }
+
+  get type() { return this.#state.type; }
+
+  get context() { return this.#insance; }
+
+  get name() { return this.#name; }
+
+  get value() { return this.#state.value; }
+
+  set value(v) { 
+    this.state.value = v; 
+    this.state.type = SYM_VARIABLE;
+    invoke(this);
+  }
+
+  set context(newContext) {
+    if (this.#insance.getIdByName(#name) === null) 
+      this.insance = newContext;
+    else throw new Error("Недопустимое изменение контекста символа таблицы идентификаторов"); 
+  }
+  
+  subscribeUpdateVarable(callback) {
+    if (typeof callback === 'function') {
+        this.#listenersUpdateVarable.add(callback);
+    }    
+  }
+
+  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); },
+
+  toJSON() {
+    return {
+      type: this.type,
+      value: this.value,
+      name: this.name
+    };
+  }        
+}
+
+export class SymbolTableContext {
   #listenersAddVarable;
   #listenersDeleteVarable;
   #listenersUpdateSettings;
