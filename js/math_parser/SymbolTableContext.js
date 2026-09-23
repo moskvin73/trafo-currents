@@ -62,12 +62,17 @@ class SymbolContextVar extends SymbolContext {
 
   get description() { this.#description; }
 
-  set description(str) { this.#description = str; }
+  set description(str) {   
+    if (typeof str !== 'string') {
+      throw new TypeError('Описание должно быть строкой.');
+    }
+    this.#description = str; 
+  }
 
   set context(newContext) {
     if (this.#insance.getIdByName(name) === null) 
       this.insance = newContext;
-    else throw new Error("Недопустимое изменение контекста символа таблицы идентификаторов"); 
+    else throw new TypeError("Недопустимое изменение контекста символа таблицы идентификаторов"); 
   }
   
   subscribeUpdateVarable(callback) {
