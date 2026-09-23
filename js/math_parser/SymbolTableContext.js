@@ -8,7 +8,6 @@ export const SYM_VARIABLE  = 1; // Обычная переменная (числ
 export const SYM_BUILTIN   = 2; // Встроенная системная функция (sin, cos)
 
 export class SymbolContext {
-  constructor() {}
 
   get type() { throw new Error('[SymbolContext]: Геттер "type" не реализован.'); }
   
@@ -154,7 +153,6 @@ export class SymbolTableContext {
       const description = data.description;
 
       this.fixedSymbols[i] = new class extends SymbolContext {
-        constructor() { super(); }
         get type() { return SYM_BUILTIN; }
         get value() {  return overloads; }
         set value(_val) {
