@@ -34,7 +34,7 @@ export class SymbolTableContext {
   set value(v) { 
     this.state.value = v; 
     this.state.type = SYM_VARIABLE;
-    invoke(this);
+    this.#invoke(this);
   }
 
   set context(newContext) {
