@@ -21,9 +21,9 @@ export class SymbolContext {
 
   get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
 
-  subscribeUpdateVarable(callback) {}
+  subscribeUpdateVarable(_callback) {}
 
-  unsubscribeUpdateVarable(callback) {}
+  unsubscribeUpdateVarable(_callback) {}
 }
 
 class SymbolContextVar extends SymbolContext {
@@ -34,6 +34,7 @@ class SymbolContextVar extends SymbolContext {
   #name;
   #description;
   constructor(value, type, insance, name) {
+    super();
     this.#listenersUpdateVarable = new Set();
     this.#value = value;
     this.#type = type;
