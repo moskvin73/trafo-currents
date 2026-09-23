@@ -23,13 +23,15 @@ export class SymbolContext {
 
 class SymbolContextVar extends SymbolContext {
   #listenersUpdateVarable;
-  #state;
+  #value;
+  #type
   #insance;
   #name;
   #description;
-  constructor(state, insance, name) {
+  constructor(insance, name) {
     this.#listenersUpdateVarable = new Set();
-    this.#state = state;
+    this.#value = 0;
+    this.#type = SYM_UNDEFINED;
     this.#insance = insance;
     this.name = name;
     this.#description = '';
@@ -45,11 +47,11 @@ class SymbolContextVar extends SymbolContext {
 
   get name() { return this.#name; }
 
-  get value() { return this.#state.value; }
+  get value() { return this.#value; }
 
   set value(v) { 
-    this.state.value = v; 
-    this.state.type = SYM_VARIABLE;
+    this.#value = v; 
+    this.#type = SYM_VARIABLE;
     this.#invoke(this);
   }
 
@@ -69,7 +71,7 @@ class SymbolContextVar extends SymbolContext {
     }    
   }
 
-  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); },
+  unsubscribeUpdateVarable(callback) { this.#listenersUpdateVarable.delete(callback); }
 
   toJSON() {
     return {
