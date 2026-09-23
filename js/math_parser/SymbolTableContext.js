@@ -87,7 +87,8 @@ class SymbolContextVar extends SymbolContext {
     return {
       type: this.type,
       value: this.value,
-      name: this.name
+      name: this.name,
+      description: this.#description
     };
   }        
 }
