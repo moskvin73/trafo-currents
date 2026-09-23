@@ -235,7 +235,8 @@ export class SymbolTableContext {
   static #defaultState() { return { type: SYM_UNDEFINED, value: 0 }; } 
 
   static #create_sybol(state, insance, name) {
-    const listenersUpdateVarable = new Set();
+    return new SymbolContextVar(state.value, state.type, insance, name);
+    /*const listenersUpdateVarable = new Set();
     const invoke = (sym) => { listenersUpdateVarable.forEach(callback => callback(sym)); };
     return {
       get type() { return state.type; },
@@ -265,7 +266,7 @@ export class SymbolTableContext {
           name: this.name
         };
       }        
-    }
+    }*/
   }
 
   #initVarable(name = null) {
