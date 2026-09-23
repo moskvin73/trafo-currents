@@ -121,13 +121,13 @@ function assertInteger(value, paramName, context) {
 
 function assertUnsignedInteger(value, paramName, context) {
   if (!Number.isInteger(value) || value < 0) {
-    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено. Получено: ${value}`);
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено: ${value}`);
   }
 }
 
 function assertSignedInteger(value, paramName, context) {
   if (!Number.isInteger(value) || value >= 0) {
-    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено. Получено: ${value}`);
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен быть целым неотрицательным числом. Получено: ${value}`);
   }
 }
 
