@@ -33,10 +33,10 @@ class SymbolContextVar extends SymbolContext {
   #insance;
   #name;
   #description;
-  constructor(insance, name) {
+  constructor(value, type, insance, name) {
     this.#listenersUpdateVarable = new Set();
-    this.#value = 0;
-    this.#type = SYM_UNDEFINED;
+    this.#value = value;
+    this.#type = type;
     this.#insance = insance;
     this.name = name;
     this.#description = '';
