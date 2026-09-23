@@ -60,7 +60,7 @@ class SymbolContextVar extends SymbolContext {
   set description(str) { this.#description = str; }
 
   set context(newContext) {
-    if (this.#insance.getIdByName(#name) === null) 
+    if (this.#insance.getIdByName(name) === null) 
       this.insance = newContext;
     else throw new Error("Недопустимое изменение контекста символа таблицы идентификаторов"); 
   }
