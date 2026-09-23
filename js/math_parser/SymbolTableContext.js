@@ -153,7 +153,17 @@ export class SymbolTableContext {
       const overloads = data.overloads; // COMPILER_REGISTRY.get(name);
       const description = data.description;
 
-      this.fixedSymbols[i] = new class extends
+      this.fixedSymbols[i] = new class extends SymbolContext {
+        constructor() { super(); }
+        get type() { return SYM_BUILTIN; },
+        get value() {  return overloads; },
+        set value(_val) {
+          throw new Error(`Идентификатор "${name}" является зарезервированным.`);
+        },
+        get description() { return description; },
+        get context() { return instance; },
+        get name() { return name; }
+      };
       /*this.fixedSymbols[i] = {
         get type() { return SYM_BUILTIN; },
         get value() {  return overloads; },
