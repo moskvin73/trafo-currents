@@ -21,7 +21,7 @@ export class SymbolContext {
   get description() { throw new Error('[SymbolContext]: Геттер "description" не реализован.'); }
 }
 
-class ЕЕSymbolContext extends SymbolContext {
+class SymbolContextVar extends SymbolContext {
   #listenersUpdateVarable;
   #state;
   #insance;
