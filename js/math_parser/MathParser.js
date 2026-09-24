@@ -556,7 +556,7 @@ export class MathParser extends EventTarget {
         add_bulder(builder);
       }
       else { 
-        this.#error(`Неопустимый символ "${this.lexer.stringValue()}"`);
+        this.#error(`Неопустимый символ "${this.lexer.stringValue()}"`, this.#location);
          this.#consume(); 
       }  
     }
