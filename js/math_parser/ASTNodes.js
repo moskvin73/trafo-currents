@@ -565,7 +565,7 @@ export class MatrixNode extends MathNode {
   }
 
   createCode(context) {
-    const builder = this.CodeBuilder;
+    const builder = this.CodeBuilder; 
     for (let i = this.#rows.length - 1; i >= 0; i--) {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
