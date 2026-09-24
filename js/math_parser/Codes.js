@@ -25,6 +25,16 @@ class UserError extends ErrorBase {
   }
 }
 
+class LocalVarable {
+    constructor(id_name) {
+        this.id_name = id_name.name;
+    }
+}
+
+export function createLocalVarable(id_name) {
+    return new LocalVarable(d_name);
+}
+
 export class Command {
     constructor() {
         // Защита от создания экземпляра самого базового класса
@@ -2374,27 +2384,16 @@ export class CommandBuilder {
     //#endregion BIN
 
     push(value, loc) {
-        if (loc)
-            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommConst(value))]);
-        else
-            this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
-        return this;
-    }
-
-    push_gsym(value, loc) {
-        if (loc)
-            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommVarbleGlobal(value))]);
-        else
-            this.#append(this.#checkCountStackCommand(new PushCommVarbleGlobal(value)));
-        return this;
-    }
-
-    push_lsym(value, loc) {
-        if (loc)
-            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommVarbleLocal(value))]);
-        else
-            this.#append(this.#checkCountStackCommand(new PushCommVarbleLocal(value)));
-        return this;
+        let command;
+        if (value instanceof LocalVarable) {
+            command = new PushCommVarbleLocal(value.id_name);
+        } else if (value instanceof SymbolContext) {
+            command = new PushCommVarbleGlobal(value);
+        } else {
+            command = new PushCommConst(value);
+        }
+        const processedCommand = this.#checkCountStackCommand(command);
+        this.#append(loc ? [new LocationComm(loc), processedCommand] : processedCommand);
     }
    
     // Команда POP
