@@ -2308,12 +2308,56 @@ export class CommandBuilder {
         throw new Error('[CommandBuilder] Опрерация "and" пока не ревализована');
     }
 
+    equ (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "equ" пока не ревализована');
+    }
+
+    notEqu (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "notEqu" пока не ревализована');
+    }
+
+    lt (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "lt" пока не ревализована');
+    }
+   
+    gt (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+    }
+
+    lte (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "lt" пока не ревализована');
+    }
+   
+    gte (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+    }
+
+    is (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+    }
+
     add(l_op, r_op, loc) {
 		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op, loc);
     }
 
     sub(l_op, r_op, loc) {
 		return this.#creatorBin(OperatorBinType.SUB, l_op, r_op, loc);
+    }
+
+    mul(l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "mul" пока не ревализована');
+    }
+
+    div(l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
+    }
+
+    mod(l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
+    }
+
+    pow(l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
     }
     //#endregion BIN
 
