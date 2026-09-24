@@ -412,7 +412,6 @@ export class MathNode extends ASTNode {
   collectMathExpressions(list) { list.push(this); }  
 }
 
-
 /**
  * Узел числа (Терминальный узел / Лист дерева)
  */
@@ -671,6 +670,8 @@ export class IsOpNode extends MathNode {
     const targetClass = this.targetType;
     return new BoolValue(leftValue instanceof targetClass);
   }
+
+  createCode(context) { return CodeBuilder.is(this.argument.createCode(context), this.targetType, loc); }
 
   *getChildren() {
     yield this.argument;
