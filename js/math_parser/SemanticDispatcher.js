@@ -323,7 +323,7 @@ export function CastValue(targetType, valueToCast) {
       return castFunction(valueToCast);
     }
 
-    const name_sourceType = getTypeNameString(sourceType, REVERSE_TYPE_CLASSES);
-    const name_targetType = getTypeNameString(targetType, REVERSE_TYPE_CLASSES);
+    const name_sourceType = getTypeNameString(sourceType);
+    const name_targetType = getTypeNameString(targetType);
     throw new ErrorBase(context, `Невозможно привести тип "${name_sourceType}" (значение: "${valueToCast}") к типу "${name_targetType}".`);
 }
