@@ -444,7 +444,7 @@ class PopComm extends Command {
 
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
-        if (st_top.type !== 'const') optimizedCode.push({ comm: this, del: false });
+        optimizedCode.push({ comm: this, del: st_top.type === 'const' });
     }
 
     get pushStackCount() { return 0; }
@@ -492,8 +492,8 @@ class PushCommConst extends PushComm {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: this.value, index: simulatedStack.length });
-        simulatedStack({ comm: this, del: true })
+        simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length });
+        optimizedCode.push({ comm: this, del: true })
     }
 
     get pushStackCount() { return 1; }
@@ -548,9 +548,9 @@ class TopStackToValueLoc extends Command {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             if (st_top.value instanceof ValueLoc)
-                simulatedStack.push({type: 'const', value: st_top.value, index: simulatedStack.length});
+                simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
             else    
-                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: simulatedStack.length});
+                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: optimizedCode.length});
             optimizedCode.push({ comm: this, del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
@@ -593,7 +593,7 @@ class PushCommConstLoc extends PushCommConst {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc), index: simulatedStack.length});
+        simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc), index: optimizedCode.length});
         optimizedCode.push({ comm: this, del: true });
     }
 
@@ -1093,7 +1093,7 @@ class UnCommValue extends BaseUnComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.operator(toParserBase(this.value.value)), index: simulatedStack.length});
+            simulatedStack.push({type: 'const', value: this.operator(toParserBase(this.value.value)), index: optimizedCode.length});
             optimizedCode.push({ comm: this, del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
@@ -1138,7 +1138,7 @@ class UnCommOp extends BaseUnComm {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             const calc_v = this.operator(toParserBase(st_top.value));
-            simulatedStack.push({type: 'const', value: calc_v, index: simulatedStack.length});
+            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
             optimizedCode.push({ comm: this, del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
@@ -1316,8 +1316,9 @@ class BinCommValueValue extends BaseBinComm {
     foldConstants(optimizedCode, simulatedStack) {
         if (this.l_value instanceof OpConst && this.r_value instanceof OpConst) {
             const { l, r } = dispatcher.promoteTypes(this.l_value.value, this.r_value.value);
-            simulatedStack.push({type: 'const', value: this.operator(l, r), index: simulatedStack.length});
-            optimizedCode.push({ comm: this, del: true });
+            const calc_v = this.operator(l, r);
+            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
@@ -1368,8 +1369,8 @@ class BinCommOpValue extends BaseBinComm {
         {
             const { l, r } = dispatcher.promoteTypes(st_top.value, this.value.value);
             const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: simulatedStack.length}); 
-            optimizedCode.push({ comm: this, del: true });  
+            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
+            optimizedCode.push({ comm: push, del: true });  
         }
         else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
@@ -1423,8 +1424,8 @@ class BinCommValueOp extends BaseBinComm {
         {
             const { l, r } = dispatcher.promoteTypes(this.value.value, st_top.value);
             const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: simulatedStack.length});   
-            optimizedCode.push({ comm: this, del: true });
+            simulatedStack.push({type: 'const', value: calc_v, index: soptimizedCode.length});   
+            optimizedCode.push({ comm: this.recreateCommValueValue(this.value, new OpConst(st_top.value)), del: true });
         }
         else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
