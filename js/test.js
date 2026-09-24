@@ -362,8 +362,8 @@ export function test3() {
   };
 
   const builder = parse(`
-    A = (C = 10) - true;
-    B = %pi;
+    A = (C = 10) - 11;
+    B = true;
     A = A - 10 - B;
     `);
 
