@@ -2207,6 +2207,18 @@ export class CommandBuilder {
         }
     }
 
+    #prepend(newCode) {
+        if (this.#currentCode === null) {            
+            if (newCode instanceof Command) this.#currentCode = [newCode];
+            else this.#currentCode = newCode; 
+        } else {
+            const result = unionCommands(newCode, this.#currentCode);
+            this.#currentCode = result.commands;
+            this.#countStack += result.totalStackCount;
+            this.#checkCountStack();
+        }
+    }
+
     #checkOperand(op) {
         if (op instanceof OperandValue || op === self) return { op, st_c: 0 };
         if (op instanceof CommandBuilder) return { op: op.build(), st_c: op.countStack };
@@ -2256,6 +2268,16 @@ export class CommandBuilder {
             this.#countStack += op.countStack;
             if (loc) this.#append([new LocationComm(loc), ...op.build()]);
             else this.#append(op.build());
+        }
+        else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
+        return this;
+    }
+
+    prepend(op, loc) {
+        if (op instanceof CommandBuilder) {
+            this.#countStack += op.countStack;
+            if (loc) this.#prepend([new LocationComm(loc), ...op.build()]);
+            else this.#prepend(op.build());
         }
         else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
         return this;
