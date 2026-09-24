@@ -363,7 +363,7 @@ export function test3() {
 
   const builder = parse(`
     A = 10;
-    B = 3;
+    B = %pi;
     A = A - 10 - B;
     `);
 
