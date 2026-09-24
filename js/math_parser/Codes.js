@@ -536,59 +536,6 @@ class ValueLoc {
     toString() { return `[${this.loc}], ${outValue(this.value)}`; }
 }
 
-class TopStackToValueLoc extends Command {
-    constructor(loc) {
-        super();
-        assertLocation(loc, "loc", "TopStackToValueLoc");
-        this.loc = loc;
-    }
-
-    toString(_context) { return `top_to_loc [${this.loc}]`; }
-
-    internal_evaluate(context) {
-        const stack = context.evaluate_stack;
-        const st_top = stack.pop();
-        if (st_top instanceof ValueLoc)
-            stack.push(st_top);
-        else    
-            stack.push(new ValueLoc(st_top, this.loc));
-    }
-
-    foldConstants(optimizedCode, simulatedStack) {
-        const st_top = simulatedStack.pop();
-        if (st_top.type === 'const') {
-            if (st_top.value instanceof ValueLoc)
-                simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
-            else    
-                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: optimizedCode.length});
-            optimizedCode.push({ comm: this, del: true });
-        } else {
-            simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push({ comm: this, del: false });
-        }
-    }
-
-    get pushStackCount() { return 1; }
-
-    get popStackCount() { return 1; }
-
-    toJSON() {
-        return {
-            ...super.toJSON(),
-            loc: this.loc
-        };
-    }
-
-    static get dataTypeName() { return "TopStackToValueLoc"; }
-
-    static fromJSON(data) {
-        return new TopStackToValueLoc(
-            restoreLocation(data.loc)
-        );
-    }    
-}
-regCode(TopStackToValueLoc);
-
 class PushCommConstLoc extends PushCommConst {
     constructor(value, loc) {
         super(value);
@@ -624,6 +571,59 @@ class PushCommConstLoc extends PushCommConst {
     }    
 }
 regCode(PushCommConstLoc);
+
+class TopStackToValueLoc extends Command {
+    constructor(loc) {
+        super();
+        assertLocation(loc, "loc", "TopStackToValueLoc");
+        this.loc = loc;
+    }
+
+    toString(_context) { return `top_to_loc [${this.loc}]`; }
+
+    internal_evaluate(context) {
+        const stack = context.evaluate_stack;
+        const st_top = stack.pop();
+        if (st_top instanceof ValueLoc)
+            stack.push(st_top);
+        else    
+            stack.push(new ValueLoc(st_top, this.loc));
+    }
+
+    foldConstants(optimizedCode, simulatedStack) {
+        const st_top = simulatedStack.pop();
+        if (st_top.type === 'const') {
+            if (st_top.value instanceof ValueLoc)
+                simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
+            else    
+                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: optimizedCode.length});
+            optimizedCode.push({ comm: new PushCommConstLoc(st_top.value, this.loc), del: true });
+        } else {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode.push({ comm: this, del: false });
+        }
+    }
+
+    get pushStackCount() { return 1; }
+
+    get popStackCount() { return 1; }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            loc: this.loc
+        };
+    }
+
+    static get dataTypeName() { return "TopStackToValueLoc"; }
+
+    static fromJSON(data) {
+        return new TopStackToValueLoc(
+            restoreLocation(data.loc)
+        );
+    }    
+}
+regCode(TopStackToValueLoc);
 
 function checkSymbolNull(sym) { if (sym === null) throw new ErrorBase(`Символ не опредилён.`); }
 
