@@ -1031,15 +1031,13 @@ class MatrixComm extends Command {
                     optimizedCode[index].del = false;
                 }
                 while (c-- > 0) simulatedStack.pop();
-                break;
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({ comm: this, del: false });
+                return;
             }
         }
-        if (all_constnts) {
-            simulatedStack.push({type: 'const', value: this.operand(constnts)});   
-        } else {
-            simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push(this);
-        }
+        simulatedStack.push({type: 'const', value: this.operand(constnts), index: simulatedStack.length});
+        optimizedCode.push({ comm: this, del: false });   
     }
 
     get pushStackCount() { return 1; }
