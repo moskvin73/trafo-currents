@@ -1726,7 +1726,7 @@ export class VariableNode extends IdentifierNode {
 
   createCode(context) { 
     if (context.is_global(this.id_name)) {
-      const sym = context.scope_context.getParseSymbolById(this.id_name);
+      const sym = context.getParseSymbolById(this.id_name);
       return this.CodeBuilder.push(sym, this.loc);
     }
     return this.CodeBuilder.push(Code.createLocalVarable(this.id_name), this.loc);
@@ -1787,7 +1787,7 @@ export class AssignNode extends IdentifierNode {
 
   createCode(context) {
     if (context.is_global(this.id_name)) {
-      const sym = context.scope_context.getParseSymbolById(this.id_name);
+      const sym = context.getParseSymbolById(this.id_name);
       return this.CodeBuilder.assign(sym, this.expression.createCode(context), this.loc);
     }
     return this.CodeBuilder.assign(Code.createLocalVarable(this.id_name), this.expression.createCode(context), this.loc);
