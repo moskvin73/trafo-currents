@@ -65,7 +65,7 @@ export class Command {
 
     get modifiesStack() { return this.pushStackCount > 0 || this.popStackCount > 0; }
 
-    foldConstants(optimizedCode, simulatedStack) { optimizedCode.push(this); }
+    foldConstants(optimizedCode, simulatedStack) { optimizedCode.push({ comm: this, del: false }); }
 
     toJSON() {
         return {
@@ -238,9 +238,9 @@ class ReportComm extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.peek();
         if (st_top.type === 'const') {
-            optimizedCode.push(new ReportCommConst(this.astNode, st_top.value));
+            optimizedCode.push({ comm: new ReportCommConst(this.astNode, st_top.value), del: false });
         }
-        else optimizedCode.push(this);
+        else optimizedCode.push({ comm: this, del: false });
     }
 
     get pushStackCount() { return 0; }
@@ -444,7 +444,7 @@ class PopComm extends Command {
 
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
-        if (st_top.type !== 'const') optimizedCode.push(this);
+        if (st_top.type !== 'const') optimizedCode.push({ comm: this, del: false });
     }
 
     get pushStackCount() { return 0; }
@@ -492,7 +492,8 @@ class PushCommConst extends PushComm {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: this.value});
+        simulatedStack.push({type: 'const', value: this.value, index: simulatedStack.length });
+        simulatedStack({ comm: this, del: true })
     }
 
     get pushStackCount() { return 1; }
@@ -547,12 +548,13 @@ class TopStackToValueLoc extends Command {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             if (st_top.value instanceof ValueLoc)
-                simulatedStack.push({type: 'const', value: st_top.value});
+                simulatedStack.push({type: 'const', value: st_top.value, index: simulatedStack.length});
             else    
-                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc)});
+                simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: simulatedStack.length});
+            optimizedCode.push({ comm: this, del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push(this);
+            optimizedCode.push({ comm: this, del: false });
         }
     }
 
@@ -591,7 +593,8 @@ class PushCommConstLoc extends PushCommConst {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc)});
+        simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc), index: simulatedStack.length});
+        optimizedCode.push({ comm: this, del: true });
     }
 
     toJSON() {
