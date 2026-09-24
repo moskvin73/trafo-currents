@@ -331,5 +331,5 @@ export function CastValue(targetType, valueToCast) {
 export function isKnownTypeValue(value) {
     const type = typeof value;
     const sourceType = type === 'object' && value !== null ? valueToCast.constructor : type;
-    return CAST_TABLE.has(value) || typeof typeRef === 'string';
+    return CAST_TABLE.has(sourceType) || typeof sourceType === 'string';
 }
