@@ -1983,91 +1983,91 @@ const SubstitutionTableBin = new Map([
     // ASSIGN
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o) => { return [new AssignCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AssignCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AssignCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return [...r_o, new AssignCommValueOp(l_o)]; }
     ],
 
     // ADD
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.CONST),
-        (l_o, r_o) => { return [...l_o, new AddCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AddCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [...l_o, new AddCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new AddCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...l_o, ...r_o, new AddCommOpOp()]; }
+        (l_o, r_o, loc) => { return [...l_o, ...r_o, new AddCommOpOp()]; }
     ],
 
     // SUB
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.CONST),
-        (l_o, r_o) => { return [...l_o, new SubCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return [...l_o, new SubCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new SubCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return [...r_o, new SubCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.VARABLE),
-        (l_o, r_o) => { return [...l_o, new SubCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return [...l_o, new SubCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...r_o, new SubCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return [...r_o, new SubCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        (l_o, r_o) => { return [...l_o, ...r_o, new SubCommOpOp()]; }
+        (l_o, r_o, loc) => { return [...l_o, ...r_o, new SubCommOpOp()]; }
     ],
 
 ]);
@@ -2197,33 +2197,33 @@ export class CommandBuilder {
         return comm;
     }
 
-	#creatorBin(operand, l_op, r_op) {
+	#creatorBin(operand, l_op, r_op, loc) {
         const { op: l, st_c:l_sc } = this.#checkOperand(l_op);
         const { op: r, st_c:r_sc } = this.#checkOperand(r_op);
 		if (l === self && r === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode), this.#countStack);
+                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, this.#currentCode, loc), this.#countStack);
         }
 		else if (l === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, r), r_sc);
+                this.#checkCountStackCommand(createBinCode(operand, this.#currentCode, r, loc), r_sc);
         }
 		else if (r === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(createBinCode(operand, l, this.#currentCode), l_sc);
+                this.#checkCountStackCommand(createBinCode(operand, l, this.#currentCode, loc), l_sc);
 		} else {
-            this.#append(this.#checkCountStackCommand(createBinCode(operand, l, r), l_sc + r_sc));
+            this.#append(this.#checkCountStackCommand(createBinCode(operand, l, r, loc), l_sc + r_sc));
 		}
 		return this;
 	}
 
- 	#creatorUn(operand, op) {
+ 	#creatorUn(operand, op, loc) {
         const { op: l, st_c:l_sc } = this.#checkOperand(op);
 		if (l === self) {
             this.#currentCode = 
-                this.#checkCountStackCommand(createUnCode(operand, this.#currentCode));
+                this.#checkCountStackCommand(createUnCode(operand, this.#currentCode, loc));
 		} else {
-            this.#append(this.#checkCountStackCommand(createUnCode(operand, l), l_sc));
+            this.#append(this.#checkCountStackCommand(createUnCode(operand, l, loc), l_sc));
 		}
 		return this;
 	}
@@ -2238,68 +2238,77 @@ export class CommandBuilder {
         return this;
     }
 
-    report(astNode) {
-        this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
+    report(astNode, loc) {
+        if (loc)
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new ReportComm(astNode))]);
+        else
+            this.#append(this.#checkCountStackCommand(new ReportComm(astNode)));
         return this;
     }
 
-    error(msg) {
-        this.#append(this.#checkCountStackCommand(new ErrorComm(msg)));
+    error(msg, loc) {
+        if (loc)
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new ErrorComm(msg))]);
+        else
+            this.#append(this.#checkCountStackCommand(new ErrorComm(msg)));
         return this;
     }
 
-    matrix(cont_row, count_col) {
-        this.#append(this.#checkCountStackCommand(new MatrixComm(cont_row, count_col)));
+    matrix(cont_row, count_col, loc) {
+        if (loc)
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new MatrixComm(cont_row, count_col))]);
+        else
+            this.#append(this.#checkCountStackCommand(new MatrixComm(cont_row, count_col)));
         return this;
     }
 
     //#region UN
-    plus(op) {
-        return this.#creatorUn(OperatorUnType.PLUS, op);
+    plus(op, loc) {
+        return this.#creatorUn(OperatorUnType.PLUS, op, loc);
     }    
 
-    neg(op) {
-        return this.#creatorUn(OperatorUnType.NEG, op);
+    neg(op, loc) {
+        return this.#creatorUn(OperatorUnType.NEG, op, loc);
     }    
 
-    not(op) {
-        return this.#creatorUn(OperatorUnType.NOR, op);
+    not(op, loc) {
+        return this.#creatorUn(OperatorUnType.NOR, op, loc);
     }
     //#endregion UN    
 
     //#region BIN
-    assign(l_op, r_op) {
-		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op);
+    assign(l_op, r_op, loc) {
+		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op, loc);
     }
 
-    add(l_op, r_op) {
-		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op);
+    add(l_op, r_op, loc) {
+		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op, loc);
     }
 
-    sub(l_op, r_op) {
-		return this.#creatorBin(OperatorBinType.SUB, l_op, r_op);
+    sub(l_op, r_op, loc) {
+		return this.#creatorBin(OperatorBinType.SUB, l_op, r_op, loc);
     }
     //#endregion BIN
 
-    push(value, loc = null) {
+    push(value, loc) {
         if (loc)
-            this.#append(this.#checkCountStackCommand(new PushCommConstLoc(value, loc)));
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommConst(value))]);
         else
             this.#append(this.#checkCountStackCommand(new PushCommConst(value)));
         return this;
     }
 
-    push_gsym(value, loc = null) {
+    push_gsym(value, loc) {
         if (loc)
-            this.#append(this.#checkCountStackCommand(new PushCommVarbleGlobalLoc(value, loc)));
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommVarbleGlobal(value))]);
         else
             this.#append(this.#checkCountStackCommand(new PushCommVarbleGlobal(value)));
         return this;
     }
 
-    push_lsym(value, loc = null) {
+    push_lsym(value, loc) {
         if (loc)
-            this.#append(this.#checkCountStackCommand(new PushCommVarbleLocalLoc(value, loc)));
+            this.#append([new LocationComm(loc), this.#checkCountStackCommand(new PushCommVarbleLocal(value))]);
         else
             this.#append(this.#checkCountStackCommand(new PushCommVarbleLocal(value)));
         return this;
