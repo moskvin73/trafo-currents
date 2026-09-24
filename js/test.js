@@ -367,7 +367,7 @@ export function test3() {
     A = A - 10 - B;
     `);
 
-  builder.foldConstants(contextError);
+  //builder.foldConstants(contextError);
   if (builder.isConstant) {
     console.log(`Код отсутсвет константное занчение: ${builder.constant}`);
   } else {
