@@ -905,6 +905,8 @@ export class UnaryOpNodePlus extends UnaryOpNode {
   static fromJSON(data) { return UnaryOpNode.create(UnaryOpNodePlus, data); }
 
   internal_evaluate(context) { return this.argument.internal_evaluate(context); }
+
+  createCode(context) { return CodeBuilder.plus(this.argument.createCode(context), loc); }
 }
 regAST(UnaryOpNodePlus);
 
@@ -925,6 +927,8 @@ export class UnaryOpNodeMinus extends UnaryOpNode {
     const argVal = this.argument.internal_evaluate(context);
     return argVal.negate();
   }
+
+  createCode(context) { return CodeBuilder.neg(this.argument.createCode(context), loc); }
 }
 regAST(UnaryOpNodeMinus);
 
@@ -946,6 +950,8 @@ export class UnaryOpNodeNot extends UnaryOpNode {
     const argVal = this.argument.internal_evaluate(context);
     return argVal.not();
   }
+
+  createCode(context) { return CodeBuilder.not(this.argument.createCode(context), loc); }
 
   toTeX(context) {
     const argTex = this.argument.toTeX(context);
