@@ -532,6 +532,10 @@ export class MathParser extends EventTarget {
     TokenType.MINUS,
   ]));
 
+  testParse() {
+    return this.#parseExpression();
+  }
+
   #parseStatement(code, f_out = false) {
     let exprNode = null;
 
