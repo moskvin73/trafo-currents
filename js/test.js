@@ -362,7 +362,7 @@ export function test3() {
   };
 
   const builder = parse(`
-    A = 10;
+    A = 10 - 11;
     B = %pi;
     A = A - 10 - B;
     `);
