@@ -2404,9 +2404,10 @@ export class CommandBuilder {
             command = new PushCommVarbleLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
             command = new PushCommVarbleGlobal(value);
-        } else {
+        } else if (isKnownTypeValue(op)) {
             command = new PushCommConst(value);
         }
+        else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
         const processedCommand = this.#checkCountStackCommand(command);
         this.#append(loc ? [new LocationComm(loc), processedCommand] : processedCommand);
         return this;
