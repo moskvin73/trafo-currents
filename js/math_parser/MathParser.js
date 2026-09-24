@@ -533,7 +533,34 @@ export class MathParser extends EventTarget {
   ]));
 
   testParse() {
-    return this.#parseExpression();
+    let ret_builder = null;
+    const add_bulder = (b) => {
+      if (ret_builder) ret_builder.append(b);
+      else ret_builder = b;
+    }; 
+    while (this.c_token !== this.c_token) {
+      if (this.c_token === TokenType.SILENT || TokenType.SILENT) {
+        this.#consume(); 
+        continue;
+      }
+      const node = this.#parseExpression();
+      const builder = node.createCode(this.context);
+      if (this.c_token === TokenType.SEMICOLON) {
+        this.#consume();
+        builder.report(node).pop();
+        add_bulder(builder);
+      }
+      if (this.c_token === TokenType.SILENT) {
+        this.#consume();
+        builder.pop();
+        add_bulder(builder);
+      }
+      else { 
+        this.#error(`Неопустимый символ "${this.lexer.stringValue()}"`);
+         this.#consume(); 
+      }  
+    }
+    return ret_builder;
   }
 
   #parseStatement(code, f_out = false) {
@@ -626,7 +653,7 @@ export class MathParser extends EventTarget {
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
     while (true) switch (this.c_token)
     {
-      case TokenType.EOF:
+      case :
       case TokenType.SEMICOLON:
         this.#consume();
         if (exprNode !== null)
