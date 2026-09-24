@@ -2309,89 +2309,89 @@ export class CommandBuilder {
 
     //#region UN
     plus(op, loc) {
-        return this.#creatorUn(OperatorUnType.PLUS, op, loc);
+        return this.#creatorUn(OperatorUnType.PLUS, this.#createOperand(op), loc);
     }    
 
     neg(op, loc) {
-        return this.#creatorUn(OperatorUnType.NEG, op, loc);
+        return this.#creatorUn(OperatorUnType.NEG, this.#createOperand(op), loc);
     }    
 
     not(op, loc) {
-        return this.#creatorUn(OperatorUnType.NOR, op, loc);
+        return this.#creatorUn(OperatorUnType.NOR, this.#createOperand(op), loc);
     }
     //#endregion UN    
 
     //#region BIN
     assign(l_op, r_op, loc) {
-		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op, loc);
+		return this.#creatorBin(OperatorBinType.ASSIGN, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     or (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.OR, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.OR, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     xor (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.XOR, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.XOR, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     and (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.AND, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.AND, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     equ (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.EQU, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.EQU, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     notEqu (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.NOT_EQU, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.NOT_EQU, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     lt (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.LT, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.LT, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
    
     gt (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.GT, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.GT, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     lte (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.LTE, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.LTE, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
    
     gte (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.GTE, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.GTE, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     is (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.IS, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.IS, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     add(l_op, r_op, loc) {
-		return this.#creatorBin(OperatorBinType.ADD, l_op, r_op, loc);
+		return this.#creatorBin(OperatorBinType.ADD, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     sub(l_op, r_op, loc) {
-		return this.#creatorBin(OperatorBinType.SUB, l_op, r_op, loc);
+		return this.#creatorBin(OperatorBinType.SUB, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     mul(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.MUL, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.MUL, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     div(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.DIV, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.DIV, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     mod(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.MOD, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.MOD, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     pow(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.POW, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.POW, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
 
     cast(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.CAST, l_op, r_op, loc);
+        return this.#creatorBin(OperatorBinType.CAST, this.#createOperand(l_op), this.#createOperand(r_op), loc);
     }
     //#endregion BIN
 
