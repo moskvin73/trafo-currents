@@ -35,7 +35,7 @@ export function createLocalVarable(id_name) {
     return new LocalVarable(d_name);
 }
 
-export class Command {
+class Command {
     constructor() {
         // Защита от создания экземпляра самого базового класса
         if (new.target === Command) {
@@ -803,7 +803,7 @@ regCode(PushCommVarbleGlobalLoc);
 //#endregion PUSH
 
 //#region CONST_VAR 
-export class OperandValue extends Command {
+class OperandValue extends Command {
     constructor() {
         super();
         // Защита от создания экземпляра самого базового класса
@@ -827,7 +827,7 @@ function assertOperand(value, paramName, context) {
   }
 }
 
-export class OpConst extends OperandValue {
+class OpConst extends OperandValue {
     constructor(value) {
         super();
         this.value = value;
@@ -884,7 +884,7 @@ function assertOperandVarable(value, paramName, context) {
   }
 }
 
-export class OpVarableLocal extends OpVarable {
+class OpVarableLocal extends OpVarable {
     constructor(id_name) {
         super();
         assertInteger(id_name, 'id_name', 'OpVarableLocal');
@@ -930,7 +930,7 @@ function assertOperandVarableLocal(value, paramName, context) {
   }
 }
 
-export class OpVarableGlobal extends OpVarable {
+class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
         assertSymbol(sym, "symbol", OpVarableGlobal);
@@ -2094,7 +2094,7 @@ const SubstitutionTableBin = new Map([
     ],
 ]);
 
-export function is_comands(comands) {
+function is_comands(comands) {
     return Array.isArray(comands) && comands.every(item => item instanceof Command);
 }
 
@@ -2106,14 +2106,14 @@ function getOperandType(op) {
     throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`);
 }
 
-export function operandImplementСode(op) {
+function operandImplementСode(op) {
     if (op instanceof OperandValue) return [op.createCodePush()];
     else if (op instanceof Command) return [op];
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return op;
     throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`); 
 }
 
-export function createUnCode(operator, op, loc) {
+function createUnCode(operator, op, loc) {
     const op_type = getOperandType(op);
     const key = getUnKey(operator, op_type);
     if (!SubstitutionTableUn.has(key)) {
@@ -2123,7 +2123,7 @@ export function createUnCode(operator, op, loc) {
     return processFn(op, loc);
 }
 
-export function createBinCode(operator, l_op, r_op, loc) {
+function createBinCode(operator, l_op, r_op, loc) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
     const key = getBinKey(operator, lop_type, rop_type);
