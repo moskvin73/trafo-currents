@@ -2257,7 +2257,7 @@ export class CommandBuilder {
             if (loc) this.#append([new LocationComm(loc), ...op.build()]);
             else this.#append(op.build());
         }
-        else throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
+        else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
         return this;
     }
 
