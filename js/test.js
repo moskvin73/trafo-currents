@@ -10,6 +10,7 @@ import VarableCode from './varables/VarableCode.js';
 import * as Code from './math_parser/Codes.js';
 import { TYPE_REGISTRY } from './math_parser/SemanticDispatcher.js';
 import { Stack } from './math/util.js';
+import { MathParser } from './math_parser/MathParser.js';
 
 export function test(data) {
     console.log("=== Старт тестирования сериализации ===");
@@ -355,7 +356,11 @@ export function test3() {
     },
   };
 
-  // Создаём матрицу
+  const p = new MathParser('3 + 4', symbols);
+  const node = p.testParse();
+  const command = node.createCode(symbols);
+
+  /*// Создаём матрицу
   const m = builderMatrix([
     [1, 2, 3],
     [4, 5, 6],
@@ -380,7 +385,7 @@ export function test3() {
   .add(op_n("pi"), Code.self) 
   .assign(op_n("pi"), Code.self)
   .report('astNode2')
-  .pop();
+  .pop();*/
 
   builder.foldConstants(contextError);
   if (builder.isConstant) {
