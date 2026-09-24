@@ -2265,7 +2265,7 @@ export class ConstantNode extends MathNode {
     const config = CONSTANTS_AST_REGISTRY.get(this.#tokenType);
     if (!config) {
       this.error(context, 'Неизвестный тип константы (Token ID: ${this.#tokenType})');
-      return this.errorValue();
+      return this.CodeBuilder;
     }
     else return this.CodeBuilder.push(config.instance, this.loc);    
   }
