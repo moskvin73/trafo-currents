@@ -92,6 +92,8 @@ export default class ASTNode {
     throw new Error("[ASTNode]: Метод createCode(context) не реализован.");
   }
 
+  get CodeBuilder() { return new Code.CommandBuilder(); }
+
   createLocationCode() { return Code.LocationComm(this.loc); }
 
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
@@ -412,6 +414,7 @@ export class MathNode extends ASTNode {
   collectMathExpressions(list) { list.push(this); }  
 }
 
+
 /**
  * Узел числа (Терминальный узел / Лист дерева)
  */
@@ -450,7 +453,7 @@ export class NumberNode extends MathNode {
 
   internal_evaluate(context) { return this.value; }
 
-  createCode(context) { return new Code.CommandBuilder().push(this.value, loc); }
+  createCode(context) { return CodeBuilder.push(this.value, loc); }
 
   toTeX(context) { return this.value.toRawTeX(context); }
 }
