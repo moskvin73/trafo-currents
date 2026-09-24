@@ -2305,43 +2305,43 @@ export class CommandBuilder {
     }
 
     or (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "or" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.OR, l_op, r_op, loc);
     }
 
     xor (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "xor" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.XOR, l_op, r_op, loc);
     }
 
     and (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "and" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.AND, l_op, r_op, loc);
     }
 
     equ (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "equ" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.EQU, l_op, r_op, loc);
     }
 
     notEqu (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "notEqu" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.NOT_EQU, l_op, r_op, loc);
     }
 
     lt (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "lt" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.LT, l_op, r_op, loc);
     }
    
     gt (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.GT, l_op, r_op, loc);
     }
 
     lte (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "lt" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.LTE, l_op, r_op, loc);
     }
    
     gte (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.GTE, l_op, r_op, loc);
     }
 
     is (l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "gt" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.IS, l_op, r_op, loc);
     }
 
     add(l_op, r_op, loc) {
@@ -2353,23 +2353,23 @@ export class CommandBuilder {
     }
 
     mul(l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "mul" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.MUL, l_op, r_op, loc);
     }
 
     div(l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.DIV, l_op, r_op, loc);
     }
 
     mod(l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.MOD, l_op, r_op, loc);
     }
 
     pow(l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.POW, l_op, r_op, loc);
     }
 
     cast(l_op, r_op, loc) {
-        throw new Error('[CommandBuilder] Опрерация "cast" пока не ревализована');
+        return this.#creatorBin(OperatorBinType.CAST, l_op, r_op, loc);
     }
     //#endregion BIN
 
