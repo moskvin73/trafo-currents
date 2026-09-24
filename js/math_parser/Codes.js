@@ -4,7 +4,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { BaseLocation, restoreLocation } from './CompilerErrors.js';
-import { dispatcher, toParserBase, getTypeNameString, isKnownTypeClass } from './SemanticDispatcher.js';
+import { dispatcher, toParserBase, getTypeNameString, isKnownTypeClass, isKnownTypeValue } from './SemanticDispatcher.js';
 import { SymbolTableContext, SymbolContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
@@ -2295,15 +2295,18 @@ export class CommandBuilder {
         return this;
     }
 
-    #createOperand(op) {
+    #createOperand(op, regType = false) {
         if (value instanceof LocalVarable) {
             return new PushCommVarbleLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
             return new PushCommVarbleGlobal(value);
         } else if (value instanceof CommandBuilder || value === self) {
             return op;
-        } else {
+        } else if (isKnownTypeValue(op) || (regType && isKnownTypeClass(op))) {
             return new PushCommConst(value);
+        }
+        else {
+            throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
         }
     }
 

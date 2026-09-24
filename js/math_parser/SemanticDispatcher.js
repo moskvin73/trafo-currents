@@ -327,3 +327,9 @@ export function CastValue(targetType, valueToCast) {
     const name_targetType = getTypeNameString(targetType);
     throw new ErrorBase(context, `Невозможно привести тип "${name_sourceType}" (значение: "${valueToCast}") к типу "${name_targetType}".`);
 }
+
+export function isKnownTypeValue(value) {
+    const type = typeof value;
+    const sourceType = type === 'object' && value !== null ? valueToCast.constructor : type;
+    return CAST_TABLE.has(value);
+}
