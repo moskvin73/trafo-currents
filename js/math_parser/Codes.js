@@ -1912,13 +1912,19 @@ const OperatorBinType = {
     OR:         1,
     XOR:        2,
     AND:        3,
-    RELATIONAL: 4,
-    IS:         5,  
-    ADD:        6,
-    SUB:        7,    
-    MUL:        8,
-    DIV:        9,
-    POW:        10,
+	EQU:		4,
+	NOT_EQU:	5,
+	LT:			6,
+	GT:			7,
+	LTE:		8,
+	GTE:		9,
+    IS:         10,
+    ADD:        11,
+    SUB:        12,
+    MUL:        13,
+    DIV:        14,
+	MOD:		15,
+    POW:        16,
 };
 
 const OperandsType = {
@@ -2288,6 +2294,18 @@ export class CommandBuilder {
     //#region BIN
     assign(l_op, r_op, loc) {
 		return this.#creatorBin(OperatorBinType.ASSIGN, l_op, r_op, loc);
+    }
+
+    or (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "or" пока не ревализована');
+    }
+
+    xor (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "xor" пока не ревализована');
+    }
+
+    and (l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "and" пока не ревализована');
     }
 
     add(l_op, r_op, loc) {
