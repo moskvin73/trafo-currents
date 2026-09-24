@@ -2229,7 +2229,8 @@ export class CommandBuilder {
    
     append(op, loc) {
         if (op instanceof CommandBuilder) {
-            this.#append(this.#checkCountStackCommand(op.build(), op.countStack));
+            this.#countStack += op.countStack;
+            this.#append(op.build());
         }
         else throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
         return this;
