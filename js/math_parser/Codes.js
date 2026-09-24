@@ -1037,7 +1037,7 @@ class MatrixComm extends Command {
             }
         }
         simulatedStack.push({type: 'const', value: this.operand(constnts), index: simulatedStack.length});
-        optimizedCode.push({ comm: this, del: false });   
+        optimizedCode.push({ comm: this, del: true });   
     }
 
     get pushStackCount() { return 1; }
