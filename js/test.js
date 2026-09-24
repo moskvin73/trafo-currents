@@ -359,6 +359,8 @@ export function test3() {
   const p = new MathParser('3 + 4', symbols);
   const node = p.testParse();
   const builder = node.createCode(symbols);
+  builder.report(node).pop();
+
 
   /*// Создаём матрицу
   const m = builderMatrix([
