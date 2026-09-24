@@ -450,7 +450,7 @@ export class NumberNode extends MathNode {
 
   internal_evaluate(context) { return this.value; }
 
-  createCode(context) { return new Code.CommandBuilder().push(this.value); }
+  createCode(context) { return new Code.CommandBuilder().push(this.value, loc); }
 
   toTeX(context) { return this.value.toRawTeX(context); }
 }
