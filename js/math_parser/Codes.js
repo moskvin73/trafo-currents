@@ -1997,79 +1997,78 @@ const SubstitutionTableBin = new Map([
     // ADD
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AddCommValueValue(l_o, r_o)] : [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AddCommValueValue(l_o, r_o)] : [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AddCommValueValue(l_o, r_o)] : [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [new AddCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AddCommValueValue(l_o, r_o)] : [new AddCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [...l_o, new AddCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, new LocationComm(loc), new AddCommOpValue(r_o)] : [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.CONST, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...r_o, new AddCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...r_o, new LocationComm(loc), new AddCommValueOp(l_o)] : [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [...l_o, new AddCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, new LocationComm(loc), new AddCommOpValue(r_o)] : [...l_o, new AddCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...r_o, new AddCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...r_o, new LocationComm(loc), new AddCommValueOp(l_o)] : [...r_o, new AddCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ADD, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...l_o, ...r_o, new AddCommOpOp()]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, ...r_o, new LocationComm(loc), new AddCommOpOp()] : [...l_o, ...r_o, new AddCommOpOp()]; }
     ],
 
     // SUB
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new SubCommValueValue(l_o, r_o)] : [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new SubCommValueValue(l_o, r_o)] : [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new SubCommValueValue(l_o, r_o)] : [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [new SubCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new SubCommValueValue(l_o, r_o)] : [new SubCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [...l_o, new SubCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, new LocationComm(loc), new SubCommOpValue(r_o)] : [...l_o, new SubCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.CONST, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...r_o, new SubCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...r_o, new LocationComm(loc), new SubCommValueOp(l_o)] : [...r_o, new SubCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [...l_o, new SubCommOpValue(r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, new LocationComm(loc), new SubCommOpValue(r_o)] : [...l_o, new SubCommOpValue(r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...r_o, new SubCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...r_o, new LocationComm(loc), new SubCommValueOp(l_o)] : [...r_o, new SubCommValueOp(l_o)]; }
     ],
     [
         getBinKey(OperatorBinType.SUB, OperandsType.EVALUATE, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...l_o, ...r_o, new SubCommOpOp()]; }
+        (l_o, r_o, loc) => { return loc ? [...l_o, ...r_o, new LocationComm(loc), new SubCommOpOp()] : [...l_o, ...r_o, new SubCommOpOp()]; }
     ],
-
 ]);
 
 export function is_comands(comands) {
