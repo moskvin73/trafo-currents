@@ -2295,6 +2295,18 @@ export class CommandBuilder {
         return this;
     }
 
+    #createOperand(op) {
+        if (value instanceof LocalVarable) {
+            return new PushCommVarbleLocal(value.id_name);
+        } else if (value instanceof SymbolContext) {
+            return new PushCommVarbleGlobal(value);
+        } else if (value instanceof CommandBuilder) {
+            return op;
+        } else {
+            return new PushCommConst(value);
+        }
+    }
+
     //#region UN
     plus(op, loc) {
         return this.#creatorUn(OperatorUnType.PLUS, op, loc);
