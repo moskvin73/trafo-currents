@@ -566,13 +566,14 @@ export class MatrixNode extends MathNode {
   }
 
   createCode(context) {
-    let ret_code = [this.createLocationCode()]; 
+    const builder = this.CodeBuilder;
     for (let i = this.#rows.length - 1; i >= 0; i--) {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
-        const op = node.createCode(context);
-        ret_code = [...ret_code, node.createLocationCode(), ...Code.operandImplementСode(node.createCode(context))];
+        const code = node.createCode(context);
+        
+
       }
     }
     const rowCount = this.#rows.length;

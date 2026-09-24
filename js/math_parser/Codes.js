@@ -2227,6 +2227,14 @@ export class CommandBuilder {
 		return this;
 	}
    
+    append(op, loc) {
+        if (op instanceof CommandBuilder) {
+            this.#append(this.#checkCountStackCommand(op.build(), op.countStack));
+        }
+        else throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
+        return this;
+    }
+
     location(loc) {
         this.#append(this.#checkCountStackCommand(new LocationComm(loc)));
         return this;
