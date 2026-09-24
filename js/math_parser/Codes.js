@@ -2094,7 +2094,7 @@ const SubstitutionTableBin = new Map([
     ],
 ]);
 
-function is_comands(comands) {
+export function is_comands(comands) {
     return Array.isArray(comands) && comands.every(item => item instanceof Command);
 }
 
