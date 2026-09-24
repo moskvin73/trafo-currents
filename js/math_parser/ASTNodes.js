@@ -1724,7 +1724,13 @@ export class VariableNode extends IdentifierNode {
     }
   }
 
-  createCode(context) { return new Code.OpVarableLocal(this.id_name); }
+  createCode(context) { 
+    if (context.is_global(this.id_name)) {
+      const sym = context.scope_context.getParseSymbolById(this.id_name);
+      return CodeBuilder.push(sym, loc);
+    }
+    return CodeBuilder.push(Code.createLocalVarable(this.id_name), loc);
+  }
 
   toTeX(context) { return this.getTexName(); }
 }
@@ -1780,10 +1786,12 @@ export class AssignNode extends IdentifierNode {
   }
 
   createCode(context) {
-    const l_op = new Code.OpVarableLocal(this.id_name);
-    const r_op = this.expression.createCode(context);
-    return [this.createLocationCode(), ...Code.createBinCode(Code.OperatorBinType.ASSIGN, l_op, r_op)];
-   }
+    if (context.is_global(this.id_name)) {
+      const sym = context.scope_context.getParseSymbolById(this.id_name);
+      return CodeBuilder.assign(sym, this.expression.createCode(context), loc);
+    }
+    return CodeBuilder.assign(Code.createLocalVarable(this.id_name), this.expression.createCode(context), loc);
+  }
 
   *getChildren() {
     yield this.expression;
