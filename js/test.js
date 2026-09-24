@@ -358,12 +358,13 @@ export function test3() {
 
   const parse = (text) => {
     const p = new MathParser(text, symbols);
-    const node = p.testParse();
-    const builder = node.createCode(symbols);
-    return builder.report(node).pop();
+    return p.testParse();
   };
 
-  const builder = parse("A = 10").append(parse("A + 10"));
+  const builder = parse(`
+    A = 10;
+    A = 10 - A;
+    `);
 
   builder.foldConstants(contextError);
   if (builder.isConstant) {
