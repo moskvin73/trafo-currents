@@ -593,11 +593,14 @@ class TopStackToValueLoc extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            if (st_top.value instanceof ValueLoc)
+            if (st_top.value instanceof ValueLoc) {
                 simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
-            else    
+                optimizedCode.push({ comm: new PushCommConstLoc(st_top.value.value, this.loc), del: true });
+            }
+            else {   
                 simulatedStack.push({type: 'const', value: new ValueLoc(st_top.value, this.loc), index: optimizedCode.length});
-            optimizedCode.push({ comm: new PushCommConstLoc(st_top.value, this.loc), del: true });
+                optimizedCode.push({ comm: new PushCommConstLoc(st_top.value, this.loc), del: true });
+            }
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
