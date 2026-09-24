@@ -570,7 +570,7 @@ export class MatrixNode extends MathNode {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
-        builder.prepend(node.createCode(context)).topToLoc(node.loc);
+        builder.prepend(node.createCode(context).topToLoc(node.loc));
       }
     }
 
