@@ -539,7 +539,7 @@ export class MathParser extends EventTarget {
       else ret_builder = b;
     }; 
     while (this.c_token !== TokenType.EOF) {
-      if (this.c_token === TokenType.SILENT || TokenType.SILENT) {
+      if (this.c_token === TokenType.SILENT || this.c_token === TokenType.SILENT) {
         this.#consume(); 
         continue;
       }
