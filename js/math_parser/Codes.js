@@ -1930,6 +1930,7 @@ const OperatorBinType = {
     DIV:        14,
 	MOD:		15,
     POW:        16,
+    CAST:       17,
 };
 
 const OperandsType = {
