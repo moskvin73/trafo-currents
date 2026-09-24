@@ -571,15 +571,13 @@ export class MatrixNode extends MathNode {
       const row = this.#rows[i];
       for (let j = row.length - 1; j >= 0; j--) {
         const node = row[j];
-        const code = node.createCode(context);
-        
-
+        builder.append(node.createCode(context)).topToLoc(loc);
       }
     }
     const rowCount = this.#rows.length;
     const colCount = rows.length > 0 ? rows[0].length : 0;
-    ret_code = [...ret_code, new Code.MatrixComm(rowCount, colCount)];
-    return ret_code;
+    builder.matrix(rowCount, colCount, loc);
+    return builder;
   }
 
   /**
