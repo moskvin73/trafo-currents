@@ -2367,6 +2367,10 @@ export class CommandBuilder {
     pow(l_op, r_op, loc) {
         throw new Error('[CommandBuilder] Опрерация "div" пока не ревализована');
     }
+
+    cast(l_op, r_op, loc) {
+        throw new Error('[CommandBuilder] Опрерация "cast" пока не ревализована');
+    }
     //#endregion BIN
 
     push(value, loc) {
