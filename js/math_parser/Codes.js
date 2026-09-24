@@ -1935,7 +1935,8 @@ const OperatorBinType = {
 const OperandsType = {
     CONST:       0,
     VARABLE:     1,
-    EVALUATE:    2,
+    KNOWN_TYPE:  2,
+    EVALUATE:    3,
 };
 
 function getUnKey(operator, operand) {
