@@ -615,7 +615,7 @@ class PushCommConstLoc extends PushCommConst {
 }
 regCode(PushCommConstLoc);
 
-function checkSymbolNull(sym) { if (sym === null) throw new Error(`Символ не опредилён.`); }
+function checkSymbolNull(sym) { if (sym === null) throw new ErrorBase(`Символ не опредилён.`); }
 
 function checkSymbol(sym) {
     const name = sym.name;
@@ -706,10 +706,15 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
 }
 regCode(PushCommVarbleLocalLoc);
 
+function assertSymbol(value, paramName, context) {
+    if (!(value instanceof SymbolContext))
+        throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс "SymbolContext". Получено: ${value}`);        
+}
+
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
         super();
-        checkSymbolNull(sym);
+        assertSymbol(sym, symbol, PushCommVarbleGlobal);
         this.symbol = sym;
     }
 
@@ -918,7 +923,7 @@ function assertOperandVarableLocal(value, paramName, context) {
 export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
-        checkSymbolNull(sym);
+        assertSymbol(sym, symbol, OpVarableGlobal);
         this.symbol = sym;
     }
 
