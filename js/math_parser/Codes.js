@@ -1043,7 +1043,12 @@ class MatrixComm extends Command {
                 for (const index of const_indexs) {
                     optimizedCode[index].del = false;
                 }
-                while (c-- > 0) simulatedStack.pop();
+                while (c-- > 0) { 
+                    const st_top = simulatedStack.pop();
+                    if (st_top.type === 'const') {
+                        optimizedCode[st_top.index].del = false;
+                    }
+                }
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({ comm: this, del: false });
                 return;
