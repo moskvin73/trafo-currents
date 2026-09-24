@@ -325,7 +325,8 @@ export function test3() {
   });
   const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
   const op_v = (sym) => { return new Code.OpVarableGlobal(sym); };
-  const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
+  //const op_n = (name) => { return new Code.OpVarableGlobal(acquireVar(name)); };
+  const op_n = (name) => { return acquireVar(name); };
   const op_c = (value) => { return new Code.OpConst(value); };
 
   const c_loc = loc(0);

@@ -2300,7 +2300,7 @@ export class CommandBuilder {
             return new PushCommVarbleLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
             return new PushCommVarbleGlobal(value);
-        } else if (value instanceof CommandBuilder) {
+        } else if (value instanceof CommandBuilder || value === self) {
             return op;
         } else {
             return new PushCommConst(value);
