@@ -538,7 +538,7 @@ export class MathParser extends EventTarget {
       if (ret_builder) ret_builder.append(b);
       else ret_builder = b;
     }; 
-    while (this.c_token !== this.c_token) {
+    while (this.c_token !== TokenType.EOF) {
       if (this.c_token === TokenType.SILENT || TokenType.SILENT) {
         this.#consume(); 
         continue;
@@ -653,6 +653,7 @@ export class MathParser extends EventTarget {
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
     while (true) switch (this.c_token)
     {
+      case TokenType.EOF: return;
       case TokenType.SEMICOLON:
         this.#consume();
         if (exprNode !== null)
