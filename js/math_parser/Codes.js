@@ -2295,18 +2295,18 @@ export class CommandBuilder {
         return this;
     }
 
-    #createOperand(op, regType = false) {
+    #createOperand(value, regType = false) {
         if (value instanceof LocalVarable) {
             return new PushCommVarbleLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
             return new PushCommVarbleGlobal(value);
         } else if (value instanceof CommandBuilder || value === self) {
-            return op;
-        } else if (isKnownTypeValue(op) || (regType && isKnownTypeClass(op))) {
+            return value;
+        } else if (isKnownTypeValue(value) || (regType && isKnownTypeClass(value))) {
             return new PushCommConst(value);
         }
         else {
-            throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
+            throw new TypeError(`[CommandBuilder] Недопустимый операнд ${value}`);
         }
     }
 
