@@ -2297,13 +2297,13 @@ export class CommandBuilder {
 
     #createOperand(value, regType = false) {
         if (value instanceof LocalVarable) {
-            return new PushCommVarbleLocal(value.id_name);
+            return new OpVarableLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
-            return new PushCommVarbleGlobal(value);
+            return new OpVarableGlobal(value);
         } else if (value instanceof CommandBuilder || value === self) {
             return value;
         } else if (isKnownTypeValue(value) || (regType && isKnownTypeClass(value))) {
-            return new PushCommConst(value);
+            return new OpConst(value);
         }
         else {
             throw new TypeError(`[CommandBuilder] Недопустимый операнд ${value}`);
