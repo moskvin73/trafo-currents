@@ -94,8 +94,6 @@ export default class ASTNode {
 
   get CodeBuilder() { return new Code.CommandBuilder(); }
 
-  createLocationCode() { return Code.LocationComm(this.loc); }
-
   /** Генерирует чистый LaTeX-код БЕЗ знаков доллара */
   toTeX(context) {
     throw new Error("[ASTNode]: Метод toTeX() не реализован.");
