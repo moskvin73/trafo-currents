@@ -2409,6 +2409,7 @@ export class CommandBuilder {
         }
         const processedCommand = this.#checkCountStackCommand(command);
         this.#append(loc ? [new LocationComm(loc), processedCommand] : processedCommand);
+        return this;
     }
    
     // Команда POP
