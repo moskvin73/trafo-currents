@@ -2306,7 +2306,7 @@ export class CommandBuilder {
             return new PushCommConst(value);
         }
         else {
-            throw new Error(`[CommandBuilder] Недопустимый операнд ${op}`);
+            throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
         }
     }
 
