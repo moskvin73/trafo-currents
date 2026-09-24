@@ -649,7 +649,7 @@ class PushCommVarbleLocal extends PushComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         simulatedStack.push({ type: 'unknown' });
-        optimizedCode.push(this);
+        optimizedCode.push({ comm: this, del: false });
     }
 
     get pushStackCount() { return 1; }
@@ -722,7 +722,7 @@ class PushCommVarbleGlobal extends PushComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         simulatedStack.push({ type: 'unknown' });
-        optimizedCode.push(this);
+        optimizedCode.push({ comm: this, del: false });
     }
 
     get pushStackCount() { return 1; }
@@ -1019,12 +1019,17 @@ class MatrixComm extends Command {
         let c = this.popStackCount;
         let all_constnts = true;
         const constnts = new Stack();
+        const const_indexs = [];
         while (c-- > 0) { 
             const st_top = simulatedStack.pop();
             if (st_top.type === 'const') {
+                const_indexs.push(st_top.index);
                 constnts.push(st_top.value);
             } else {
                 all_constnts = false;
+                for (const index of const_indexs) {
+                    optimizedCode[index].del = false;
+                }
                 while (c-- > 0) simulatedStack.pop();
                 break;
             }
