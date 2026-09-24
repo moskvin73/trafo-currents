@@ -714,7 +714,7 @@ function assertSymbol(value, paramName, context) {
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
         super();
-        assertSymbol(sym, symbol, PushCommVarbleGlobal);
+        assertSymbol(sym, "symbol", PushCommVarbleGlobal);
         this.symbol = sym;
     }
 
@@ -923,7 +923,7 @@ function assertOperandVarableLocal(value, paramName, context) {
 export class OpVarableGlobal extends OpVarable {
     constructor(sym) {
         super();
-        assertSymbol(sym, symbol, OpVarableGlobal);
+        assertSymbol(sym, "symbol", OpVarableGlobal);
         this.symbol = sym;
     }
 
