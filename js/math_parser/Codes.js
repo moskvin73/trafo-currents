@@ -2407,7 +2407,7 @@ export class CommandBuilder {
         } else if (isKnownTypeValue(value)) {
             command = new PushCommConst(value);
         }
-        else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
+        else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${value}`);
         const processedCommand = this.#checkCountStackCommand(command);
         this.#append(loc ? [new LocationComm(loc), processedCommand] : processedCommand);
         return this;
