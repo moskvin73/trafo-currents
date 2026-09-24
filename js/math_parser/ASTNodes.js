@@ -1209,6 +1209,8 @@ export class AddNode extends BinaryOpNode {
     return l.add(r);
   }
 
+  createCode(context) { return CodeBuilder.add(this.left.createCode(context), this.right.createCode(context), loc); }
+
   simpleTeX(l, r) {
     return `${l} + ${r}`;
   }
@@ -1230,6 +1232,8 @@ export class OrNode extends BinaryOpNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.or(r);
   }
+
+  createCode(context) { return CodeBuilder.or(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} \\vee ${r}`;
@@ -1253,6 +1257,8 @@ export class XorNode extends BinaryOpNode {
     return l.xor(r);
   }
 
+  createCode(context) { return CodeBuilder.xor(this.left.createCode(context), this.right.createCode(context), loc); }
+
   simpleTeX(l, r) {
     return `${l} \\oplus ${r}`;
   }
@@ -1274,6 +1280,8 @@ export class AndNode extends BinaryOpNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.and(r);
   }
+
+  createCode(context) { return CodeBuilder.and(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} \\wedge ${r}`;
@@ -1297,6 +1305,8 @@ export class EquNode extends BinaryOpNode {
     return l.eq(r);
   }
 
+  createCode(context) { return CodeBuilder.equ(this.left.createCode(context), this.right.createCode(context), loc); }
+
   simpleTeX(l, r) {
     return `${l} = ${r}`;
   }
@@ -1318,6 +1328,8 @@ export class NotEquNode extends BinaryOpNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.not_eq(r);
   }
+
+  createCode(context) { return CodeBuilder.notEqu(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} \\neq ${r}`;
@@ -1341,6 +1353,8 @@ export class LtNode extends BinaryOpNode {
     return l.lt(r);
   }
 
+  createCode(context) { return CodeBuilder.lt(this.left.createCode(context), this.right.createCode(context), loc); }
+
   simpleTeX(l, r) {
     return `${l} < ${r}`;
   }
@@ -1362,6 +1376,8 @@ export class GtNode extends BinaryOpNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.gt(r);
   }
+
+  createCode(context) { return CodeBuilder.gt(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} > ${r}`;
@@ -1385,6 +1401,8 @@ export class LteNode extends BinaryOpNode {
     return l.lte(r);
   }
 
+  createCode(context) { return CodeBuilder.lte(this.left.createCode(context), this.right.createCode(context), loc); }
+
   simpleTeX(l, r) {
     return `${l} \\leqslant ${r}`;
   }
@@ -1406,6 +1424,8 @@ export class GteNode extends BinaryOpNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.gte(r);
   }
+
+  createCode(context) { return CodeBuilder.gte(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} \\geqslant ${r}`;
@@ -1447,6 +1467,8 @@ export class SubNode extends StrictRightBinNode {
     //const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.subtract(r);
   }
+
+  createCode(context) { return CodeBuilder.sub(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} - ${r}`;
@@ -1492,7 +1514,9 @@ export class MulNode extends BinaryOpNode {
 
     /*const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.multiply(r);*/
-  } 
+  }
+
+  createCode(context) { return CodeBuilder.mul(this.left.createCode(context), this.right.createCode(context), loc); }
 
   toTeX(context) { return super._renderFractionChain(context); }
 }
@@ -1537,7 +1561,9 @@ export class DivNode extends StrictRightBinNode {
     }
 
     return l.divide(r);
-  } 
+  }
+
+  createCode(context) { return CodeBuilder.div(this.left.createCode(context), this.right.createCode(context), loc); }
 
   toTeX(context) { return super._renderFractionChain(context); }
 }
@@ -1558,6 +1584,8 @@ export class ModNode extends StrictRightBinNode {
     const { l, r } = dispatcher.promoteTypes(this.left.internal_evaluate(context), this.right.internal_evaluate(context));
     return l.mod(r);
   }
+
+  createCode(context) { return CodeBuilder.mod(this.left.createCode(context), this.right.createCode(context), loc); }
 
   simpleTeX(l, r) {
     return `${l} \\bmod ${r}`;
@@ -1608,7 +1636,9 @@ export class PowNode extends BinaryOpNode {
       this.error(context, `Оператор '^' не определён для типов "${l.type}" и "${r.type}".`);
       return this.errorValue();
     }
-  } 
+  }
+
+  createCode(context) { return CodeBuilder.pow(this.left.createCode(context), this.right.createCode(context), loc); }
 
   toTeX(context) {
     let l = this.left.toTeX(context);
