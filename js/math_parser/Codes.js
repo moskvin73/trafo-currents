@@ -2404,7 +2404,7 @@ export class CommandBuilder {
             command = new PushCommVarbleLocal(value.id_name);
         } else if (value instanceof SymbolContext) {
             command = new PushCommVarbleGlobal(value);
-        } else if (isKnownTypeValue(op)) {
+        } else if (isKnownTypeValue(value)) {
             command = new PushCommConst(value);
         }
         else throw new TypeError(`[CommandBuilder] Недопустимый операнд ${op}`);
