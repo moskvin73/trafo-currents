@@ -2366,7 +2366,7 @@ export class CommandBuilder {
     }
 
     is (l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.IS, this.#createOperand(l_op), this.#createOperand(r_op), loc);
+        return this.#creatorBin(OperatorBinType.IS, this.#createOperand(l_op), this.#createOperand(r_op, true), loc);
     }
 
     add(l_op, r_op, loc) {
@@ -2394,7 +2394,7 @@ export class CommandBuilder {
     }
 
     cast(l_op, r_op, loc) {
-        return this.#creatorBin(OperatorBinType.CAST, this.#createOperand(l_op), this.#createOperand(r_op), loc);
+        return this.#creatorBin(OperatorBinType.CAST, this.#createOperand(l_op), this.#createOperand(r_op, true), loc);
     }
     //#endregion BIN
 
