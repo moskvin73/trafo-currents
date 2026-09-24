@@ -125,4 +125,6 @@ export class Stack {
   clear() {
     this.#items = [];
   }
+
+  reverse() { this.#items.reverse(); return this; }
 }
