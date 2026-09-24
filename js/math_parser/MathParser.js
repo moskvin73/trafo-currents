@@ -550,7 +550,7 @@ export class MathParser extends EventTarget {
         builder.report(node).pop();
         add_bulder(builder);
       }
-      if (this.c_token === TokenType.SILENT) {
+      else if (this.c_token === TokenType.SILENT) {
         this.#consume();
         builder.pop();
         add_bulder(builder);
