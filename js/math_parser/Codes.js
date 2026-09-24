@@ -1093,8 +1093,9 @@ class UnCommValue extends BaseUnComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.operator(toParserBase(this.value.value)), index: optimizedCode.length});
-            optimizedCode.push({ comm: this, del: true });
+            const calc_v = this.operator(toParserBase(this.value.value));
+            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
@@ -1139,7 +1140,7 @@ class UnCommOp extends BaseUnComm {
         if (st_top.type === 'const') {
             const calc_v = this.operator(toParserBase(st_top.value));
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-            optimizedCode.push({ comm: this, del: true });
+            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
@@ -1478,7 +1479,7 @@ class BinCommOpOp extends BaseBinComm {
         if (st_l.type === 'const' && st_r.type === 'const') {
             const { l, r } = dispatcher.promoteTypes(st_l.value, st_r.value);
             const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: simulatedStack.length});
+            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
             optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         } else if (st_l.type === 'const') {
             // Пересоздать BinCommValueOp
@@ -1525,7 +1526,7 @@ class AssignCommValueConst extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack) {
-        simulatedStack.push({type: 'const', value: this.value, index: simulatedStack.length});
+        simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length});
         optimizedCode.push({ comm: this, del: false });        
     }
 
@@ -1571,7 +1572,7 @@ class AssignCommValueValue extends Command {
 
     foldConstants(optimizedCode, simulatedStack) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.value.value, index: simulatedStack.length});
+            simulatedStack.push({type: 'const', value: this.value.value, index: optimizedCode.length});
             optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, this.value.value), del: false });    
         }
         else {
@@ -1622,7 +1623,7 @@ class AssignCommValueOp extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            simulatedStack.push({type: 'const', value: st_top.value, index: simulatedStack.length});
+            simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
             optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, st_top.value), del: false });
         } else {
             simulatedStack.push({ type: 'unknown' });
