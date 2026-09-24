@@ -377,7 +377,7 @@ export function test3() {
   .assign(op_n("pi"), Code.self)
   .pop()
   .push(1, incLoc(c_loc))
-  .sub(op_c(10), Code.self)
+  .sub(10, Code.self)
   .sub(Code.self, new Code.CommandBuilder().push(-100)) 
   .neg(Code.self)
   .add(op_n("pi"), Code.self) 
