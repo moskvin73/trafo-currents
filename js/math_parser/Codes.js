@@ -1983,15 +1983,15 @@ const SubstitutionTableBin = new Map([
     // ASSIGN
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.CONST),
-        (l_o, r_o, loc) => { return [new AssignCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AssignCommValueValue(l_o, r_o)] : [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.VARABLE),
-        (l_o, r_o, loc) => { return [new AssignCommValueValue(l_o, r_o)]; }
+        (l_o, r_o, loc) => { return loc ? [new LocationComm(loc), new AssignCommValueValue(l_o, r_o)] : [new AssignCommValueValue(l_o, r_o)]; }
     ],
     [
         getBinKey(OperatorBinType.ASSIGN, OperandsType.VARABLE, OperandsType.EVALUATE),
-        (l_o, r_o, loc) => { return [...r_o, new AssignCommValueOp(l_o)]; }
+        (l_o, r_o, loc) => { return loc ? [...r_o, new LocationComm(loc), new AssignCommValueOp(l_o)] : [...r_o, new AssignCommValueOp(l_o)]; }
     ],
 
     // ADD
