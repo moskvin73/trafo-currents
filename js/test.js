@@ -339,8 +339,7 @@ export function test3() {
       for (let j = count_col - 1; j >= 0; j--) {
         const loc = incLoc(c_loc);
         builder
-        .location(loc)
-        .push(row[j])
+        .push(row[j], loc)
         .topToLoc(loc);
       }
     }
@@ -369,17 +368,14 @@ export function test3() {
   .push(15) 
   .assign(op_n("z"), Code.self)
   .sub(m, Code.self)
-  .location(incLoc(c_loc))
-  .sub(Code.self, new Code.CommandBuilder().push(-100))
+  .sub(Code.self, new Code.CommandBuilder().push(-100), incLoc(c_loc))
   .neg(Code.self)
   .report('astNode1')
   .pop()
-  .location(incLoc(c_loc))
-  .push(Math.PI)
+  .push(Math.PI, incLoc(c_loc))
   .assign(op_n("pi"), Code.self)
   .pop()
-  .location(incLoc(c_loc))
-  .push(1)
+  .push(1, incLoc(c_loc))
   .sub(op_c(10), Code.self)
   .sub(Code.self, new Code.CommandBuilder().push(-100)) 
   .neg(Code.self)
