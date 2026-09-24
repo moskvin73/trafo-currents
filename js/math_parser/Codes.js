@@ -4,7 +4,7 @@ import ComplexNumber from '../math/ComplexNumber.js';
 import Matrix from '../math/Matrix.js';
 import { registerDataType, restoreDataType } from '../DataTypeRegistry.js';
 import { BaseLocation, restoreLocation } from './CompilerErrors.js';
-import { dispatcher, toParserBase, getTypeNameString } from './SemanticDispatcher.js';
+import { dispatcher, toParserBase, getTypeNameString, isKnownTypeClass } from './SemanticDispatcher.js';
 import { SymbolTableContext, SymbolContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
 import { Stack }  from '../math/util.js';
@@ -2090,6 +2090,7 @@ export function is_comands(comands) {
 function getOperandType(op) {
     if (op instanceof OpConst) return OperandsType.CONST;
     else if (op instanceof OpVarable) return OperandsType.VARABLE;
+    else if (isKnownTypeClass(op)) return  OperandsType.KNOWN_TYPE;
     else if (Array.isArray(op) && op.every(item => item instanceof Command)) return OperandsType.EVALUATE;
     throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`);
 }
