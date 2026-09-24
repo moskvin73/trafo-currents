@@ -1935,43 +1935,43 @@ const SubstitutionTableUn = new Map([
     // PLUS
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.CONST),
-        (op) => { return [new PlusCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new PlusCommValue(op)] : [new PlusCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.VARABLE),
-        (op) => { return [new PlusCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new PlusCommValue(op)] : [new PlusCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.PLUS, OperandsType.EVALUATE),
-        (op) => { return [...op, new PlusCommOp()]; }
+        (op, loc) => { return loc ? [...op, new LocationComm(loc), new PlusCommOp()] : [...op, new PlusCommOp()]; }
     ],
 
     // NEG
     [
         getUnKey(OperatorUnType.NEG, OperandsType.CONST),
-        (op) => { return [new NegCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new NegCommValue(op)] : [new NegCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NEG, OperandsType.VARABLE),
-        (op) => { return [new NegCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new NegCommValue(op)] : [new NegCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NEG, OperandsType.EVALUATE),
-        (op) => { return [...op, new NegCommOp()]; }
+        (op, loc) => { return loc ? [...op, new LocationComm(loc), new NegCommOp()] : [...op, new NegCommOp()]; }
     ],
 
     // NOT
     [
         getUnKey(OperatorUnType.NOT, OperandsType.CONST),
-        (op) => { return [new NotCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new NotCommValue(op)] : [new NotCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NOT, OperandsType.VARABLE),
-        (op) => { return [new NotCommValue(op)]; }
+        (op, loc) => { return loc ? [new LocationComm(loc), new NotCommValue(op)] : [new NotCommValue(op)]; }
     ],
     [
         getUnKey(OperatorUnType.NOT, OperandsType.EVALUATE),
-        (op) => { return [...op, new NotCommOp()]; }
+        (op, loc) => { return loc ? [...op, new LocationComm(loc), new NotCommOp()] : [...op, new NotCommOp()]; }
     ],
 ]);
 
