@@ -61,6 +61,20 @@ export function getTypeByTypeNameForParser(parserTypeName) {
     return targetType;
 }
 
+/**
+ * Проверяет, является ли переданное значение одним из зарегистрированных классов типов.
+ *
+ * @param {mixed} typeRef - Проверяемое значение (предположительно класс/функция-конструктор).
+ * @returns {boolean} True, если значение является известным классом типа, иначе false.
+ */
+export function isKnownTypeClass(typeRef) {
+  // Проверяем, что передан именно класс (функция)
+  if (typeof typeRef !== 'function') {
+    return false;
+  }
+  return REVERSE_TYPE_CLASSES.has(typeRef);
+}
+
 export const TYPE_REGISTRY = new Map([
   // 1. Примитив JS число. 
   ['number', {
