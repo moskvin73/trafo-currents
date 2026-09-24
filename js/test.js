@@ -307,7 +307,7 @@ export function test3() {
     }
   };
 
-  const getSymbol = (source, id) => {
+  /*const getSymbol = (source, id) => {
     if (executor.is_evaluate)
       return source.getSymbolById(id);
     else  
@@ -345,7 +345,7 @@ export function test3() {
     return builder
           .location(incLoc(c_loc))
           .matrix(cont_row, count_col);
-  };
+  };*/
 
   const contextError = {
     errors: [],
@@ -363,35 +363,7 @@ export function test3() {
     return builder.report(node).pop();
   };
 
- builder = parse("A = 10").append(parse("A + 10"));
-
-
-  /*// Создаём матрицу
-  const m = builderMatrix([
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-  ]);
-  const builder = new Code.CommandBuilder();
-  const command = builder
-  .push(15) 
-  .assign(op_n("z"), Code.self)
-  .sub(m, Code.self)
-  .sub(Code.self, new Code.CommandBuilder().push(-100), incLoc(c_loc))
-  .neg(Code.self)
-  .report('astNode1')
-  .pop()
-  .push(Math.PI, incLoc(c_loc))
-  .assign(op_n("pi"), Code.self)
-  .pop()
-  .push(1, incLoc(c_loc))
-  .sub(10, Code.self)
-  .sub(Code.self, new Code.CommandBuilder().push(-100)) 
-  .neg(Code.self)
-  .add(op_n("pi"), Code.self) 
-  .assign(op_n("pi"), Code.self)
-  .report('astNode2')
-  .pop();*/
+  builder = parse("A = 10").append(parse("A + 10"));
 
   builder.foldConstants(contextError);
   if (builder.isConstant) {
