@@ -356,10 +356,14 @@ export function test3() {
     },
   };
 
-  const p = new MathParser('3 + 4', symbols);
-  const node = p.testParse();
-  const builder = node.createCode(symbols);
-  builder.report(node).pop();
+  const parse = (text) => {
+    const p = new MathParser('3 + 4', symbols);
+    const node = p.testParse();
+    const builder = node.createCode(symbols);
+    return builder.report(node).pop();
+  };
+
+ builder = parse("A = 10").append(parse("A + 10"));
 
 
   /*// Создаём матрицу
