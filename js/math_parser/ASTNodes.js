@@ -805,6 +805,8 @@ export class CastOpNode extends MathNode {
     const name_targetType = getTypeNameString(this.targetType, REVERSE_TYPE_CLASSES);
     this.error(context, `Невозможно привести тип "${name_sourceType}" к типу "${name_targetType}".`);
   }
+
+  createCode(context) { return CodeBuilder.cast(this.argument.createCode(context), this.targetType, loc); }
 }
 regAST(CastOpNode);
 
