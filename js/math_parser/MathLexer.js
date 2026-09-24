@@ -213,7 +213,7 @@ export function calcSubstrGraphemes(text, start, end, chars_tab = 4, segmenter =
   // Защита от выхода за границы и пустых диапазонов
   if (!text || start >= end || start < 0) return 1; 
   
-  let visualLength = 0;
+  let visualLength = 1;
 
   if (!segmenter) {
     segmenter = typeof Intl.Segmenter !== 'undefined' 
@@ -278,7 +278,7 @@ export function calcSubstrGraphemes(text, start, end, chars_tab = 4, segmenter =
 export function calcLineGraphemes(line,  chars_tab = 4, segmenter = null) {
   if (!line || line.length === 0) return 1; // Для пустой строки позиций 0
 
-  let visualLength = 0;
+  let visualLength = 1;
 
   if (!segmenter) {
     segmenter = typeof Intl.Segmenter !== 'undefined' 
