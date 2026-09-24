@@ -576,8 +576,7 @@ export class MatrixNode extends MathNode {
     }
     const rowCount = this.#rows.length;
     const colCount = rows.length > 0 ? rows[0].length : 0;
-    builder.matrix(rowCount, colCount, loc);
-    return builder;
+    return builder.matrix(rowCount, colCount, loc);
   }
 
   /**
