@@ -2267,7 +2267,7 @@ export class ConstantNode extends MathNode {
       this.error(context, 'Неизвестный тип константы (Token ID: ${this.#tokenType})');
       return this.errorValue();
     }
-    else return Code.OpConst(config.instance);    
+    else return this.CodeBuilder.push(config.instance, this.loc);    
   }
 
   toTeX(context) {
