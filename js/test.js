@@ -357,7 +357,7 @@ export function test3() {
   };
 
   const parse = (text) => {
-    const p = new MathParser('3 + 4', symbols);
+    const p = new MathParser(text, symbols);
     const node = p.testParse();
     const builder = node.createCode(symbols);
     return builder.report(node).pop();
