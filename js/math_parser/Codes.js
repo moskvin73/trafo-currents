@@ -2090,17 +2090,17 @@ export function operandImplementСode(op) {
     throw new TypeError(`[CommandBuilder]:: Неизвестны тип опранда ${op}`); 
 }
 
-export function createUnCode(operator, op) {
+export function createUnCode(operator, op, loc) {
     const op_type = getOperandType(op);
     const key = getUnKey(operator, op_type);
     if (!SubstitutionTableUn.has(key)) {
         throw new Error(`[CommandBuilder]: Операция не поддерживается: не найден обработчик для ключа "${key}"`);
     }
     const processFn = SubstitutionTableUn.get(key);
-    return processFn(op);
+    return processFn(op, loc);
 }
 
-export function createBinCode(operator, l_op, r_op) {
+export function createBinCode(operator, l_op, r_op, loc) {
     const lop_type = getOperandType(l_op);
     const rop_type = getOperandType(r_op);
     const key = getBinKey(operator, lop_type, rop_type);
@@ -2108,7 +2108,7 @@ export function createBinCode(operator, l_op, r_op) {
         throw new Error(`[CommandBuilder]: Операция не поддерживается: не найден обработчик для ключа "${key}"`);
     }
     const processFn = SubstitutionTableBin.get(key);
-    return processFn(l_op, r_op);
+    return processFn(l_op, r_op, loc);
 }
 
 function unionCommands(...args) {
