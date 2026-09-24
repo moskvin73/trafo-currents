@@ -1017,7 +1017,6 @@ class MatrixComm extends Command {
     foldConstants(optimizedCode, simulatedStack) {
         // читаем элименты из стека
         let c = this.popStackCount;
-        let all_constnts = true;
         const constnts = new Stack();
         const const_indexs = [];
         while (c-- > 0) { 
@@ -1026,7 +1025,6 @@ class MatrixComm extends Command {
                 const_indexs.push(st_top.index);
                 constnts.push(st_top.value);
             } else {
-                all_constnts = false;
                 for (const index of const_indexs) {
                     optimizedCode[index].del = false;
                 }
