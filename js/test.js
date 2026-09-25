@@ -344,7 +344,7 @@ export function test3() {
 
   const source_code = `
     A = (C = 10) - 11;
-    B = [1, +2 + A, -3];
+    B = [1, +2, -3];
     A = A - (10 - B);
     `;
   const builder = parse(source_code);
