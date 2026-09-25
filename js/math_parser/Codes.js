@@ -1693,22 +1693,28 @@ class AssignCommValueValue extends Command {
         context.evaluate_stack.push(sym.value = value);
     }
 
+    #foldConst(optimizedCode, simulatedStack, known_constants, c_value) {
+        // Кладём в стек значение константы присваевоемой переменной let_value
+        simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
+        // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
+        const old_v = this.let_value.get_constant_value(known_constants);    
+        if (old_v) optimizedCode[old_v.index].del = true;
+        // Заменяем значение прсвоенного значения константы, на новое и сохраяем ссылку (индекс) на новую команду присвоения
+        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
+        optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });    
+    }
+
     foldConstants(optimizedCode, simulatedStack, known_constants) {
-        const c_value = this.value instanceof OpConst 
-            ? this.value.value 
-            : this.value.get_constant_value(known_constants);
-        if (c_value !== undefined && c_value !== null) {   
-        //if (this.value instanceof OpConst) {
-            //const c_value = this.value.value;
-            simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
-            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
-            // Переменой присвено константное значение
-            this.let_value.add_constant_value(known_constants, c_value);    
-        }
-        else {
-            this.let_value.delete_constant_value(known_constants);
-            simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push({ comm: this, del: false });
+        if (this.value instanceof OpConst) {
+            this.#foldConst(optimizedCode, simulatedStack, known_constants, this.value.value);
+        } else {
+            const v = this.let_value.get_constant_value(known_constants);
+            if (v) this.#foldConst(optimizedCode, simulatedStack, known_constants, v.value);
+            else {
+                this.let_value.delete_constant_value(known_constants);
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({ comm: this, del: false });
+            }
         }        
     }
 
