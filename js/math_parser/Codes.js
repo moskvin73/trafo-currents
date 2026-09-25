@@ -158,7 +158,7 @@ function assertLocation(value, paramName, context) {
         throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс BaseLocation. Получено: ${value}`);
 }
 
-function extendBinPrototypes(classes, methods) {
+function extendPrototypes(classes, methods) {
     for (const cls of classes) {
         Object.assign(cls.prototype, methods);
     }
@@ -1215,7 +1215,7 @@ class PlusCommOp extends UnCommOp {
 }
 regCode(PlusCommOp);
 
-extendBinPrototypes([PlusCommValue, PlusCommOp],
+extendPrototypes([PlusCommValue, PlusCommOp],
     {
         commandName() { return 'plus'; },
         operator(op) {         
@@ -1252,7 +1252,7 @@ class NegCommOp extends UnCommOp {
 }
 regCode(NegCommOp);
 
-extendBinPrototypes([NegCommValue, NegCommOp],
+extendPrototypes([NegCommValue, NegCommOp],
     {
         commandName() { return 'neg'; },
         operator(op) { return op.negate(); }
@@ -1283,7 +1283,7 @@ class NotCommOp extends UnCommOp {
 }
 regCode(NotCommOp);
 
-extendBinPrototypes([NotCommValue, NotCommOp],
+extendPrototypes([NotCommValue, NotCommOp],
     {
         commandName() { return 'not'; },
         operator(op) { return op.not(); }
@@ -1861,7 +1861,7 @@ class AddCommOpOp extends BinCommOpOp {
 }
 regCode(AddCommOpOp);
 
-extendBinPrototypes([AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp],
+extendPrototypes([AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp],
     {
         commandName() { return 'add'; },
         operator(l, r) { return binIsRightMatrix(l, r) ? r.add(l) : l.add(r); },
@@ -1917,7 +1917,7 @@ class SubCommOpOp extends BinCommOpOp {
 }
 regCode(SubCommOpOp);
 
-extendBinPrototypes([SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp],
+extendPrototypes([SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp],
     {
         commandName() { return 'sub'; },
         operator(l, r) { return binIsRightMatrix(l, r) ? r.rsubtract(l) : l.subtract(r); },
