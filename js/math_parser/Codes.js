@@ -1431,7 +1431,7 @@ class BinCommValueValue extends BaseBinComm {
         } else if (this.l_value instanceof OpConst && this.r_value instanceof OpVarable) {
             const r_c = this.r_value.get_constant_value(known_constants);
             if (r_c) {
-                this.foldConst(optimizedCode, simulatedStack,this.l_value.value, r_c.value); 
+                this.foldConst(optimizedCode, simulatedStack, this.l_value.value, r_c.value); 
                 return;
             }
         }
