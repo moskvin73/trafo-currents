@@ -364,7 +364,7 @@ export function test3() {
   const builder = parse(`
     A = (C = 10) - 11;
     B = [1, +2, -3];
-    A = A - 10 - B;
+    A = A - (10 - B);
     `);
 
   builder.foldConstants(contextError);
