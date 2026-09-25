@@ -1220,7 +1220,7 @@ class UnCommOp extends BaseUnComm {
             optimizedCode[st_top.index].del = true;
             const c_value = st_top.value.get_constant_value(known_constants);
             if (c_value) {
-                const calc_v = this.operator(toParserBase(st_top.value));
+                const calc_v = this.operator(toParserBase(c_value));
                 simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
                 optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
             } else optimizedCode.push({ comm: new UnCommValue(st_top.value), del: false });
