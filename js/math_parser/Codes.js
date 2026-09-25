@@ -7,7 +7,7 @@ import { BaseLocation, restoreLocation } from './CompilerErrors.js';
 import { dispatcher, toParserBase, getTypeNameString, isKnownTypeClass, isKnownTypeValue } from './SemanticDispatcher.js';
 import { SymbolTableContext, SymbolContext, SYM_UNDEFINED, SYM_VARIABLE, SYM_BUILTIN } from './SymbolTableContext.js';
 import VarableCode from '../varables/VarableCode.js';
-import { Stack }  from '../math/util.js';
+import { Stack, DualDictionary }  from '../math/util.js';
 import { ErrorBase, ErrorMath } from '../math/MathErrors.js'
 
 export class EvaluateError extends ErrorBase {
@@ -571,7 +571,7 @@ class OpVarable extends OperandValue {
    /**
    * Извлекает значение константы, связанное с переменной на этапе компеляции.
    * 
-   * @param {*} known_constants - таблица инецелезированных пременных константами на этапе компеляции.
+   * @param {DualDictionary} known_constants - таблица инициализированных константами переменных на этапе компиляции.
    * @returns {*|null} Возвращает сохраненное значение, либо `null`, если переменная не имеет иецелезации константным значением.
    */
     get_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'get_constant_value' не реализован."); }
@@ -607,6 +607,8 @@ class OpVarableLocal extends OpVarable {
         checkSymbolNull(sym);
         return sym; 
     }
+
+    get_constant_value(known_constants) { return known_constants.get(key); }
 
     toJSON() {
         return {
