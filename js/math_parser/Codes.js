@@ -1396,55 +1396,47 @@ class BinCommValueValue extends BaseBinComm {
         context.evaluate_stack.push(this.operator(l, r));
     }
 
+    foldConst(optimizedCode, simulatedStack, l_v, r_v) {
+        const { l, r } = dispatcher.promoteTypes(l_v, r_v);
+        const calc_v = this.operator(l, r);
+        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+    }
+
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         if (this.l_value instanceof OpConst && this.r_value instanceof OpConst) {
-            const { l, r } = dispatcher.promoteTypes(this.l_value.value, this.r_value.value);
-            const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+            this.foldConst(optimizedCode, simulatedStack, this.l_value.value, this.r_value.value);
+            return;
         } else if (this.l_value instanceof OpVarable && this.r_value instanceof OpVarable) {
             const l_c = this.l_value.get_constant_value(known_constants);
             const r_c = this.r_value.get_constant_value(known_constants);
             if (l_c && r_c) {
-                const { l, r } = dispatcher.promoteTypes(l_c.value, r_c.value);
-                const calc_v = this.operator(l, r);
-                simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+                this.foldConst(optimizedCode, simulatedStack, l_c.value, r_c.value);
+                return;
             } else if (l_c) {
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({comm: this.recreateCommValueValue(new OpConst(l_c), this.r_value), del: false});
+                return;
             } else if (r_c) {
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({comm: this.recreateCommValueValue(this.l_value, new OpConst(r_c)), del: false});                
-            } else {
-                simulatedStack.push({ type: 'unknown' });
-                optimizedCode.push({ comm: this, del: false });
+                return;
             }
         } else if (this.l_value instanceof OpVarable && this.r_value instanceof OpConst) {
             const l_c = this.l_value.get_constant_value(known_constants);
             if (l_c) {
-                const { l, r } = dispatcher.promoteTypes(l_c.value, this.r_value.value);
-                const calc_v = this.operator(l, r);
-                simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-            } else {
-                simulatedStack.push({ type: 'unknown' });
-                optimizedCode.push({ comm: this, del: false });
+                this.foldConst(optimizedCode, simulatedStack, l_c.value, this.r_value.value);
+                return;
             } 
         } else if (this.l_value instanceof OpConst && this.r_value instanceof OpVarable) {
+            const r_c = this.r_value.get_constant_value(known_constants);
             if (r_c) {
-                const { l, r } = dispatcher.promoteTypes(this.l_value.value, r_c.value);
-                const calc_v = this.operator(l, r);
-                simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-            } else {
-                simulatedStack.push({ type: 'unknown' });
-                optimizedCode.push({ comm: this, del: false });
+                this.foldConst(optimizedCode, simulatedStack,this.l_value.value, r_c.value); 
+                return;
             }
-        } else {
-            simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push({ comm: this, del: false });
         }
+        simulatedStack.push({ type: 'unknown' });
+        optimizedCode.push({ comm: this, del: false });
     }
 
     get popStackCount() { return 0; }
