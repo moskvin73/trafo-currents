@@ -562,9 +562,9 @@ class OpVarable extends OperandValue {
         }
     }
 
-    getSymbol(_context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    getSymbol(_context) { throw new Error("[OpVarable]: Метод 'getSymbol' не реализован."); }
 
-    getSymbolNoCheck(_context) { throw new Error("[Code]: Метод getSymbolNoCheck() не реализован."); }
+    getSymbolNoCheck(_context) { throw new Error("[OpVarable]: Метод 'getSymbolNoCheck' не реализован."); }
 
     getValue(context) { return this.getSymbol(context).value; }
 
@@ -574,9 +574,11 @@ class OpVarable extends OperandValue {
    * @param {*} known_constants - таблица инецелезированных пременных константами на этапе компеляции.
    * @returns {*|null} Возвращает сохраненное значение, либо `null`, если переменная не имеет иецелезации константным значением.
    */
-    get_constant_value(_known_constants) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    get_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'get_constant_value' не реализован."); }
 
-    delete_constant_value(_known_constants) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    delete_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'delete_constant_value' не реализован."); }
+
+    update_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'update_constant_value' не реализован."); }
 }
 
 function assertOperandVarable(value, paramName, context) {
