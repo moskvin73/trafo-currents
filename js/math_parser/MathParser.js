@@ -653,7 +653,7 @@ export class MathParser extends EventTarget {
     // 2. СТРОГИЙ КОНТРОЛЬ РАЗДЕЛИТЕЛЕЙ ДЛЯ ВСЕХ БЕЗ ИСКЛЮЧЕНИЯ
     while (true) switch (this.c_token)
     {
-      case TokenType.EOF: return;
+      case TokenType.EOF:
       case TokenType.SEMICOLON:
         this.#consume();
         if (exprNode !== null)
