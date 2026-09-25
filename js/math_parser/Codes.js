@@ -1648,8 +1648,7 @@ class BinCommValueOp extends BaseBinComm {
             const calc_v = this.operator(l, r);
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});   
             optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-        }
-        else if (st_top.type === 'const') {
+        } else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({comm: this.recreateCommValueValue(this.value, new OpConst(st_top.value)), del: false});
@@ -1734,7 +1733,7 @@ class BinCommOpOp extends BaseBinComm {
         } else if (st_r.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_r.index].del = true;
-            ptimizedCode.push({comm: this.recreateCommOpValue(st_r.value), del: false });
+            optimizedCode.push({comm: this.recreateCommOpValue(st_r.value), del: false });
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
