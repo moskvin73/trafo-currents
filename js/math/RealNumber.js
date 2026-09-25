@@ -57,6 +57,8 @@ export default class RealNumber extends MathType {
     return new RealNumber(this.#value);
   }
 
+  get is_signed() { return true; }
+
   // ==========================================
   // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ПРИВЕДЕНИЯ ТИПОВ
   // ==========================================

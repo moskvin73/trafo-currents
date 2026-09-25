@@ -47,6 +47,8 @@ export default class MathType {
    */
   toString(settings) { this.#notImplemented('toString'); }
 
+  get is_signed() { return false; }
+  
   /**
    * Вспомогательный метод для полной TeX-обёртки (для обратной совместимости).
    * @param {string} displayMode - 'inline' ($...$) или 'block' ($$...$$)

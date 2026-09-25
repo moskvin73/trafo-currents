@@ -109,6 +109,8 @@ export default class ComplexNumber extends MathType {
     return new ComplexNumber(this.#real, -this.#imaginary);
   }
 
+  get is_signed() { return true; }
+
   // ==========================================
   // МЕТОДЫ ФОРМАТИРОВАНИЯ И ВЫВОДА
   // ==========================================

@@ -106,6 +106,8 @@ export default class Matrix extends MathType {
     return this.rowCount === 1 || this.colCount === 1;
   }
 
+  get is_signed() { return true; }
+  
   /**
    * Получить элемент по индексам (0-indexed)
    */
