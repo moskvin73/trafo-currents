@@ -158,6 +158,12 @@ function assertLocation(value, paramName, context) {
         throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс BaseLocation. Получено: ${value}`);
 }
 
+function extendBinPrototypes(classes, methods) {
+    for (const cls of classes) {
+        Object.assign(cls.prototype, methods);
+    }
+}
+
 class LocationComm extends Command {
     constructor(loc) {
         super();
@@ -1300,12 +1306,6 @@ function binIsRightMatrix(l, r) {
     const isLeftMatrix = l.constructor.typeId === MATRIX_SYMBOL;
     const isRightMatrix = r.constructor.typeId === MATRIX_SYMBOL;
     return !isLeftMatrix && isRightMatrix;
-}
-
-function extendBinPrototypes(classes, methods) {
-    for (const cls of classes) {
-        Object.assign(cls.prototype, methods);
-    }
 }
 
 class BaseBinComm extends Command {
