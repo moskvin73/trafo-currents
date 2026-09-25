@@ -1197,16 +1197,6 @@ class PlusCommValue extends UnCommValue {
     constructor(value) {
         super(value);
     }
-    
-    commandName() { return 'plus'; } 
-
-    operator(op) {
-        if (op.is_signed) return op;
-        const typeKey = typeof op === 'object' ? op.constructor : typeof value;
-        throw new class extends ErrorMath {
-              getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
-            }(`[${PlusCommValue}]: Тип "${typeKey}" не поддерживается для операции урный плюс.`); 
-    }
 
     static get dataTypeName() { return "PlusCommValue"; }
 
@@ -1219,21 +1209,24 @@ class PlusCommOp extends UnCommOp {
         super();
     }
     
-    commandName() { return 'plus'; }
-
-    operator(op) { 
-        if (op.is_signed) return op;
-        const typeKey = typeof op === 'object' ? op.constructor : typeof value;
-        throw new class extends ErrorMath {
-              getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
-            }(`[${PlusCommValue}]: Тип "${typeKey}" не поддерживается для операции урный плюс.`); 
-    }
-
     static get dataTypeName() { return "PlusCommOp"; }
 
     static fromJSON(data) { return UnCommOp.create(PlusCommOp, data); }    
 }
 regCode(PlusCommOp);
+
+extendBinPrototypes([PlusCommValue, PlusCommOp],
+    {
+        commandName() { return 'plus'; },
+        operator(op) {         
+            if (op.is_signed) return op;
+            const typeKey = typeof op === 'object' ? op.constructor : typeof value;
+            throw new class extends ErrorMath {
+                getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
+                }(`[Тип "${typeKey}" не поддерживается для операции урный плюс.`); 
+ },
+    }
+)
 //#endregion PLUS
 
 //#region NEG
