@@ -1145,6 +1145,12 @@ class BaseUnComm extends Command {
     commandName() { throw new Error("[BaseUnComm]: Метод commandName() не реализован."); }
 
     get pushStackCount() { return 1; }
+
+    foldConst(optimizedCode, simulatedStack, c_value) {
+        const calc_v = this.operator(toParserBase(c_value));
+        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+    }   
 }
 
 class UnCommValue extends BaseUnComm {
@@ -1160,18 +1166,12 @@ class UnCommValue extends BaseUnComm {
         context.evaluate_stack.push(this.operator(toParserBase(this.value.getValue(context))));
     }
 
-     #foldConst(optimizedCode, simulatedStack, c_value) {
-        const calc_v = this.operator(toParserBase(c_value));
-        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-    }   
-
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         if (this.value instanceof OpConst) {
-            this.#foldConst(optimizedCode, simulatedStack, this.value.value);
+            this.foldConst(optimizedCode, simulatedStack, this.value.value);
         } else {
             const v = this.value.get_constant_value(known_constants);
-            if (v) this.#foldConst(optimizedCode, simulatedStack, v.value);
+            if (v) this.foldConst(optimizedCode, simulatedStack, v.value);
             else {
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({ comm: this, del: false });
@@ -1212,22 +1212,16 @@ class UnCommOp extends BaseUnComm {
         stack.push(this.operator(op));
     }
 
-    #foldConst(optimizedCode, simulatedStack, c_value) {
-        const calc_v = this.operator(toParserBase(c_value));
-        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-    }
-
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            this.#foldConst(optimizedCode, simulatedStack, st_top.value);
+            this.foldConst(optimizedCode, simulatedStack, st_top.value);
         }
         else if (st_top.type === 'varable') {
             optimizedCode[st_top.index].del = true;
             const c_value = st_top.value.get_constant_value(known_constants);
             if (c_value) {
-                this.#foldConst(optimizedCode, simulatedStack, c_value.value);
+                this.foldConst(optimizedCode, simulatedStack, c_value.value);
             } else { 
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({ comm: new UnCommValue(st_top.value), del: false }); 
