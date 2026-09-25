@@ -1164,7 +1164,7 @@ class UnCommValue extends BaseUnComm {
         const c_value = this.value instanceof OpConst 
             ? this.value.value 
             : this.value.get_constant_value(known_constants);
-        if (c_value !== undefined && c_value !== null) {    
+        if (c_value) {    
         //if (this.value instanceof OpConst) {
             const calc_v = this.operator(toParserBase(c_value));
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
@@ -1208,20 +1208,28 @@ class UnCommOp extends BaseUnComm {
         stack.push(this.operator(op));
     }
 
+    #foldConst(optimizedCode, simulatedStack, c_value) {
+        const calc_v = this.operator(toParserBase(c_value));
+        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+    }
+
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            const calc_v = this.operator(toParserBase(st_top.value));
+            this.#foldConst(optimizedCode, simulatedStack, st_top.value);
+            /*const calc_v = this.operator(toParserBase(st_top.value));
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });*/
         }
         else if (st_top.type === 'varable') {
             optimizedCode[st_top.index].del = true;
             const c_value = st_top.value.get_constant_value(known_constants);
             if (c_value) {
-                const calc_v = this.operator(toParserBase(c_value));
+                this.#foldConst(optimizedCode, simulatedStack, c_value);
+                /*const calc_v = this.operator(toParserBase(c_value));
                 simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });*/
             } else { 
                 simulatedStack.push({ type: 'unknown' });
                 optimizedCode.push({ comm: new UnCommValue(st_top.value), del: false }); 
