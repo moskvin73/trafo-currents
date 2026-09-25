@@ -1410,6 +1410,15 @@ class BinCommValueValue extends BaseBinComm {
                 const calc_v = this.operator(l, r);
                 simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
                 optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+            } else if (l_c) {
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({comm: this.recreateCommValueValue(new OpConst(l_c), this.r_value), del: false});
+            } else if (r_c) {
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({comm: this.recreateCommValueValue(this.l_value, new OpConst(r_c)), del: false});                
+            } else {
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({ comm: this, del: false });
             }
         } else {
             simulatedStack.push({ type: 'unknown' });
