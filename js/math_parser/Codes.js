@@ -1555,12 +1555,8 @@ class BinCommValueOp extends BaseBinComm {
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
-        if (st_top.type === 'const' && this.value instanceof OpConst)
-        {
-            const { l, r } = dispatcher.promoteTypes(this.value.value, st_top.value);
-            const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});   
-            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+        if (st_top.type === 'const' && this.value instanceof OpConst) {
+            this.foldConst(optimizedCode, simulatedStack, this.value.value, st_top.value);
         } else if (st_top.type === 'const') {
             // Нужно перессоздать BinCommValueValue
             simulatedStack.push({ type: 'unknown' });
@@ -1614,10 +1610,7 @@ class BinCommOpOp extends BaseBinComm {
         const st_r = simulatedStack.pop();
         const st_l = simulatedStack.pop();
         if (st_l.type === 'const' && st_r.type === 'const') {
-            const { l, r } = dispatcher.promoteTypes(st_l.value, st_r.value);
-            const calc_v = this.operator(l, r);
-            simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-            optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+            this.foldConst(optimizedCode, simulatedStack, st_l.value, st_r.value);
         } else if (st_l.type === 'varable' && st_r.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_l.index].del = true;
