@@ -713,6 +713,7 @@ class PushCommConst extends PushComm {
     }    
 }
 regCode(PushCommConst);
+
 extendPrototypes([OpConst], { createCodePush() { return new PushCommConst(this.value); }});
 
 class ValueLoc {
@@ -873,6 +874,7 @@ class PushCommVarbleLocal extends PushComm {
     }
 }
 regCode(PushCommVarbleLocal);
+
 extendPrototypes([OpVarableLocal], { createCodePush() { return new PushCommVarbleLocal(this.id_name); }});
 
 class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
@@ -953,6 +955,7 @@ class PushCommVarbleGlobal extends PushComm {
     }
 }
 regCode(PushCommVarbleGlobal);
+
 extendPrototypes([OpVarableGlobal], { createCodePush() { return new PushCommVarbleGlobal(this.symbol); }});
 
 class PushCommVarbleGlobalLoc extends PushComm {
@@ -1407,7 +1410,7 @@ extendPrototypes([PlusCommValue, PlusCommOp],
                 }(`[Тип "${typeKey}" не поддерживается для операции урный плюс.`); 
         }
     }
-)
+);
 //#endregion PLUS
 
 //#region NEG
@@ -1438,7 +1441,7 @@ extendPrototypes([NegCommValue, NegCommOp],
         commandName() { return 'neg'; },
         operator(op) { return op.negate(); }
     }
-)
+);
 //#endregion NEG
 
 //#region NOT
@@ -1469,7 +1472,7 @@ extendPrototypes([NotCommValue, NotCommOp],
         commandName() { return 'not'; },
         operator(op) { return op.not(); }
     }
-)
+);
 //#endregion NOT
 
 //#region BaseBinCode
@@ -2050,7 +2053,7 @@ extendPrototypes([AddCommValueValue, AddCommOpValue, AddCommValueOp, AddCommOpOp
         recreateCommOpValue(value) { return new AddCommOpValue(value); },
         recreateCommValueOp(value) { return new AddCommValueOp(value); }
     }
-)
+);
 //#endregion ADD
 
 //#region SUB
@@ -2106,7 +2109,7 @@ extendPrototypes([SubCommValueValue, SubCommOpValue, SubCommValueOp, SubCommOpOp
         recreateCommOpValue(value) { return new SubCommOpValue(value); },
         recreateCommValueOp(value) { return new SubCommValueOp(value); }
     }   
-)
+);
 //#endregion SUB 
 
 const OperatorUnType = {
