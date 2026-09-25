@@ -1643,13 +1643,14 @@ class AssignCommValueConst extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
+        const idx = optimizedCode.length;
         // Кладём в стек значение константы присваевоемой переменной let_value
-        simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length});
+        simulatedStack.push({type: 'const', value: this.value, index: idx});
         // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
         const old_v = this.let_value.get_constant_value(known_constants);    
         if (old_v) optimizedCode[old_v.index].del = true;
         // Заменяем значение прсвоенного значения константы, на новое и сохраяем ссылку (индекс) на новую команду присвоения
-        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
+        this.let_value.add_constant_value(known_constants, { value: this.value, index: idx });
         optimizedCode.push({ comm: this, del: false });     
     }
 
@@ -1694,13 +1695,14 @@ class AssignCommValueValue extends Command {
     }
 
     #foldConst(optimizedCode, simulatedStack, known_constants, c_value) {
+        const idx = optimizedCode.length;
         // Кладём в стек значение константы присваевоемой переменной let_value
-        simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
+        simulatedStack.push({type: 'const', value: c_value, index: idx});
         // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
         const old_v = this.let_value.get_constant_value(known_constants);    
         if (old_v) optimizedCode[old_v.index].del = true;
         // Заменяем значение прсвоенного значения константы, на новое и сохраяем ссылку (индекс) на новую команду присвоения
-        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
+        this.let_value.add_constant_value(known_constants, { value: this.value, index: idx });
         optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });    
     }
 
