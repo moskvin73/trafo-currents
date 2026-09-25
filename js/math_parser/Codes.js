@@ -1710,12 +1710,15 @@ class BinCommOpOp extends BaseBinComm {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_l.index].del = true;
             optimizedCode[st_r.index].del = true;
+            optimizedCode.push({comm: this.recreateCommValueValue(st_l.value, st_r.value), del: false});
         } if (st_l.type === 'const' && st_r.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_r.index].del = true;
+            optimizedCode.push({comm: this.recreateCommValueValue(new OpConst(st_l.value), st_r.value), del: false});
         } if (st_l.type === 'varable' && st_r.type === 'const') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_l.index].del = true;
+            optimizedCode.push({comm: this.recreateCommValueValue(st_l.value, new OpConst(st_r.value)), del: false});
         } else if (st_l.type === 'const') {
             // Пересоздать BinCommValueOp
             simulatedStack.push({ type: 'unknown' });
@@ -1727,9 +1730,11 @@ class BinCommOpOp extends BaseBinComm {
         }  else if (st_l.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_l.index].del = true;
+            optimizedCode.push({comm: this.recreateCommValueOp(st_l.value), del: false });
         } else if (st_r.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_r.index].del = true;
+            ptimizedCode.push({comm: this.recreateCommOpValue(st_r.value), del: false });
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
