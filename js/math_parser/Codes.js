@@ -1224,7 +1224,7 @@ extendBinPrototypes([PlusCommValue, PlusCommOp],
             throw new class extends ErrorMath {
                 getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
                 }(`[Тип "${typeKey}" не поддерживается для операции урный плюс.`); 
- },
+        }
     }
 )
 //#endregion PLUS
@@ -1235,10 +1235,6 @@ class NegCommValue extends UnCommValue {
         super(value);
     }
     
-    commandName() { return 'neg'; }
-
-    operator(op) { return op.negate(); }
-
     static get dataTypeName() { return "NegCommValue"; }
 
     static fromJSON(data) { return UnCommValue.create(NegCommValue, data); }
@@ -1250,15 +1246,18 @@ class NegCommOp extends UnCommOp {
         super();
     }
     
-    commandName() { return 'neg'; }
-
-    operator(op) { return op.negate(); }
-
     static get dataTypeName() { return "NegCommOp"; }
 
     static fromJSON(data) { return UnCommOp.create(NegCommOp, data); }    
 }
 regCode(NegCommOp);
+
+extendBinPrototypes([NegCommValue, NegCommOp],
+    {
+        commandName() { return 'neg'; },
+        operator(op) { return op.negate(); }
+    }
+)
 //#endregion NEG
 
 //#region NOT
@@ -1267,10 +1266,6 @@ class NotCommValue extends UnCommValue {
         super(value);
     }
     
-    commandName() { return 'not'; }
-
-    operator(op) { return op.not(); }
-
     static get dataTypeName() { return "NotCommValue"; }
 
     static fromJSON(data) { return UnCommValue.create(NotCommValue, data); }
@@ -1282,15 +1277,18 @@ class NotCommOp extends UnCommOp {
         super();
     }
     
-    commandName() { return 'not'; }
-
-    operator(op) { return op.not(); }
-
     static get dataTypeName() { return "NotCommOp"; }
 
     static fromJSON(data) { return UnCommOp.create(NotCommOp, data); }    
 }
 regCode(NotCommOp);
+
+extendBinPrototypes([NotCommValue, NotCommOp],
+    {
+        commandName() { return 'not'; },
+        operator(op) { return op.not(); }
+    }
+)
 //#endregion NOT
 
 //#region BaseBinCode
