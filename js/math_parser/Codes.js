@@ -661,6 +661,18 @@ class OpVarableGlobal extends OpVarable {
 
     getSymbolNoCheck(_context) { return this.symbol; }
 
+    add_constant_value(known_constants, value) { known_constants.set(this.symbol, value); }
+
+    get_constant_value(known_constants) { return known_constants.get(this.symbol); }
+
+    delete_constant_value(known_constants) { known_constants.delete(this.symbol);  }
+
+    update_constant_value(known_constants, new_value) {
+        if (known_constants.has(this.symbol)) {
+            known_constants.set(this.symbol, new_value);
+        }
+    }
+
     toJSON() {
         const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
         return {
