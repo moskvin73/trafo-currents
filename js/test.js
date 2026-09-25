@@ -307,45 +307,26 @@ export function test3() {
     }
   };
 
-  /*const getSymbol = (source, id) => {
+  const getSymbol = (source, id) => {
     if (executor.is_evaluate)
       return source.getSymbolById(id);
     else  
       return source.getParseSymbolById(id);
   };
+
   const out_updte_sym = (sym) => {
     console.log(` set varable: ${sym.name} = ${sym.value}`);
   };
+
   symbols.subscribeAddVarable((source, id) => {
     const new_sym = getSymbol(source, id);
     new_sym.subscribeUpdateVarable(out_updte_sym);
   });
+
   symbols.subscribeDeleteVarable((source, id) => {
     const del_sym = getSymbol(source, id);
     del_sym.unsubscribeUpdateVarable(out_updte_sym);
   });
-  const acquireVar = (name) => { return symbols.getParseSymbolById(symbols.acquireId(name)); };
-  const op_n = (name) => { return acquireVar(name); };
-
-  const c_loc = loc(0);
-  const builderMatrix = (matrix) => {
-    const builder = new Code.CommandBuilder();
-
-    const cont_row = matrix.length;
-    const count_col = matrix[0].length;
-    for (let i = cont_row - 1; i >= 0; i--) {
-      const row = matrix[i];
-      for (let j = count_col - 1; j >= 0; j--) {
-        const loc = incLoc(c_loc);
-        builder
-        .push(row[j], loc)
-        .topToLoc(loc);
-      }
-    }
-    return builder
-          .location(incLoc(c_loc))
-          .matrix(cont_row, count_col);
-  };*/
 
   const contextError = {
     errors: [],
