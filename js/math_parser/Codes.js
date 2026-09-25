@@ -1165,8 +1165,12 @@ class UnCommValue extends BaseUnComm {
     }
 
     foldConstants(optimizedCode, simulatedStack, _known_constants) {
-        if (this.value instanceof OpConst) {
-            const calc_v = this.operator(toParserBase(this.value.value));
+        const c_value = this.value instanceof OpConst 
+            ? this.value.value 
+            : this.value.get_constant_value(known_constants);
+        if (c_value !== undefined && c_value !== null) {    
+        //if (this.value instanceof OpConst) {
+            const calc_v = this.operator(toParserBase(c_value));
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
             optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         } else {
