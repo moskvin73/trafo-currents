@@ -1195,7 +1195,7 @@ class PlusCommValue extends UnCommValue {
 
     operator(op) {
         if (op.is_signed()) return op;
-        const typeKey = typeof value === 'object' ? (value.constructor.typeId || value.constructor) : typeof value;
+        const typeKey = typeof op === 'object' ? op.constructor : typeof value;
         throw new new class extends ErrorMath {
               getMes(func) { return `Тип "${func(typeKey)}" не поддерживается для приведения операции урный минус.`; }
             }(`[${PlusCommValue}]: Тип "${typeKey}" не поддерживается для приведения.`); 
@@ -1216,7 +1216,7 @@ class PlusCommOp extends UnCommOp {
 
     operator(op) { 
         if (op.is_signed()) return op;
-        const typeKey = typeof value === 'object' ? (value.constructor.typeId || value.constructor) : typeof value;
+        const typeKey = typeof op === 'object' ? op.constructor : typeof value;
         throw new new class extends ErrorMath {
               getMes(func) { return `Тип "${func(typeKey)}" не поддерживается для приведения операции урный минус.`; }
             }(`[${PlusCommValue}]: Тип "${typeKey}" не поддерживается для приведения.`); 
