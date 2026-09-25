@@ -164,6 +164,11 @@ function extendPrototypes(classes, methods) {
     }
 }
 
+function assertSymbol(value, paramName, context) {
+    if (!(value instanceof SymbolContext))
+        throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс "SymbolContext". Получено: ${value}`);        
+}
+
 class LocationComm extends Command {
     constructor(loc) {
         super();
@@ -485,6 +490,182 @@ function outValue(value) {
     return typeof value === 'string' ? `"${value}"` : String(value);
 }
 
+//#region CONST_VAR 
+class OperandValue extends Command {
+    constructor() {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === OperandValue) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "OperandValue" напрямую.');
+        }
+    }
+
+    get pushStackCount() { return 0; }
+
+    get popStackCount() { return 0; }
+
+    getValue(context) { throw new Error("[Code]: Метод value() не реализован."); }
+
+    createCodePush() { throw new Error("[Code]: Метод createCodePush() не реализован."); }
+}
+ 
+function assertOperand(value, paramName, context) {
+  if (!(value instanceof OperandValue)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+class OpConst extends OperandValue {
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+
+    toString(_context) { return `${outValue(this.value)}`; }
+
+    getValue(_context) { return this.value; }
+
+    createCodePush() { return new PushCommConst(this.value); }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            value: this.value
+        };
+    }
+
+    static get dataTypeName() { return "OpConst"; }
+
+    static fromJSON(data) {
+        return new OpConst(
+            restoreDataType(data.value),
+        );
+    }
+}
+regCode(OpConst);
+
+function assertOperandConst(value, paramName, context) {
+  if (!(value instanceof OpConst)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+class OpVarable extends OperandValue {
+    constructor() {
+        super();
+        // Защита от создания экземпляра самого базового класса
+        if (new.target === OpVarable) {
+            throw new TypeError('Нельзя создавать экземпляры базового класса "OpVarable" напрямую.');
+        }
+    }
+
+    getSymbol(_context) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+
+    getSymbolNoCheck(_context) { throw new Error("[Code]: Метод getSymbolNoCheck() не реализован."); }
+
+    getValue(context) { return this.getSymbol(context).value; }
+}
+
+function assertOperandVarable(value, paramName, context) {
+  if (!(value instanceof OperandValue)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+class OpVarableLocal extends OpVarable {
+    constructor(id_name) {
+        super();
+        assertInteger(id_name, 'id_name', 'OpVarableLocal');
+        this.id_name = id_name;
+    }
+
+    toString(context) { return `${context.getNameById(this.id_name)}`; }
+
+    getSymbol(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name);
+        checkSymbolAll(sym); 
+        return sym; 
+    }
+
+    getSymbolNoCheck(context) {
+        const sym = context.scope_context.getSymbolById(this.id_name);
+        checkSymbolNull(sym);
+        return sym; 
+    }
+
+    createCodePush() { return new PushCommVarbleLocal(this.id_name); }
+
+    toJSON() {
+        return {
+        ...super.toJSON(),
+        id_name: this.id_name
+        };
+    }
+
+    static get dataTypeName() { return "OpVarableLocal"; }
+
+    static fromJSON(data) {
+        return new OpVarableLocal(
+        data.id_name,
+        );
+    }
+}
+regCode(OpVarableLocal);
+
+function assertOperandVarableLocal(value, paramName, context) {
+  if (!(value instanceof OpVarableLocal)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+
+class OpVarableGlobal extends OpVarable {
+    constructor(sym) {
+        super();
+        assertSymbol(sym, "symbol", OpVarableGlobal);
+        this.symbol = sym;
+    }
+
+    toString(_context) { return `${this.symbol.name}`; }
+
+    createCodePush() { return new PushCommVarbleGlobal(this.symbol); }
+
+    getSymbol(_context) { 
+        checkSymbol(this.symbol); 
+        return this.symbol; 
+    }
+
+    getSymbolNoCheck(_context) { return this.symbol; }
+
+    toJSON() {
+        const sym_data = SymbolTableContext.dataToJSON(this.symbol); 
+        return {
+            ...super.toJSON(),
+            sym_data: sym_data
+        };
+    }
+
+    static get dataTypeName() { return "OpVarableGlobal"; }
+
+    static fromJSON(data) {
+        const data_restore = data.context.dataFromJSON(data.sym_data);
+        if ('callback' in data_restore) {
+            const instance = new OpVarableGlobal(data_restore.proxyPlaceholder);
+            data_restore.callback = (realSymbol) => { instance.symbol = realSymbol; };
+            return instance;
+        }
+        else return new OpVarableGlobal(data_restore);
+    }
+}
+regCode(OpVarableGlobal);
+
+function assertOperandVarableGlobal(value, paramName, context) {
+  if (!(value instanceof OpVarableGlobal)) {
+    throw new TypeError(`[${context}] Параметр "${paramName}" должен экзепляром класса 'OperandValue'. Получено: ${value}`);
+  }
+}
+//#endregion CONST_VAR 
+
+
 //#region PUSH
 class PushComm extends Command {
 
@@ -725,11 +906,6 @@ class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
 }
 regCode(PushCommVarbleLocalLoc);
 
-function assertSymbol(value, paramName, context) {
-    if (!(value instanceof SymbolContext))
-        throw new TypeError(`[${context}] Параметр "${paramName}" должен быть экземпляром значения прозводного от класс "SymbolContext". Получено: ${value}`);        
-}
-
 class PushCommVarbleGlobal extends PushComm {
     constructor(sym) {
         super();
@@ -812,6 +988,7 @@ class PushCommVarbleGlobalLoc extends PushComm {
 regCode(PushCommVarbleGlobalLoc);
 //#endregion PUSH
 
+/*
 //#region CONST_VAR 
 class OperandValue extends Command {
     constructor() {
@@ -986,6 +1163,7 @@ function assertOperandVarableGlobal(value, paramName, context) {
   }
 }
 //#endregion CONST_VAR 
+*/
 
 class MatrixComm extends Command {
     constructor(cont_row, count_col) {
