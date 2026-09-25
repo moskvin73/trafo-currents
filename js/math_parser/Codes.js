@@ -1150,10 +1150,6 @@ class BaseUnComm extends Command {
 class UnCommValue extends BaseUnComm {
     constructor(value) {
         super();
-        // Защита от создания экземпляра самого базового класса
-        if (new.target === BinCommValueValue) {
-            throw new TypeError('Нельзя создавать экземпляры базового класса "BinCommValueValue" напрямую.');
-        }
         assertOperand(value, 'value', `${new.target.name}`);
         this.value = value;
     }
