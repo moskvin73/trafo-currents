@@ -1150,7 +1150,7 @@ class BaseUnComm extends Command {
 class UnCommValue extends BaseUnComm {
     constructor(value) {
         super();
-        assertOperand(value, 'value', `${new.target.name}`);
+        assertOperand(value, 'value', `UnCommValue`);
         this.value = value;
     }
 
