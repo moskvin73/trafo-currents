@@ -1648,7 +1648,7 @@ class AssignCommValueConst extends Command {
         // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
         const old_v = this.let_value.get_constant_value(known_constants);    
         if (old_v) optimizedCode[old_v.index].del = true;
-        // Заменяем значение прсвоенного значения константы, на новое и сохраяем сссылку на новую команду присвоения
+        // Заменяем значение прсвоенного значения константы, на новое и сохраяем ссылку (индекс) на новую команду присвоения
         this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });     
     }
