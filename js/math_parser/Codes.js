@@ -1681,8 +1681,16 @@ class AssignCommValueValue extends Command {
             this.let_value.add_constant_value(known_constants, c_value);    
         }
         else {
-            simulatedStack.push({ type: 'unknown' });
-            optimizedCode.push({ comm: this, del: false });
+            const c_value = this.value.get_constant_value(known_constants);
+            if (c_value) {
+                simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
+                optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
+                // Переменой присвено константное значение
+                this.let_value.add_constant_value(known_constants, c_value);    
+            } else {
+                simulatedStack.push({ type: 'unknown' });
+                optimizedCode.push({ comm: this, del: false });
+            }
         }        
     }
 
