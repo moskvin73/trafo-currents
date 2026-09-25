@@ -361,13 +361,15 @@ export function test3() {
     return p.testParse();
   };
 
-  const builder = parse(`
+  const source_code = `
     A = (C = 10) - 11;
     B = [1, +2 + A, -3];
     A = A - (10 - B);
-    `);
+    `;
+  const builder = parse(source_code);
 
-  builder.foldConstants(contextError);
+  builder.foldConstants(source_code);
+  console.log(`Исходный код:\n${builder.constant}`);
   if (builder.isConstant) {
     console.log(`Код отсутсвет константное занчение: ${builder.constant}`);
   } else {
