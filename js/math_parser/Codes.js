@@ -1594,8 +1594,7 @@ class BinCommOpValue extends BaseBinComm {
             // Нужно перессоздать BinCommValueValue
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({comm: this.recreateCommValueValue(new OpConst(st_top.value), this.value), del: false});
-        }
-        else if (st_top.type === 'varable') {
+        } else if (st_top.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_top.index].del = true;    
             optimizedCode.push({comm: this.recreateCommValueValue(st_top.value, this.value), del: false});
@@ -1654,6 +1653,10 @@ class BinCommValueOp extends BaseBinComm {
             // Нужно перессоздать BinCommValueValue
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({comm: this.recreateCommValueValue(this.value, new OpConst(st_top.value)), del: false});
+        } else if (st_top.type === 'varable') {
+            simulatedStack.push({ type: 'unknown' });
+            optimizedCode[st_top.index].del = true;
+            optimizedCode.push({comm: this.recreateCommValueValue(this.value, st_top.value), del: false});
         } else {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
