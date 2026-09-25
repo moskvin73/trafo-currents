@@ -1643,9 +1643,12 @@ class AssignCommValueConst extends Command {
     }
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
+        // Кладём в стек значение константы присваевоемой переменной let_value
         simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length});
-        const old_v = this.value.get_constant_value(known_constants);    
+        // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
+        const old_v = this.let_value.get_constant_value(known_constants);    
         if (old_v) optimizedCode[old_v.index].del = true;
+        // Заменяем значение прсвоенного значения константы, на новое и сохраяем сссылку на новую команду присвоения
         this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });     
     }
