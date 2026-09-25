@@ -1775,7 +1775,7 @@ class AssignCommValueOp extends Command {
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            this.#foldConst(st_top.value);
+            this.#foldConst(optimizedCode, simulatedStack, known_constants, st_top.value);
         } else {
             this.let_value.delete_constant_value(known_constants);
             simulatedStack.push({ type: 'unknown' });
