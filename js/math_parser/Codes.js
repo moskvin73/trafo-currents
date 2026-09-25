@@ -1644,7 +1644,12 @@ class AssignCommValueConst extends Command {
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length});
-        optimizedCode.push({ comm: this, del: false });        
+        const old_v = this.value.get_constant_value(known_constants);    
+        if (old_v) {
+            optimizedCode[old_v.index].del = true;
+        }
+        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length});
+        optimizedCode.push({ comm: this, del: false });     
     }
 
     get pushStackCount() { return 0; }
