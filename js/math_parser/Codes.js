@@ -1194,7 +1194,7 @@ class PlusCommValue extends UnCommValue {
     commandName() { return 'plus'; }
 
     operator(op) {
-        if (op.is_signed()) return op;
+        if (op.is_signed) return op;
         const typeKey = typeof op === 'object' ? op.constructor : typeof value;
         throw new new class extends ErrorMath {
               getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
@@ -1215,7 +1215,7 @@ class PlusCommOp extends UnCommOp {
     commandName() { return 'plus'; }
 
     operator(op) { 
-        if (op.is_signed()) return op;
+        if (op.is_signed) return op;
         const typeKey = typeof op === 'object' ? op.constructor : typeof value;
         throw new new class extends ErrorMath {
               getMes(func) { return `Оператор "+ (унарный)" не поддерживает тип "${func(typeKey)}"`; }
