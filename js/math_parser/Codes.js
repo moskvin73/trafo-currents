@@ -1760,13 +1760,22 @@ class AssignCommValueOp extends Command {
         stack.push(sym.value = value);
     }
 
+    #foldConst(optimizedCode, simulatedStack, known_constants, c_value) {
+        const idx = optimizedCode.length;
+        // Кладём в стек значение константы присваевоемой переменной let_value
+        simulatedStack.push({type: 'const', value: c_value, index: idx});
+        // Сотрим если было предыдущие назначение константы, то помечаем эту операцию присвоения на удаление
+        const old_v = this.let_value.get_constant_value(known_constants);    
+        if (old_v) optimizedCode[old_v.index].del = true;
+        // Заменяем значение прсвоенного значения константы, на новое и сохраяем ссылку (индекс) на новую команду присвоения
+        this.let_value.add_constant_value(known_constants, { value: c_value, index: idx });
+        optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });    
+    }
+
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            const c_value = st_top.value;
-            simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
-            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
-            this.let_value.add_constant_value(known_constants, c_value); 
+            this.#foldConst(st_top.value);
         } else {
             this.let_value.delete_constant_value(known_constants);
             simulatedStack.push({ type: 'unknown' });
