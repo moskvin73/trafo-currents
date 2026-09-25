@@ -578,7 +578,7 @@ class OpVarable extends OperandValue {
 
     delete_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'delete_constant_value' не реализован."); }
 
-    update_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'update_constant_value' не реализован."); }
+    update_constant_value(_known_constants, new_value) { throw new Error("[OpVarable]: Метод 'update_constant_value' не реализован."); }
 }
 
 function assertOperandVarable(value, paramName, context) {
@@ -608,7 +608,13 @@ class OpVarableLocal extends OpVarable {
         return sym; 
     }
 
-    get_constant_value(known_constants) { return known_constants.get(key); }
+    get_constant_value(known_constants) { return known_constants.get(this.id_name); }
+
+    delete_constant_value(known_constants) { known_constants.delete(this.id_name);  }
+
+    update_constant_value(known_constants, new_value) {
+        known_constants
+    }
 
     toJSON() {
         return {

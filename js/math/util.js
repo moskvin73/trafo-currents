@@ -173,6 +173,14 @@ export class DualDictionary {
     return key !== null && (typeof key === 'object' || typeof key === 'function');
   }
 
+  has(key) {
+    if (this.#isObject(key)) {
+      this.#objectMap.has(key);
+    } else {
+      this.#indexMap.has(key);
+    }
+  }
+
   /**
    * Добавляет новый элемент или обновляет существующий по указанному ключу.
    * 
