@@ -1674,8 +1674,11 @@ class AssignCommValueValue extends Command {
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         if (this.value instanceof OpConst) {
-            simulatedStack.push({type: 'const', value: this.value.value, index: optimizedCode.length});
-            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, this.value.value), del: false });    
+            const c_value = this.value.value;
+            simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
+            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
+            // Переменой присвено константное значение
+            this.let_value.add_constant_value(known_constants, c_value);    
         }
         else {
             simulatedStack.push({ type: 'unknown' });
