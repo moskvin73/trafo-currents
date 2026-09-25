@@ -75,7 +75,7 @@ class Command {
 
     get modifiesStack() { return this.pushStackCount > 0 || this.popStackCount > 0; }
 
-    foldConstants(optimizedCode, simulatedStack) { optimizedCode.push({ comm: this, del: false }); }
+    foldConstants(optimizedCode, _simulatedStack, _known_constants) { optimizedCode.push({ comm: this, del: false }); }
 
     toJSON() {
         return {
@@ -256,7 +256,7 @@ class ReportComm extends Command {
         }
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         const st_top = simulatedStack.peek();
         if (st_top.type === 'const') {
             optimizedCode.push({ comm: new ReportCommConst(this.astNode, st_top.value), del: false });
@@ -463,7 +463,7 @@ class PopComm extends Command {
         context.last_popped = context.evaluate_stack.pop();
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         const st_top = simulatedStack.pop();
         optimizedCode.push({ comm: this, del: st_top.type === 'const' });
     }
@@ -725,7 +725,7 @@ class PushCommConst extends PushComm {
         context.evaluate_stack.push(this.value);
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: true })
     }
@@ -775,7 +775,7 @@ class PushCommConstLoc extends PushCommConst {
         context.evaluate_stack.push(new ValueLoc(this.value, this.loc));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         simulatedStack.push({type: 'const', value: new ValueLoc(this.value, this.loc), index: optimizedCode.length});
         optimizedCode.push({ comm: this, del: true });
     }
@@ -816,7 +816,7 @@ class TopStackToValueLoc extends Command {
             stack.push(new ValueLoc(st_top, this.loc));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             if (st_top.value instanceof ValueLoc) {
@@ -886,7 +886,7 @@ class PushCommVarbleLocal extends PushComm {
         context.evaluate_stack.push(sym.value);
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         simulatedStack.push({ type: 'varable', value: new OpVarableLocal(this.id_name), index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });
     }
@@ -961,7 +961,7 @@ class PushCommVarbleGlobal extends PushComm {
         context.evaluate_stack.push(this.symbol.value);
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         simulatedStack.push({ type: 'varable', value: new OpVarableGlobal(this.symbol), index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });
     }
@@ -1082,7 +1082,7 @@ class MatrixComm extends Command {
         stack.push(this.operand(stack));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         // читаем элименты из стека
         let c = this.popStackCount;
         const constnts = new Stack();
@@ -1164,7 +1164,7 @@ class UnCommValue extends BaseUnComm {
         context.evaluate_stack.push(this.operator(toParserBase(this.value.getValue(context))));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, _known_constants) {
         if (this.value instanceof OpConst) {
             const calc_v = this.operator(toParserBase(this.value.value));
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
@@ -1208,7 +1208,7 @@ class UnCommOp extends BaseUnComm {
         stack.push(this.operator(op));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             const calc_v = this.operator(toParserBase(st_top.value));
@@ -1389,7 +1389,7 @@ class BinCommValueValue extends BaseBinComm {
         context.evaluate_stack.push(this.operator(l, r));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         if (this.l_value instanceof OpConst && this.r_value instanceof OpConst) {
             const { l, r } = dispatcher.promoteTypes(this.l_value.value, this.r_value.value);
             const calc_v = this.operator(l, r);
@@ -1439,7 +1439,7 @@ class BinCommOpValue extends BaseBinComm {
         stack.push(this.operator(l, r));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const' && this.value instanceof OpConst)
         {
@@ -1497,7 +1497,7 @@ class BinCommValueOp extends BaseBinComm {
         stack.push(this.operator(l, r));
     }    
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const' && this.value instanceof OpConst)
         {
@@ -1554,7 +1554,7 @@ class BinCommOpOp extends BaseBinComm {
         stack.push(this.operator(l, r));
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_r = simulatedStack.pop();
         const st_l = simulatedStack.pop();
         if (st_l.type === 'const' && st_r.type === 'const') {
@@ -1627,7 +1627,7 @@ class AssignCommValueConst extends Command {
         sym.value = this.value;
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         simulatedStack.push({type: 'const', value: this.value, index: optimizedCode.length});
         optimizedCode.push({ comm: this, del: false });        
     }
@@ -1672,7 +1672,7 @@ class AssignCommValueValue extends Command {
         context.evaluate_stack.push(sym.value = value);
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         if (this.value instanceof OpConst) {
             simulatedStack.push({type: 'const', value: this.value.value, index: optimizedCode.length});
             optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, this.value.value), del: false });    
@@ -1722,7 +1722,7 @@ class AssignCommValueOp extends Command {
         stack.push(sym.value = value);
     }
 
-    foldConstants(optimizedCode, simulatedStack) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
             simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
@@ -2538,13 +2538,14 @@ export class CommandBuilder {
         if (!this.#currentCode || this.isConstant) return;
         const optimizedCode = [];
         const simulatedStack = new Stack();
+        const known_constants = new DualDictionary();
 
         let loc; let s_len = 0; let c_len; let errors = false;
         for (const comm of this.#currentCode) {
             if (comm instanceof LocationComm) loc = comm.loc;
             s_len = simulatedStack.length;
             c_len = optimizedCode.length;
-            try { comm.foldConstants(optimizedCode, simulatedStack); }
+            try { comm.foldConstants(optimizedCode, simulatedStack, known_constants); }
             catch(err) {
                 if (err instanceof EvaluateError)
                     context?.error(err.message || String(err), err.location ?? loc, err);
