@@ -713,6 +713,7 @@ class PushCommConst extends PushComm {
     }    
 }
 regCode(PushCommConst);
+extendPrototypes([OpConst], { createCodePush() { return new PushCommConst(this.value); }});
 
 class ValueLoc {
     constructor(value, loc) {
@@ -872,6 +873,7 @@ class PushCommVarbleLocal extends PushComm {
     }
 }
 regCode(PushCommVarbleLocal);
+extendPrototypes([OpVarableLocal], { createCodePush() { return new PushCommVarbleLocal(this.id_name); }});
 
 class PushCommVarbleLocalLoc extends PushCommVarbleLocal {
     constructor(id_name, loc) {
@@ -951,6 +953,7 @@ class PushCommVarbleGlobal extends PushComm {
     }
 }
 regCode(PushCommVarbleGlobal);
+extendPrototypes([OpVarableGlobal], { createCodePush() { return new PushCommVarbleGlobal(this.symbol); }});
 
 class PushCommVarbleGlobalLoc extends PushComm {
     constructor(sym, loc) {
