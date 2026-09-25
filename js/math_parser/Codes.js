@@ -1685,6 +1685,7 @@ class AssignCommValueValue extends Command {
             this.let_value.add_constant_value(known_constants, c_value);    
         }
         else {
+            this.let_value.delete_constant_value(known_constants);
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
         }        
@@ -1732,9 +1733,12 @@ class AssignCommValueOp extends Command {
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (st_top.type === 'const') {
-            simulatedStack.push({type: 'const', value: st_top.value, index: optimizedCode.length});
-            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, st_top.value), del: false });
+            const c_value = st_top.value;
+            simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
+            optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
+            this.let_value.add_constant_value(known_constants, c_value); 
         } else {
+            this.let_value.delete_constant_value(known_constants);
             simulatedStack.push({ type: 'unknown' });
             optimizedCode.push({ comm: this, del: false });
         }
