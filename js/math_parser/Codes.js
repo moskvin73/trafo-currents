@@ -1648,7 +1648,7 @@ class AssignCommValueConst extends Command {
         if (old_v) {
             optimizedCode[old_v.index].del = true;
         }
-        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length});
+        this.let_value.add_constant_value(known_constants, { value: this.value, index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });     
     }
 
