@@ -175,9 +175,9 @@ export class DualDictionary {
 
   has(key) {
     if (this.#isObject(key)) {
-      this.#objectMap.has(key);
+      return this.#objectMap.has(key);
     } else {
-      this.#indexMap.has(key);
+      return this.#indexMap.has(key);
     }
   }
 

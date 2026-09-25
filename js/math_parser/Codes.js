@@ -613,7 +613,7 @@ class OpVarableLocal extends OpVarable {
     delete_constant_value(known_constants) { known_constants.delete(this.id_name);  }
 
     update_constant_value(known_constants, new_value) {
-        known_constants
+        known_constants.has(this.id_name)
     }
 
     toJSON() {
