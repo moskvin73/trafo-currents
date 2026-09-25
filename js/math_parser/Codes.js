@@ -550,6 +550,9 @@ function assertOperandConst(value, paramName, context) {
   }
 }
 
+/**
+ *  Базовый класс опеадов переменных. Используемый командами.
+ */
 class OpVarable extends OperandValue {
     constructor() {
         super();
