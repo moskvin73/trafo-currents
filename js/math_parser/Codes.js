@@ -525,7 +525,7 @@ class OpConst extends OperandValue {
 
     getValue(_context) { return this.value; }
 
-    createCodePush() { return new PushCommConst(this.value); }
+    //createCodePush() { return new PushCommConst(this.value); }
 
     toJSON() {
         return {
@@ -593,7 +593,7 @@ class OpVarableLocal extends OpVarable {
         return sym; 
     }
 
-    createCodePush() { return new PushCommVarbleLocal(this.id_name); }
+    //createCodePush() { return new PushCommVarbleLocal(this.id_name); }
 
     toJSON() {
         return {
@@ -627,7 +627,7 @@ class OpVarableGlobal extends OpVarable {
 
     toString(_context) { return `${this.symbol.name}`; }
 
-    createCodePush() { return new PushCommVarbleGlobal(this.symbol); }
+    //createCodePush() { return new PushCommVarbleGlobal(this.symbol); }
 
     getSymbol(_context) { 
         checkSymbol(this.symbol); 
