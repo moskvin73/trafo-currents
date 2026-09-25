@@ -363,7 +363,7 @@ export function test3() {
 
   const builder = parse(`
     A = (C = 10) - 11;
-    B = [1, +true, true];
+    B = [1, +2, true];
     A = A - 10 - B;
     `);
 
