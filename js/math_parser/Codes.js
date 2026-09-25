@@ -566,12 +566,14 @@ class OpVarable extends OperandValue {
     getValue(context) { return this.getSymbol(context).value; }
 
    /**
-   * Извлекает значение константы, связанное с переменной.
+   * Извлекает значение константы, связанное с переменной на этапе компеляции.
    * 
    * @param {*} known_constants - таблица инецелезированных пременных константами на этапе компеляции.
    * @returns {*|null} Возвращает сохраненное значение, либо `null`, если переменная не имеет иецелезации константным значением.
    */
-    get_constant_value(known_constants) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+    get_constant_value(_known_constants) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
+
+    delete_constant_value(_known_constants) { throw new Error("[Code]: Метод getSymbol() не реализован."); }
 }
 
 function assertOperandVarable(value, paramName, context) {
