@@ -1374,6 +1374,13 @@ class BaseBinComm extends Command {
     recreateCommValueOp(value) { throw new Error("[Command]: Метод recreateCommValueValue() не реализован."); }
 
     get pushStackCount() { return 1; }
+
+    foldConst(optimizedCode, simulatedStack, l_v, r_v) {
+        const { l, r } = dispatcher.promoteTypes(l_v, r_v);
+        const calc_v = this.operator(l, r);
+        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+    }
 }
 
 class BinCommValueValue extends BaseBinComm {
@@ -1394,13 +1401,6 @@ class BinCommValueValue extends BaseBinComm {
     internal_evaluate(context) {
         const { l, r } = dispatcher.promoteTypes(this.l_value.getValue(context), this.r_value.getValue(context));
         context.evaluate_stack.push(this.operator(l, r));
-    }
-
-    foldConst(optimizedCode, simulatedStack, l_v, r_v) {
-        const { l, r } = dispatcher.promoteTypes(l_v, r_v);
-        const calc_v = this.operator(l, r);
-        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
     }
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
@@ -1475,13 +1475,6 @@ class BinCommOpValue extends BaseBinComm {
         const l_op = stack.pop();
         const { l, r } = dispatcher.promoteTypes(l_op, this.value.getValue(context));
         stack.push(this.operator(l, r));
-    }
-
-    foldConst(optimizedCode, simulatedStack, l_v, r_v) {
-        const { l, r } = dispatcher.promoteTypes(l_v, r_v);
-        const calc_v = this.operator(l, r);
-        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
-        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
     }
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
