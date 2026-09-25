@@ -350,7 +350,7 @@ export function test3() {
   const builder = parse(source_code);
 
   builder.foldConstants(source_code);
-  console.log(`Исходный код:\n${builder.constant}`);
+  console.log(`Исходный код:\n${source_code}`);
   if (builder.isConstant) {
     console.log(`Код отсутсвет константное занчение: ${builder.constant}`);
   } else {
