@@ -1477,22 +1477,23 @@ class BinCommOpValue extends BaseBinComm {
         stack.push(this.operator(l, r));
     }
 
+    foldConst(optimizedCode, simulatedStack, l_v, r_v) {
+        const { l, r } = dispatcher.promoteTypes(l_v, r_v);
+        const calc_v = this.operator(l, r);
+        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
+        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+    }
+
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
         if (this.value instanceof OpConst) {
             if (st_top.type === 'const') {
-                const { l, r } = dispatcher.promoteTypes(st_top.value, this.value.value);
-                const calc_v = this.operator(l, r);
-                simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
-                optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+                this.foldConst(optimizedCode, simulatedStack, st_top.value, this.value.value);
                 return;  
             } else if (st_top.type === 'varable') {
                 const l_c = st_top.value.get_constant_value(known_constants);
                 if (l_c) {
-                    const { l, r } = dispatcher.promoteTypes(l_c.value, this.value.value);
-                    const calc_v = this.operator(l, r);
-                    simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
-                    optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+                    this.foldConst(optimizedCode, simulatedStack, l_c.value, this.value.value);
                     return;  
                 }                
             }
@@ -1500,19 +1501,12 @@ class BinCommOpValue extends BaseBinComm {
             const r_c = this.value.get_constant_value(known_constants);
             if (r_c) {
                 if (st_top.type === 'const') {
-                    const { l, r } = dispatcher.promoteTypes(st_top.value, r_c.value);
-                    const calc_v = this.operator(l, r);
-                    simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
-                    optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
+                    this.foldConst(optimizedCode, simulatedStack, st_top.value, r_c.value);
                     return;  
                 } else if (st_top.type === 'varable') {
                     const l_c = st_top.value.get_constant_value(known_constants);
                     if (l_c) {
-                        const { l, r } = dispatcher.promoteTypes(l_c.value, r_c.value);
-                        const calc_v = this.operator(l, r);
-                        simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
-                        optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
-                        return;  
+                        this.foldConst(optimizedCode, simulatedStack, l_c.value, r_c.value);
                     }
                 }
             } 
