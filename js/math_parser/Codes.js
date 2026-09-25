@@ -1678,7 +1678,7 @@ class AssignCommValueValue extends Command {
             : this.value.get_constant_value(known_constants);
         if (c_value !== undefined && c_value !== null) {   
         //if (this.value instanceof OpConst) {
-            const c_value = this.value.value;
+            //const c_value = this.value.value;
             simulatedStack.push({type: 'const', value: c_value, index: optimizedCode.length});
             optimizedCode.push({ comm: new AssignCommValueConst(this.let_value, c_value), del: false });
             // Переменой присвено константное значение
