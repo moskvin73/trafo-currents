@@ -1191,7 +1191,7 @@ class PlusCommValue extends UnCommValue {
         super(value);
     }
     
-    commandName() { return 'plus'; }
+    commandName() { return 'plus'; } 
 
     operator(op) {
         if (op.is_signed) return op;
