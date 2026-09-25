@@ -32,7 +32,7 @@ class LocalVarable {
 }
 
 export function createLocalVarable(id_name) {
-    return new LocalVarable(d_name);
+    return new LocalVarable(id_name);
 }
 
 class Command {
