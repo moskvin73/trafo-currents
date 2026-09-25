@@ -1357,7 +1357,7 @@ class UnCommOp extends BaseUnComm {
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length});
             optimizedCode.push({ comm: new PushCommConst(calc_v), del: true });
         }
-        if (st_top.type === 'varable') {
+        else if (st_top.type === 'varable') {
             simulatedStack.push({ type: 'unknown' });
             optimizedCode[st_top.index].del = true;
             optimizedCode.push({ comm: new UnCommValue(st_top.value), del: false });
