@@ -568,17 +568,19 @@ class OpVarable extends OperandValue {
 
     getValue(context) { return this.getSymbol(context).value; }
 
-   /**
-   * Извлекает значение константы, связанное с переменной на этапе компеляции.
-   * 
-   * @param {DualDictionary} known_constants - таблица инициализированных константами переменных на этапе компиляции.
-   * @returns {*|null} Возвращает сохраненное значение, либо `null`, если переменная не имеет иецелезации константным значением.
-   */
+    add_constant_value(_known_constants, _value) { throw new Error("[OpVarable]: Метод 'add_constant_value' не реализован."); }
+
+    /**
+     * Извлекает значение константы, связанное с переменной на этапе компеляции.
+     * 
+     * @param {DualDictionary} known_constants - таблица инициализированных константами переменных на этапе компиляции.
+     * @returns {*|null} Возвращает сохраненное значение, либо `null`, если переменная не имеет иецелезации константным значением.
+     */
     get_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'get_constant_value' не реализован."); }
 
     delete_constant_value(_known_constants) { throw new Error("[OpVarable]: Метод 'delete_constant_value' не реализован."); }
 
-    update_constant_value(_known_constants, new_value) { throw new Error("[OpVarable]: Метод 'update_constant_value' не реализован."); }
+    update_constant_value(_known_constants, _new_value) { throw new Error("[OpVarable]: Метод 'update_constant_value' не реализован."); }
 }
 
 function assertOperandVarable(value, paramName, context) {
@@ -607,6 +609,8 @@ class OpVarableLocal extends OpVarable {
         checkSymbolNull(sym);
         return sym; 
     }
+
+    add_constant_value(known_constants, value) { known_constants.set(this.id_name, value); }
 
     get_constant_value(known_constants) { return known_constants.get(this.id_name); }
 
