@@ -1479,8 +1479,7 @@ class BinCommOpValue extends BaseBinComm {
 
     foldConstants(optimizedCode, simulatedStack, known_constants) {
         const st_top = simulatedStack.pop();
-        if (st_top.type === 'const' && this.value instanceof OpConst)
-        {
+        if (st_top.type === 'const' && this.value instanceof OpConst) {
             const { l, r } = dispatcher.promoteTypes(st_top.value, this.value.value);
             const calc_v = this.operator(l, r);
             simulatedStack.push({type: 'const', value: calc_v, index: optimizedCode.length}); 
