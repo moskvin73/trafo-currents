@@ -128,3 +128,107 @@ export class Stack {
 
   reverse() { this.#items.reverse(); return this; }
 }
+
+/**
+ * Двухрежимная структура данных (словарь), предназначенная для хранения 
+ * пар ключ-значение с автоматическим разделением типов ключей.
+ * 
+ * Использует `Map` для примитивных ключей (строки, числа, символы) и 
+ * `WeakMap` для ссылочных типов (объекты, массивы, функции), предотвращая 
+ * утечки памяти и позволяя сборщику мусора удалять неиспользуемые объекты.
+ */
+export class DualDictionary {
+  /** 
+   * Хранилище для примитивных ключей.
+   * @type {Map<any, any>} 
+   * @private
+   */
+  #indexMap;
+
+   /** 
+   * Хранилище для объектных ключей с поддержкой автоматической сборки мусора.
+   * @type {WeakMap<object, any>} 
+   * @private
+   */ 
+  #objectMap;
+
+   /**
+   * Создает пустой экземпляр DualDictionary.
+   */
+    constructor() {
+    // Для простых индексов (строки, числа)
+    this.#indexMap = new Map();
+    // Для экземпляров классов (объектов)
+    this.#objectMap = new WeakMap();
+  }
+
+  /**
+   * Проверяет, является ли переданный ключ объектом или функцией.
+   * 
+   * @param {*} key - Проверяемый ключ.
+   * @returns {boolean} `true`, если ключ является ссылочным типом данных, иначе `false`.
+   * @private
+   */
+   #isObject(key) {
+    return key !== null && (typeof key === 'object' || typeof key === 'function');
+  }
+
+  /**
+   * Добавляет новый элемент или обновляет существующий по указанному ключу.
+   * 
+   * @param {*} key - Ключ элемента. Может быть как примитивом, так и объектом/функцией.
+   * @param {*} value - Сохраняемое значение любого типа.
+   * @returns {void}
+   */
+  set(key, value) {
+    if (this.#isObject(key)) {
+      this.#objectMap.set(key, value);
+    } else {
+      this.#indexMap.set(key, value);
+    }
+  }
+
+  /**
+   * Извлекает значение, связанное с ключом.
+   * 
+   * @param {*} key - Ключ для поиска.
+   * @returns {*|null} Возвращает сохраненное значение, либо `null`, если ключ не найден.
+   */
+  get(key) {
+    if (this.#isObject(key)) {
+      const result = this.#objectMap.get(key);
+      return result !== undefined ? result : null;
+    } else {
+      const result = this.#indexMap.get(key);
+      return result !== undefined ? result : null;
+    }
+  }
+
+  /**
+   * Удаляет элемент по его ключу.
+   * 
+   * @param {*} key - Ключ удаляемого элемента.
+   * @returns {boolean} `true`, если элемент успешно найден и удален; `false`, если элемент отсутствовал.
+   */
+  delete(key) {
+    if (this.#isObject(key)) {
+      return this.#objectMap.delete(key);
+    } else {
+      return this.#indexMap.delete(key);
+    }
+  }
+
+  /**
+   * Полностью очищает словарь, удаляя все сохраненные пары ключ-значение.
+   * 
+   * @returns {void}
+   */
+  clear() {
+    // Map очищается стандартным методом
+    this.#indexMap.clear();
+    
+    // WeakMap не имеет метода .clear() из-за особенностей сборки мусора.
+    // Чтобы очистить его, мы просто пересоздаем экземпляр.
+    this.#objectMap = new WeakMap();
+  }
+}
