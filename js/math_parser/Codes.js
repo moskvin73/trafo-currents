@@ -1164,7 +1164,7 @@ class UnCommValue extends BaseUnComm {
         context.evaluate_stack.push(this.operator(toParserBase(this.value.getValue(context))));
     }
 
-    foldConstants(optimizedCode, simulatedStack, _known_constants) {
+    foldConstants(optimizedCode, simulatedStack, known_constants) {
         const c_value = this.value instanceof OpConst 
             ? this.value.value 
             : this.value.get_constant_value(known_constants);
