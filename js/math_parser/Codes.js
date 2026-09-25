@@ -740,6 +740,7 @@ class PushCommVarbleGlobal extends PushComm {
 
     foldConstants(optimizedCode, simulatedStack) {
         simulatedStack.push({ type: 'unknown' });
+        //simulatedStack.push({ type: 'varable', operand: new OpVarableGlobal(this.symbol), index: optimizedCode.length });
         optimizedCode.push({ comm: this, del: false });
     }
 
