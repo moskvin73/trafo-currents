@@ -234,6 +234,15 @@ console.log("fromNumber(0.1):", nativeNum.toString()); // "1/10" (точная �
 
 const jsMath = new Rational(1, 4) + 2; // Автовызов Symbol.toPrimitive
 console.log("1/4 + 2 в контексте JS:", jsMath); // 2.25 (тип Number)
+
+console.log("Число e (30 знаков):  ", Rational.e(30).toDecimalString());
+// 2.718281828459045235360287471352
+
+console.log("Число Pi (30 знаков): ", Rational.pi(30).toDecimalString());
+// 3.141592653589793238462643383279
+
+console.log("Число Phi (30 знаков):", Rational.phi(30).toDecimalString());
+// 1.618033988749894848204586834365
   
   const loc = (line, col =  1) => {
     const loc_data = {
