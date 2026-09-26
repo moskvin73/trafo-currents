@@ -344,6 +344,26 @@ export default class Rational {
     return 0n;                           // Ноль
   } 
 
+  // Возвращает обратное значение дроби (1 / число)
+  invert() {
+    // 1. Обработка NaN: 1 / NaN = NaN
+    if (this.isNaN) return Rational.NaN;
+
+    // 2. Обработка бесконечностей: 1 / (+-Infinity) = 0
+    if (this.isInfinity) return new Rational(0n);
+
+    // 3. Обработка нуля: 1 / 0 дает бесконечность с соответствующим знаком
+    if (this.num === 0n) {
+      // Так как знаменатель у нас всегда положительный после #simplify(),
+      // знак нуля определяется его числителем (хотя 0n обычно положителен)
+      return this.num >= 0n ? Rational.POSITIVE_INFINITY : Rational.NEGATIVE_INFINITY;
+    }
+
+    // 4. Для обычных дробей просто меняем числитель и знаменатель местами.
+    // Вызываем приватный метод #simplify(), чтобы знак минус гарантированно перешел в числитель
+    return new Rational(this.den, this.num);
+  }
+    
   // Возвращает массив [integerPart, fractionalPart], где оба элемента — объекты Rational
   split() {
     // 1. Обработка спец-состояний
@@ -1109,7 +1129,7 @@ export default class Rational {
 
     return `${sign}\\frac{${absNum.toString()}}{${this.den.toString()}}`;
   }
-      
+
     toDecimalString(maxStandardDigits = 20) {
         if (this.isNaN) return "NaN";
         if (this.isPositiveInfinity) return "Infinity";
