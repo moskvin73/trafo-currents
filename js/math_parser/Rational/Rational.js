@@ -3,7 +3,7 @@ class Rational {
     this.num = BigInt(numerator);
     this.den = BigInt(denominator);
 
-    this._simplify();
+    this.#simplify();
   }
 
   // --- СТАТИЧЕСКИЕ СВОЙСТВА ДЛЯ СПЕЦИАЛЬНЫХ СЛУЧАЕВ ---
@@ -17,12 +17,12 @@ class Rational {
   get isPositiveInfinity() { return this.den === 0n && this.num > 0n; }
   get isNegativeInfinity() { return this.den === 0n && this.num < 0n; }
 
-  static _toRational(val) {
+  static #toRational(val) {
     if (val instanceof Rational) return val;
     return new Rational(val);
   }
 
-  _simplify() {
+  #simplify() {
     // Если это Infinity или NaN (знаменатель 0), сохраняем их базовый вид
     if (this.den === 0n) {
       if (this.num > 0n) this.num = 1n;
@@ -49,7 +49,7 @@ class Rational {
   // --- АРИФМЕТИКА С УЧЕТОМ NaN И INFINITY ---
 
   add(other) {
-    const o = Rational._toRational(other);
+    const o = Rational.#toRational(other);
     
     // Любая операция с NaN дает NaN
     if (this.isNaN || o.isNaN) return Rational.NaN;
@@ -65,7 +65,7 @@ class Rational {
   }
 
   sub(other) {
-    const o = Rational._toRational(other);
+    const o = Rational.#toRational(other);
     if (this.isNaN || o.isNaN) return Rational.NaN;
 
     if (this.isInfinity || o.isInfinity) {
@@ -78,7 +78,7 @@ class Rational {
   }
 
   mul(other) {
-    const o = Rational._toRational(other);
+    const o = Rational.#toRational(other);
     if (this.isNaN || o.isNaN) return Rational.NaN;
 
     // Умножение бесконечности на 0 дает NaN
@@ -96,7 +96,7 @@ class Rational {
   }
 
   div(other) {
-    const o = Rational._toRational(other);
+    const o = Rational.#toRational(other);
     if (this.isNaN || o.isNaN) return Rational.NaN;
 
     // Деление 0 / 0 или Inf / Inf дает NaN
@@ -124,4 +124,160 @@ class Rational {
     if (this.isNegativeInfinity) return "-Infinity";
     return this.den === 1n ? `${this.num}` : `${this.num}/${this.den}`;
   }
+
+    static parse(str) {
+        // Убираем пробелы
+        str = str.trim();
+
+        // 1. Обработка спец-значений
+        if (str === "NaN") return Rational.NaN;
+        if (str === "Infinity" || str === "+Infinity") return Rational.POSITIVE_INFINITY;
+        if (str === "-Infinity") return Rational.NEGATIVE_INFINITY;
+
+        // 2. Регулярное выражение для разбора формата:
+        // +/-XXX . XXX (XXX) e+/-XXX
+        const regex = /^([+-]?\d+)?(?:\.(\d+)?(?:\((\d+)\))?)?(?:[eE]([+-]?\d+))?$/;
+        const match = str.match(regex);
+
+        if (!match) {
+            return Rational.NaN; // Неверный формат строки
+        }
+
+        const [, intPartStr, fracPartStr, repeatPartStr, expPartStr] = match;
+
+        // Если нет ни целой части, ни дробной — строка некорректна (например, просто "e3")
+        if (!intPartStr && !fracPartStr && !repeatPartStr) return Rational.NaN;
+
+        // Определяем знак
+        const isNegative = str.startsWith('-');
+        const absIntStr = intPartStr ? intPartStr.replace(/[+-]/, '') : '0';
+        
+        // Базовая целая часть
+        let num = BigInt(absIntStr);
+        let den = 1n;
+
+        // 3. Обработка непериодической дробной части
+        if (fracPartStr) {
+            const fracLen = BigInt(fracPartStr.length);
+            num = num * (10n ** fracLen) + BigInt(fracPartStr);
+            den = 10n ** fracLen;
+        }
+
+        // 4. Обработка периодической дробной части
+        if (repeatPartStr) {
+            const fracLen = fracPartStr ? BigInt(fracPartStr.length) : 0n;
+            const repeatLen = BigInt(repeatPartStr.length);
+
+            // Дробь для периодической части: repeatPart / (999...000)
+            const repNum = BigInt(repeatPartStr);
+            const repDen = (10n ** repeatLen - 1n) * (10n ** fracLen);
+
+            // Складываем текущую дробь (целая + обычная дробная) с периодической частью
+            num = num * repDen + repNum * den;
+            den = den * repDen;
+        }
+
+        // Применяем знак
+        if (isNegative) num = -num;
+
+        // 5. Обработка экспоненты (E+/-XXX)
+        if (expPartStr) {
+            const exp = BigInt(expPartStr);
+            if (exp > 0n) {
+            num *= 10n ** exp;
+            } else if (exp < 0n) {
+            den *= 10n ** (-exp);
+            }
+        }
+
+        return new Rational(num, den);
+    }
+
+    toDecimalString(maxStandardDigits = 20) {
+        if (this.isNaN) return "NaN";
+        if (this.isPositiveInfinity) return "Infinity";
+        if (this.isNegativeInfinity) return "-Infinity";
+
+        const sign = this.num < 0n ? "-" : "";
+        let absNum = this.num < 0n ? -this.num : this.num;
+        let absDen = this.den;
+
+        // 1. Проверяем, нужно ли использовать экспоненциальный формат (для очень больших/маленьких чисел)
+        // Нам нужно грубо прикинуть порядок числа
+        let integerPart = absNum / absDen;
+        let exp = 0n;
+
+        // Если число не равно 0 и требуется экспоненциальный вид
+        if (integerPart === 0n && absNum !== 0n) {
+            // Число слишком маленькое (меньше 1)
+            let tempNum = absNum;
+            while (tempNum / absDen === 0n) {
+            tempNum *= 10n;
+            exp--;
+            }
+            // Если вышли за рамки лимита знаков, масштабируем
+            if (-exp > BigInt(maxStandardDigits)) {
+            absNum = tempNum;
+            integerPart = absNum / absDen;
+            } else {
+            exp = 0n; // Сбрасываем, помещается в стандартный формат
+            }
+        } else if (integerPart > 0n) {
+            // Число очень большое
+            let intStrLen = BigInt(integerPart.toString().length);
+            if (intStrLen > BigInt(maxStandardDigits)) {
+            exp = intStrLen - 1n;
+            absDen *= 10n ** exp;
+            integerPart = absNum / absDen;
+            }
+        }
+
+        // 2. Вычисляем целую часть и остаток для дробной
+        let remainder = absNum % absDen;
+        let fracStr = "";
+        
+        // Карты для отслеживания остатков (чтобы найти период алгоритмом деления в столбик)
+        const seenRemainders = new Map();
+        let index = 0;
+        let periodStartIndex = -1;
+
+        // Алгоритм деления в столбик с поиском цикла
+        while (remainder !== 0n) {
+            if (seenRemainders.has(remainder)) {
+            periodStartIndex = seenRemainders.get(remainder);
+            break;
+            }
+            
+            seenRemainders.set(remainder, index);
+            remainder *= 10n;
+            fracStr += (remainder / absDen).toString();
+            remainder %= absDen;
+            index++;
+        }
+
+        // 3. Формируем дробную часть с учетом периода
+        let finalFrac = "";
+        if (periodStartIndex !== -1) {
+            // Есть период
+            const nonRepeat = fracStr.slice(0, periodStartIndex);
+            const repeat = fracStr.slice(periodStartIndex);
+            finalFrac = nonRepeat + "(" + repeat + ")";
+        } else if (fracStr.length > 0) {
+            // Конечная дробь
+            finalFrac = fracStr;
+        }
+
+        // Сборка финальной строки
+        let result = sign + integerPart.toString();
+        if (finalFrac) {
+            result += "." + finalFrac;
+        }
+        
+        // Добавляем экспоненту, если она была вычислена
+        if (exp !== 0n) {
+            result += "E" + (exp > 0n ? "+" : "") + exp.toString();
+        }
+
+        return result;
+    }    
 }
