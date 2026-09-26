@@ -1,4 +1,4 @@
-export class Rational {
+export default class Rational {
   constructor(numerator, denominator = 1n) {
     this.num = BigInt(numerator);
     this.den = BigInt(denominator);
