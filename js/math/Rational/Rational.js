@@ -120,7 +120,7 @@ export default class Rational {
 
     // Равно (==)
     eq(other) {
-        const o = Rational._toRational(other);
+        const o = Rational.#toRational(other);
         // По правилам IEEE 754, NaN не равен ничему, даже NaN
         if (this.isNaN || o.isNaN) return false;
         
@@ -140,7 +140,7 @@ export default class Rational {
 
     // Меньше (<)
     lt(other) {
-        const o = Rational._toRational(other);
+        const o = Rational.#toRational(other);
         if (this.isNaN || o.isNaN) return false; // Сравнения с NaN всегда false
 
         // Обработка бесконечностей
@@ -156,7 +156,7 @@ export default class Rational {
 
     // Больше (>)
     gt(other) {
-        const o = Rational._toRational(other);
+        const o = Rational.#toRational(other);
         if (this.isNaN || o.isNaN) return false;
 
         // Обработка бесконечностей
@@ -172,14 +172,14 @@ export default class Rational {
 
     // Меньше или равно (<=)
     lte(other) {
-        const o = Rational._toRational(other);
+        const o = Rational.#toRational(other);
         if (this.isNaN || o.isNaN) return false;
         return this.lt(o) || this.eq(o);
     }
 
     // Больше или равно (>=)
     gte(other) {
-        const o = Rational._toRational(other);
+        const o = Rational.#toRational(other);
         if (this.isNaN || o.isNaN) return false;
         return this.gt(o) || this.eq(o);
     }
