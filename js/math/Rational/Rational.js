@@ -573,6 +573,56 @@ export default class Rational {
     // Извлекаем корень степени знаменателя (знаменатель o.den всегда положительный после #simplify())
     return powerBase._root(o.den, precision);
   }
+
+  // Вычисление e^x с заданной точностью знаков после запятой
+  exp(precision = 20) {
+    // 1. Обработка спец-состояний
+    if (this.isNaN) return Rational.NaN;
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+    if (this.isNegativeInfinity) return new Rational(0n);
+    if (this.num === 0n) return new Rational(1n); // e^0 = 1
+
+    const p = BigInt(precision);
+    const extra = 5n; // Запас точности для внутренних расчетов ряда
+    const scale = 10n ** (p + extra);
+
+    // 2. Выделяем целую и дробную часть числа x
+    let integerPart = this.num / this.den;
+    let remainder = this.num % this.den;
+
+    // Результат для дробной части в масштабе scale
+    let sum = scale; // Первый член ряда (1)
+    
+    if (remainder !== 0n) {
+      // Переводим дробный остаток в масштабированное целое число для расчетов ряда
+      // xScaled = (remainder * scale) / den
+      let xScaled = (remainder * scale) / this.den;
+      let term = xScaled; // Текущий член ряда (x^n / n!)
+      let n = 1n;
+
+      while (term > 0n || term < -0n) {
+        sum += term;
+        n++;
+        // Следующий член: term = (term * xScaled) / (n * scale)
+        term = (term * xScaled) / (n * scale);
+      }
+    }
+
+    // Превращаем результат ряда для дробной части обратно в объект Rational
+    let fractionalResult = new Rational(sum / (10n ** extra), 10n ** p);
+
+    // 3. Если есть целая часть, считаем e^(integerPart) и умножаем результаты: e^(a+b) = e^a * e^b
+    if (integerPart !== 0n) {
+      // Генерируем константу e с нужной точностью
+      const eConstant = Rational.e(Number(p));
+      // Возводим константу e в целую степень (используя ваш pow_int)
+      const ePower = eConstant.pow_int(integerPart);
+      
+      return ePower.mul(fractionalResult);
+    }
+
+    return fractionalResult;
+  }  
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
