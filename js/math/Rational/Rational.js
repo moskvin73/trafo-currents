@@ -116,6 +116,28 @@ export default class Rational {
     return new Rational(this.num * o.den, this.den * o.num);
   }
 
+    // Вычисляет остаток от деления текущей дроби на other (аналог оператора % в JS)
+  mod(other) {
+    const o = Rational.#toRational(other);
+
+    // 1. Обработка NaN и деления на ноль
+    if (this.isNaN || o.isNaN || o.num === 0n) return Rational.NaN;
+
+    // 2. Обработка бесконечностей
+    if (this.isInfinity) return Rational.NaN; // Inf % любое_число = NaN
+    if (o.isInfinity) return this; // Любое_конечное_число % Inf = исходное_число
+
+    // 3. Вычисление для обычных дробей: A % B = A - B * trunc(A / B)
+    // Сначала находим результат деления
+    const divResult = this.div(o);
+    
+    // Выделяем целую часть (trunc)
+    const intPart = divResult.split()[0];
+    
+    // Возвращаем результат: this - (o * intPart)
+    return this.sub(o.mul(intPart));
+  }
+
     // --- ОПЕРАЦИИ ОТНОШЕНИЯ (СРАВНЕНИЯ) ---
 
     // Равно (==)
