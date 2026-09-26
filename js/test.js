@@ -223,8 +223,8 @@ console.log("Знак нуля:", new Rational(0).sign()); // 0n
 console.log("\n=== ТЕСТ 5: Корни, степени и спец-значения ===");
 const two = new Rational(2);
 console.log("Корень из 2 (10 знаков):", two.sqrt(10).toDecimalString()); // "1.4142135623"
-console.log("(-Infinity) в кубе:", negInf.pow(3).toString()); // "-Infinity"
-console.log("(-Infinity) в квадрате:", negInf.pow(2).toString()); // "Infinity"
+console.log("(-Infinity) в кубе:", negInf.pow_int(3).toString()); // "-Infinity"
+console.log("(-Infinity) в квадрате:", negInf.pow_int(2).toString()); // "Infinity"
 console.log("Корень из -5:", new Rational(-5).sqrt().toString()); // "NaN"
 
 
