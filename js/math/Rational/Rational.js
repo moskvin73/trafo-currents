@@ -363,7 +363,7 @@ export default class Rational {
     // Вызываем приватный метод #simplify(), чтобы знак минус гарантированно перешел в числитель
     return new Rational(this.den, this.num);
   }
-    
+
   // Возвращает массив [integerPart, fractionalPart], где оба элемента — объекты Rational
   split() {
     // 1. Обработка спец-состояний
@@ -1032,7 +1032,114 @@ export default class Rational {
     const lnResult = fractionPart.ln(calcPrecision);
 
     return lnResult.div(2n).round(precision);
-  }  
+  }
+  
+   // --- ФАКТОРИАЛ И ГАММА-ФУНКЦИЯ ---
+
+  // Вычисление факториала (только для целых неотрицательных чисел)
+  factorial() {
+    if (this.isNaN || this.isInfinity) return Rational.NaN;
+    
+    // Проверяем, что число целое (знаменатель 1) и неотрицательное
+    if (this.den !== 1n || this.num < 0n) {
+      throw new RangeError("Факториал определен только для целых неотрицательных чисел.");
+    }
+
+    if (this.num === 0n || this.num === 1n) return new Rational(1n);
+
+    let result = 1n;
+    for (let i = 2n; i <= this.num; i++) {
+      result *= i;
+    }
+
+    return new Rational(result, 1n);
+  }
+
+  // Гамма-функция Г(x) с заданной точностью знаков после запятой
+  gamma(precision = 20) {
+    if (this.isNaN || this.isNegativeInfinity) return Rational.NaN;
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+
+    // Г(x) для целых чисел <= 0 не определена (полюса функции)
+    if (this.den === 1n && this.num <= 0n) return Rational.NaN;
+
+    // Если число целое и положительное, то Г(n) = (n-1)!
+    if (this.den === 1n && this.num > 0n) {
+      const inverseMinusOne = new Rational(this.num - 1n, 1n);
+      return inverseMinusOne.factorial();
+    }
+
+    const p = BigInt(precision);
+    const extra = 8n; // Больший запас точности для перемножения рядов Спирта
+    const scale = 10n ** (p + extra);
+
+    // Параметр подгонки А для аппроксимации Спирта. 
+    // Для точности ~20 знаков достаточно A = 13..15
+    const A = precision < 15 ? 12n : BigInt(precision) + 2n;
+
+    // Переводим x в масштаб BigInt
+    const xScaled = (this.num * scale) / this.den;
+
+    // Вычисляем базовую константу e с нужным запасом
+    const eConst = Rational.e(Number(p + extra));
+
+    // Коэффициент c_0 = sqrt(2 * PI)
+    const twoPi = Rational.pi(Number(p + extra)).mul(2n);
+    const sqrtTwoPi = twoPi.sqrt(Number(p + extra));
+    let c0Scaled = (sqrtTwoPi.num * scale) / sqrtTwoPi.den;
+
+    let sum = c0Scaled;
+
+    // Вычисляем коэффициенты ряда Спирта c_k и суммируем
+    for (let k = 1n; k < A; k++) {
+      // Факториал (k-1)!
+      let fact = 1n;
+      for (let i = 2n; i < k; i++) fact *= i;
+      if (k === 1n) fact = 1n;
+
+      // c_k = ( (-1)^(k-1) * (A - k)^(k - 0.5) * e^(A - k) ) / (k - 1)!
+      const Ak = A - k;
+      
+      // Вычисляем (A-k)^(k - 0.5) с помощью перевода в Rational
+      const base = new Rational(Ak, 1n);
+      // Степень (2k - 1) / 2
+      const expPart = new Rational(2n * k - 1n, 2n);
+      const powerResult = base.pow(expPart, Number(p + extra));
+      
+      // e^(A-k)
+      const ePower = eConst.pow_int(Ak);
+      
+      const numeratorRational = powerResult.mul(ePower);
+      const ckRational = numeratorRational.div(fact);
+      let ckScaled = (ckRational.num * scale) / ckRational.den;
+
+      if ((k - 1n) % 2n !== 0n) {
+        ckScaled = -ckScaled;
+      }
+
+      // sum += ck / (x + k)
+      // В масштабе: (ckScaled * scale) / (xScaled + k * scale)
+      const denominator = xScaled + k * scale;
+      sum += (ckScaled * scale) / denominator;
+    }
+
+    // Итоговая формула: Г(x) = (x + A)^(x + 0.5) * e^(-(x + A)) * sum / scale
+    const xPlusA = this.add(A);
+    const firstExp = this.add(new Rational(1n, 2n)); // x + 0.5
+    
+    // (x + A)^(x + 0.5)
+    const basePart = xPlusA.pow(firstExp, Number(p + extra));
+    
+    // e^(-(x + A))
+    const ePart = xPlusA.negate().exp(Number(p + extra));
+    
+    const combined = basePart.mul(ePart);
+    const sumRational = new Rational(sum, scale);
+    
+    const finalResult = combined.mul(sumRational);
+
+    return finalResult.round(precision);
+  } 
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
