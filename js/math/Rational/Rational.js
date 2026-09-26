@@ -736,6 +736,103 @@ export default class Rational {
     }
 
     return lnRemainder;
+  }
+  
+  // --- ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ ---
+
+  // Синус угла (аргумент задан в радианах)
+  sin(precision = 20) {
+    if (this.isNaN || this.isInfinity) return Rational.NaN;
+    if (this.num === 0n) return new Rational(0n); // sin(0) = 0
+
+    const p = BigInt(precision);
+    const extra = 5n; // Запас для внутренних расчетов
+    const scale = 10n ** (p + extra);
+
+    // 1. Редукция аргумента к интервалу [0, 2*PI)
+    const piConst = Rational.pi(Number(p + extra));
+    const twoPi = piConst.mul(2n);
+    let reduced = this.mod(twoPi);
+    if (reduced.num < 0n) {
+      reduced = reduced.add(twoPi); // Переводим в положительный диапазон
+    }
+
+    // Масштабируем приведенный угол в целое число BigInt для расчета ряда
+    const xScaled = (reduced.num * scale) / reduced.den;
+    const x2Scaled = (xScaled * xScaled) / scale; // x^2
+
+    // 2. Вычисление ряда Тейлора для sin(x) = x - x^3/3! + x^5/5! - x^7/7! ...
+    let sum = xScaled; // Первый член ряда (x)
+    let term = xScaled; // Текущий член ряда
+    let n = 1n;
+    let sign = -1n;
+
+    while (term > 0n || term < -0n) {
+      // term = (term * x^2) / ((2n) * (2n + 1) * scale)
+      term = (term * x2Scaled) / ((2n * (2n + 1n)) * scale);
+      if (term === 0n) break;
+      
+      sum += sign * term;
+      sign = -sign;
+      n++;
+    }
+
+    return new Rational(sum / (10n ** extra), 10n ** p);
+  }
+
+  // Косинус угла (аргумент задан в радианах)
+  cos(precision = 20) {
+    if (this.isNaN || this.isInfinity) return Rational.NaN;
+    if (this.num === 0n) return new Rational(1n); // cos(0) = 1
+
+    const p = BigInt(precision);
+    const extra = 5n;
+    const scale = 10n ** (p + extra);
+
+    // 1. Редукция аргумента к интервалу [0, 2*PI)
+    const piConst = Rational.pi(Number(p + extra));
+    const twoPi = piConst.mul(2n);
+    let reduced = this.mod(twoPi);
+    if (reduced.num < 0n) {
+      reduced = reduced.add(twoPi);
+    }
+
+    const xScaled = (reduced.num * scale) / reduced.den;
+    const x2Scaled = (xScaled * xScaled) / scale;
+
+    // 2. Вычисление ряда Тейлора для cos(x) = 1 - x^2/2! + x^4/4! - x^6/6! ...
+    let sum = scale; // Первый член ряда (1)
+    let term = scale;
+    let n = 1n;
+    let sign = -1n;
+
+    while (term > 0n || term < -0n) {
+      // term = (term * x^2) / ((2n - 1) * (2n) * scale)
+      term = (term * x2Scaled) / (((2n - 1n) * (2n)) * scale);
+      if (term === 0n) break;
+
+      sum += sign * term;
+      sign = -sign;
+      n++;
+    }
+
+    return new Rational(sum / (10n ** extra), 10n ** p);
+  }
+
+  // Тангенс угла: tan(x) = sin(x) / cos(x)
+  tan(precision = 20) {
+    if (this.isNaN || this.isInfinity) return Rational.NaN;
+
+    // Вычисляем синус и косинус с небольшим запасом точности
+    const calcPrecision = precision + 2;
+    const s = this.sin(calcPrecision);
+    const c = this.cos(calcPrecision);
+
+    // Если косинус близок к 0, деление выбросит бесконечность нужного знака
+    const result = s.div(c);
+    
+    // Округляем до итоговой точности
+    return result.round(precision);
   }  
   // --- ВЫВОД ДАННЫХ ---
 
