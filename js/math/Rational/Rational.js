@@ -507,7 +507,72 @@ export default class Rational {
     // (1 + sqrt(5)) / 2
     return one.add(sqrtFive).div(2n);
   }
+
+  // Извлечение корня произвольной целой степени q методом Ньютона
+  // precision - точность (количество знаков после запятой)
+  _root(q, precision = 20) {
+    const degree = BigInt(q);
+    if (degree === 1n) return this;
+    if (degree === 0n) return Rational.POSITIVE_INFINITY;
     
+    // Обработка спец-состояний
+    if (this.isNaN) return Rational.NaN;
+    if (this.num === 0n) return new Rational(0n);
+    if (this.num < 0n) {
+      // Корень четной степени из отрицательного числа — NaN
+      if (degree % 2n === 0n) return Rational.NaN;
+      // Для нечетной степени: root(-x) = -root(x)
+      return this.abs()._root(degree, precision).negate();
+    }
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+
+    const p = BigInt(precision);
+    // Масштабируем: умножаем числитель на 10^(degree * precision)
+    const shift = 10n ** (degree * p);
+    const scaledNum = (this.num * shift) / this.den;
+
+    // Итерационная формула Ньютона: x_next = ((degree - 1) * x + scaledNum / x^(degree - 1)) / degree
+    let x = scaledNum / degree || 1n;
+    let lastX = 0n;
+
+    while (x !== lastX && x !== lastX + 1n && x !== lastX - 1n) {
+      lastX = x;
+      const xPower = x ** (degree - 1n);
+      x = ((degree - 1n) * x + scaledNum / xPower) / degree;
+    }
+
+    return new Rational(x, 10n ** p);
+  }
+  
+    // Возведение в произвольную дробную степень
+  pow(other, precision = 20) {
+    const o = Rational.#toRational(other);
+
+    // 1. Обработка спец-значений степени
+    if (this.isNaN || o.isNaN) return Rational.NaN;
+    
+    // Любое число в степени 0 равно 1
+    if (o.num === 0n) return new Rational(1n);
+
+    // 2. Обработка бесконечностей в степени
+    if (o.isInfinity) {
+      if (this.eq(1) || this.eq(-1)) return Rational.NaN; // 1^Inf или (-1)^Inf не определено
+      
+      const absValue = this.abs();
+      if (o.isPositiveInfinity) {
+        return absValue.gt(1) ? Rational.POSITIVE_INFINITY : new Rational(0n);
+      } else {
+        return absValue.gt(1) ? new Rational(0n) : Rational.POSITIVE_INFINITY;
+      }
+    }
+
+    // 3. Базовый расчет: x^(p/q) = (x^p)^(1/q)
+    // Сначала возводим в целую степень числителя (используя ваш переименованный pow_int)
+    const powerBase = this.pow_int(o.num);
+    
+    // Извлекаем корень степени знаменателя (знаменатель o.den всегда положительный после #simplify())
+    return powerBase._root(o.den, precision);
+  }
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
