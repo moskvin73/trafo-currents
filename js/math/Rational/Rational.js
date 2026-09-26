@@ -321,6 +321,28 @@ export default class Rational {
     if (this.num < 0n) return -1n;       // Отрицательные дроби и -Infinity
     return 0n;                           // Ноль
   } 
+
+  // Возвращает массив [integerPart, fractionalPart], где оба элемента — объекты Rational
+  split() {
+    // 1. Обработка спец-состояний
+    if (this.isNaN) {
+      return [Rational.NaN, Rational.NaN];
+    }
+    if (this.isInfinity) {
+      // Бесконечность полностью уходит в целую часть, дробная часть равна 0
+      return [this, new Rational(0n)];
+    }
+
+    // 2. Вычисляем целую часть и остаток
+    const integerValue = this.num / this.den;
+    const remainderValue = this.num % this.den;
+
+    // 3. Формируем объекты Rational
+    const integerPart = new Rational(integerValue, 1n);
+    const fractionalPart = new Rational(remainderValue, this.den);
+
+    return [integerPart, fractionalPart];
+  }  
   // --- СТЕПЕНИ И КОРНИ ---
 
   // Возведение в целую степень (степень может быть отрицательной)
