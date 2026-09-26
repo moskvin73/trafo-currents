@@ -287,7 +287,33 @@ class Rational {
       return new Rational(divResult * scale, 1n);
     }
   }
-      
+
+  // --- УНАРНЫЕ ОПЕРАЦИИ ---
+
+  // Модуль числа (абсолютное значение)
+  abs() {
+    // Если это NaN, возвращаем его же
+    if (this.isNaN) return this;
+    
+    // Если числитель отрицательный, меняем его знак на положительный
+    if (this.num < 0n) {
+      return new Rational(-this.num, this.den);
+    }
+    
+    // В остальных случаях (число уже положительное или Infinity) возвращаем копию
+    return new Rational(this.num, this.den);
+  }
+
+  // Смена знака (унарный минус)
+  negate() {
+    // Если это NaN, знак не меняется
+    if (this.isNaN) return this;
+    
+    // Меняем знак числителя на противоположный. 
+    // Это автоматически инвертирует и обычные числа, и бесконечности
+    return new Rational(-this.num, this.den);
+  }
+    
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
