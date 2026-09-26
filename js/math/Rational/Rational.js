@@ -1090,6 +1090,26 @@ export default class Rational {
         return new Rational(num, den);
     }
 
+  // Возвращает чистый LaTeX-код дроби без знаков \( или \)\$
+  toRawTeX() {
+    // 1. Обработка специальных математических состояний
+    if (this.isNaN) return "\(\text{NaN}\)";
+    if (this.isPositiveInfinity) return "\(\infty\)";
+    if (this.isNegativeInfinity) return "\(-\infty\)";
+
+    // 2. Если число целое (знаменатель равен 1), выводим просто число
+    if (this.den === 1n) {
+      return this.num.toString();
+    }
+
+    // 3. Для обыкновенных дробей
+    // Знак минус выносим перед дробью \(\frac\)
+    const sign = this.num < 0n ? "-" : "";
+    const absNum = this.num < 0n ? -this.num : this.num;
+
+    return `${sign}\\frac{${absNum.toString()}}{${this.den.toString()}}`;
+  }
+      
     toDecimalString(maxStandardDigits = 20) {
         if (this.isNaN) return "NaN";
         if (this.isPositiveInfinity) return "Infinity";
