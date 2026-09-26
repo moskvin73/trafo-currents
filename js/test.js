@@ -179,6 +179,62 @@ function getFirstStackTraceLinkRef(err) {
 
 export function test3() {
 
+console.log("=== ТЕСТ 1: Парсинг строк и десятичный вывод ===");
+const r1 = Rational.parse("0.3(3)");
+console.log(`Разбор "0.3(3)":`, r1.toString()); // "1/3"
+console.log(`Вывод обратно:`, r1.toDecimalString()); // "0.(3)"
+
+const r2 = Rational.parse("-1.25E+2");
+console.log(`Разбор "-1.25E+2":`, r2.toString()); // "-125"
+
+const r3 = Rational.parse("0.(142857)");
+console.log(`Разбор периода 1/7:`, r3.toString()); // "1/7"
+
+
+console.log("\n=== ТЕСТ 2: Операции отношения (Сравнения) ===");
+const half = new Rational(1, 2);
+const third = new Rational(1, 3);
+
+console.log("1/2 > 1/3:", half.gt(third));  // true
+console.log("1/3 < 1/2:", third.lt(half)); // true
+console.log("1/2 == 2/4:", half.eq(new Rational(2, 4))); // true
+console.log("NaN == NaN:", Rational.NaN.eq(Rational.NaN)); // false (по стандарту IEEE 754)
+
+
+console.log("\n=== ТЕСТ 3: Округления с точностью ===");
+const piApprox = new Rational(22, 7); // ~3.142857...
+console.log("22/7 floor(2):", piApprox.floor(2).toDecimalString()); // "3.14"
+console.log("22/7 ceil(2):", piApprox.ceil(2).toDecimalString());   // "3.15"
+console.log("22/7 round(2):", piApprox.round(2).toDecimalString()); // "3.14"
+
+const negativeVal = new Rational(-5, 2); // -2.5
+console.log("-2.5 floor(0):", negativeVal.floor(0).toDecimalString()); // "-3" (в меньшую сторону)
+console.log("-2.5 round(0):", negativeVal.round(0).toDecimalString()); // "-3" (половины от нуля)
+
+
+console.log("\n=== ТЕСТ 4: Модуль, смена знака и метод sign() ===");
+const negInf = Rational.NEGATIVE_INFINITY;
+console.log("Знак -Infinity:", negInf.sign()); // -1n
+console.log("Модуль -Infinity:", negInf.abs().toString()); // "Infinity"
+console.log("Унарный минус для 1/3:", third.negate().toString()); // "-1/3"
+console.log("Знак нуля:", new Rational(0).sign()); // 0n
+
+
+console.log("\n=== ТЕСТ 5: Корни, степени и спец-значения ===");
+const two = new Rational(2);
+console.log("Корень из 2 (10 знаков):", two.sqrt(10).toDecimalString()); // "1.4142135623"
+console.log("(-Infinity) в кубе:", negInf.pow(3).toString()); // "-Infinity"
+console.log("(-Infinity) в квадрате:", negInf.pow(2).toString()); // "Infinity"
+console.log("Корень из -5:", new Rational(-5).sqrt().toString()); // "NaN"
+
+
+console.log("\n=== ТЕСТ 6: Интеграция с нативным JavaScript ===");
+const nativeNum = Rational.fromNumber(0.1);
+console.log("fromNumber(0.1):", nativeNum.toString()); // "1/10" (точная дробь!)
+
+const jsMath = new Rational(1, 4) + 2; // Автовызов Symbol.toPrimitive
+console.log("1/4 + 2 в контексте JS:", jsMath); // 2.25 (тип Number)
+  
   const loc = (line, col =  1) => {
     const loc_data = {
       locType: "IndependentLoc",
