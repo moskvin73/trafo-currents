@@ -833,6 +833,185 @@ export default class Rational {
     
     // Округляем до итоговой точности
     return result.round(precision);
+  }
+  
+  // --- ОБРАТНЫЕ ТРИГОНОМЕТРИЧЕСКИЕ ФУНКЦИИ ---
+
+  // Арктангенс числа (atan x)
+  atan(precision = 20) {
+    if (this.isNaN) return Rational.NaN;
+    if (this.isPositiveInfinity) return Rational.pi(precision).div(2n);
+    if (this.isNegativeInfinity) return Rational.pi(precision).div(2n).negate();
+    if (this.num === 0n) return new Rational(0n); // atan(0) = 0
+
+    const p = BigInt(precision);
+    const extra = 5n; // Запас точности
+    const scale = 10n ** (p + extra);
+
+    const sign = this.num < 0n ? -1n : 1n;
+    let absX = this.abs();
+
+    const piConst = Rational.pi(Number(p + extra));
+    const halfPi = piConst.div(2n);
+
+    let result;
+
+    // Редукция аргумента: если x > 1, то atan(x) = pi/2 - atan(1/x)
+    if (absX.gt(1)) {
+      const invertedX = new Rational(1n).div(absX);
+      // Рекурсивный вызов для перевернутого числа (оно гарантированно < 1)
+      const atanInverted = invertedX.atan(Number(p + extra));
+      result = halfPi.sub(atanInverted);
+    } else {
+      // Вычисление ряда Тейлора для x <= 1: x - x^3/3 + x^5/5 - x^7/7 ...
+      const xScaled = (absX.num * scale) / absX.den;
+      const x2Scaled = (xScaled * xScaled) / scale;
+
+      let sum = xScaled;
+      let term = xScaled;
+      let n = 1n;
+      let currentSign = -1n;
+
+      while (term > 0n || term < -0n) {
+        term = (term * x2Scaled) / scale;
+        let currentTerm = term / (2n * n + 1n);
+        if (currentTerm === 0n) break;
+
+        sum += currentSign * currentTerm;
+        currentSign = -currentSign;
+        n++;
+      }
+
+      result = new Rational(sum / (10n ** extra), 10n ** p);
+    }
+
+    // Применяем исходный знак: atan(-x) = -atan(x)
+    return sign < 0n ? result.negate().round(precision) : result.round(precision);
+  }
+
+  // Арксинус числа (asin x), определен на отрезке [-1, 1]
+  asin(precision = 20) {
+    if (this.isNaN || this.abs().gt(1)) return Rational.NaN;
+    if (this.num === 0n) return new Rational(0n);
+    
+    // asin(1) = pi/2, asin(-1) = -pi/2
+    if (this.eq(1)) return Rational.pi(precision).div(2n);
+    if (this.eq(-1)) return Rational.pi(precision).div(2n).negate();
+
+    // Формула: asin(x) = atan(x / sqrt(1 - x^2))
+    const one = new Rational(1n);
+    const x2 = this.mul(this);
+    const denominatorPart = one.sub(x2).sqrt(precision + 5);
+    
+    const atanArgument = this.div(denominatorPart);
+    return atanArgument.atan(precision);
+  }
+
+  // Арккосинус числа (acos x), определен на отрезке [-1, 1]
+  acos(precision = 20) {
+    if (this.isNaN || this.abs().gt(1)) return Rational.NaN;
+    
+    // Формула: acos(x) = pi/2 - asin(x)
+    const piConst = Rational.pi(precision);
+    const halfPi = piConst.div(2n);
+    
+    return halfPi.sub(this.asin(precision + 2)).round(precision);
+  }
+  
+  // --- ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ ---
+
+  // Гиперболический синус: sinh(x) = (e^x - e^-x) / 2
+  sinh(precision = 20) {
+    if (this.isNaN) return Rational.NaN;
+    if (this.isInfinity) return this; // sinh(+-Inf) = +-Inf
+    if (this.num === 0n) return new Rational(0n);
+
+    const calcPrecision = precision + 5;
+    const ex = this.exp(calcPrecision);
+    const emx = this.negate().exp(calcPrecision); // e^-x
+
+    return ex.sub(emx).div(2n).round(precision);
+  }
+
+  // Гиперболический косинус: cosh(x) = (e^x + e^-x) / 2
+  cosh(precision = 20) {
+    if (this.isNaN) return Rational.NaN;
+    if (this.isInfinity) return Rational.POSITIVE_INFINITY; // cosh(+-Inf) = +Inf
+    if (this.num === 0n) return new Rational(1n);
+
+    const calcPrecision = precision + 5;
+    const ex = this.exp(calcPrecision);
+    const emx = this.negate().exp(calcPrecision); // e^-x
+
+    return ex.add(emx).div(2n).round(precision);
+  }
+
+  // Гиперболический тангенс: tanh(x) = sinh(x) / cosh(x)
+  tanh(precision = 20) {
+    if (this.isNaN) return Rational.NaN;
+    if (this.isPositiveInfinity) return new Rational(1n);
+    if (this.isNegativeInfinity) return new Rational(-1n);
+    if (this.num === 0n) return new Rational(0n);
+
+    const calcPrecision = precision + 5;
+    const s = this.sinh(calcPrecision);
+    const c = this.cosh(calcPrecision);
+
+    return s.div(c).round(precision);
+  }
+
+  // --- ОБРАТНЫЕ ГИПЕРБОЛИЧЕСКИЕ ФУНКЦИИ ---
+
+  // Обратный гиперболический синус: asinh(x) = ln(x + sqrt(x^2 + 1))
+  asinh(precision = 20) {
+    if (this.isNaN) return Rational.NaN;
+    if (this.isInfinity) return this; // asinh(+-Inf) = +-Inf
+    if (this.num === 0n) return new Rational(0n);
+
+    const calcPrecision = precision + 5;
+    const one = new Rational(1n);
+    const x2 = this.mul(this);
+    
+    // sqrt(x^2 + 1)
+    const sqrtPart = x2.add(one).sqrt(calcPrecision);
+    // x + sqrt(x^2 + 1)
+    const lnArgument = this.add(sqrtPart);
+
+    return lnArgument.ln(precision);
+  }
+
+  // Обратный гиперболический косинус: acosh(x) = ln(x + sqrt(x^2 - 1)), определен при x >= 1
+  acosh(precision = 20) {
+    if (this.isNaN || this.lt(1)) return Rational.NaN; 
+    if (this.eq(1)) return new Rational(0n); // acosh(1) = 0
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+
+    const calcPrecision = precision + 5;
+    const one = new Rational(1n);
+    const x2 = this.mul(this);
+    
+    // sqrt(x^2 - 1)
+    const sqrtPart = x2.sub(one).sqrt(calcPrecision);
+    // x + sqrt(x^2 - 1)
+    const lnArgument = this.add(sqrtPart);
+
+    return lnArgument.ln(precision);
+  }
+
+  // Обратный гиперболический тангенс: atanh(x) = 0.5 * ln((1 + x) / (1 - x)), определен на (-1, 1)
+  atanh(precision = 20) {
+    if (this.isNaN || this.abs().gte(1)) return Rational.NaN;
+    if (this.num === 0n) return new Rational(0n);
+
+    const calcPrecision = precision + 5;
+    const one = new Rational(1n);
+    
+    // (1 + x) / (1 - x)
+    const fractionPart = one.add(this).div(one.sub(this));
+    // ln((1 + x) / (1 - x))
+    const lnResult = fractionPart.ln(calcPrecision);
+
+    return lnResult.div(2n).round(precision);
   }  
   // --- ВЫВОД ДАННЫХ ---
 
