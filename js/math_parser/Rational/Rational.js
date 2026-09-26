@@ -314,6 +314,13 @@ class Rational {
     return new Rational(-this.num, this.den);
   }
  
+   // Возвращает знак числа: 1n, -1n, 0n или Rational.NaN
+  sign() {
+    if (this.isNaN) return Rational.NaN; // У NaN знака нет
+    if (this.num > 0n) return 1n;        // Положительные дроби и +Infinity
+    if (this.num < 0n) return -1n;       // Отрицательные дроби и -Infinity
+    return 0n;                           // Ноль
+  } 
   // --- СТЕПЕНИ И КОРНИ ---
 
   // Возведение в целую степень (степень может быть отрицательной)
@@ -423,7 +430,7 @@ class Rational {
     // Наш ранее написанный метод Rational.parse() идеально справляется с обоими форматами строк.
     return Rational.parse(String(num));
   }
-    
+
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
