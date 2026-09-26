@@ -666,6 +666,76 @@ export default class Rational {
     }
 
     return fractionalResult;
+  }
+
+  // Вычисление натурального логарифма с заданной точностью знаков после запятой
+  ln(precision = 20) {
+    // 1. Проверка граничных условий и спец-значений
+    if (this.isNaN || this.num <= 0n) return Rational.NaN; // ln от отрицательного или нуля — NaN
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+    if (this.num === this.den) return new Rational(0n); // ln(1) = 0
+
+    const p = BigInt(precision);
+    const extra = 5n; // Запас точности для внутренних расчетов
+    const scale = 10n ** (p + extra);
+
+    // Подготавливаем константу e с запасом точности
+    const eConst = Rational.e(Number(p + extra));
+    
+    let current = this;
+    let k = 0n; // Счетчик степеней e
+
+    // 2. Редукция аргумента: приводим число к диапазону, близкому к 1
+    // Оптимальный интервал для быстрой сходимости ряда: примерно от 0.75 до 1.5
+    const upperLimit = new Rational(3n, 2n);
+    const lowerLimit = new Rational(3n, 4n);
+
+    while (current.gt(upperLimit)) {
+      current = current.div(eConst);
+      k++;
+    }
+    while (current.lt(lowerLimit)) {
+      current = current.mul(eConst);
+      k--;
+    }
+
+    // 3. Вычисление ln(current) через ряд для artanh(z), где z = (current - 1) / (current + 1)
+    const one = new Rational(1n);
+    const zNum = current.sub(one);
+    const zDen = current.add(one);
+    const z = zNum.div(zDen);
+
+    // Масштабируем z в целое число BigInt для вычисления ряда
+    let zScaled = (z.num * scale) / z.den;
+    let z2Scaled = (zScaled * zScaled) / scale; // z^2
+
+    let sum = 0n;
+    let term = zScaled; // Первый член ряда: z^(2n+1)
+    let n = 0n;
+
+    while (term > 0n || term < -0n) {
+      let currentTerm = term / (2n * n + 1n);
+      if (currentTerm === 0n) break;
+      
+      sum += currentTerm;
+      n++;
+      
+      // Вычисляем следующий член: term = (term * z^2) / scale
+      term = (term * z2Scaled) / scale;
+    }
+    
+    // Умножаем сумму ряда на 2 (по формуле логарифма)
+    sum *= 2n;
+
+    // Переводим результат ряда обратно в Rational с базовой точностью
+    let lnRemainder = new Rational(sum / (10n ** extra), 10n ** p);
+
+    // 4. Собираем итоговое значение: ln(x) = ln(remainder) + k
+    if (k !== 0n) {
+      return lnRemainder.add(new Rational(k, 1n));
+    }
+
+    return lnRemainder;
   }  
   // --- ВЫВОД ДАННЫХ ---
 
