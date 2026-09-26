@@ -431,6 +431,83 @@ export default class Rational {
     return Rational.parse(String(num));
   }
 
+  // --- МАТЕМАТИЧЕСКИЕ КОНСТАНТЫ ---
+
+  // Экспонента (число e) через ряд Тейлора: e = 1 + 1/1! + 1/2! + 1/3! + ...
+  static e(digits = 50) {
+    if (digits < 0) throw new RangeError("Количество знаков должно быть неотрицательным.");
+    
+    const d = BigInt(digits);
+    const extra = 5n; // Запас точности для промежуточных вычислений
+    const scale = 10n ** (d + extra);
+    
+    let sum = scale; // Первый член (1)
+    let term = scale; // Текущий член ряда (1/n!)
+    let n = 1n;
+    
+    while (term > 0n) {
+      term /= n;
+      sum += term;
+      n++;
+    }
+    
+    // Возвращаем результат, убирая запас точности
+    return new Rational(sum / (10n ** extra), 10n ** d);
+  }
+
+  // Число Пи (PI) по формуле Бентли-Борвейна-Плауффа (BBP) или ряду братьев Чудновских.
+  // Для простоты и высокой скорости на умеренных разрядах используем алгоритм кратной точности Бэйли-Борвейна-Плауффа,
+  // либо классический алгоритм Гаусса-Лежандра (или формулу Мачина).
+  // Ниже реализована формула Мачина: pi/4 = 4*arctan(1/5) - arctan(1/239), разложение arctan в ряд Тейлора.
+  static pi(digits = 50) {
+    if (digits < 0) throw new RangeError("Количество знаков должно быть неотрицательным.");
+    
+    const d = BigInt(digits);
+    const extra = 5n;
+    const scale = 10n ** (d + extra);
+
+    // Функция вычисления arctan(1/x) * scale
+    const arccot = (x, baseScale) => {
+      let sum = baseScale / x;
+      let term = sum;
+      let x2 = x * x;
+      let n = 3n;
+      let sign = -1n;
+      
+      while (true) {
+        term /= x2;
+        let current = term / n;
+        if (current === 0n) break;
+        sum += sign * current;
+        sign = -sign;
+        n += 2n;
+      }
+      return sum;
+    };
+
+    // pi = 4 * (4 * arctan(1/5) - arctan(1/239))
+    const term5 = arccot(5n, scale);
+    const term239 = arccot(239n, scale);
+    const piScaled = 4n * (4n * term5 - term239);
+
+    return new Rational(piScaled / (10n ** extra), 10n ** d);
+  }
+
+  // Золотое сечение (phi) по формуле: (1 + sqrt(5)) / 2
+  static phi(digits = 50) {
+    if (digits < 0) throw new RangeError("Количество знаков должно быть неотрицательным.");
+    
+    const d = BigInt(digits);
+    const one = new Rational(1n);
+    const five = new Rational(5n);
+    
+    // Извлекаем корень из 5 с заданной точностью
+    const sqrtFive = five.sqrt(digits);
+    
+    // (1 + sqrt(5)) / 2
+    return one.add(sqrtFive).div(2n);
+  }
+    
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
