@@ -116,6 +116,178 @@ class Rational {
     return new Rational(this.num * o.den, this.den * o.num);
   }
 
+    // --- ОПЕРАЦИИ ОТНОШЕНИЯ (СРАВНЕНИЯ) ---
+
+    // Равно (==)
+    eq(other) {
+        const o = Rational._toRational(other);
+        // По правилам IEEE 754, NaN не равен ничему, даже NaN
+        if (this.isNaN || o.isNaN) return false;
+        
+        // Если обе бесконечности одного знака — они равны
+        if (this.den === 0n && o.den === 0n) {
+        return (this.num > 0n) === (o.num > 0n);
+        }
+        
+        // Для обычных дробей сравниваем перекрестным умножением
+        return this.num * o.den === o.num * this.den;
+    }
+
+    // Не равно (!=)
+    not_eq(other) {
+        return !this.eq(other);
+    }
+
+    // Меньше (<)
+    lt(other) {
+        const o = Rational._toRational(other);
+        if (this.isNaN || o.isNaN) return false; // Сравнения с NaN всегда false
+
+        // Обработка бесконечностей
+        if (this.isInfinity || o.isInfinity) {
+        if (this.isNegativeInfinity && !o.isNegativeInfinity) return true;
+        if (this.isPositiveInfinity) return false;
+        if (o.isPositiveInfinity && !this.isPositiveInfinity) return true;
+        if (o.isNegativeInfinity) return false;
+        }
+
+        return this.num * o.den < o.num * this.den;
+    }
+
+    // Больше (>)
+    gt(other) {
+        const o = Rational._toRational(other);
+        if (this.isNaN || o.isNaN) return false;
+
+        // Обработка бесконечностей
+        if (this.isInfinity || o.isInfinity) {
+        if (this.isPositiveInfinity && !o.isPositiveInfinity) return true;
+        if (this.isNegativeInfinity) return false;
+        if (o.isNegativeInfinity && !this.isNegativeInfinity) return true;
+        if (o.isPositiveInfinity) return false;
+        }
+
+        return this.num * o.den > o.num * this.den;
+    }
+
+    // Меньше или равно (<=)
+    lte(other) {
+        const o = Rational._toRational(other);
+        if (this.isNaN || o.isNaN) return false;
+        return this.lt(o) || this.eq(o);
+    }
+
+    // Больше или равно (>=)
+    gte(other) {
+        const o = Rational._toRational(other);
+        if (this.isNaN || o.isNaN) return false;
+        return this.gt(o) || this.eq(o);
+    }
+
+  // --- ФУНКЦИИ ОКРУГЛЕНИЯ ---
+
+  // Округление вниз (к ближайшему меньшему или равному)
+  floor(precision = 0) {
+    if (this.isNaN || this.isInfinity) return this;
+
+    const p = BigInt(precision);
+    const scale = 10n ** (p > 0n ? p : -p);
+
+    let scaledNum, scaledDen;
+    if (p >= 0n) {
+      scaledNum = this.num * scale;
+      scaledDen = this.den;
+    } else {
+      scaledNum = this.num;
+      scaledDen = this.den * scale;
+    }
+
+    let divResult = scaledNum / scaledDen;
+    let remainder = scaledNum % scaledDen;
+
+    // Если число отрицательное и есть остаток, при делении BigInt 
+    // округление идет к нулю (вверх), а для floor нам нужно вниз
+    if (remainder !== 0n && scaledNum < 0n) {
+      divResult -= 1n;
+    }
+
+    if (p >= 0n) {
+      return new Rational(divResult, scale);
+    } else {
+      return new Rational(divResult * scale, 1n);
+    }
+  }
+
+  // Округление вверх (к ближайшему большему или равному)
+  ceil(precision = 0) {
+    if (this.isNaN || this.isInfinity) return this;
+
+    const p = BigInt(precision);
+    const scale = 10n ** (p > 0n ? p : -p);
+
+    let scaledNum, scaledDen;
+    if (p >= 0n) {
+      scaledNum = this.num * scale;
+      scaledDen = this.den;
+    } else {
+      scaledNum = this.num;
+      scaledDen = this.den * scale;
+    }
+
+    let divResult = scaledNum / scaledDen;
+    let remainder = scaledNum % scaledDen;
+
+    // Если число положительное и есть остаток, при делении BigInt 
+    // округление идет к нулю (вниз), а для ceil нам нужно вверх
+    if (remainder !== 0n && scaledNum > 0n) {
+      divResult += 1n;
+    }
+
+    if (p >= 0n) {
+      return new Rational(divResult, scale);
+    } else {
+      return new Rational(divResult * scale, 1n);
+    }
+  }
+
+  // Математическое округление к ближайшему целому (0.5 округляется вверх по модулю)
+  round(precision = 0) {
+    if (this.isNaN || this.isInfinity) return this;
+
+    const p = BigInt(precision);
+    const scale = 10n ** (p > 0n ? p : -p);
+
+    let scaledNum, scaledDen;
+    if (p >= 0n) {
+      scaledNum = this.num * scale;
+      scaledDen = this.den;
+    } else {
+      scaledNum = this.num;
+      scaledDen = this.den * scale;
+    }
+
+    let divResult = scaledNum / scaledDen;
+    let remainder = scaledNum % scaledDen;
+    
+    if (remainder !== 0n) {
+      // Берем абсолютные значения остатка и делителя для сравнения половины
+      const absRemainder = remainder < 0n ? -remainder : remainder;
+      const absDen = scaledDen < 0n ? -scaledDen : scaledDen;
+      
+      // Удваиваем остаток, чтобы избежать деления при проверке на "больше или равно 0.5"
+      if (absRemainder * 2n >= absDen) {
+        if (scaledNum > 0n) divResult += 1n;
+        else divResult -= 1n;
+      }
+    }
+
+    if (p >= 0n) {
+      return new Rational(divResult, scale);
+    } else {
+      return new Rational(divResult * scale, 1n);
+    }
+  }
+      
   // --- ВЫВОД ДАННЫХ ---
 
   toString() {
