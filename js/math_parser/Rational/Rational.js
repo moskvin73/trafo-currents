@@ -383,6 +383,46 @@ class Rational {
     // Возвращаем результат со сдвигом масштаба назад на 10^precision
     return new Rational(x, 10n ** p);
   }
+ 
+  // --- ИНТЕГРАЦИЯ С JS (ПРИВЕДЕНИЕ ТИПОВ) ---
+
+  // Автоматическое приведение типа в зависимости от контекста (hint)
+  [Symbol.toPrimitive](hint) {
+    // 1. Если JS ожидает строку (например, при `${obj}` или alert(obj))
+    if (hint === "string") {
+      return this.toString();
+    }
+
+    // 2. Если JS ожидает число (hint === "number") или режим "default" (например, obj + 2 или obj == 2)
+    // Возвращаем стандартный Number (с возможной потерей точности, так как это ограничение самого Number)
+    if (this.isNaN) return Number.NaN;
+    if (this.isPositiveInfinity) return Number.POSITIVE_INFINITY;
+    if (this.isNegativeInfinity) return Number.NEGATIVE_INFINITY;
+
+    // Преобразуем через деление обычных чисел JavaScript
+    return Number(this.num) / Number(this.den);
+  }
+
+  // --- ОБРАТНОЕ ПРЕОБРАЗОВАНИЕ ИЗ NUMBER ---
+
+  // Статический метод создания Rational из стандартного JavaScript Number
+  static fromNumber(num) {
+    // 1. Проверка на спец-значения Number
+    if (Number.isNaN(num)) return Rational.NaN;
+    if (num === Number.POSITIVE_INFINITY) return Rational.POSITIVE_INFINITY;
+    if (num === Number.NEGATIVE_INFINITY) return Rational.NEGATIVE_INFINITY;
+
+    // 2. Если число целое, возвращаем num / 1
+    if (Number.isInteger(num)) {
+      return new Rational(BigInt(num), 1n);
+    }
+
+    // 3. Если число дробное (например, 0.125), превращаем его в точную дробь.
+    // Используем метод toString(), чтобы избежать накопления плавающих ошибок JS при разборе парсером.
+    // Если число записано в экспоненциальной форме (например, 1.2e-5), то String(num) вернет "0.000012" или "1.2e-5".
+    // Наш ранее написанный метод Rational.parse() идеально справляется с обоими форматами строк.
+    return Rational.parse(String(num));
+  }
     
   // --- ВЫВОД ДАННЫХ ---
 
