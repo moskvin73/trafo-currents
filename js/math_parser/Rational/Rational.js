@@ -313,6 +313,76 @@ class Rational {
     // Это автоматически инвертирует и обычные числа, и бесконечности
     return new Rational(-this.num, this.den);
   }
+ 
+  // --- СТЕПЕНИ И КОРНИ ---
+
+  // Возведение в целую степень (степень может быть отрицательной)
+  pow_int(exp) {
+    const e = BigInt(exp);
+
+    // 1. Обработка NaN
+    if (this.isNaN) return Rational.NaN;
+
+    // 2. Обработка нуля (0^0 = NaN по стандарту IEEE 754 в некоторых контекстах, но в JS 0^0 = 1)
+    if (this.num === 0n) {
+      if (e === 0n) return new Rational(1n);
+      if (e < 0n) return Rational.POSITIVE_INFINITY; // 1 / 0^n = Infinity
+      return new Rational(0n); // 0^n = 0
+    }
+
+    // 3. Обработка бесконечностей
+    if (this.isInfinity) {
+      if (e === 0n) return new Rational(1n);
+      if (e < 0n) return new Rational(0n); // Inf^-n = 0
+      
+      // Inf^n зависит от знака бесконечности и четности степени
+      if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+      
+      // -Infinity в четной степени -> +Infinity, в нечетной -> -Infinity
+      const isEven = e % 2n === 0n;
+      return isEven ? Rational.POSITIVE_INFINITY : Rational.NEGATIVE_INFINITY;
+    }
+
+    // 4. Обычное возведение в степень для конечных дробей
+    if (e === 0n) return new Rational(1n);
+    
+    if (e < 0n) {
+      // (a/b)^-n = (b/a)^n
+      if (this.num === 0n) return Rational.POSITIVE_INFINITY;
+      return new Rational(this.den ** -e, this.num ** -e);
+    }
+    
+    return new Rational(this.num ** e, this.den ** e);
+  }
+
+  // Квадратный корень методом Ньютона (целочисленный) с поддержкой точности
+  sqrt(precision = 20) {
+    // 1. Обработка NaN и отрицательных чисел
+    if (this.isNaN || this.num < 0n) return Rational.NaN;
+
+    // 2. Обработка бесконечности
+    if (this.isPositiveInfinity) return Rational.POSITIVE_INFINITY;
+
+    // 3. Обработка нуля
+    if (this.num === 0n) return new Rational(0n);
+
+    // 4. Вычисление для конечных положительных дробей
+    const p = BigInt(precision);
+    const shift = 10n ** (p * 2n);
+    const scaledNum = (this.num * shift) / this.den;
+
+    // Целочисленный метод Ньютона для поиска корня
+    let x = scaledNum / 2n || 1n;
+    let lastX = 0n;
+    
+    while (x !== lastX && x !== lastX + 1n && x !== lastX - 1n) {
+      lastX = x;
+      x = (x + scaledNum / x) / 2n;
+    }
+
+    // Возвращаем результат со сдвигом масштаба назад на 10^precision
+    return new Rational(x, 10n ** p);
+  }
     
   // --- ВЫВОД ДАННЫХ ---
 
