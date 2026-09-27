@@ -179,7 +179,7 @@ function getFirstStackTraceLinkRef(err) {
 
 export function test3() {
 
-console.log("=== ТЕСТ 1: Парсинг строк и десятичный вывод ===");
+/*console.log("=== ТЕСТ 1: Парсинг строк и десятичный вывод ===");
 console.log("\n=== ТЕСТ 6: tan(pi) ===");
 //const r_pi = Rational.pi();///.div(2);//.tan();
 
@@ -245,7 +245,7 @@ console.log("Число Pi (30 знаков): ", Rational.pi(30).toDecimalString
 // 3.141592653589793238462643383279
 
 console.log("Число Phi (30 знаков):", Rational.phi(30).toDecimalString());
-// 1.618033988749894848204586834365
+// 1.618033988749894848204586834365*/
   
   const loc = (line, col =  1) => {
     const loc_data = {
