@@ -180,6 +180,9 @@ function getFirstStackTraceLinkRef(err) {
 export function test3() {
 
 console.log("=== ТЕСТ 1: Парсинг строк и десятичный вывод ===");
+console.log("\n=== ТЕСТ 6: tan(pi) ===");
+const r_pi = Rational.pi.tan();
+
 const r1 = Rational.parse("0.3(3)");
 console.log(`Разбор "0.3(3)":`, r1.toString()); // "1/3"
 console.log(`Вывод обратно:`, r1.toDecimalString()); // "0.(3)"
